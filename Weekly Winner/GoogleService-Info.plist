@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyC8RToZWSJcow2wVYtO4DyfZE3OhtT94rI</string>
+	<key>GCM_SENDER_ID</key>
+	<string>74891887467</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>PerkinsBrown.Weekly-Winner</string>
+	<key>PROJECT_ID</key>
+	<string>weekly-winner</string>
+	<key>STORAGE_BUCKET</key>
+	<string>weekly-winner.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:74891887467:ios:c2c022829bbc5511bd022e</string>
+</dict>
+</plist>
