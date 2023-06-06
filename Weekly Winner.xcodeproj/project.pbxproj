@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8668B30F2A2EE62700A1B343 /* game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8668B30E2A2EE62700A1B343 /* game.swift */; };
+		8668B3112A2EE9CF00A1B343 /* bookViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8668B3102A2EE9CF00A1B343 /* bookViewModel.swift */; };
+		8668B3132A2EF06A00A1B343 /* gameService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8668B3122A2EF06A00A1B343 /* gameService.swift */; };
 		867801552A213010006FE479 /* Weekly_WinnerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801542A213010006FE479 /* Weekly_WinnerApp.swift */; };
 		867801572A213010006FE479 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801562A213010006FE479 /* ContentView.swift */; };
 		867801592A213015006FE479 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 867801582A213015006FE479 /* Assets.xcassets */; };
@@ -49,6 +52,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8668B30E2A2EE62700A1B343 /* game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = game.swift; sourceTree = "<group>"; };
+		8668B3102A2EE9CF00A1B343 /* bookViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = bookViewModel.swift; sourceTree = "<group>"; };
+		8668B3122A2EF06A00A1B343 /* gameService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = gameService.swift; sourceTree = "<group>"; };
 		867801512A213010006FE479 /* Weekly Winner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Weekly Winner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		867801542A213010006FE479 /* Weekly_WinnerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weekly_WinnerApp.swift; sourceTree = "<group>"; };
 		867801562A213010006FE479 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -130,9 +136,12 @@
 				8678017F2A213CB9006FE479 /* tabBarView.swift */,
 				867801812A213F83006FE479 /* screen1.swift */,
 				867801832A213F90006FE479 /* screen2.swift */,
+				8668B3102A2EE9CF00A1B343 /* bookViewModel.swift */,
+				8668B3122A2EF06A00A1B343 /* gameService.swift */,
 				867801872A213FA5006FE479 /* screen3.swift */,
 				867801852A213F99006FE479 /* screen4.swift */,
 				867801892A213FB1006FE479 /* screen5.swift */,
+				8668B30E2A2EE62700A1B343 /* game.swift */,
 				867801582A213015006FE479 /* Assets.xcassets */,
 				8678015A2A213015006FE479 /* Weekly_Winner.entitlements */,
 				8678018B2A21662D006FE479 /* GoogleService-Info.plist */,
@@ -311,13 +320,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				867801572A213010006FE479 /* ContentView.swift in Sources */,
+				8668B3112A2EE9CF00A1B343 /* bookViewModel.swift in Sources */,
 				867801882A213FA5006FE479 /* screen3.swift in Sources */,
 				867801822A213F83006FE479 /* screen1.swift in Sources */,
+				8668B30F2A2EE62700A1B343 /* game.swift in Sources */,
 				867801862A213F9A006FE479 /* screen4.swift in Sources */,
 				867801552A213010006FE479 /* Weekly_WinnerApp.swift in Sources */,
 				8678018A2A213FB1006FE479 /* screen5.swift in Sources */,
 				867801842A213F90006FE479 /* screen2.swift in Sources */,
 				867801802A213CB9006FE479 /* tabBarView.swift in Sources */,
+				8668B3132A2EF06A00A1B343 /* gameService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

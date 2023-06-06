@@ -1,0 +1,22 @@
+//
+//  game.swift
+//  Weekly Winner
+//
+//  Created by Johnny Perkins on 6/5/23.
+//
+
+import Foundation
+import Firebase
+import FirebaseFirestoreSwift
+
+struct game: Identifiable, Decodable {
+    @DocumentID var id: String?
+    var idd: String
+    var awaySpread: Double
+    var awayTeam: String
+    var homeSpread: Double
+    var homeTeam: String
+    var commenceTime: Timestamp
+    var completed: Bool
+    var totalOU: Double
+}

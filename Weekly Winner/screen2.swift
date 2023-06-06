@@ -14,6 +14,7 @@ enum GameType: String, CaseIterable {
 
 struct BettingAppView: View {
     @State private var selectedGameType = GameType.collegeFootball
+    @ObservedObject private var viewModel = bookViewModel()
     
     var body: some View {
         NavigationView {
@@ -38,9 +39,10 @@ struct BettingAppView: View {
                 
                 ScrollView {
                     VStack(spacing: 20) {
-                        ForEach(filteredGames, id: \.self) { game in
+                        ForEach(viewModel.NFLgames) { game in
                             NavigationLink(destination: BetDetailsView(bet: createSampleBet())) {
-                                BetRowView1(game: game)
+                                //BetRowView1(game: game)
+                                Text(game.awayTeam)
                             }
                         }
                     }
@@ -56,7 +58,7 @@ struct BettingAppView: View {
                 .edgesIgnoringSafeArea(.all)
             )
             .navigationBarHidden(true)
-        }
+        }.onAppear(perform: {viewModel.getGames()})
     }
     
     private var filteredGames: [Game] {
@@ -70,16 +72,10 @@ struct BettingAppView: View {
 }
 
 struct BetRowView1: View {
-    let game: Game
+    let game: game
     
     var body: some View {
-        VStack(spacing: 20) {
-            ForEach(game.teams, id: \.id) { team in
-                NavigationLink(destination: BetDetailsView(bet: createSampleBet())) {
-                    BetItemView(team: team)
-                }
-            }
-        }
+        Text("g")
     }
 }
 
