@@ -8,6 +8,8 @@
 import SwiftUI
 import FirebaseCore
 
+// Reid Was Here
+
 
 class AppDelegate: NSObject, UIApplicationDelegate {
   func application(_ application: UIApplication,
