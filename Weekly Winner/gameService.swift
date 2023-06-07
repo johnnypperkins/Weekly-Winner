@@ -9,7 +9,7 @@ import Firebase
 
 struct gameService {
     
-    func getGames() async -> [game] {
+    func getGames() async -> [Game] {
         return await withCheckedContinuation { continuation in
             Firestore.firestore().collection("games")
                 .order(by: "commenceTime", descending: true)
@@ -18,11 +18,11 @@ struct gameService {
                         print("There was an issue retrieving data from Firestore. \(e)")
                         
                     } else {
-                        var games: [game] = []
+                        var games: [Game] = []
                         
                         guard let documents = snapshot?.documents, error == nil else {return}
                         games = documents.compactMap { snapshot1 in
-                            try? snapshot1.data(as: game.self)
+                            try? snapshot1.data(as: Game.self)
                             
                         }
                         continuation.resume(returning: games)
