@@ -88,6 +88,17 @@ struct BetRowView1: View {
                     Text("@\(game.homeTeam)")
                         .foregroundColor(.white)
                 }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(
+                            LinearGradient(
+                                gradient: Gradient(colors: [Color.green, Color.blue]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                )
                 
                 HStack(spacing: 10) {
                     Button(action: {
@@ -95,14 +106,19 @@ struct BetRowView1: View {
                         self.showingSheet.toggle()
                             }) {
                                 Text("\(game.awaySpread, specifier: "%.1f")")
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(.white)
                                     .padding()
-                                    .background(Color(showingAway ? .gray : .white))
-                                    .cornerRadius(10)
+                                    .background(Color(showingAway ? .gray : .clear))
+                                    .cornerRadius(20)
+                                    .background(
+                                                        RoundedRectangle(cornerRadius: 20)
+                                                            .stroke(Color.black, lineWidth: 1)
+                                                    )
                                     .shadow(color: showingAway ? .gray : .clear, radius: 5)
-                                    .scaleEffect(showingAway ? 0.9 : 1.0)
+                                    .scaleEffect(showingAway ? 0.8 : 1.0)
                                     .animation(.spring(), value: 4)
                             }
+                        
                     Spacer()
                     Button(action: {
                                 self.showingTotal.toggle()
@@ -116,7 +132,11 @@ struct BetRowView1: View {
                                 .padding()
                         }
                         .background(Color(showingTotal ? .gray : .white))
-                        .cornerRadius(10)
+                        .cornerRadius(20)
+                        .background(
+                                            RoundedRectangle(cornerRadius: 20)
+                                                .stroke(Color.black, lineWidth: 1)
+                                        )
                         .shadow(color: showingTotal ? .gray : .clear, radius: 5)
                         .scaleEffect(showingTotal ? 0.9 : 1.0)
                         .animation(.spring(), value: 4)
@@ -135,23 +155,14 @@ struct BetRowView1: View {
                                     .scaleEffect(showingHome ? 0.9 : 1.0)
                                     .animation(.spring(), value: 4)
                             }
-                }
+                }.padding(.top,4)
             }
             .padding(.leading)
             
             Spacer()
         }
         .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(
-                    LinearGradient(
-                        gradient: Gradient(colors: [Color.green, Color.blue]),
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-        )
+        
         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
         .sheet(isPresented: $showingSheet) {
             BetDetailsView(game: game, showingAway: $showingAway, showingHome: $showingHome, showingTotal: $showingTotal)
