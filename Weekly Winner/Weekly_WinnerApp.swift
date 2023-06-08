@@ -8,7 +8,7 @@
 import SwiftUI
 import FirebaseCore
 
-// Reid Was Here
+// Reid Was Here --
 
 
 class AppDelegate: NSObject, UIApplicationDelegate {
