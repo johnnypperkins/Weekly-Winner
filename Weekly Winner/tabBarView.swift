@@ -9,13 +9,16 @@ import SwiftUI
 
 struct tabBarView: View {
     @State private var selectedTab = 0
+    @StateObject var authViewModel = authenticationViewModel()
+    @State var showContentView = false
     
     var body: some View {
         NavigationStack{
             VStack(spacing: 0) {
                         HStack {
                             Button(action: {
-                                // Action for left button
+                                authViewModel.signOut()
+                                showContentView.toggle()
                             }) {
                                 Image(systemName: "gear")
                                     .imageScale(.large)
@@ -81,6 +84,9 @@ struct tabBarView: View {
                     }
                     .edgesIgnoringSafeArea(.bottom)
                     .navigationBarBackButtonHidden(true)
+                    .navigationDestination(isPresented: $showContentView) {
+                        ContentView()
+                    }
         }
     }
 }
