@@ -16,7 +16,7 @@ struct Game: Identifiable, Decodable {
     var awayTeam: String
     var homeSpread: Double
     var homeTeam: String
-    var commenceTime: String
+    var commenceTime: Timestamp
     var completed: Bool
     var totalOU: Double
 }

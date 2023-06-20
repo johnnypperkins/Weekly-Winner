@@ -72,6 +72,7 @@ class authenticationViewModel: ObservableObject {
                     self.fetchUser()
                     
                     self.authenticationState = .authenticated
+                    print("sign in successful")
                 }
             }
         }

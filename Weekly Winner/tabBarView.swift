@@ -60,7 +60,7 @@ struct tabBarView: View {
                                 }
                               
                             
-                            FantasyFootballView()
+                            ticketView()
                                 .tabItem {
                                     Image(systemName: "3.square.fill")
                                     Text("Tab 3")
@@ -87,7 +87,8 @@ struct tabBarView: View {
                     .navigationDestination(isPresented: $showContentView) {
                         ContentView()
                     }
-        }
+        }.edgesIgnoringSafeArea(.bottom)
+            .background(Color.green)
     }
 }
 

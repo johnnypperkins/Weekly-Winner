@@ -7,10 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		863FC0512A41176400405F2A /* ticketViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863FC0502A41176400405F2A /* ticketViewModel.swift */; };
 		865C4A762A327CA600C3C626 /* authenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 865C4A752A327CA600C3C626 /* authenticationView.swift */; };
 		865C4A782A327CC200C3C626 /* authenticationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 865C4A772A327CC200C3C626 /* authenticationViewModel.swift */; };
 		865C4A7A2A32890F00C3C626 /* userService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 865C4A792A32890F00C3C626 /* userService.swift */; };
 		865C4A7C2A32893100C3C626 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 865C4A7B2A32893100C3C626 /* User.swift */; };
+		866251102A3E862400708495 /* Ticket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8662510F2A3E862400708495 /* Ticket.swift */; };
+		866251122A3E892E00708495 /* Bet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866251112A3E892E00708495 /* Bet.swift */; };
+		866251142A40D3B500708495 /* betService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866251132A40D3B500708495 /* betService.swift */; };
 		8668B30F2A2EE62700A1B343 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8668B30E2A2EE62700A1B343 /* Game.swift */; };
 		8668B3112A2EE9CF00A1B343 /* bookViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8668B3102A2EE9CF00A1B343 /* bookViewModel.swift */; };
 		8668B3132A2EF06A00A1B343 /* gameService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8668B3122A2EF06A00A1B343 /* gameService.swift */; };
@@ -25,7 +29,7 @@
 		867801822A213F83006FE479 /* screen1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801812A213F83006FE479 /* screen1.swift */; };
 		867801842A213F90006FE479 /* screen2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801832A213F90006FE479 /* screen2.swift */; };
 		867801862A213F9A006FE479 /* screen4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801852A213F99006FE479 /* screen4.swift */; };
-		867801882A213FA5006FE479 /* screen3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801872A213FA5006FE479 /* screen3.swift */; };
+		867801882A213FA5006FE479 /* ticketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801872A213FA5006FE479 /* ticketView.swift */; };
 		8678018A2A213FB1006FE479 /* screen5.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801892A213FB1006FE479 /* screen5.swift */; };
 		8678018C2A21662D006FE479 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8678018B2A21662D006FE479 /* GoogleService-Info.plist */; };
 		8678018F2A21691E006FE479 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8678018E2A21691E006FE479 /* FirebaseAnalytics */; };
@@ -56,10 +60,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		863FC0502A41176400405F2A /* ticketViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ticketViewModel.swift; sourceTree = "<group>"; };
 		865C4A752A327CA600C3C626 /* authenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = authenticationView.swift; sourceTree = "<group>"; };
 		865C4A772A327CC200C3C626 /* authenticationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = authenticationViewModel.swift; sourceTree = "<group>"; };
 		865C4A792A32890F00C3C626 /* userService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = userService.swift; sourceTree = "<group>"; };
 		865C4A7B2A32893100C3C626 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		8662510F2A3E862400708495 /* Ticket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ticket.swift; sourceTree = "<group>"; };
+		866251112A3E892E00708495 /* Bet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bet.swift; sourceTree = "<group>"; };
+		866251132A40D3B500708495 /* betService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = betService.swift; sourceTree = "<group>"; };
 		8668B30E2A2EE62700A1B343 /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		8668B3102A2EE9CF00A1B343 /* bookViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = bookViewModel.swift; sourceTree = "<group>"; };
 		8668B3122A2EF06A00A1B343 /* gameService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = gameService.swift; sourceTree = "<group>"; };
@@ -78,7 +86,7 @@
 		867801812A213F83006FE479 /* screen1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = screen1.swift; sourceTree = "<group>"; };
 		867801832A213F90006FE479 /* screen2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = screen2.swift; sourceTree = "<group>"; };
 		867801852A213F99006FE479 /* screen4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = screen4.swift; sourceTree = "<group>"; };
-		867801872A213FA5006FE479 /* screen3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = screen3.swift; sourceTree = "<group>"; };
+		867801872A213FA5006FE479 /* ticketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ticketView.swift; sourceTree = "<group>"; };
 		867801892A213FB1006FE479 /* screen5.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = screen5.swift; sourceTree = "<group>"; };
 		8678018B2A21662D006FE479 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -116,6 +124,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		865C4A7D2A32BFF500C3C626 /* services */ = {
+			isa = PBXGroup;
+			children = (
+				8668B3122A2EF06A00A1B343 /* gameService.swift */,
+				865C4A792A32890F00C3C626 /* userService.swift */,
+				866251132A40D3B500708495 /* betService.swift */,
+			);
+			path = services;
+			sourceTree = "<group>";
+		};
+		865C4A7E2A32C00B00C3C626 /* custom variables */ = {
+			isa = PBXGroup;
+			children = (
+				8668B30E2A2EE62700A1B343 /* Game.swift */,
+				865C4A7B2A32893100C3C626 /* User.swift */,
+				8662510F2A3E862400708495 /* Ticket.swift */,
+				866251112A3E892E00708495 /* Bet.swift */,
+			);
+			path = "custom variables";
+			sourceTree = "<group>";
+		};
 		867801482A213010006FE479 = {
 			isa = PBXGroup;
 			children = (
@@ -147,13 +176,12 @@
 				867801812A213F83006FE479 /* screen1.swift */,
 				867801832A213F90006FE479 /* screen2.swift */,
 				8668B3102A2EE9CF00A1B343 /* bookViewModel.swift */,
-				867801872A213FA5006FE479 /* screen3.swift */,
+				867801872A213FA5006FE479 /* ticketView.swift */,
+				863FC0502A41176400405F2A /* ticketViewModel.swift */,
 				867801852A213F99006FE479 /* screen4.swift */,
 				867801892A213FB1006FE479 /* screen5.swift */,
-				8668B30E2A2EE62700A1B343 /* Game.swift */,
-				865C4A7B2A32893100C3C626 /* User.swift */,
-				8668B3122A2EF06A00A1B343 /* gameService.swift */,
-				865C4A792A32890F00C3C626 /* userService.swift */,
+				865C4A7E2A32C00B00C3C626 /* custom variables */,
+				865C4A7D2A32BFF500C3C626 /* services */,
 				867801582A213015006FE479 /* Assets.xcassets */,
 				8678015A2A213015006FE479 /* Weekly_Winner.entitlements */,
 				8678018B2A21662D006FE479 /* GoogleService-Info.plist */,
@@ -334,7 +362,7 @@
 				867801572A213010006FE479 /* ContentView.swift in Sources */,
 				8668B3112A2EE9CF00A1B343 /* bookViewModel.swift in Sources */,
 				865C4A7A2A32890F00C3C626 /* userService.swift in Sources */,
-				867801882A213FA5006FE479 /* screen3.swift in Sources */,
+				867801882A213FA5006FE479 /* ticketView.swift in Sources */,
 				867801822A213F83006FE479 /* screen1.swift in Sources */,
 				8668B30F2A2EE62700A1B343 /* Game.swift in Sources */,
 				867801862A213F9A006FE479 /* screen4.swift in Sources */,
@@ -342,10 +370,14 @@
 				865C4A7C2A32893100C3C626 /* User.swift in Sources */,
 				867801552A213010006FE479 /* Weekly_WinnerApp.swift in Sources */,
 				8678018A2A213FB1006FE479 /* screen5.swift in Sources */,
+				863FC0512A41176400405F2A /* ticketViewModel.swift in Sources */,
+				866251102A3E862400708495 /* Ticket.swift in Sources */,
+				866251122A3E892E00708495 /* Bet.swift in Sources */,
 				867801842A213F90006FE479 /* screen2.swift in Sources */,
 				867801802A213CB9006FE479 /* tabBarView.swift in Sources */,
 				865C4A762A327CA600C3C626 /* authenticationView.swift in Sources */,
 				8668B3132A2EF06A00A1B343 /* gameService.swift in Sources */,
+				866251142A40D3B500708495 /* betService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

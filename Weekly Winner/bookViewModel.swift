@@ -13,11 +13,28 @@ class bookViewModel: ObservableObject {
     @Published var NFLgames: [Game] = []
     private let service = gameService()
     
-    init() {
-        getGames()
-    }
-    
+    private let betService = BetService()
     private let db = Firestore.firestore()
+        
+        init() {
+            getGames()
+        }
+        
+    func uploadBet(team: String, betLine: Double, betOdds: Double, betType: BetType) {
+            // Prepare the data to upload
+        let bet = Bet(groupNumber: 1, betNumber: 1, weekNumber: 1, betStatus: .open, betType: betType, teamBetOn: team, betLine: Float(betLine), betOdds: Float(betOdds), result: .inAction)
+            
+            // Perform the upload asynchronously
+            betService.uploadBet(bet) { error in
+                if let error = error {
+                    // Handle the error
+                    print("Error uploading bet: \(error)")
+                } else {
+                    // Upload successful
+                    print("Bet uploaded successfully")
+                }
+            }
+        }
     
     func getGames() {
         Firestore.firestore().collection("games")
@@ -34,7 +51,7 @@ class bookViewModel: ObservableObject {
                         for doc in snapshotDocuments {
                             let data = doc.data()
                             if let idd = data["id"] as? String,
-                               let commenceTime = data["commenceTime"] as? String,
+                               let commenceTime = data["commenceTime"] as? Timestamp,
                                let totalOU = data["totalOU"] as? Double,
                                let homeTeam = data["homeTeam"] as? String,
                                let awayTeam = data["awayTeam"] as? String,

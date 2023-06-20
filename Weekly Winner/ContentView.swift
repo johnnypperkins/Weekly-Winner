@@ -12,19 +12,17 @@ struct ContentView: View {
     var body: some View {
         NavigationStack{
             VStack {
-                switch viewModel.authenticationState {
-                case .unauthenticated, .authenticating:
-                
-                    authenticationView()
-                    
-                case .authenticated:
-                   //. print("Login")
+                if viewModel.currUser != nil {
                     tabBarView()
+                    
+                }
+                    else{
+                   //. print("Login")
+                    authenticationView()
                 
                 }
 
             }.environmentObject(viewModel)
-            .padding()
             .ignoresSafeArea(.all)
         }.ignoresSafeArea(.all)
             .navigationBarBackButtonHidden()

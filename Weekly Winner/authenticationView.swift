@@ -23,6 +23,7 @@ struct authenticationView: View {
         }
         .environmentObject(viewModel)
         .padding()
+        .ignoresSafeArea(.all)
     }
 }
 
