@@ -24,9 +24,8 @@ struct BettingAppView: View {
                     Text("Betting App")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundColor(.white)
+                        .foregroundColor(.blue)
                         .padding()
-                        .background(Color.blue)
                     
                     Picker("", selection: $selectedGameType) {
                         ForEach(GameType.allCases, id: \.self) { gameType in
@@ -47,12 +46,7 @@ struct BettingAppView: View {
                     .padding()
                 }
             }
-            .background(
-                LinearGradient(
-                    gradient: Gradient(colors: [Color.blue, Color.purple]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+            .background(Color.white
                 .edgesIgnoringSafeArea(.all)
             ).ignoresSafeArea(.all)
             .navigationBarHidden(true)
@@ -206,6 +200,7 @@ struct BetDetailsView: View {
     @Environment(\.dismiss) var dismiss
     @State private var userRating: Double = 2
     @ObservedObject var viewModel = bookViewModel()
+    @State private var groupNumber = 1
     
     var body: some View {
         VStack {
@@ -233,13 +228,20 @@ struct BetDetailsView: View {
             }.frame(maxWidth:.infinity, alignment: .center)
                 .padding(.leading)
             
+            Picker("Group", selection: $groupNumber) {
+                ForEach(viewModel.userGroups, id: \.self) { group in
+                    Text(group).tag(group)
+                }
+            }
+            .pickerStyle(MenuPickerStyle())
+            
             if betTeamType == .betAwaySpread {
                 VStack{
                     Text("Team: \(game.awayTeam)")
                         .font(.headline)
                     
                     HStack {
-                        Text("Rate This Bar:")
+                        Text("Choose odds:")
                             .font(.headline)
                         Slider(value: $userRating, in: Double(game.awaySpread - 5)...Double(game.awaySpread + 5), step: 0.5) { editing in
                             if editing == false {
@@ -267,7 +269,7 @@ struct BetDetailsView: View {
                         .font(.headline)
                     
                     HStack {
-                        Text("Rate This Bar:")
+                        Text("Choose odds:")
                             .font(.headline)
                         Slider(value: $userRating, in: Double(game.homeSpread - 5)...Double(game.homeSpread + 5), step: 0.5) { editing in
                             if editing == false {
@@ -298,7 +300,7 @@ struct BetDetailsView: View {
                         .font(.headline)
                     
                     HStack {
-                        Text("Rate This Bar:")
+                        Text("Choose odds:")
                             .font(.headline)
                         Slider(value: $userRating, in: Double(game.awaySpread - 5)...Double(game.awaySpread + 5), step: 0.5) { editing in
                             if editing == false {
@@ -329,7 +331,7 @@ struct BetDetailsView: View {
                         .font(.headline)
                     
                     HStack {
-                        Text("Rate This Bar:")
+                        Text("Choose odds:")
                             .font(.headline)
                         Slider(value: $userRating, in: Double(game.awaySpread - 5)...Double(game.awaySpread + 5), step: 0.5) { editing in
                             if editing == false {
@@ -355,7 +357,7 @@ struct BetDetailsView: View {
                 }}
             
             Button(action: {
-                viewModel.uploadBet(team: game.awayTeam, betLine: userRating, betOdds: 100, betType: .spread)
+                viewModel.uploadBet(groupNumber: groupNumber, team: game.awayTeam, betLine: userRating, betOdds: 100, betType: .spread)
                    }) {
                        Text("Place Bet")
                            .font(.title)

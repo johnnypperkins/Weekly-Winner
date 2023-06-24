@@ -88,7 +88,6 @@ struct tabBarView: View {
                         ContentView()
                     }
         }.edgesIgnoringSafeArea(.bottom)
-            .background(Color.green)
     }
 }
 

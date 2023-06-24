@@ -11,18 +11,21 @@ import FirebaseAuth
 
 class bookViewModel: ObservableObject {
     @Published var NFLgames: [Game] = []
-    private let service = gameService()
-    
-    private let betService = BetService()
-    private let db = Firestore.firestore()
+        @Published var userGroups: [String] = []
         
-        init() {
-            getGames()
-        }
+        private let gameServe = gameService()
+        private let betService = BetService()
+        private let groupServe = groupService()
+        private let db = Firestore.firestore()
         
-    func uploadBet(team: String, betLine: Double, betOdds: Double, betType: BetType) {
+    init() {
+        getGames()
+        fetchUserGroups()
+    }
+        
+    func uploadBet(groupNumber: Int, team: String, betLine: Double, betOdds: Double, betType: BetType) {
             // Prepare the data to upload
-        let bet = Bet(groupNumber: 1, betNumber: 1, weekNumber: 1, betStatus: .open, betType: betType, teamBetOn: team, betLine: Float(betLine), betOdds: Float(betOdds), result: .inAction)
+        let bet = Bet(groupNumber: groupNumber, betNumber: 1, weekNumber: 1, betStatus: .open, betType: betType, teamBetOn: team, betLine: Float(betLine), betOdds: Float(betOdds), result: .inAction)
             
             // Perform the upload asynchronously
             betService.uploadBet(bet) { error in
@@ -34,6 +37,18 @@ class bookViewModel: ObservableObject {
                     print("Bet uploaded successfully")
                 }
             }
+        }
+    
+    func fetchUserGroups() {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+            groupServe.fetchUserGroups(userID: userId) { groups, error in
+                if let error = error {
+                    print("Error fetching user groups: \(error.localizedDescription)")
+                } else if let groups = groups {
+                    self.userGroups = groups
+                }
+            }
+       // print(userGroups)
         }
     
     func getGames() {
