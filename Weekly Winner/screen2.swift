@@ -16,9 +16,7 @@ struct BettingAppView: View {
     @State private var selectedGameType = GameType.nfl
     @ObservedObject private var viewModel = bookViewModel()
     @State private var showingSheet = false
-    
-    
-    
+
     var body: some View {
         NavigationView {
             VStack {
@@ -194,15 +192,15 @@ struct BetRowView1: View {
     }
 }
 
-
-
 struct BetDetailsView: View { // the pop up thing
     let game: Game
     @Binding var betTeamType: BetTeamType
     @Environment(\.dismiss) var dismiss
     @State private var userRating: Double = 2
     @ObservedObject var viewModel = bookViewModel()
-    @State private var groupNumber = 1
+    @State private var groupNumber = 0
+    @State private var parlayType = "Straight"
+    @State private var groupDict: [String: Int] = [:]
     @State private var whichTeam = ""
     
     var body: some View {
@@ -222,158 +220,76 @@ struct BetDetailsView: View { // the pop up thing
                 Spacer()
                 
                 Text("Create Your Bet")
-                    .font(.largeTitle)
+                    .font(.title2)
                     .fontWeight(.bold)
                     .padding()
-                
+
                 Spacer()
                 
             }.frame(maxWidth:.infinity, alignment: .center)
                 .padding(.leading)
             
-            Picker("Group", selection: $groupNumber) {
-                ForEach(viewModel.userGroups, id: \.self) { group in
-                    Text(group).tag(group)
+//            Picker("Group", selection: $groupNumber) {
+//                ForEach(viewModel.userGroups, id: \.self) { group in
+//                    Text(group).tag(group)
+//                }
+//            }
+//            .pickerStyle(MenuPickerStyle())
+            HStack {
+                if viewModel.isGroupsLoaded {
+                    Picker("Group", selection: $groupNumber) {
+                        ForEach(0..<viewModel.userGroups.count, id: \.self) { index in
+                            Text(viewModel.userGroups[index]).tag(index)
+                        }
+                    }
+                    .pickerStyle(MenuPickerStyle())
+                } else {
+                    Text("Loading...")
                 }
+                Picker("Bet Type", selection: $parlayType) {
+                       Text("Straight").tag("Straight")
+                       Text("2leg").tag("2leg")
+                       Text("5leg").tag("5leg")
+                   }
+                   .pickerStyle(MenuPickerStyle())
             }
-            .pickerStyle(MenuPickerStyle())
+            
+            
             
             if betTeamType == .betAwaySpread {
-                VStack{
-                    Text("Team: \(game.awayTeam)")
-                        .font(.headline)
-                    
-                    HStack {
-                        Text("Choose odds:")
-                            .font(.headline)
-                        Slider(value: $userRating, in: Double(game.awaySpread - 5)...Double(game.awaySpread + 5), step: 0.5) { editing in
-                            if editing == false {
-                                
-                            }
-                        }
-                        .accentColor(Color(.green))
-                        
-                        Text(String(format: "%.1f", userRating))
-                            .font(.headline)
-                    }
-                    .padding()
-                    
-                    Text("Spread: \(game.awaySpread)")
-                        .font(.subheadline)
-                    
-                    Text("Over/Under: \(game.awayTeam)")
-                        .font(.subheadline)
-                    
-                    Divider()
-                }}
+                BetView(teamName: game.awayTeam, spread: game.awaySpread, userRating: $userRating)
+            }
             if betTeamType == .betHomeSpread {
-                VStack{
-                    Text("Team: \(game.homeTeam)")
-                        .font(.headline)
-                    
-                    HStack {
-                        Text("Choose odds:")
-                            .font(.headline)
-                        Slider(value: $userRating, in: Double(game.homeSpread - 5)...Double(game.homeSpread + 5), step: 0.5) { editing in
-                            if editing == false {
-                                
-                            }
-                        }
-                        .accentColor(Color(.green))
-                        
-                        Text(String(format: "%.1f", userRating))
-                            .font(.headline)
-                    }
-                    .padding()
-                    
-                    Text("Spread: \(game.homeSpread, specifier: "%.1f")")
-                        .font(.subheadline)
-                    
-                    Text("Over/Under: \(game.awayTeam)")
-                        .font(.subheadline)
-                    
-                    Divider()
-                    
-                    
-                }}
-            
+                BetView(teamName: game.homeTeam, spread: game.homeSpread, userRating: $userRating)
+            }
             if betTeamType == .over {
-                VStack{
-                    Text("Team: \(game.awayTeam)")
-                        .font(.headline)
-                    
-                    HStack {
-                        Text("Choose odds:")
-                            .font(.headline)
-                        Slider(value: $userRating, in: Double(game.totalOver - 5)...Double(game.totalOver + 5), step: 0.5) { editing in
-                            if editing == false {
-                                
-                            }
-                        }
-                        .accentColor(Color(.green))
-                        
-                        Text(String(format: "%.1f", userRating))
-                            .font(.headline)
-                    }
-                    .padding()
-                    
-                    Text("Spread: \(game.totalOver)")
-                        .font(.subheadline)
-                    
-                    //Text("Over/Under: \(game.awayTeam)")
-                       // .font(.subheadline)
-                    
-                    Divider()
-                    
-                
-                }}
-            
+                BetView(teamName: game.awayTeam, spread: game.totalOver, userRating: $userRating)
+            }
             if betTeamType == .under {
-                VStack{
-                    Text("Team: \(game.awayTeam)") // change
-                        .font(.headline)
-                    
-                    HStack {
-                        Text("Choose odds:")
-                            .font(.headline)
-                        Slider(value: $userRating, in: Double(game.totalUnder - 5)...Double(game.totalUnder + 5), step: 0.5) { editing in
-                            if editing == false {
-                                
-                            }
-                        }
-                        .accentColor(Color(.green))
-                        
-                        Text(String(format: "%.1f", userRating))
-                            .font(.headline)
-                    }
-                    .padding()
-                    
-                    Text("Spread: \(game.totalUnder)")
-                        .font(.subheadline)
-                    
-//                    Text("Over/Under: \(game.awayTeam)")
-//                        .font(.subheadline)
-                    
-                    Divider()
-                    
-                
-                }}
+                BetView(teamName: game.awayTeam, spread: game.totalUnder, userRating: $userRating)
+            }
+        
             
-            Button(action: {
-                viewModel.uploadBet(groupNumber: groupNumber, team: whichTeam, betLine: userRating, betOdds: 100, betType: .spread)
-                   }) {
-                       Text("Place Bet")
-                           .font(.title)
-                           .fontWeight(.bold)
-                           .foregroundColor(.white)
-                           .padding()
-                           .frame(maxWidth: .infinity)
-                           .background(
-                               LinearGradient(gradient: Gradient(colors: [.blue, .purple]), startPoint: .leading, endPoint: .trailing)
-                           )
-                           .cornerRadius(10)
-                           .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
-                   }
+        Button(action: {
+            
+            viewModel.uploadBet(groupNumber: groupNumber, team: whichTeam, betLine: userRating, betOdds: 100, betType: .spread)
+                withAnimation {
+                    dismiss()
+                    betTeamType = .None
+                }
+               }) {
+                   Text("Place Bet")
+                       .font(.title)
+                       .fontWeight(.bold)
+                       .foregroundColor(.white)
+                       .padding()
+                       .frame(maxWidth: .infinity)
+                       .background(
+                           LinearGradient(gradient: Gradient(colors: [.blue, .purple]), startPoint: .leading, endPoint: .trailing)
+                       )
+                       .cornerRadius(10)
+                       .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
+               }
         }.onAppear(perform: {
             if betTeamType == .betAwaySpread {
                 userRating = game.awaySpread
@@ -391,6 +307,12 @@ struct BetDetailsView: View { // the pop up thing
                 userRating = game.totalUnder
                 whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
             }
+            print("view model.usergroups: \(viewModel.userGroups)")
+            var index = 0
+           for group in viewModel.userGroups {
+               groupDict[group] = index
+               index += 1
+           }
             
         })
     }
@@ -405,3 +327,31 @@ struct BettingAppView_Previews: PreviewProvider {
     }
 }
 
+struct BetView: View {
+    var teamName: String
+    var spread: Double
+    @Binding var userRating: Double
+
+    var body: some View {
+        VStack{
+            Text("Team: \(teamName)")
+                .font(.headline)
+            
+            HStack {
+                Text("Choose odds:")
+                    .font(.headline)
+                Slider(value: $userRating, in: Double(spread - 5)...Double(spread + 5), step: 0.5)
+                    .accentColor(Color(.green))
+                
+                Text(String(format: "%.1f", userRating))
+                    .font(.headline)
+            }
+            .padding()
+            
+            Text("Spread: \(spread)")
+                .font(.subheadline)
+            
+            Divider()
+        }
+    }
+}

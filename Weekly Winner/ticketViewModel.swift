@@ -11,6 +11,8 @@ import SwiftUI
 import Firebase
 
 class ticketViewModel: ObservableObject {
+    
+
 
     @Published var betArray1 = [Bet]()
     @Published var betArray2 = [Bet]()
@@ -22,7 +24,7 @@ class ticketViewModel: ObservableObject {
     func fetchBets(groupNumber: Int) {
         guard let userId = Auth.auth().currentUser?.uid else { return }
         print("userID:" + userId)
-        listener = db.collection("users").document("hvh6dJddFDfqHCjF2PZxc6VL92A3").collection("bets")
+        listener = db.collection("users").document(userId).collection("bets")
         .whereField("groupNumber", isEqualTo: groupNumber)
         .order(by: "betNumber")
         .addSnapshotListener { (querySnapshot, error) in
@@ -31,14 +33,10 @@ class ticketViewModel: ObservableObject {
                 return
             }
 
-            self.betArray1 = documents.compactMap { queryDocumentSnapshot -> Bet? in
-                do {
-                    return try queryDocumentSnapshot.data(as: Bet.self)
-                } catch {
-                    print("Error decoding data: \(error)")
-                    return nil
-                }
-            }.filter { $0.betNumber == 1 }
+            
+            self.betArray1 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
+                return try? queryDocumentSnapshot.data(as: Bet.self)
+            }.filter { $0.betNumber == 1 }.prefix(5)) // caps it at five, however bets can still be added just displays 5
 
             self.betArray2 = documents.compactMap { queryDocumentSnapshot -> Bet? in
                 return try? queryDocumentSnapshot.data(as: Bet.self)

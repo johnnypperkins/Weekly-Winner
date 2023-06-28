@@ -2,14 +2,16 @@ import SwiftUI
 
 struct ticketView: View {
     @ObservedObject var viewModel = ticketViewModel()
-    @State private var selectedGroup = 1 // Variable to track the selected group
+    @ObservedObject var bookVM = bookViewModel()
+    @State private var selectedGroup = 0 // Variable to track the selected group
     
     var body: some View {
         ScrollView {
             VStack {
-                Picker("Group", selection: $selectedGroup) {
-                    Text("Group 1").tag(1)
-                    Text("Group 2").tag(2)
+                Picker("Group", selection: $selectedGroup) { // Needs to be dependent on num of groups in. Will change later
+                    Text("Global").tag(0)
+                    Text("Group 2").tag(1)
+                    Text("Group 3").tag(2)
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding(.top)
@@ -22,7 +24,14 @@ struct ticketView: View {
                     betCard(bet: bet)
                 }
                 
-                Text("2 paylay bets").font(.title).padding(.top)
+                let emptyBoxesCount = max(0, 5 - viewModel.betArray1.count)
+                let emptyBoxes = Array(0..<emptyBoxesCount)
+
+                ForEach(emptyBoxes, id: \.self) { _ in
+                    EmptyBetCard()
+                }
+                
+                Text("2 leg parlays").font(.title).padding(.top)
                 ForEach(viewModel.betArray2) { bet in
                     betCard(bet: bet)
                 }
@@ -55,6 +64,19 @@ struct ticketView: View {
         .cornerRadius(10)
         .shadow(color: Color.black.opacity(0.2), radius: 7, x: 0, y: 2)
         .padding(.horizontal)
+    }
+    
+    struct EmptyBetCard: View {
+        var body: some View {
+            VStack(alignment: .leading) {
+                Text("Empty Bet").font(.headline)
+            }
+            .padding()
+            .background(Color.gray)
+            .cornerRadius(10)
+            .shadow(color: Color.black.opacity(0.2), radius: 7, x: 0, y: 2)
+            .padding(.horizontal)
+        }
     }
 }
 

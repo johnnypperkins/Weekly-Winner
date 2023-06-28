@@ -11,12 +11,14 @@ import FirebaseAuth
 
 class bookViewModel: ObservableObject {
     @Published var NFLgames: [Game] = []
-        @Published var userGroups: [String] = []
-        
-        private let gameServe = gameService()
-        private let betService = BetService()
-        private let groupServe = groupService()
-        private let db = Firestore.firestore()
+    @Published var userGroups: [String] = []
+    @Published var isGroupsLoaded = false  // Add this line
+
+    
+    private let gameServe = gameService()
+    private let betService = BetService()
+    private let groupServe = groupService()
+    private let db = Firestore.firestore()
         
     init() {
         getGames()
@@ -41,15 +43,15 @@ class bookViewModel: ObservableObject {
     
     func fetchUserGroups() {
         guard let userId = Auth.auth().currentUser?.uid else { return }
-            groupServe.fetchUserGroups(userID: userId) { groups, error in
-                if let error = error {
-                    print("Error fetching user groups: \(error.localizedDescription)")
-                } else if let groups = groups {
-                    self.userGroups = groups
-                }
+        groupServe.fetchUserGroups(userID: userId) { groups, error in
+            if let error = error {
+                print("Error fetching user groups: \(error.localizedDescription)")
+            } else if let groups = groups {
+                self.userGroups = groups
+                self.isGroupsLoaded = true  // Set this to true when data is loaded
             }
-       // print(userGroups)
         }
+    }
     
     func getGames() {
         Firestore.firestore().collection("games")
