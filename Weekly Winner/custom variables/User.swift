@@ -23,7 +23,7 @@ struct User: Identifiable, Decodable, Encodable {
     }
 }
 
-extension String {
+extension String { // Lmao what is this johnny
     func generateStringSequence() -> [String] {
         
         guard self.count > 0 else {return [] }

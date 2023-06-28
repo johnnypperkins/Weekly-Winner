@@ -43,7 +43,9 @@ class authenticationViewModel: ObservableObject {
             
             do {
                 authResult = try await Auth.auth().createUser(withEmail: email, password: password)
+                userSession = authResult!.user // added - Reid
                 let user = authResult!.user
+                
                 
                 
                 let newUser = User(username: username, firstName: firstName, lastName: lastName, profileImageUrl: "", email: email)
@@ -69,8 +71,10 @@ class authenticationViewModel: ObservableObject {
                     self.authenticationState = .unauthenticated
                 } else {
                     // Sign-in successful
-                    self.fetchUser()
-                    
+                    self.userSession = authResult!.user  // Set placeholder user session
+
+                    self.fetchUser() // sets user to user instead of nil
+
                     self.authenticationState = .authenticated
                     print("sign in successful")
                 }

@@ -65,18 +65,24 @@ class bookViewModel: ObservableObject {
                     if let snapshotDocuments = querySnapshot?.documents {
                         for doc in snapshotDocuments {
                             let data = doc.data()
+                            print("test")
                             if let idd = data["id"] as? String,
                                let commenceTime = data["commenceTime"] as? Timestamp,
-                               let totalOU = data["totalOU"] as? Double,
-                               let homeTeam = data["homeTeam"] as? String,
-                               let awayTeam = data["awayTeam"] as? String,
+                                let totalOver = data["totalOver"] as? Double,
+                                let totalUnder = data["totalUnder"] as? Double,
+                                let homeTeam = data["homeTeam"] as? String,
+                                let awayTeam = data["awayTeam"] as? String,
                                let homeSpread = data["homeSpread"] as? Double,
-                                let awaySpread = data["awaySpread"] as? Double,
-                               let completed = data["completed"] as? Bool {
-                                let newGame = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: completed, totalOU: totalOU)
+                               let awaySpread = data["awaySpread"] as? Double {
+//                               let completed = data["completed"] as? Bool {
+                            let newGame = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder)
                                 print("3")
+                                
                                 games.append(newGame)
+                            } else {
+                                print("There is an error")
                             }
+                            print(data["totalOver"])
                             print("2")
                         }
                         print("1")

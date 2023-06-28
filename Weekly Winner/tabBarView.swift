@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct tabBarView: View {
-    @State private var selectedTab = 0
+    @State private var selectedTab = 0 // which tab selected
     @StateObject var authViewModel = authenticationViewModel()
     @State var showContentView = false
     
@@ -45,7 +45,7 @@ struct tabBarView: View {
                         
                         Spacer()
                         
-                        TabView {
+                        TabView { // the corresponding views go under this. Makes sense - Reid
                             UserProfileView()
                                 .tabItem {
                                     Image(systemName: "1.square.fill")

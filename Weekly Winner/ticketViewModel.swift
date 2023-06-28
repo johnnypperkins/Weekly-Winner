@@ -21,8 +21,8 @@ class ticketViewModel: ObservableObject {
 
     func fetchBets(groupNumber: Int) {
         guard let userId = Auth.auth().currentUser?.uid else { return }
-
-        listener = db.collection("users").document("fY8xGVaMSlZ8xI5HMPeOGBOIarq1").collection("bets")
+        print("userID:" + userId)
+        listener = db.collection("users").document("hvh6dJddFDfqHCjF2PZxc6VL92A3").collection("bets")
         .whereField("groupNumber", isEqualTo: groupNumber)
         .order(by: "betNumber")
         .addSnapshotListener { (querySnapshot, error) in

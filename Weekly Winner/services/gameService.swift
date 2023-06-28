@@ -9,7 +9,7 @@ import Firebase
 
 struct gameService {
     
-    func getGames() async -> [Game] {
+    func getGames() async -> [Game] { // Yeah right you fucking wrote this
         return await withCheckedContinuation { continuation in
             Firestore.firestore().collection("games")
                 .order(by: "commenceTime", descending: true)

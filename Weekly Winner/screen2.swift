@@ -13,9 +13,11 @@ enum GameType: String, CaseIterable {
 }
 
 struct BettingAppView: View {
-    @State private var selectedGameType = GameType.collegeFootball
+    @State private var selectedGameType = GameType.nfl
     @ObservedObject private var viewModel = bookViewModel()
     @State private var showingSheet = false
+    
+    
     
     var body: some View {
         NavigationView {
@@ -68,7 +70,7 @@ struct BetRowView1: View {
     @State private var showingAway = false
     @State private var showingTotal = false
     @State private var showingHome = false
-    @State private var showingSheet = false
+    @State private var showingSheet = false // placeBet thing pops up
     @State private var betTeamType: BetTeamType = .None
     
     var body: some View {
@@ -103,7 +105,7 @@ struct BetRowView1: View {
                         self.showingSheet.toggle()
                     }) {
                         HStack{
-                            Text("\(game.totalOU, specifier: "%.1f")")
+                            Text("o\(game.totalOver, specifier: "%.1f")")
                                 .foregroundColor(.blue)
                                 .padding()
                         }
@@ -148,7 +150,7 @@ struct BetRowView1: View {
                         self.showingSheet.toggle()
                     }) {
                         HStack{
-                            Text("\(game.totalOU, specifier: "%.1f")")
+                            Text("u\(game.totalUnder, specifier: "%.1f")")
                                 .foregroundColor(.blue)
                                 .padding()
                         }
@@ -194,13 +196,14 @@ struct BetRowView1: View {
 
 
 
-struct BetDetailsView: View {
+struct BetDetailsView: View { // the pop up thing
     let game: Game
     @Binding var betTeamType: BetTeamType
     @Environment(\.dismiss) var dismiss
     @State private var userRating: Double = 2
     @ObservedObject var viewModel = bookViewModel()
     @State private var groupNumber = 1
+    @State private var whichTeam = ""
     
     var body: some View {
         VStack {
@@ -255,7 +258,7 @@ struct BetDetailsView: View {
                     }
                     .padding()
                     
-                    Text("Spread: \(game.totalOU)")
+                    Text("Spread: \(game.awaySpread)")
                         .font(.subheadline)
                     
                     Text("Over/Under: \(game.awayTeam)")
@@ -283,7 +286,7 @@ struct BetDetailsView: View {
                     }
                     .padding()
                     
-                    Text("Spread: \(game.totalOU, specifier: "%.1f")")
+                    Text("Spread: \(game.homeSpread, specifier: "%.1f")")
                         .font(.subheadline)
                     
                     Text("Over/Under: \(game.awayTeam)")
@@ -302,7 +305,7 @@ struct BetDetailsView: View {
                     HStack {
                         Text("Choose odds:")
                             .font(.headline)
-                        Slider(value: $userRating, in: Double(game.awaySpread - 5)...Double(game.awaySpread + 5), step: 0.5) { editing in
+                        Slider(value: $userRating, in: Double(game.totalOver - 5)...Double(game.totalOver + 5), step: 0.5) { editing in
                             if editing == false {
                                 
                             }
@@ -314,11 +317,11 @@ struct BetDetailsView: View {
                     }
                     .padding()
                     
-                    Text("Spread: \(game.totalOU)")
+                    Text("Spread: \(game.totalOver)")
                         .font(.subheadline)
                     
-                    Text("Over/Under: \(game.awayTeam)")
-                        .font(.subheadline)
+                    //Text("Over/Under: \(game.awayTeam)")
+                       // .font(.subheadline)
                     
                     Divider()
                     
@@ -327,13 +330,13 @@ struct BetDetailsView: View {
             
             if betTeamType == .under {
                 VStack{
-                    Text("Team: \(game.awayTeam)")
+                    Text("Team: \(game.awayTeam)") // change
                         .font(.headline)
                     
                     HStack {
                         Text("Choose odds:")
                             .font(.headline)
-                        Slider(value: $userRating, in: Double(game.awaySpread - 5)...Double(game.awaySpread + 5), step: 0.5) { editing in
+                        Slider(value: $userRating, in: Double(game.totalUnder - 5)...Double(game.totalUnder + 5), step: 0.5) { editing in
                             if editing == false {
                                 
                             }
@@ -345,11 +348,11 @@ struct BetDetailsView: View {
                     }
                     .padding()
                     
-                    Text("Spread: \(game.totalOU)")
+                    Text("Spread: \(game.totalUnder)")
                         .font(.subheadline)
                     
-                    Text("Over/Under: \(game.awayTeam)")
-                        .font(.subheadline)
+//                    Text("Over/Under: \(game.awayTeam)")
+//                        .font(.subheadline)
                     
                     Divider()
                     
@@ -357,7 +360,7 @@ struct BetDetailsView: View {
                 }}
             
             Button(action: {
-                viewModel.uploadBet(groupNumber: groupNumber, team: game.awayTeam, betLine: userRating, betOdds: 100, betType: .spread)
+                viewModel.uploadBet(groupNumber: groupNumber, team: whichTeam, betLine: userRating, betOdds: 100, betType: .spread)
                    }) {
                        Text("Place Bet")
                            .font(.title)
@@ -373,13 +376,21 @@ struct BetDetailsView: View {
                    }
         }.onAppear(perform: {
             if betTeamType == .betAwaySpread {
-                userRating = game.awaySpread}
+                userRating = game.awaySpread
+                whichTeam = game.awayTeam
+            }
             if betTeamType == .betHomeSpread {
-                userRating = game.homeSpread}
+                userRating = game.homeSpread
+                whichTeam = game.homeTeam
+            }
             if betTeamType == .over {
-                userRating = game.totalOU}
+                userRating = game.totalOver
+                whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
+            }
             if betTeamType == .under {
-                userRating = game.totalOU}
+                userRating = game.totalUnder
+                whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
+            }
             
         })
     }
