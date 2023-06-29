@@ -51,13 +51,12 @@ struct ticketView: View {
     }
     
     func betCard(bet: Bet) -> some View {
-        VStack(alignment: .leading) {
-            Text("Team: \(bet.teamBetOn ?? "No team")").font(.headline)
-            Text("Bet Type: \(bet.betType.rawValue)")
-            Text("Bet Status: \(bet.betStatus.rawValue)")
-            Text("Bet Result: \(bet.result.rawValue)")
-            Text("Bet Line: \(bet.betLine)")
-            Text("Bet Odds: \(bet.betOdds)")
+        HStack {
+            Text("\(bet.teamBetOn ?? "Null team")").font(.headline)
+            VStack(alignment: .center) {
+                Text("\(bet.betLine, specifier: "%.0f")")
+                Text("+\(bet.betOdds, specifier: "%.0f")")
+            }
         }
         .padding()
         .background(Color.white)

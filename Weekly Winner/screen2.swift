@@ -229,12 +229,6 @@ struct BetDetailsView: View { // the pop up thing
             }.frame(maxWidth:.infinity, alignment: .center)
                 .padding(.leading)
             
-//            Picker("Group", selection: $groupNumber) {
-//                ForEach(viewModel.userGroups, id: \.self) { group in
-//                    Text(group).tag(group)
-//                }
-//            }
-//            .pickerStyle(MenuPickerStyle())
             HStack {
                 if viewModel.isGroupsLoaded {
                     Picker("Group", selection: $groupNumber) {
