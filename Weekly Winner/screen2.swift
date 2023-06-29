@@ -84,7 +84,7 @@ struct BetRowView1: View {
                         betTeamType = .betHomeSpread
                         self.showingSheet.toggle()
                             }) {
-                                Text("\(game.homeSpread, specifier: "%.1f")")
+                                Text("\(game.homeSpread, specifier: "%.0f")")
                                     .foregroundColor(.blue)
                                     .padding()
                                     .background(Color(betTeamType == .betHomeSpread ? .gray : .white))
@@ -103,7 +103,7 @@ struct BetRowView1: View {
                         self.showingSheet.toggle()
                     }) {
                         HStack{
-                            Text("o\(game.totalOver, specifier: "%.1f")")
+                            Text("o\(game.totalOver, specifier: "%.0f")")
                                 .foregroundColor(.blue)
                                 .padding()
                         }
@@ -130,7 +130,7 @@ struct BetRowView1: View {
                         betTeamType = .betAwaySpread
                         self.showingSheet.toggle()
                             }) {
-                                Text("\(game.awaySpread, specifier: "%.1f")")
+                                Text("\(game.awaySpread, specifier: "%.0f")")
                                     .foregroundColor(.blue)
                                     .padding()
                                     .background(Color(betTeamType == .betAwaySpread ? .gray : .white))
@@ -148,7 +148,7 @@ struct BetRowView1: View {
                         self.showingSheet.toggle()
                     }) {
                         HStack{
-                            Text("u\(game.totalUnder, specifier: "%.1f")")
+                            Text("u\(game.totalUnder, specifier: "%.0f")")
                                 .foregroundColor(.blue)
                                 .padding()
                         }
