@@ -70,53 +70,34 @@ struct BetRowView1: View {
     @State private var showingHome = false
     @State private var showingSheet = false // placeBet thing pops up
     @State private var betTeamType: BetTeamType = .None
+    @State var titleStringH: String = ""
+    @State var titleStringA: String = ""
     
     var body: some View {
+      
         HStack {
             VStack(alignment: .leading) {
                 HStack{
-                    Text(game.homeTeam)
+                    Text(game.homeTeam) // team name
                         .font(.headline)
                         .foregroundColor(.white)
                     
                     Spacer()
-                    Button(action: {
+                     
+                    
+                    BetButton(betTeamType: .betHomeSpread, currentBetType: $betTeamType, title: titleStringH) {
                         betTeamType = .betHomeSpread
-                        self.showingSheet.toggle()
-                            }) {
-                                Text("\(game.homeSpread, specifier: "%.0f")")
-                                    .foregroundColor(.blue)
-                                    .padding()
-                                    .background(Color(betTeamType == .betHomeSpread ? .gray : .white))
-                                    .cornerRadius(10)
-                                    .shadow(color: betTeamType == .betHomeSpread ? .gray : .clear, radius: 5)
-                                    .scaleEffect(betTeamType == .betHomeSpread ? 0.9 : 1.0)
-                                    .animation(.spring(), value: 4)
-                            }
+                        showingSheet.toggle()
+                    }
                     
                     Rectangle()
                                 .fill(Color.black)
                                 .frame(width: 1)
                     
-                    Button(action: {
-                        betTeamType = .over
-                        self.showingSheet.toggle()
-                    }) {
-                        HStack{
-                            Text("o\(game.totalOver, specifier: "%.0f")")
-                                .foregroundColor(.blue)
-                                .padding()
-                        }
-                        .background(Color(betTeamType == .over ? .gray : .white))
-                        .cornerRadius(20)
-                        .background(
-                            RoundedRectangle(cornerRadius: 20)
-                                .stroke(Color.black, lineWidth: 1)
-                        )
-                        .shadow(color: betTeamType == .over ? .gray : .clear, radius: 5)
-                        .scaleEffect(betTeamType == .over ? 0.9 : 1.0)
-                        .animation(.spring(), value: 4)
-                    }
+                    BetButton(betTeamType: .over, currentBetType: $betTeamType, title: "o" + String(format: "%.0f", game.totalOver)) {
+                                    betTeamType = .over
+                                    showingSheet.toggle()
+                                }
                 }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
                 
                 Divider()
@@ -126,47 +107,35 @@ struct BetRowView1: View {
                         .font(.headline)
                         .foregroundColor(.white)
                     Spacer()
-                    Button(action: {
+                    
+                    BetButton(betTeamType: .betAwaySpread, currentBetType: $betTeamType, title: titleStringA) {
                         betTeamType = .betAwaySpread
-                        self.showingSheet.toggle()
-                            }) {
-                                Text("\(game.awaySpread, specifier: "%.0f")")
-                                    .foregroundColor(.blue)
-                                    .padding()
-                                    .background(Color(betTeamType == .betAwaySpread ? .gray : .white))
-                                    .cornerRadius(10)
-                                    .shadow(color: betTeamType == .betAwaySpread ? .gray : .clear, radius: 5)
-                                    .scaleEffect(betTeamType == .betAwaySpread ? 0.9 : 1.0)
-                                    .animation(.spring(), value: 4)
-                            }
+                        showingSheet.toggle()
+                    }
                     Rectangle()
                                 .fill(Color.black)
                                 .frame(width: 1)
                     //Spacer()
-                    Button(action: {
-                        betTeamType = .under
-                        self.showingSheet.toggle()
-                    }) {
-                        HStack{
-                            Text("u\(game.totalUnder, specifier: "%.0f")")
-                                .foregroundColor(.blue)
-                                .padding()
-                        }
-                        .background(Color(betTeamType == .under ? .gray : .white))
-                        .cornerRadius(20)
-                        .background(
-                                            RoundedRectangle(cornerRadius: 20)
-                                                .stroke(Color.black, lineWidth: 1)
-                                        )
-                        .shadow(color: betTeamType == .under ? .gray : .clear, radius: 5)
-                        .scaleEffect(betTeamType == .under ? 0.9 : 1.0)
-                        .animation(.spring(), value: 4)
-                    }
+                    BetButton(betTeamType: .under, currentBetType: $betTeamType, title: "u" + String(format: "%.0f", game.totalUnder)) {
+                                    betTeamType = .over
+                                    showingSheet.toggle()
+                                }
                     
                 }.padding(.top,4)
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
+                    .onAppear {
+                        if (game.homeSpread < 0) {
+                            titleStringH = String(format: "%.0f", game.homeSpread)
+                        } else {
+                            titleStringH = "+" + String(format: "%.0f", game.homeSpread)
+                        }
+                        if (game.awaySpread < 0) {
+                            titleStringA = String(format: "%.0f", game.awaySpread)
+                        } else {
+                            titleStringA = "+" + String(format: "%.0f", game.awaySpread)
+                        }
+                    }
             }
-            //.padding(.leading)
             
             Spacer()
         }.padding()
@@ -346,6 +315,26 @@ struct BetView: View {
                 .font(.subheadline)
             
             Divider()
+        }
+    }
+}
+
+struct BetButton: View { // consolidated
+    let betTeamType: BetTeamType
+    let currentBetType: Binding<BetTeamType>
+    let title: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .foregroundColor(.blue)
+                .padding()
+                .background(Color(currentBetType.wrappedValue == betTeamType ? .gray : .white))
+                .cornerRadius(currentBetType.wrappedValue == betTeamType ? 20 : 10)
+                .shadow(color: currentBetType.wrappedValue == betTeamType ? .gray : .clear, radius: 5)
+                .scaleEffect(currentBetType.wrappedValue == betTeamType ? 0.9 : 1.0)
+                .animation(.spring(), value: 4)
         }
     }
 }
