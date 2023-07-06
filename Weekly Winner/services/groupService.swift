@@ -26,7 +26,7 @@ class groupService {
                 }
             }
             
-            let sortedGroups = Array(groupsDict.sorted(by: { $0.key < $1.key }).map { $0.value })
+            let sortedGroups = Array(groupsDict.sorted(by: { $0.key < $1.key }).map { $0.value }) // sorts them based on groupnum
             
             completion(sortedGroups, nil)
         }

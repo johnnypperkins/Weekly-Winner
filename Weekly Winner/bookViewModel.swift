@@ -11,17 +11,18 @@ import FirebaseAuth
 
 class bookViewModel: ObservableObject {
     @Published var NFLgames: [Game] = []
+    @Published var NCAAFGames: [Game] = []
     @Published var userGroups: [String] = []
     @Published var isGroupsLoaded = false  // Add this line
-
     
-    private let gameServe = gameService()
+    //private let gameServe = gameService()
     private let betService = BetService()
     private let groupServe = groupService()
     private let db = Firestore.firestore()
         
     init() {
-        getGames()
+        getGames(whichSport: "NFL")
+        getGames(whichSport: "NCAAF")
         fetchUserGroups()
     }
         
@@ -53,8 +54,8 @@ class bookViewModel: ObservableObject {
         }
     }
     
-    func getGames() {
-        Firestore.firestore().collection("games")
+    func getGames(whichSport: String) {
+        Firestore.firestore().collection("Book").document(whichSport).collection("games")
                 .order(by: "commenceTime")
                 .addSnapshotListener {  querySnapshot, error in
                     guard (querySnapshot?.documents) != nil else {
@@ -91,7 +92,12 @@ class bookViewModel: ObservableObject {
                     }
                     print("hhsdhfs")
                     print(games)
-                    self.NFLgames = games
+                    if (whichSport == "NFL") {
+                        self.NFLgames = games
+                    } else if (whichSport == "NCAAF") {
+                        self.NCAAFGames = games
+                    }
+                    
                 }
         }
 }

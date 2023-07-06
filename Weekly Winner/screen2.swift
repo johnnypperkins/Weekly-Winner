@@ -7,19 +7,28 @@
 
 import SwiftUI
 
-enum GameType: String, CaseIterable {
+enum GameType: String, CaseIterable, Hashable {
     case collegeFootball = "College Football"
     case nfl = "NFL"
 }
 
 struct BettingAppView: View {
-    @State private var selectedGameType = GameType.nfl
+    @State private var selectedGameType = GameType.collegeFootball
     @ObservedObject private var viewModel = bookViewModel()
     @State private var showingSheet = false
 
     var body: some View {
         NavigationView {
+            
             VStack {
+                Picker("", selection: $selectedGameType) {
+                    ForEach(GameType.allCases, id: \.self) { gameType in
+                        Text(gameType.rawValue)
+                    }
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .foregroundColor(.blue)
+                .padding(.horizontal)
                 HStack {
                     Text("Betting App")
                         .font(.largeTitle)
@@ -27,19 +36,12 @@ struct BettingAppView: View {
                         .foregroundColor(.blue)
                         .padding()
                     
-                    Picker("", selection: $selectedGameType) {
-                        ForEach(GameType.allCases, id: \.self) { gameType in
-                            Text(gameType.rawValue)
-                        }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    .foregroundColor(.blue)
-                    .padding(.horizontal)
+                    
                 }
                 
                 ScrollView {
-                    VStack(spacing: 20) {
-                        ForEach(viewModel.NFLgames, id: \.idd) { game in
+                    VStack(spacing: 15) {
+                        ForEach(filteredGames, id: \.idd) { game in // HARDCODE NCAAF
                             BetRowView1(game: game)
                             }
                     }
@@ -53,14 +55,16 @@ struct BettingAppView: View {
         }
     }
     
-    /*private var filteredGames: [Game] {
+    private var filteredGames: [Game] {
         switch selectedGameType {
         case .collegeFootball:
-            return ""
+            // return array of college football games from your viewModel
+            return viewModel.NCAAFGames
         case .nfl:
-            return ""
+            // return array of NFL games from your viewModel
+            return viewModel.NFLgames
         }
-    }*/
+    }
 }
 
 struct BetRowView1: View {
@@ -161,12 +165,14 @@ struct BetRowView1: View {
     }
 }
 
-struct BetDetailsView: View { // the pop up thing
+// the pop up thing
+struct BetDetailsView: View {
     let game: Game
     @Binding var betTeamType: BetTeamType
     @Environment(\.dismiss) var dismiss
     @State private var userRating: Double = 2
     @ObservedObject var viewModel = bookViewModel()
+    @ObservedObject var ticketVM = ticketViewModel()
     @State private var groupNumber = 0
     @State private var parlayType = "Straight"
     @State private var groupDict: [String: Int] = [:]
@@ -234,12 +240,12 @@ struct BetDetailsView: View { // the pop up thing
         
             
         Button(action: {
-            
             viewModel.uploadBet(groupNumber: groupNumber, team: whichTeam, betLine: userRating, betOdds: 100, betType: .spread)
                 withAnimation {
                     dismiss()
                     betTeamType = .None
                 }
+            
                }) {
                    Text("Place Bet")
                        .font(.title)
@@ -272,10 +278,10 @@ struct BetDetailsView: View { // the pop up thing
             }
             print("view model.usergroups: \(viewModel.userGroups)")
             var index = 0
-           for group in viewModel.userGroups {
+            for group in viewModel.userGroups {
                groupDict[group] = index
                index += 1
-           }
+            }
             
         })
     }

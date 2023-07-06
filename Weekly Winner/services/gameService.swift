@@ -9,9 +9,9 @@ import Firebase
 
 struct gameService {
     
-    func getGames() async -> [Game] { // Yeah right you fucking wrote this
+    func getGames(whichSport: String) async -> [Game] { // Yeah right you fucking wrote this
         return await withCheckedContinuation { continuation in
-            Firestore.firestore().collection("games")
+            Firestore.firestore().collection("Book").document(whichSport).collection("games")
                 .order(by: "commenceTime", descending: true)
                 .addSnapshotListener { (snapshot, error) in
                     if let e = error {
