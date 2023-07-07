@@ -13,7 +13,7 @@ enum GameType: String, CaseIterable, Hashable {
 }
 
 struct BettingAppView: View {
-    @State private var selectedGameType = GameType.collegeFootball
+    @State private var selectedGameType = GameType.nfl
     @ObservedObject private var viewModel = bookViewModel()
     @State private var showingSheet = false
 
@@ -174,7 +174,7 @@ struct BetDetailsView: View {
     @ObservedObject var viewModel = bookViewModel()
     @ObservedObject var ticketVM = ticketViewModel()
     @State private var groupNumber = 0
-    @State private var parlayType = "Straight"
+    @State private var parlayType = 1
     @State private var groupDict: [String: Int] = [:]
     @State private var whichTeam = ""
     
@@ -216,11 +216,12 @@ struct BetDetailsView: View {
                     Text("Loading...")
                 }
                 Picker("Bet Type", selection: $parlayType) {
-                       Text("Straight").tag("Straight")
-                       Text("2leg").tag("2leg")
-                       Text("5leg").tag("5leg")
+                       Text("Straight").tag(1)
+                       Text("2leg").tag(2)
+                       Text("5leg").tag(3)
                    }
                    .pickerStyle(MenuPickerStyle())
+                
             }
             
             
@@ -240,7 +241,8 @@ struct BetDetailsView: View {
         
             
         Button(action: {
-            viewModel.uploadBet(groupNumber: groupNumber, team: whichTeam, betLine: userRating, betOdds: 100, betType: .spread)
+            print("groupNumber: \(groupNumber), betNumber: \(parlayType)")
+            viewModel.uploadBet(groupNumber: groupNumber, betNumber: parlayType, team: whichTeam, betLine: userRating, betOdds: 100, betType: .spread)
                 withAnimation {
                     dismiss()
                     betTeamType = .None
@@ -276,7 +278,7 @@ struct BetDetailsView: View {
                 userRating = game.totalUnder
                 whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
             }
-            print("view model.usergroups: \(viewModel.userGroups)")
+            //print("view model.usergroups: \(viewModel.userGroups)")
             var index = 0
             for group in viewModel.userGroups {
                groupDict[group] = index

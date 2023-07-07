@@ -26,7 +26,6 @@ class ticketViewModel: ObservableObject {
         print("userID:" + userId)
         listener = db.collection("users").document(userId).collection("bets")
         .whereField("groupNumber", isEqualTo: groupNumber)
-        .order(by: "betNumber")
         .addSnapshotListener { (querySnapshot, error) in
             guard let documents = querySnapshot?.documents else {
                 print("No documents")

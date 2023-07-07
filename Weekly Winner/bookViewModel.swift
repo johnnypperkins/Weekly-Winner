@@ -26,9 +26,9 @@ class bookViewModel: ObservableObject {
         fetchUserGroups()
     }
         
-    func uploadBet(groupNumber: Int, team: String, betLine: Double, betOdds: Double, betType: BetType) {
+    func uploadBet(groupNumber: Int, betNumber: Int, team: String, betLine: Double, betOdds: Double, betType: BetType) {
             // Prepare the data to upload
-        let bet = Bet(groupNumber: groupNumber, betNumber: 1, weekNumber: 1, betStatus: .open, betType: betType, teamBetOn: team, betLine: Float(betLine), betOdds: Float(betOdds), result: .inAction)
+        let bet = Bet(groupNumber: groupNumber, betNumber: betNumber, weekNumber: 1, betStatus: .open, betType: betType, teamBetOn: team, betLine: Float(betLine), betOdds: Float(betOdds), result: .inAction)
             
             // Perform the upload asynchronously
             betService.uploadBet(bet) { error in
