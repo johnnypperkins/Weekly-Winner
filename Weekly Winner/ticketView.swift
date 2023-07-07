@@ -71,15 +71,33 @@ struct ticketView: View {
                     .frame(maxWidth: .infinity)
                 }
                 .frame(height: 30) // Adjust this to your desired title
-
-                ForEach(betArray) { bet in
-                    BetCard(bet: bet, viewModel: viewModel)
+                VStack(spacing: 0) {
+                    let emptyBoxesCount = max(0, maxBetsPlaced - betArray.count)
+                    let totalBetsCount = betArray.count + emptyBoxesCount
+                    
+                    ForEach(0..<totalBetsCount, id: \.self) { index in
+                        if index < betArray.count {
+                            VStack(alignment: .leading, spacing: 0) {
+                                BetCard(bet: betArray[index], viewModel: viewModel)
+                                    .clipShape(RoundSomeCorners(topLeft: index == 0 ? 10 : 0, topRight: index == 0 ? 10 : 0,
+                                                                bottomLeft: index == totalBetsCount - 1 ? 10 : 0, bottomRight: index == totalBetsCount - 1 ? 10 : 0))
+                                if index != totalBetsCount - 1 {
+                                    Divider()
+                                }
+                            }
+                        } else {
+                            VStack(alignment: .leading, spacing: 0) {
+                                EmptyBetCard()
+                                    .clipShape(RoundSomeCorners(topLeft: index == 0 ? 10 : 0, topRight: index == 0 ? 10 : 0,
+                                                                bottomLeft: index == totalBetsCount - 1 ? 10 : 0, bottomRight: index == totalBetsCount - 1 ? 10 : 0))
+                                if index != totalBetsCount - 1 {
+                                    Divider()
+                                }
+                            }
+                        }
+                    }
                 }
-
-                let emptyBoxesCount = max(0, maxBetsPlaced - betArray.count)
-                ForEach(0..<emptyBoxesCount, id: \.self) { _ in
-                    EmptyBetCard()
-                }
+                
             }
             .padding(.horizontal) // Applying padding to the VStack directly
         }
@@ -87,15 +105,19 @@ struct ticketView: View {
         struct BetCard: View {
             let bet: Bet
             @ObservedObject var viewModel: ticketViewModel
+//            var topLeft: CGFloat
+//            var topRight: CGFloat
+//            var bottomLeft: CGFloat
+//            var bottomRight: CGFloat
 
             var body: some View {
                 HStack {
                     Text("\(bet.teamBetOn ?? "Null team") \(bet.betLine >= 0 ? "+" : "")\(bet.betLine, specifier: "%.0f")")
                         .font(.headline)
-                        .foregroundColor(Color.blue)
+                        .foregroundColor(K.darkBlue)
                     Spacer()
                     Text("+\(bet.betOdds, specifier: "%.0f")")
-                        .foregroundColor(Color.green)
+                        .foregroundColor(K.darkGreen)
                     
                     Button(action: {
                         self.viewModel.deleteBet(bet: bet)
@@ -109,63 +131,37 @@ struct ticketView: View {
                     
                 }
                 .padding()
-                .background(Color.white)
-                .cornerRadius(10)
-                .shadow(color: Color.black.opacity(0.2), radius: 7, x: 0, y: 2)
-                .frame(maxWidth: .infinity)
-                .padding(.horizontal, 10) // Ensuring padding on the sides
+                .frame(maxWidth: .infinity) // Move the frame to the bottom
+                .background(K.veryLightBlue)
+                
+                //.modifier(ConditionalCornerRadius(topLeft: topLeft, topRight: topRight, bottomLeft: bottomLeft, bottomRight: bottomRight))
+                //.shadow(color: Color.black.opacity(0.2), radius: 7, x: 0, y: 2)
             }
             
             
         }
 
         struct EmptyBetCard: View {
+//            var topLeft: CGFloat
+//            var topRight: CGFloat
+//            var bottomLeft: CGFloat
+//            var bottomRight: CGFloat
+
             var body: some View {
                 VStack(alignment: .leading) {
                     Text("Empty Bet").font(.headline)
                 }
                 .padding()
-                .background(Color(.systemGray3))
-                .cornerRadius(10)
-                .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
                 .frame(maxWidth: .infinity)
-                .padding(.horizontal, 10) // Ensuring padding on the sides
+                .background(K.veryLightGray)
+//                .overlay(
+//                            RoundSomeCorners(topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10)
+//                                .stroke(Color.gray, lineWidth: 1)
+//                        )
+                //.modifier(ConditionalCornerRadius(topLeft: topLeft, topRight: topRight, bottomLeft: bottomLeft, bottomRight: bottomRight))
             }
         }
-    }
-    
-    
-    
-    struct LeftRoundedCorners: Shape {
-        var radius: CGFloat = .infinity
-        func path(in rect: CGRect) -> Path {
-            Path { path in
-                path.move(to: CGPoint(x: rect.minX, y: rect.minY)) // top left
-                path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY)) // top right
-                path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY)) // bottom right
-                path.addLine(to: CGPoint(x: rect.minX + radius, y: rect.maxY)) // start of bottom left curve
-                path.addArc(center: CGPoint(x: rect.minX + radius, y: rect.maxY - radius), radius: radius,
-                            startAngle: Angle(degrees: 90), endAngle: Angle(degrees: 180), clockwise: false)
-                path.addLine(to: CGPoint(x: rect.minX, y: rect.minY + radius)) // end of top left curve
-                path.addArc(center: CGPoint(x: rect.minX + radius, y: rect.minY + radius), radius: radius,
-                            startAngle: Angle(degrees: 180), endAngle: Angle(degrees: 270), clockwise: false)
-            }
-        }
-    }
-    struct RightRoundedCorners: Shape {
-        var radius: CGFloat = .infinity
-        func path(in rect: CGRect) -> Path {
-            Path { path in
-                path.move(to: CGPoint(x: rect.minX, y: rect.minY)) // top left
-                path.addLine(to: CGPoint(x: rect.maxX - radius, y: rect.minY)) // start of top right curve
-                path.addArc(center: CGPoint(x: rect.maxX - radius, y: rect.minY + radius), radius: radius,
-                            startAngle: Angle(degrees: -90), endAngle: Angle(degrees: 0), clockwise: false)
-                path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - radius)) // end of bottom right curve
-                path.addArc(center: CGPoint(x: rect.maxX - radius, y: rect.maxY - radius), radius: radius,
-                            startAngle: Angle(degrees: 0), endAngle: Angle(degrees: 90), clockwise: false)
-                path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY)) // bottom left
-            }
-        }
+
     }
     
 }
@@ -175,3 +171,4 @@ struct ticketView_Previews: PreviewProvider {
         ticketView()
     }
 }
+

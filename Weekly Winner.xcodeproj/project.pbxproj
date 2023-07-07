@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C91B6C62A58BA0E00398F53 /* UI Misc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C91B6C52A58BA0E00398F53 /* UI Misc.swift */; };
+		3C91B6C82A58BE6D00398F53 /* RoundingUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C91B6C72A58BE6D00398F53 /* RoundingUI.swift */; };
 		863FC0512A41176400405F2A /* ticketViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863FC0502A41176400405F2A /* ticketViewModel.swift */; };
 		863FC0532A466FD500405F2A /* groupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863FC0522A466FD500405F2A /* groupService.swift */; };
 		865C4A762A327CA600C3C626 /* authenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 865C4A752A327CA600C3C626 /* authenticationView.swift */; };
@@ -61,6 +63,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3C91B6C52A58BA0E00398F53 /* UI Misc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UI Misc.swift"; sourceTree = "<group>"; };
+		3C91B6C72A58BE6D00398F53 /* RoundingUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundingUI.swift; sourceTree = "<group>"; };
 		863FC0502A41176400405F2A /* ticketViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ticketViewModel.swift; sourceTree = "<group>"; };
 		863FC0522A466FD500405F2A /* groupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = groupService.swift; sourceTree = "<group>"; };
 		865C4A752A327CA600C3C626 /* authenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = authenticationView.swift; sourceTree = "<group>"; };
@@ -126,6 +130,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3C91B6C42A58B9E700398F53 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				3C91B6C52A58BA0E00398F53 /* UI Misc.swift */,
+				3C91B6C72A58BE6D00398F53 /* RoundingUI.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
 		865C4A7D2A32BFF500C3C626 /* services */ = {
 			isa = PBXGroup;
 			children = (
@@ -185,6 +198,7 @@
 				867801892A213FB1006FE479 /* screen5.swift */,
 				865C4A7E2A32C00B00C3C626 /* custom variables */,
 				865C4A7D2A32BFF500C3C626 /* services */,
+				3C91B6C42A58B9E700398F53 /* UI */,
 				867801582A213015006FE479 /* Assets.xcassets */,
 				8678015A2A213015006FE479 /* Weekly_Winner.entitlements */,
 				8678018B2A21662D006FE479 /* GoogleService-Info.plist */,
@@ -363,6 +377,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				867801572A213010006FE479 /* ContentView.swift in Sources */,
+				3C91B6C62A58BA0E00398F53 /* UI Misc.swift in Sources */,
 				8668B3112A2EE9CF00A1B343 /* bookViewModel.swift in Sources */,
 				865C4A7A2A32890F00C3C626 /* userService.swift in Sources */,
 				867801882A213FA5006FE479 /* ticketView.swift in Sources */,
@@ -372,6 +387,7 @@
 				863FC0532A466FD500405F2A /* groupService.swift in Sources */,
 				865C4A782A327CC200C3C626 /* authenticationViewModel.swift in Sources */,
 				865C4A7C2A32893100C3C626 /* User.swift in Sources */,
+				3C91B6C82A58BE6D00398F53 /* RoundingUI.swift in Sources */,
 				867801552A213010006FE479 /* Weekly_WinnerApp.swift in Sources */,
 				8678018A2A213FB1006FE479 /* screen5.swift in Sources */,
 				863FC0512A41176400405F2A /* ticketViewModel.swift in Sources */,
