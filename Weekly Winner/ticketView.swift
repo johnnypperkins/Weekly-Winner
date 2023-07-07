@@ -20,14 +20,14 @@ struct ticketView: View {
             
             ScrollView {
                 VStack {
-                    SectionTitle(title: "Straight #1", betArray: viewModel.betArray1, maxBetsPlaced: 1)
-                    SectionTitle(title: "Straight #2", betArray: viewModel.betArray2, maxBetsPlaced: 1)
-                    SectionTitle(title: "Straight #3", betArray: viewModel.betArray3, maxBetsPlaced: 1)
-                    SectionTitle(title: "Straight #4", betArray: viewModel.betArray4, maxBetsPlaced: 1)
-                    SectionTitle(title: "2 Leg #1", betArray: viewModel.betArray5, maxBetsPlaced: 2)
-                    SectionTitle(title: "2 leg #2", betArray: viewModel.betArray6, maxBetsPlaced: 2)
-                    SectionTitle(title: "3 leg #1", betArray: viewModel.betArray7, maxBetsPlaced: 3)
-                    SectionTitle(title: "5 leg #1", betArray: viewModel.betArray8, maxBetsPlaced: 5)
+                    SectionTitle(title: "Straight #1", betArray: viewModel.betArray1, maxBetsPlaced: 1, viewModel: viewModel)
+                    SectionTitle(title: "Straight #2", betArray: viewModel.betArray2, maxBetsPlaced: 1, viewModel: viewModel)
+                    SectionTitle(title: "Straight #3", betArray: viewModel.betArray3, maxBetsPlaced: 1, viewModel: viewModel)
+                    SectionTitle(title: "Straight #4", betArray: viewModel.betArray4, maxBetsPlaced: 1, viewModel: viewModel)
+                    SectionTitle(title: "2 Leg #1", betArray: viewModel.betArray5, maxBetsPlaced: 2, viewModel: viewModel)
+                    SectionTitle(title: "2 leg #2", betArray: viewModel.betArray6, maxBetsPlaced: 2, viewModel: viewModel)
+                    SectionTitle(title: "3 leg #1", betArray: viewModel.betArray7, maxBetsPlaced: 3, viewModel: viewModel)
+                    SectionTitle(title: "5 leg #1", betArray: viewModel.betArray8, maxBetsPlaced: 5, viewModel: viewModel)
                 }
                 .padding()
             }
@@ -47,6 +47,7 @@ struct ticketView: View {
         let title: String
         let betArray: [Bet]
         let maxBetsPlaced: Int
+        @ObservedObject var viewModel: ticketViewModel
 
         var body: some View {
             VStack(alignment: .leading) {
@@ -72,7 +73,7 @@ struct ticketView: View {
                 .frame(height: 30) // Adjust this to your desired title
 
                 ForEach(betArray) { bet in
-                    BetCard(bet: bet)
+                    BetCard(bet: bet, viewModel: viewModel)
                 }
 
                 let emptyBoxesCount = max(0, maxBetsPlaced - betArray.count)
@@ -85,6 +86,7 @@ struct ticketView: View {
 
         struct BetCard: View {
             let bet: Bet
+            @ObservedObject var viewModel: ticketViewModel
 
             var body: some View {
                 HStack {
@@ -94,6 +96,17 @@ struct ticketView: View {
                     Spacer()
                     Text("+\(bet.betOdds, specifier: "%.0f")")
                         .foregroundColor(Color.green)
+                    
+                    Button(action: {
+                        self.viewModel.deleteBet(bet: bet)
+                    }) {
+                        Image(systemName: "xmark.circle")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundColor(.red)
+                    }
+                    .padding(.leading)
+                    
                 }
                 .padding()
                 .background(Color.white)
@@ -102,6 +115,8 @@ struct ticketView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 10) // Ensuring padding on the sides
             }
+            
+            
         }
 
         struct EmptyBetCard: View {
@@ -118,6 +133,8 @@ struct ticketView: View {
             }
         }
     }
+    
+    
     
     struct LeftRoundedCorners: Shape {
         var radius: CGFloat = .infinity

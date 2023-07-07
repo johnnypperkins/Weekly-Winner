@@ -211,7 +211,7 @@ struct BetDetailsView: View {
                             Text(viewModel.userGroups[index]).tag(index)
                         }
                     }
-                    .pickerStyle(MenuPickerStyle())
+                    .pickerStyle(WheelPickerStyle())
                 } else {
                     Text("Loading...")
                 }
@@ -226,7 +226,7 @@ struct BetDetailsView: View {
                        Text("3leg").tag(7)
                        Text("8leg").tag(8)
                    }
-                   .pickerStyle(MenuPickerStyle())
+                   .pickerStyle(WheelPickerStyle())
                 
             }
             

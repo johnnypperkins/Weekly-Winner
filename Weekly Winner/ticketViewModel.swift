@@ -71,6 +71,19 @@ class ticketViewModel: ObservableObject {
             }.filter { $0.betNumber == 8 }.prefix(5))
         }
     }
+    
+    func deleteBet(bet: Bet) {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        
+        db.collection("users").document(userId).collection("bets").document(bet.id ?? "").delete { error in
+            if let error = error {
+                print("Error removing document: \(error)")
+            } else {
+                print("Document successfully removed!")
+                self.fetchBets(groupNumber: bet.groupNumber) // fetch the updated list of bets
+            }
+        }
+    }
 
     func stopListening() {
         listener?.remove()
