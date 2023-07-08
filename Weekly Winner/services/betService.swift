@@ -54,3 +54,72 @@ class BetService {
 enum AuthError: Error {
     case userNotFound
 }
+
+ 
+
+// This function converts the difference between the original spread and the chosenSpread into a percentage. Will then be converted into an actual "moneyline"
+func returnOdds(betType: Int, ogSpr: Int, chsSpr: Int) -> Double {
+    var chosenSpread = chsSpr
+    var originalSpread = ogSpr
+    if betType != 3 {
+        if chosenSpread == originalSpread {
+            return 0.5
+        } else if chosenSpread == originalSpread - 1 {
+            return 0.45
+        } else if chosenSpread == originalSpread - 2 {
+            return 0.4
+        } else if chosenSpread == originalSpread - 3 {
+            return 0.35
+        } else if chosenSpread == originalSpread - 4 {
+            return 0.3
+        } else if chosenSpread == originalSpread - 5 {
+            return 0.25
+        }  else if chosenSpread == originalSpread + 1 {
+            return 0.55
+        } else if chosenSpread == originalSpread + 2 {
+            return 0.6
+        } else if chosenSpread == originalSpread + 3 {
+            return 0.65
+        } else if chosenSpread == originalSpread + 4 {
+            return 0.7
+        } else if chosenSpread == originalSpread + 5 {
+            return 0.75
+        }
+    } else if betType == 3 {
+        if chosenSpread == originalSpread {
+            return 0.5
+        } else if chosenSpread == originalSpread + 1 {
+            return 0.45
+        } else if chosenSpread == originalSpread + 2 {
+            return 0.4
+        } else if chosenSpread == originalSpread + 3 {
+            return 0.35
+        } else if chosenSpread == originalSpread + 4 {
+            return 0.3
+        } else if chosenSpread == originalSpread + 5 {
+            return 0.25
+        }  else if chosenSpread == originalSpread - 1 {
+            return 0.55
+        } else if chosenSpread == originalSpread - 2 {
+            return 0.6
+        } else if chosenSpread == originalSpread - 3 {
+            return 0.65
+        } else if chosenSpread == originalSpread - 4 {
+            return 0.7
+        } else if chosenSpread == originalSpread - 5 {
+            return 0.75
+        }
+    }
+    return 0.5
+}
+
+func returnML(percentage: Double) -> String { // gets ML from percentage
+    var ML: Double
+    if percentage < 0.5 {
+        ML = (1-percentage) / percentage * 100
+        return "+" + String(format: "%.0f", ML)
+    } else {
+        ML = percentage / (1-percentage) * -100
+        return String(format: "%.0f", ML)
+    }
+}

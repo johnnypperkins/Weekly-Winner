@@ -164,10 +164,12 @@ struct BetRowView1: View {
 struct BetDetailsView: View {
     let game: Game
     @Binding var betTeamType: BetTeamType
+    
     @Environment(\.dismiss) var dismiss
     @State private var chosenSpread: Double = 2
+    @State private var originalSpread: Double = 2
+    @State private var betType = 1
     @ObservedObject var viewModel = bookViewModel()
-    @ObservedObject var ticketVM = ticketViewModel()
     @State private var groupNumber = 0
     @State private var parlayType = 1
     @State private var groupDict: [String: Int] = [:]
@@ -224,22 +226,22 @@ struct BetDetailsView: View {
             
 
             if betTeamType == .betAwaySpread {
-                BetView(teamName: game.awayTeam, spread: game.awaySpread, betType: 1, chosenSpread: $chosenSpread)
+                BetView(teamName: game.awayTeam, originalSpread: game.awaySpread, betType: 1, chosenSpread: $chosenSpread)
             }
             if betTeamType == .betHomeSpread {
-                BetView(teamName: game.homeTeam, spread: game.homeSpread, betType: 2, chosenSpread: $chosenSpread)
+                BetView(teamName: game.homeTeam, originalSpread: game.homeSpread, betType: 2, chosenSpread: $chosenSpread)
             }
             if betTeamType == .over {
-                BetView(teamName: "\(game.awayTeam) / \(game.homeTeam)", spread: game.totalOver, betType: 3, chosenSpread: $chosenSpread)
+                BetView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalOver, betType: 3, chosenSpread: $chosenSpread)
             }
             if betTeamType == .under {
-                BetView(teamName: "\(game.awayTeam) / \(game.homeTeam)", spread: game.totalUnder, betType: 4, chosenSpread: $chosenSpread)
+                BetView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalUnder, betType: 4, chosenSpread: $chosenSpread)
             }
         
             
         Button(action: {
             print("groupNumber: \(groupNumber), betNumber: \(parlayType)")
-            viewModel.uploadBet(groupNumber: groupNumber, betNumber: parlayType, team: whichTeam, betLine: chosenSpread, betOdds: 100, betType: .spread)
+            viewModel.uploadBet(groupNumber: groupNumber, betNumber: parlayType, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread)), betType: .spread)
                 withAnimation {
                     dismiss()
                     betTeamType = .None
@@ -261,21 +263,27 @@ struct BetDetailsView: View {
         }.onAppear(perform: {
             if betTeamType == .betAwaySpread {
                 chosenSpread = game.awaySpread
+                originalSpread = game.awaySpread
                 whichTeam = game.awayTeam
-
+                betType = 1
             }
             if betTeamType == .betHomeSpread {
                 chosenSpread = game.homeSpread
+                originalSpread = game.homeSpread
                 whichTeam = game.homeTeam
-
+                betType = 2
             }
             if betTeamType == .over {
                 chosenSpread = game.totalOver
+                originalSpread = game.totalOver
                 whichTeam = "\(game.homeTeam) / \(game.awayTeam) o"
+                betType = 3
             }
             if betTeamType == .under {
                 chosenSpread = game.totalUnder
+                originalSpread = game.totalUnder
                 whichTeam = "\(game.homeTeam)/\(game.awayTeam) u"
+                betType = 4
             }
             //print("view model.usergroups: \(viewModel.userGroups)")
             var index = 0
@@ -299,7 +307,7 @@ struct BettingAppView_Previews: PreviewProvider {
 
 struct BetView: View {
     var teamName: String
-    var spread: Double
+    var originalSpread: Double
     //var extra: String
     var internalExtra: String {
         if chosenSpread < 0 {
@@ -333,12 +341,12 @@ struct BetView: View {
             HStack {
                 //Text("Spread/total:")
                   //  .font(.headline)
-                Slider(value: $chosenSpread, in: Double(spread - 5)...Double(spread + 5), step: 1)
+                Slider(value: $chosenSpread, in: Double(originalSpread - 5)...Double(originalSpread + 5), step: 1)
                     .accentColor(Color(.green))
             }
             .padding()
             
-            Text("To Win: $ \(String(format: "%.0f", spread/chosenSpread * 100))") // sample algorithm
+            Text("Odds: \(returnML(percentage: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread))))") // sample algorithm
                 .font(.largeTitle)
                 .foregroundColor(.green)
             
@@ -370,9 +378,3 @@ struct BetButton: View {
 }
 
 //
-//func returnOdds(betType: Int, originalSpread: Int) -> Double {
-//    if betType != 3 {
-//        
-//    }
-//    return "Reid"
-//}

@@ -17,6 +17,8 @@ struct ticketView: View {
             .onChange(of: selectedGroup) { newValue in
                 viewModel.fetchBets(groupNumber: newValue)
             }
+            Text("Potential Winnings: ")
+            Text("Total Winnings: ").font(.custom("Futura", size: 24))
             
             ScrollView {
                 VStack {
@@ -57,15 +59,20 @@ struct ticketView: View {
                             .font(.subheadline)
                             .padding(.vertical, 5)
                             .padding(.leading) // Padding for the title
-                            .frame(width: geometry.size.width * 0.65, alignment: .leading)
+                            .frame(width: geometry.size.width * 0.50, alignment: .leading)
                             .background(Color.gray.opacity(0.7))
                             .clipShape(LeftRoundedCorners(radius: 5))
-                            
-                        Text("Not Started")
+                        Text("Odds")
                             .font(.subheadline)
                             .padding(.vertical, 5)
-                            .frame(width: geometry.size.width * 0.35, alignment: .center)
-                            .background(Color.red.opacity(0.3))
+                            .frame(width: geometry.size.width * 0.25, alignment: .center)
+                            .background(Color.blue.opacity(0.3))
+//                            .clipShape(RightRoundedCorners(radius: 5))
+                        Text("To Win")
+                            .font(.subheadline)
+                            .padding(.vertical, 5)
+                            .frame(width: geometry.size.width * 0.25, alignment: .center)
+                            .background(Color.green.opacity(0.3))
                             .clipShape(RightRoundedCorners(radius: 5))
                     }
                     .frame(maxWidth: .infinity)
@@ -112,13 +119,6 @@ struct ticketView: View {
 
             var body: some View {
                 HStack {
-                    Text("\(bet.teamBetOn ?? "Null team") \(bet.betLine >= 0 ? "+" : "")\(bet.betLine, specifier: "%.0f")")
-                        .font(.headline)
-                        .foregroundColor(K.darkBlue)
-                    Spacer()
-                    Text("+\(bet.betOdds, specifier: "%.0f")")
-                        .foregroundColor(K.darkGreen)
-                    
                     Button(action: {
                         self.viewModel.deleteBet(bet: bet)
                     }) {
@@ -127,7 +127,16 @@ struct ticketView: View {
                             .frame(width: 20, height: 20)
                             .foregroundColor(.red)
                     }
-                    .padding(.leading)
+//                    .padding(.leading)
+                    
+                    Text("\(bet.teamBetOn ?? "Null team") \(bet.betLine >= 0 ? "+" : "")\(bet.betLine, specifier: "%.0f")")
+                        .font(.headline)
+                        .foregroundColor(K.darkBlue)
+                    Spacer()
+                    Text(returnML(percentage: Double(bet.betOdds)))
+                        .foregroundColor(K.darkGreen)
+                    
+                    
                     
                 }
                 .padding()
