@@ -38,7 +38,7 @@ struct BettingAppView: View {
                 }
                 
                 ScrollView {
-                    VStack(spacing: 15) {
+                    VStack(spacing: 7.5) {
                         ForEach(filteredGames, id: \.idd) { game in // HARDCODE NCAAF
                             BetRowView1(game: game)
                             }
@@ -75,6 +75,9 @@ struct BetRowView1: View {
     @State var titleStringH: String = ""
     @State var titleStringA: String = ""
     
+    var maxHeight = 100
+    var maxWidth = 100
+    
     var body: some View {
       
         HStack {
@@ -85,21 +88,18 @@ struct BetRowView1: View {
                         .foregroundColor(.white)
                     
                     Spacer()
-                     
-                    
-                    BetButton(betTeamType: .betHomeSpread, currentBetType: $betTeamType, title: titleStringH) {
-                        betTeamType = .betHomeSpread
-                        showingSheet.toggle()
+                    HStack(spacing: 20) {
+                        BetButton(betTeamType: .betHomeSpread, currentBetType: $betTeamType, title: titleStringH) { // home spread
+                            betTeamType = .betHomeSpread
+                            showingSheet.toggle()
+                        }
+                        
+                        BetButton(betTeamType: .over, currentBetType: $betTeamType, title: "o" + String(format: "%.0f", game.totalOver)) { // over
+                            betTeamType = .over
+                            showingSheet.toggle()
+                        }
                     }
-                    
-                    Rectangle()
-                                .fill(Color.black)
-                                .frame(width: 1)
-                    
-                    BetButton(betTeamType: .over, currentBetType: $betTeamType, title: "o" + String(format: "%.0f", game.totalOver)) {
-                                    betTeamType = .over
-                                    showingSheet.toggle()
-                                }
+                   
                 }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
                 
                 Divider()
@@ -109,19 +109,17 @@ struct BetRowView1: View {
                         .font(.headline)
                         .foregroundColor(.white)
                     Spacer()
-                    
-                    BetButton(betTeamType: .betAwaySpread, currentBetType: $betTeamType, title: titleStringA) {
-                        betTeamType = .betAwaySpread
-                        showingSheet.toggle()
+                    HStack(spacing: 20) {
+                        BetButton(betTeamType: .betAwaySpread, currentBetType: $betTeamType, title: titleStringA) {
+                            betTeamType = .betAwaySpread
+                            showingSheet.toggle()
+                        }
+
+                        BetButton(betTeamType: .under, currentBetType: $betTeamType, title: "u" + String(format: "%.0f", game.totalUnder)) {
+                            betTeamType = .under
+                            showingSheet.toggle()
+                        }
                     }
-                    Rectangle()
-                                .fill(Color.black)
-                                .frame(width: 1)
-                    //Spacer()
-                    BetButton(betTeamType: .under, currentBetType: $betTeamType, title: "u" + String(format: "%.0f", game.totalUnder)) {
-                                    betTeamType = .under
-                                    showingSheet.toggle()
-                                }
                     
                 }.padding(.top,4)
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
@@ -152,7 +150,6 @@ struct BetRowView1: View {
                     )
             )
         .padding()
-        
         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
         .sheet(isPresented: $showingSheet) {
             BetDetailsView(game: game, betTeamType: $betTeamType)
@@ -168,7 +165,7 @@ struct BetDetailsView: View {
     let game: Game
     @Binding var betTeamType: BetTeamType
     @Environment(\.dismiss) var dismiss
-    @State private var userRating: Double = 2
+    @State private var chosenSpread: Double = 2
     @ObservedObject var viewModel = bookViewModel()
     @ObservedObject var ticketVM = ticketViewModel()
     @State private var groupNumber = 0
@@ -192,13 +189,7 @@ struct BetDetailsView: View {
                         .foregroundColor(.black)
                 }
                 Spacer()
-//
-//                Text("Create Your Bet")
-//                    .font(.title2)
-//                    .fontWeight(.bold)
-//                    .padding()
-//
-//                Spacer()
+
                 
             }.frame(maxWidth:.infinity, alignment: .center)
                 .padding(.leading)
@@ -224,7 +215,7 @@ struct BetDetailsView: View {
                        Text("2leg #1").tag(5)
                        Text("2leg #2").tag(6)
                        Text("3leg").tag(7)
-                       Text("8leg").tag(8)
+                       Text("5leg").tag(8)
                    }
                    .pickerStyle(WheelPickerStyle())
                 
@@ -233,22 +224,22 @@ struct BetDetailsView: View {
             
 
             if betTeamType == .betAwaySpread {
-                BetView(teamName: game.awayTeam, spread: game.awaySpread, betType: 1, userRating: $userRating)
+                BetView(teamName: game.awayTeam, spread: game.awaySpread, betType: 1, chosenSpread: $chosenSpread)
             }
             if betTeamType == .betHomeSpread {
-                BetView(teamName: game.homeTeam, spread: game.homeSpread, betType: 2, userRating: $userRating)
+                BetView(teamName: game.homeTeam, spread: game.homeSpread, betType: 2, chosenSpread: $chosenSpread)
             }
             if betTeamType == .over {
-                BetView(teamName: "\(game.awayTeam) / \(game.homeTeam)", spread: game.totalOver, betType: 3, userRating: $userRating)
+                BetView(teamName: "\(game.awayTeam) / \(game.homeTeam)", spread: game.totalOver, betType: 3, chosenSpread: $chosenSpread)
             }
             if betTeamType == .under {
-                BetView(teamName: "\(game.awayTeam) / \(game.homeTeam)", spread: game.totalUnder, betType: 4, userRating: $userRating)
+                BetView(teamName: "\(game.awayTeam) / \(game.homeTeam)", spread: game.totalUnder, betType: 4, chosenSpread: $chosenSpread)
             }
         
             
         Button(action: {
             print("groupNumber: \(groupNumber), betNumber: \(parlayType)")
-            viewModel.uploadBet(groupNumber: groupNumber, betNumber: parlayType, team: whichTeam, betLine: userRating, betOdds: 100, betType: .spread)
+            viewModel.uploadBet(groupNumber: groupNumber, betNumber: parlayType, team: whichTeam, betLine: chosenSpread, betOdds: 100, betType: .spread)
                 withAnimation {
                     dismiss()
                     betTeamType = .None
@@ -269,21 +260,21 @@ struct BetDetailsView: View {
                }
         }.onAppear(perform: {
             if betTeamType == .betAwaySpread {
-                userRating = game.awaySpread
+                chosenSpread = game.awaySpread
                 whichTeam = game.awayTeam
 
             }
             if betTeamType == .betHomeSpread {
-                userRating = game.homeSpread
+                chosenSpread = game.homeSpread
                 whichTeam = game.homeTeam
 
             }
             if betTeamType == .over {
-                userRating = game.totalOver
+                chosenSpread = game.totalOver
                 whichTeam = "\(game.homeTeam) / \(game.awayTeam) o"
             }
             if betTeamType == .under {
-                userRating = game.totalUnder
+                chosenSpread = game.totalUnder
                 whichTeam = "\(game.homeTeam)/\(game.awayTeam) u"
             }
             //print("view model.usergroups: \(viewModel.userGroups)")
@@ -311,7 +302,7 @@ struct BetView: View {
     var spread: Double
     //var extra: String
     var internalExtra: String {
-        if userRating < 0 {
+        if chosenSpread < 0 {
                     return ""
                 } else {
                     switch betType {
@@ -329,12 +320,12 @@ struct BetView: View {
                 }
     }
     var betType: Int // 1 AS, 2 HS, 3 O, 4 U
-    @Binding var userRating: Double
+    @Binding var chosenSpread: Double
 
     var body: some View {
         VStack{
             HStack {
-                Text("\(teamName) \(internalExtra)\(String(format: "%.0f", userRating))")
+                Text("\(teamName) \(internalExtra)\(String(format: "%.0f", chosenSpread))")
                     .font(.title2)
                     .foregroundColor(.blue)
             }
@@ -342,12 +333,12 @@ struct BetView: View {
             HStack {
                 //Text("Spread/total:")
                   //  .font(.headline)
-                Slider(value: $userRating, in: Double(spread - 5)...Double(spread + 5), step: 1)
+                Slider(value: $chosenSpread, in: Double(spread - 5)...Double(spread + 5), step: 1)
                     .accentColor(Color(.green))
             }
             .padding()
             
-            Text("To Win: $ \(String(format: "%.0f", spread/userRating * 100))") // sample algorithm
+            Text("To Win: $ \(String(format: "%.0f", spread/chosenSpread * 100))") // sample algorithm
                 .font(.largeTitle)
                 .foregroundColor(.green)
             
@@ -356,22 +347,32 @@ struct BetView: View {
     }
 }
 
-struct BetButton: View { // consolidated
+struct BetButton: View {
     let betTeamType: BetTeamType
-    let currentBetType: Binding<BetTeamType>
+    @Binding var currentBetType: BetTeamType
     let title: String
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             Text(title)
+                .frame(minWidth: 35, maxWidth: 35, alignment: .center)
                 .foregroundColor(.blue)
-                .padding()
-                .background(Color(currentBetType.wrappedValue == betTeamType ? .gray : .white))
-                .cornerRadius(currentBetType.wrappedValue == betTeamType ? 20 : 10)
-                .shadow(color: currentBetType.wrappedValue == betTeamType ? .gray : .clear, radius: 5)
-                .scaleEffect(currentBetType.wrappedValue == betTeamType ? 0.9 : 1.0)
-                .animation(.spring(), value: 4)
+                .padding(10)
+                .background(Color(currentBetType == betTeamType ? .gray : .white))
+                .cornerRadius(currentBetType == betTeamType ? 20 : 10)
+                .shadow(color: currentBetType == betTeamType ? .gray : .clear, radius: 5)
+                .scaleEffect(currentBetType == betTeamType ? 0.9 : 1.0)
         }
+        .frame(width: 50, height: 45)
+        .animation(.spring(), value: 4)
     }
 }
+
+//
+//func returnOdds(betType: Int, originalSpread: Int) -> Double {
+//    if betType != 3 {
+//        
+//    }
+//    return "Reid"
+//}
