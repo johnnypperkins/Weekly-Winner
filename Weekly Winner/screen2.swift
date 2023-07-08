@@ -170,6 +170,8 @@ struct BetDetailsView: View {
     @State private var originalSpread: Double = 2
     @State private var betType = 1
     @ObservedObject var viewModel = bookViewModel()
+    @ObservedObject var ticketVM = ticketViewModel()
+    
     @State private var groupNumber = 0
     @State private var parlayType = 1
     @State private var groupDict: [String: Int] = [:]
@@ -205,21 +207,31 @@ struct BetDetailsView: View {
                         }
                     }
                     .pickerStyle(WheelPickerStyle())
+                    .onChange(of: groupNumber) { newValue in
+                        ticketVM.fetchBets(groupNumber: newValue)
+                    }.onAppear {
+                        ticketVM.fetchBets(groupNumber: groupNumber)
+                    }
                 } else {
                     Text("Loading...")
                 }
  
                 Picker("Bet Type", selection: $parlayType) { // starts at 1 bc "1 leg"
-                       Text("Straight #1").tag(1)
-                       Text("Straight #2").tag(2)
-                       Text("Straight #3").tag(3)
-                       Text("Straight #4").tag(4)
-                       Text("2leg #1").tag(5)
-                       Text("2leg #2").tag(6)
-                       Text("3leg").tag(7)
-                       Text("5leg").tag(8)
-                   }
-                   .pickerStyle(WheelPickerStyle())
+                    ForEach(ticketVM.availableBets(for: groupNumber), id: \.self) { index in //
+                        switch index {
+                        case 1: Text("Straight #1").tag(1)
+                        case 2: Text("Straight #2").tag(2)
+                        case 3: Text("Straight #3").tag(3)
+                        case 4: Text("Straight #4").tag(4)
+                        case 5: Text("2leg #1").tag(5)
+                        case 6: Text("2leg #2").tag(6)
+                        case 7: Text("3leg").tag(7)
+                        case 8: Text("5leg").tag(8)
+                        default: EmptyView()
+                        }
+                    }
+                }
+                .pickerStyle(WheelPickerStyle())
                 
             }
             
@@ -346,7 +358,7 @@ struct BetView: View {
             }
             .padding()
             
-            Text("Odds: \(returnML(percentage: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread))))") // sample algorithm
+            Text("Odds: \(percentageToML(percentage: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread))))") // sample algorithm
                 .font(.largeTitle)
                 .foregroundColor(.green)
             

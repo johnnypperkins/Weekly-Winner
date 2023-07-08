@@ -113,13 +113,26 @@ func returnOdds(betType: Int, ogSpr: Int, chsSpr: Int) -> Double {
     return 0.5
 }
 
-func returnML(percentage: Double) -> String { // gets ML from percentage
+func percentageToML(percentage: Double) -> String { // gets ML from percentage
     var ML: Double
-    if percentage < 0.5 {
+    if percentage <= 0.5 {
         ML = (1-percentage) / percentage * 100
         return "+" + String(format: "%.0f", ML)
-    } else {
+    } else if percentage > 0.5 && percentage < 1 {
         ML = percentage / (1-percentage) * -100
         return String(format: "%.0f", ML)
+    } else {
+        return "n/a"
     }
+}
+
+func percentageToTotalWin(percentage: Double) -> String {
+    var toWin: Double
+    if percentage < 1 {
+        toWin = (1-percentage) / percentage * 100
+        return "$" + String(Int(toWin))
+    } else {
+        return "n/a"
+    }
+
 }

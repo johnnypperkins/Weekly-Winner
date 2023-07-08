@@ -49,10 +49,21 @@ struct ticketView: View {
         let title: String
         let betArray: [Bet]
         let maxBetsPlaced: Int
+       // let totalOdds: Double
         @ObservedObject var viewModel: ticketViewModel
+        
+        var totalOdds: Double {
+            var total: Double = 1
+            for bet in betArray {
+                total = total*Double(bet.betOdds)
+            }
+            return total
+        }
 
         var body: some View {
+
             VStack(alignment: .leading) {
+                
                 GeometryReader { geometry in
                     HStack(spacing: 0) {
                         Text(title)
@@ -62,13 +73,13 @@ struct ticketView: View {
                             .frame(width: geometry.size.width * 0.50, alignment: .leading)
                             .background(Color.gray.opacity(0.7))
                             .clipShape(LeftRoundedCorners(radius: 5))
-                        Text("Odds")
+                        Text("\(percentageToML(percentage: totalOdds))")
                             .font(.subheadline)
                             .padding(.vertical, 5)
                             .frame(width: geometry.size.width * 0.25, alignment: .center)
                             .background(Color.blue.opacity(0.3))
 //                            .clipShape(RightRoundedCorners(radius: 5))
-                        Text("To Win")
+                        Text("\(percentageToTotalWin(percentage: totalOdds))")
                             .font(.subheadline)
                             .padding(.vertical, 5)
                             .frame(width: geometry.size.width * 0.25, alignment: .center)
@@ -78,6 +89,7 @@ struct ticketView: View {
                     .frame(maxWidth: .infinity)
                 }
                 .frame(height: 30) // Adjust this to your desired title
+                
                 VStack(spacing: 0) {
                     let emptyBoxesCount = max(0, maxBetsPlaced - betArray.count)
                     let totalBetsCount = betArray.count + emptyBoxesCount
@@ -133,11 +145,9 @@ struct ticketView: View {
                         .font(.headline)
                         .foregroundColor(K.darkBlue)
                     Spacer()
-                    Text(returnML(percentage: Double(bet.betOdds)))
+                    Text(percentageToML(percentage: Double(bet.betOdds)))
                         .foregroundColor(K.darkGreen)
-                    
-                    
-                    
+
                 }
                 .padding()
                 .frame(maxWidth: .infinity) // Move the frame to the bottom

@@ -72,6 +72,19 @@ class ticketViewModel: ObservableObject {
         }
     }
     
+    func availableBets(for groupNumber: Int) -> [Int] {
+        var bets = [Int]()
+        if betArray1.filter { $0.groupNumber == groupNumber }.count < 1 { bets.append(1) }
+        if betArray2.filter { $0.groupNumber == groupNumber }.count < 1 { bets.append(2) }
+        if betArray3.filter { $0.groupNumber == groupNumber }.count < 1 { bets.append(3) }
+        if betArray4.filter { $0.groupNumber == groupNumber }.count < 1 { bets.append(4) }
+        if betArray5.filter { $0.groupNumber == groupNumber }.count < 2 { bets.append(5) }
+        if betArray6.filter { $0.groupNumber == groupNumber }.count < 2 { bets.append(6) }
+        if betArray7.filter { $0.groupNumber == groupNumber }.count < 3 { bets.append(7) }
+        if betArray8.filter { $0.groupNumber == groupNumber }.count < 5 { bets.append(8) }
+        return bets
+    }
+    
     func deleteBet(bet: Bet) {
         guard let userId = Auth.auth().currentUser?.uid else { return }
         
