@@ -61,6 +61,11 @@ struct BettingAppView: View {
                                 BetRowView1(game: game)
                             }.padding()
                         }
+                        if viewModel.selectedGameType == "Upcoming" {
+                            ForEach(viewModel.upcomingGames, id: \.idd) { game in 
+                                BetRowView1(game: game)
+                            }.padding()
+                        }
                     }
                 }
             }.cornerRadius(isShowing ? 50 : 30)
@@ -74,6 +79,8 @@ struct BettingAppView: View {
     
     private var filteredGames: [Game] {
         switch viewModel.selectedGameType {
+        case "Upcoming":
+            return viewModel.upcomingGames
         case "NCAAF":
             // return array of college football games from your viewModel
             return viewModel.NCAAFGames
