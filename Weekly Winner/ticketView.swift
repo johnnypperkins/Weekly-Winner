@@ -18,7 +18,7 @@ struct ticketView: View {
                 viewModel.fetchBets(groupNumber: newValue)
             }
             Text("Potential Winnings: ")
-            Text("Total Winnings: ").font(.custom("Futura", size: 24))
+            Text("Total Winnings: $\(String(format: "%.0f", viewModel.totalWon))").font(.custom("Futura", size: 24))
             
             ScrollView {
                 VStack {

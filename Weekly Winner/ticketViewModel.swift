@@ -12,8 +12,6 @@ import Firebase
 
 class ticketViewModel: ObservableObject {
     
-
-
     @Published var betArray1 = [Bet]() // Straight #1
     @Published var betArray2 = [Bet]() // Straight #2
     @Published var betArray3 = [Bet]() // Straight #3
@@ -22,6 +20,8 @@ class ticketViewModel: ObservableObject {
     @Published var betArray6 = [Bet]() // 2 Leg #2
     @Published var betArray7 = [Bet]() // 3 Leg #1
     @Published var betArray8 = [Bet]() // 5 Leg
+    
+    @Published var totalWon: Double = 0.0
 
     private var db = Firestore.firestore()
     private var listener: ListenerRegistration?
@@ -69,11 +69,13 @@ class ticketViewModel: ObservableObject {
                 return try? queryDocumentSnapshot.data(as: Bet.self)
             }.filter { $0.betNumber == 8 }.prefix(5))
             
+            // only necessary for parlays
             self.updateBetsInResponseToLoss(betArray: &self.betArray5, maxBetsPlaced: 2, groupNumber: groupNumber, betNumber: 5)
             self.updateBetsInResponseToLoss(betArray: &self.betArray6, maxBetsPlaced: 2, groupNumber: groupNumber, betNumber: 6)
             self.updateBetsInResponseToLoss(betArray: &self.betArray7, maxBetsPlaced: 3, groupNumber: groupNumber, betNumber: 7)
             self.updateBetsInResponseToLoss(betArray: &self.betArray8, maxBetsPlaced: 5, groupNumber: groupNumber, betNumber: 8)
             
+            self.calculateTotalWon(for: groupNumber)
         }
     }
     
@@ -127,7 +129,23 @@ class ticketViewModel: ObservableObject {
             }
         }
     }
-
+    
+    func calculateTotalWon(for groupNumber: Int) {
+        let betArrays = [betArray1, betArray2, betArray3, betArray4, betArray5, betArray6, betArray7, betArray8]
+        
+        var totalWonLocal: Double = 0.0
+        
+        for betArray in betArrays {
+            if betArray.filter({ $0.groupNumber == groupNumber }).allSatisfy({ $0.result == .win }) {
+                let product = betArray.reduce(1.0, { $0 * $1.betOdds })
+                let toWin = percentageToTotalWin(percentage: Double(product))
+                totalWonLocal += Double(toWin.replacingOccurrences(of: "$", with: "")) ?? 0.0
+            }
+        }
+        
+        totalWon = totalWonLocal
+    }
+    
     func stopListening() {
         listener?.remove()
     }
