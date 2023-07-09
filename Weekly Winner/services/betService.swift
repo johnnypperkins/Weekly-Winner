@@ -23,7 +23,6 @@ class BetService {
         var data: [String: Any] = [
             "groupNumber": bet.groupNumber,
             "betNumber": bet.betNumber,
-            "betStatus": bet.betStatus.rawValue,
             "betType": bet.betType.rawValue,
             "betLine": bet.betLine,
             "betOdds": bet.betOdds,

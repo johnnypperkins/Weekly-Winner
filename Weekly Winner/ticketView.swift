@@ -141,7 +141,7 @@ struct ticketView: View {
                         }
                     }
                     if bet.result == .forcedLoss {
-                        Text("Forced Loss")
+                        Text("-")
                     } else {
                         Text("\(bet.teamBetOn ?? "Null team") \(bet.betLine >= 0 ? "+" : "")\(bet.betLine, specifier: "%.0f")")
                             .font(.headline)

@@ -15,7 +15,6 @@ struct Bet: Identifiable, Codable {
     var groupNumber: Int
     var betNumber: Int
     var weekNumber: Int? // I have literally no idea why this was the problem but it was. This needed to be an optional for whatever reason - Reid
-    var betStatus: BetStatus
     var betType: BetType
     var teamBetOn: String?
     var betLine: Float
@@ -24,11 +23,11 @@ struct Bet: Identifiable, Codable {
     var totalType: TotalType?
 }
 
-enum BetStatus: String, Codable {
-    case open
-    case inAction
-    case closed
-}
+//enum BetStatus: String, Codable {
+//    case open
+//    case inAction
+//    case closed
+//}
 
 enum BetType: String, Codable {
     case spread
