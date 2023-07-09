@@ -14,6 +14,7 @@ class bookViewModel: ObservableObject {
     @Published var NCAAFGames: [Game] = []
     @Published var userGroups: [String] = []
     @Published var isGroupsLoaded = false  // Add this line
+    @Published var selectedGameType = "NFL"
     
     //private let gameServe = gameService()
     private let betService = BetService()
@@ -25,7 +26,12 @@ class bookViewModel: ObservableObject {
         getGames(whichSport: "NCAAF")
         fetchUserGroups()
     }
-        
+    
+    enum GameType: String, CaseIterable, Hashable {
+        case collegeFootball = "College Football"
+        case nfl = "NFL"
+    }
+    
     func uploadBet(groupNumber: Int, betNumber: Int, team: String, betLine: Double, betOdds: Double, betType: BetType) {
             // Prepare the data to upload
         let bet = Bet(groupNumber: groupNumber, betNumber: betNumber, weekNumber: 1, betStatus: .open, betType: betType, teamBetOn: team, betLine: Float(betLine), betOdds: Float(betOdds), result: .inAction)
@@ -51,6 +57,8 @@ class bookViewModel: ObservableObject {
                 self.userGroups = groups
                 self.isGroupsLoaded = true  // Set this to true when data is loaded
             }
+            print(groups)
+            print(userId)
         }
     }
     

@@ -17,6 +17,7 @@ class groupService {
                 completion(nil, error)
                 return
             }
+            print(documents)
             
             var groupsDict: [Int: String] = [:]
             

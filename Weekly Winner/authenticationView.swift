@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct authenticationView: View {
     @State private var isShowingSignup = false
     @EnvironmentObject var viewModel: authenticationViewModel

@@ -7,60 +7,81 @@
 
 import SwiftUI
 
-enum GameType: String, CaseIterable, Hashable {
-    case collegeFootball = "College Football"
-    case nfl = "NFL"
-}
+//enum GameType: String, CaseIterable, Hashable {
+//    case collegeFootball = "College Football"
+//    case nfl = "NFL"
+//}
 
 struct BettingAppView: View {
-    @State private var selectedGameType = GameType.nfl
-    @ObservedObject private var viewModel = bookViewModel()
+//    @State private var selectedGameType = GameType.nfl
+    @StateObject private var viewModel = bookViewModel()
     @State private var showingSheet = false
+    @State private var isShowing = false
 
     var body: some View {
-        NavigationView {
-            
+        ZStack{
+            if isShowing {
+                sideMenuView(bookVM: viewModel, isShowing: $isShowing)
+            }
             VStack {
-                Picker("", selection: $selectedGameType) {
-                    ForEach(GameType.allCases, id: \.self) { gameType in
-                        Text(gameType.rawValue)
-                    }
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .foregroundColor(.blue)
-                .padding(.horizontal)
+                //                Picker("", selection: $selectedGameType) {
+                //                    ForEach(GameType.allCases, id: \.self) { gameType in
+                //                        Text(gameType.rawValue)
+                //                    }
+                //                }
+                //                .pickerStyle(SegmentedPickerStyle())
+                //                .foregroundColor(.blue)
+                //                .padding(.horizontal)
                 HStack {
                     Text("Betting App")
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .foregroundColor(.blue)
                         .padding()
+                    Button(action: {
+                        withAnimation(.spring()) {
+                            isShowing.toggle()
+                        }
+                        // Action for right button
+                    }) {
+                        Image(systemName: "bell")
+                            .imageScale(.large)
+                    }
                 }
                 
                 ScrollView {
                     VStack(spacing: 7.5) {
-                        ForEach(filteredGames, id: \.idd) { game in // HARDCODE NCAAF
-                            BetRowView1(game: game)
-                            }
+                        if viewModel.selectedGameType == "NFL" {
+                            ForEach(viewModel.NFLgames, id: \.idd) { game in // HARDCODE NCAAF
+                                BetRowView1(game: game)
+                            }.padding()
+                        }
+                        if viewModel.selectedGameType == "NCAAF" {
+                            ForEach(viewModel.NCAAFGames, id: \.idd) { game in // HARDCODE NCAAF
+                                BetRowView1(game: game)
+                            }.padding()
+                        }
                     }
-                    .padding()
                 }
+            }.cornerRadius(isShowing ? 50 : 30)
+                .blur(radius: isShowing ? 8 : 0)
+                .offset(x:isShowing ? 300 : 0, y: isShowing ? 100 : 0)
+                .scaleEffect(isShowing ? 0.8 : 1)
             }
-            .background(Color.white
-                .edgesIgnoringSafeArea(.all)
-            ).ignoresSafeArea(.all)
+            .ignoresSafeArea(.all)
             .navigationBarHidden(true)
         }
-    }
     
     private var filteredGames: [Game] {
-        switch selectedGameType {
-        case .collegeFootball:
+        switch viewModel.selectedGameType {
+        case "NCAAF":
             // return array of college football games from your viewModel
             return viewModel.NCAAFGames
-        case .nfl:
+        case "NFL":
             // return array of NFL games from your viewModel
             return viewModel.NFLgames
+        default:
+            return []
         }
     }
 }
@@ -170,7 +191,7 @@ struct BetDetailsView: View {
     @State private var originalSpread: Double = 2
     @State private var betType = 1
     @ObservedObject var viewModel = bookViewModel()
-    @ObservedObject var ticketVM = ticketViewModel()
+    @StateObject var ticketVM = ticketViewModel()
     
     @State private var groupNumber = 0
     @State private var parlayType = 1
@@ -200,7 +221,7 @@ struct BetDetailsView: View {
             
             HStack {
 
-                if viewModel.isGroupsLoaded {
+//                if viewModel.isGroupsLoaded {
                     Picker("Group", selection: $groupNumber) {
                         ForEach(0..<viewModel.userGroups.count, id: \.self) { index in
                             Text(viewModel.userGroups[index]).tag(index)
@@ -212,9 +233,9 @@ struct BetDetailsView: View {
                     }.onAppear {
                         ticketVM.fetchBets(groupNumber: groupNumber)
                     }
-                } else {
-                    Text("Loading...")
-                }
+//                } else {
+//                    Text("Loading...")
+//                }
  
                 Picker("Bet Type", selection: $parlayType) { // starts at 1 bc "1 leg"
                     ForEach(ticketVM.availableBets(for: groupNumber), id: \.self) { index in //
