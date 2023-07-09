@@ -19,6 +19,9 @@ struct K {
     static let veryLightBlue = Color(hex: "#CCDDFF")
     static let darkBlue = Color(hex: "#062F4F")
     static let darkGreen = Color(hex: "#064F2F")
+    static let lightGreen = Color(hex: "#CCFFCC")
+    static let lightRed = Color(hex: "#FFCCCC")
+    static let lightYellow = Color(hex: "#FFFFCC")
 }
 
 extension Color {
@@ -45,5 +48,19 @@ extension Color {
             blue:  Double(b) / 255,
             opacity: Double(a) / 255
         )
+    }
+}
+
+
+extension Color {
+    static func backgroundForBetResult(_ result: BetResult) -> Color {
+        switch result {
+        case .notStarted: return K.veryLightBlue
+        case .inAction: return K.lightYellow
+        case .loss: return K.lightRed
+        case .win: return K.lightGreen
+        case .forcedLoss: return K.lightRed
+        // add other cases as needed
+        }
     }
 }

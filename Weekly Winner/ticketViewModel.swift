@@ -37,7 +37,6 @@ class ticketViewModel: ObservableObject {
                 return
             }
 
-            
             self.betArray1 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
                 return try? queryDocumentSnapshot.data(as: Bet.self)
             }.filter { $0.betNumber == 1 }.prefix(1))
@@ -61,7 +60,7 @@ class ticketViewModel: ObservableObject {
             self.betArray6 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
                 return try? queryDocumentSnapshot.data(as: Bet.self)
             }.filter { $0.betNumber == 6 }.prefix(2))
-
+            
             self.betArray7 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
                 return try? queryDocumentSnapshot.data(as: Bet.self)
             }.filter { $0.betNumber == 7 }.prefix(3))
@@ -69,19 +68,25 @@ class ticketViewModel: ObservableObject {
             self.betArray8 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
                 return try? queryDocumentSnapshot.data(as: Bet.self)
             }.filter { $0.betNumber == 8 }.prefix(5))
+            
+            self.updateBetsInResponseToLoss(betArray: &self.betArray5, maxBetsPlaced: 2, groupNumber: groupNumber, betNumber: 5)
+            self.updateBetsInResponseToLoss(betArray: &self.betArray6, maxBetsPlaced: 2, groupNumber: groupNumber, betNumber: 6)
+            self.updateBetsInResponseToLoss(betArray: &self.betArray7, maxBetsPlaced: 3, groupNumber: groupNumber, betNumber: 7)
+            self.updateBetsInResponseToLoss(betArray: &self.betArray8, maxBetsPlaced: 5, groupNumber: groupNumber, betNumber: 8)
+            
         }
     }
     
     func availableBets(for groupNumber: Int) -> [Int] {
         var bets = [Int]()
-        if betArray1.filter { $0.groupNumber == groupNumber }.count < 1 { bets.append(1) }
-        if betArray2.filter { $0.groupNumber == groupNumber }.count < 1 { bets.append(2) }
-        if betArray3.filter { $0.groupNumber == groupNumber }.count < 1 { bets.append(3) }
-        if betArray4.filter { $0.groupNumber == groupNumber }.count < 1 { bets.append(4) }
-        if betArray5.filter { $0.groupNumber == groupNumber }.count < 2 { bets.append(5) }
-        if betArray6.filter { $0.groupNumber == groupNumber }.count < 2 { bets.append(6) }
-        if betArray7.filter { $0.groupNumber == groupNumber }.count < 3 { bets.append(7) }
-        if betArray8.filter { $0.groupNumber == groupNumber }.count < 5 { bets.append(8) }
+        if betArray1.filter({ $0.groupNumber == groupNumber }).count < 1 { bets.append(1) }
+        if betArray2.filter({ $0.groupNumber == groupNumber }).count < 1 { bets.append(2) }
+        if betArray3.filter({ $0.groupNumber == groupNumber }).count < 1 { bets.append(3) }
+        if betArray4.filter({ $0.groupNumber == groupNumber }).count < 1 { bets.append(4) }
+        if betArray5.filter({ $0.groupNumber == groupNumber }).count < 2 { bets.append(5) }
+        if betArray6.filter({ $0.groupNumber == groupNumber }).count < 2 { bets.append(6) }
+        if betArray7.filter({ $0.groupNumber == groupNumber }).count < 3 { bets.append(7) }
+        if betArray8.filter({ $0.groupNumber == groupNumber }).count < 5 { bets.append(8) }
         return bets
     }
     
@@ -94,6 +99,31 @@ class ticketViewModel: ObservableObject {
             } else {
                 print("Document successfully removed!")
                 self.fetchBets(groupNumber: bet.groupNumber) // fetch the updated list of bets
+            }
+        }
+    }
+    
+    // Ok so this function deals with the other bets if there is a loss in a parlay. All .notStarted bets are removed, all empty bets are pushed to null and the betArray is filled
+    func updateBetsInResponseToLoss(betArray: inout [Bet], maxBetsPlaced: Int, groupNumber: Int, betNumber: Int) {
+        if betArray.contains(where: { $0.result == .loss }) {
+            // Create a copy of betArray to avoid modifying array while iterating
+            let betArrayCopy = betArray
+
+            for bet in betArrayCopy {
+                if bet.result == .notStarted {
+                    // Remove from the array
+                    if let index = betArray.firstIndex(where: { $0.id == bet.id }) {
+                        betArray.remove(at: index)
+                    }
+                    // Delete from the database
+                    deleteBet(bet: bet)
+                }
+            }
+
+            let remainingSpots = maxBetsPlaced - betArray.count
+            for _ in 0..<remainingSpots {
+                let emptyBet = Bet(groupNumber: groupNumber, betNumber: betNumber, betStatus: .closed, betType: .null, betLine: 0, betOdds: 1, result: .forcedLoss ) // create as per your requirements
+                betArray.append(emptyBet)
             }
         }
     }

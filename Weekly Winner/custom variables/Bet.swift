@@ -33,12 +33,15 @@ enum BetStatus: String, Codable {
 enum BetType: String, Codable {
     case spread
     case total
+    case null
 }
 
 enum BetResult: String, Codable {
     case win
     case loss
     case inAction
+    case notStarted
+    case forcedLoss
 }
 
 enum TotalType: String, Codable {

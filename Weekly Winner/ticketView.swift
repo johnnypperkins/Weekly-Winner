@@ -59,6 +59,10 @@ struct ticketView: View {
             }
             return total
         }
+        
+        var hasLoss: Bool {
+            return betArray.contains(where: { $0.result == .loss })
+        }
 
         var body: some View {
 
@@ -83,7 +87,7 @@ struct ticketView: View {
                             .font(.subheadline)
                             .padding(.vertical, 5)
                             .frame(width: geometry.size.width * 0.25, alignment: .center)
-                            .background(Color.green.opacity(0.3))
+                            .background(hasLoss ? K.lightRed : K.darkBlue.opacity(0.3))
                             .clipShape(RightRoundedCorners(radius: 5))
                     }
                     .frame(maxWidth: .infinity)
@@ -116,7 +120,6 @@ struct ticketView: View {
                         }
                     }
                 }
-                
             }
             .padding(.horizontal) // Applying padding to the VStack directly
         }
@@ -124,47 +127,37 @@ struct ticketView: View {
         struct BetCard: View {
             let bet: Bet
             @ObservedObject var viewModel: ticketViewModel
-//            var topLeft: CGFloat
-//            var topRight: CGFloat
-//            var bottomLeft: CGFloat
-//            var bottomRight: CGFloat
 
             var body: some View {
                 HStack {
-                    Button(action: {
-                        self.viewModel.deleteBet(bet: bet)
-                    }) {
-                        Image(systemName: "xmark.circle")
-                            .resizable()
-                            .frame(width: 20, height: 20)
-                            .foregroundColor(.red)
+                    if bet.result == .notStarted { // ONLY SHOWS DELETE BUTTON IF .NOTSTARTED
+                        Button(action: {
+                            self.viewModel.deleteBet(bet: bet)
+                        }) {
+                            Image(systemName: "xmark.circle")
+                                .resizable()
+                                .frame(width: 20, height: 20)
+                                .foregroundColor(.red)
+                        }
                     }
-//                    .padding(.leading)
-                    
-                    Text("\(bet.teamBetOn ?? "Null team") \(bet.betLine >= 0 ? "+" : "")\(bet.betLine, specifier: "%.0f")")
-                        .font(.headline)
-                        .foregroundColor(K.darkBlue)
-                    Spacer()
-                    Text(percentageToML(percentage: Double(bet.betOdds)))
-                        .foregroundColor(K.darkGreen)
-
+                    if bet.result == .forcedLoss {
+                        Text("Forced Loss")
+                    } else {
+                        Text("\(bet.teamBetOn ?? "Null team") \(bet.betLine >= 0 ? "+" : "")\(bet.betLine, specifier: "%.0f")")
+                            .font(.headline)
+                            .foregroundColor(K.darkBlue)
+                        Spacer()
+                        Text(percentageToML(percentage: Double(bet.betOdds)))
+                            .foregroundColor(K.darkGreen)
+                    }
                 }
                 .padding()
                 .frame(maxWidth: .infinity) // Move the frame to the bottom
-                .background(K.veryLightBlue)
-                
-                //.modifier(ConditionalCornerRadius(topLeft: topLeft, topRight: topRight, bottomLeft: bottomLeft, bottomRight: bottomRight))
-                //.shadow(color: Color.black.opacity(0.2), radius: 7, x: 0, y: 2)
+                .background(Color.backgroundForBetResult(bet.result)) // changes color based on bet result
             }
-            
-            
         }
 
         struct EmptyBetCard: View {
-//            var topLeft: CGFloat
-//            var topRight: CGFloat
-//            var bottomLeft: CGFloat
-//            var bottomRight: CGFloat
 
             var body: some View {
                 VStack(alignment: .leading) {
