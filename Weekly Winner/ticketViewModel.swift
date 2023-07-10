@@ -22,6 +22,9 @@ class ticketViewModel: ObservableObject {
     @Published var betArray8 = [Bet]() // 5 Leg
     
     @Published var totalWon: Double = 0.0
+    @Published var totalPotentialWon: Double = 0.0
+    
+    @Published var isBetsLoaded = false  // Add this line
 
     private var db = Firestore.firestore()
     private var listener: ListenerRegistration?
@@ -75,7 +78,12 @@ class ticketViewModel: ObservableObject {
             self.updateBetsInResponseToLoss(betArray: &self.betArray7, maxBetsPlaced: 3, groupNumber: groupNumber, betNumber: 7)
             self.updateBetsInResponseToLoss(betArray: &self.betArray8, maxBetsPlaced: 5, groupNumber: groupNumber, betNumber: 8)
             
-            self.calculateTotalWon(for: groupNumber)
+            self.calculateTotals(for: groupNumber)
+            if let error = error {
+                print(error)
+            } else {
+                self.isBetsLoaded = true
+            }
         }
     }
     
@@ -129,23 +137,55 @@ class ticketViewModel: ObservableObject {
             }
         }
     }
-    
-    func calculateTotalWon(for groupNumber: Int) {
-        let betArrays = [betArray1, betArray2, betArray3, betArray4, betArray5, betArray6, betArray7, betArray8]
-        
+
+    func calculateTotals(for groupNumber: Int) {
+        let betArrays1 = [betArray1, betArray2, betArray3, betArray4]
+        let betArrays2 = [betArray5, betArray6]
+        let betArrays3 = [betArray7]
+        let betArrays4 = [betArray8]
+
         var totalWonLocal: Double = 0.0
-        
-        for betArray in betArrays {
-            if betArray.filter({ $0.groupNumber == groupNumber }).allSatisfy({ $0.result == .win }) {
+        var totalPotentialWonLocal: Double = 0.0
+
+        // Helper function to avoid code duplication
+        func calculateForBetArray(_ betArray: [Bet], count: Int) {
+            if betArray.count == count {
                 let product = betArray.reduce(1.0, { $0 * $1.betOdds })
                 let toWin = percentageToTotalWin(percentage: Double(product))
-                totalWonLocal += Double(toWin.replacingOccurrences(of: "$", with: "")) ?? 0.0
+                let potentialWin = Double(toWin.replacingOccurrences(of: "$", with: "")) ?? 0.0
+
+                if betArray.filter({ $0.groupNumber == groupNumber }).allSatisfy({ $0.result == .win }) {
+                    totalWonLocal += potentialWin
+                }
+
+                // check if not all elements in the array are a win
+                if !betArray.filter({ $0.groupNumber == groupNumber }).allSatisfy({ $0.result == .win }) &&
+                    !betArray.filter({ $0.groupNumber == groupNumber }).contains(where: { $0.result == .loss }) {
+                    totalPotentialWonLocal += potentialWin
+                }
             }
         }
-        
+
+        for betArray in betArrays1 {
+            calculateForBetArray(betArray, count: 1)
+        }
+
+        for betArray in betArrays2 {
+            calculateForBetArray(betArray, count: 2)
+        }
+
+        for betArray in betArrays3 {
+            calculateForBetArray(betArray, count: 3)
+        }
+
+        for betArray in betArrays4 {
+            calculateForBetArray(betArray, count: 5)
+        }
+
         totalWon = totalWonLocal
+        totalPotentialWon = totalPotentialWonLocal
     }
-    
+
     func stopListening() {
         listener?.remove()
     }

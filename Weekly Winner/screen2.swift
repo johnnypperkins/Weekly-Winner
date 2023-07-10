@@ -127,7 +127,7 @@ struct BetRowView1: View {
                             showingSheet.toggle()
                         }
                     }
-                   
+                    
                 }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
                 
                 Divider()
@@ -142,13 +142,12 @@ struct BetRowView1: View {
                             betTeamType = .betAwaySpread
                             showingSheet.toggle()
                         }
-
+                        
                         BetButton(betTeamType: .under, currentBetType: $betTeamType, title: "u" + String(format: "%.0f", game.totalUnder)) {
                             betTeamType = .under
                             showingSheet.toggle()
                         }
                     }
-                    
                 }.padding(.top,4)
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
                     .onAppear {
@@ -163,6 +162,7 @@ struct BetRowView1: View {
                             titleStringA = "+" + String(format: "%.0f", game.awaySpread)
                         }
                     }
+                Text("\(formatDate.format(date: game.commenceTime.dateValue()))")
             }
             
             Spacer()
@@ -201,7 +201,7 @@ struct BetDetailsView: View {
     @StateObject var ticketVM = ticketViewModel()
     
     @State private var groupNumber = 0
-    @State private var parlayType = 1
+    @State private var betNumber = -99
     @State private var groupDict: [String: Int] = [:]
     @State private var whichTeam = ""
     @State private var extra = "" // to add the extra detail of +, o, u
@@ -228,7 +228,7 @@ struct BetDetailsView: View {
             
             HStack {
 
-//                if viewModel.isGroupsLoaded {
+                if ticketVM.isBetsLoaded {
                     Picker("Group", selection: $groupNumber) {
                         ForEach(0..<viewModel.userGroups.count, id: \.self) { index in
                             Text(viewModel.userGroups[index]).tag(index)
@@ -237,33 +237,49 @@ struct BetDetailsView: View {
                     .pickerStyle(WheelPickerStyle())
                     .onChange(of: groupNumber) { newValue in
                         ticketVM.fetchBets(groupNumber: newValue)
-                    }.onAppear {
-                        ticketVM.fetchBets(groupNumber: groupNumber)
-                    }
-//                } else {
-//                    Text("Loading...")
-//                }
- 
-                Picker("Bet Type", selection: $parlayType) { // starts at 1 bc "1 leg"
-                    ForEach(ticketVM.availableBets(for: groupNumber), id: \.self) { index in //
-                        switch index {
-                        case 1: Text("Straight #1").tag(1)
-                        case 2: Text("Straight #2").tag(2)
-                        case 3: Text("Straight #3").tag(3)
-                        case 4: Text("Straight #4").tag(4)
-                        case 5: Text("2leg #1").tag(5)
-                        case 6: Text("2leg #2").tag(6)
-                        case 7: Text("3leg").tag(7)
-                        case 8: Text("5leg").tag(8)
-                        default: EmptyView()
+                        print("Picker \(newValue)")
+                        if !ticketVM.availableBets(for: newValue).isEmpty {
+                            betNumber = ticketVM.availableBets(for: groupNumber)[0]
+                        } else {
+                            betNumber = -99
                         }
                     }
+     
+                    Picker("Bet Type", selection: $betNumber) { // starts at 1 bc "1 leg"
+                        ForEach(ticketVM.availableBets(for: groupNumber), id: \.self) { index in //
+                            switch index {
+                            case 1: Text("Straight #1").tag(1)
+                            case 2: Text("Straight #2").tag(2)
+                            case 3: Text("Straight #3").tag(3)
+                            case 4: Text("Straight #4").tag(4)
+                            case 5: Text("2leg #1").tag(5)
+                            case 6: Text("2leg #2").tag(6)
+                            case 7: Text("3leg").tag(7)
+                            case 8: Text("5leg").tag(8)
+                            default: EmptyView()
+                            }
+                        }
+                    }
+                    .pickerStyle(WheelPickerStyle())
+                    .onChange(of: betNumber) { newValue in
+                        print("Selection changed to: \(newValue)")
+                    }
+                    .onAppear {
+                        print("\(betNumber) is original betNumber")
+                        if !ticketVM.availableBets(for: groupNumber).isEmpty {
+                            betNumber = ticketVM.availableBets(for: groupNumber)[0]
+                        } else {
+                            betNumber = -99
+                        }
+                        
+                    }
+            
+                    
                 }
-                .pickerStyle(WheelPickerStyle())
-                
+            }.onAppear {
+                ticketVM.fetchBets(groupNumber: groupNumber)
+                print("Group Number: \(groupNumber), Bet Number: \(betNumber)")
             }
-            
-            
 
             if betTeamType == .betAwaySpread {
                 BetView(teamName: game.awayTeam, originalSpread: game.awaySpread, betType: 1, chosenSpread: $chosenSpread)
@@ -280,15 +296,15 @@ struct BetDetailsView: View {
         
             
         Button(action: {
-            print("groupNumber: \(groupNumber), betNumber: \(parlayType)")
-            viewModel.uploadBet(groupNumber: groupNumber, betNumber: parlayType, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread)), betType: .spread)
+            print("groupNumber: \(groupNumber), betNumber: \(betNumber)")
+            viewModel.uploadBet(groupNumber: groupNumber, betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread)), betType: .spread)
                 withAnimation {
                     dismiss()
                     betTeamType = .None
                 }
             
-               }) {
-                   Text("Place Bet")
+               }, label: {
+                   Text(betNumber > 0 ? "Place Bet" : "Ticket Full")
                        .font(.title)
                        .fontWeight(.bold)
                        .foregroundColor(.white)
@@ -299,8 +315,11 @@ struct BetDetailsView: View {
                        )
                        .cornerRadius(10)
                        .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
-               }
-        }.onAppear(perform: {
+               })
+        .disabled(betNumber < 0)
+        }
+        
+        .onAppear(perform: {
             if betTeamType == .betAwaySpread {
                 chosenSpread = game.awaySpread
                 originalSpread = game.awaySpread

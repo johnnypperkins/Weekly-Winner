@@ -15,6 +15,8 @@ class bookViewModel: ObservableObject {
     @Published var upcomingGames: [Game] = []
     @Published var userGroups: [String] = []
     @Published var isGroupsLoaded = false  // Add this line
+
+    
     @Published var selectedGameType = "NFL"
     
     //private let gameServe = gameService()
@@ -47,9 +49,9 @@ class bookViewModel: ObservableObject {
         }
         
          upcomingGames = combinedGames
-        print("aaaa")
-        print(combinedGames)
-        print("aaaa")
+        //print("aaaa")
+        //print(combinedGames)
+       // print("aaaa")
         
     }
     
@@ -78,8 +80,8 @@ class bookViewModel: ObservableObject {
                 self.userGroups = groups
                 self.isGroupsLoaded = true  // Set this to true when data is loaded
             }
-            print(groups)
-            print(userId)
+            //print(groups)
+            //print(userId)
         }
     }
     
@@ -98,7 +100,7 @@ class bookViewModel: ObservableObject {
                 if let snapshotDocuments = querySnapshot?.documents {
                     for doc in snapshotDocuments {
                         let data = doc.data()
-                        print("test")
+                        //print("test")
                         if let idd = data["id"] as? String,
                            let commenceTime = data["commenceTime"] as? Timestamp,
                             let totalOver = data["totalOver"] as? Double,
@@ -109,19 +111,19 @@ class bookViewModel: ObservableObject {
                            let awaySpread = data["awaySpread"] as? Double {
     //                       let completed = data["completed"] as? Bool {
                             let newGame = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder)
-                            print("3")
+                            //print("3")
                             
                             games.append(newGame)
                             
                         } else {
-                            print("There is an error")
+                           // print("There is an error")
                         }
-                        print(data["totalOver"])
-                        print("2")
+                        //print(data["totalOver"])
+                        //print("2")
                     }
-                    print("1")
+                   //print("1")
                 }
-                print("hhsdhfs")
+                //print("hhsdhfs")
 //                print(games)
                 if (whichSport == "NFL") {
                     self.NFLgames = games

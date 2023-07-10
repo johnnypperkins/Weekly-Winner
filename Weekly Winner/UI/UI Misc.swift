@@ -64,3 +64,17 @@ extension Color {
         }
     }
 }
+
+
+struct formatDate {
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d, h:mm"
+        formatter.timeZone = TimeZone(abbreviation: "EST") // Or whatever timezone the date is in
+        return formatter
+    }()
+
+    static func format(date: Date) -> String {
+        return dateFormatter.string(from: date)
+    }
+}

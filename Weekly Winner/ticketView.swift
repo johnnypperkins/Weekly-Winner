@@ -17,7 +17,7 @@ struct ticketView: View {
             .onChange(of: selectedGroup) { newValue in
                 viewModel.fetchBets(groupNumber: newValue)
             }
-            Text("Potential Winnings: ")
+            Text("Potential Winnings: $\(String(format: "%.0f", viewModel.totalPotentialWon))").font(.custom("Futura", size: 24))
             Text("Total Winnings: $\(String(format: "%.0f", viewModel.totalWon))").font(.custom("Futura", size: 24))
             
             ScrollView {
