@@ -205,6 +205,19 @@ struct BetDetailsView: View {
     @State private var groupDict: [String: Int] = [:]
     @State private var whichTeam = ""
     @State private var extra = "" // to add the extra detail of +, o, u
+    @State private var uploadText = ""
+    
+    func checkTeamTaken() {
+        if betNumber < 0 {
+            uploadText = "Ticket Full"
+        } else {
+            if ticketVM.isTeamAvailable(whichTeam, groupNumber) {
+                uploadText = "Upload Bet"
+            } else {
+                uploadText = "Team Taken"
+            }
+        }
+    }
     
     var body: some View {
         VStack {
@@ -222,7 +235,6 @@ struct BetDetailsView: View {
                 }
                 Spacer()
 
-                
             }.frame(maxWidth:.infinity, alignment: .center)
                 .padding(.leading)
             
@@ -237,14 +249,22 @@ struct BetDetailsView: View {
                     .pickerStyle(WheelPickerStyle())
                     .onChange(of: groupNumber) { newValue in
                         ticketVM.fetchBets(groupNumber: newValue)
-                        print("Picker \(newValue)")
                         if !ticketVM.availableBets(for: newValue).isEmpty {
                             betNumber = ticketVM.availableBets(for: groupNumber)[0]
                         } else {
                             betNumber = -99
                         }
+                        checkTeamTaken()
                     }
-     
+                    .onAppear {
+                        if !ticketVM.availableBets(for: groupNumber).isEmpty {
+                            betNumber = ticketVM.availableBets(for: groupNumber)[0]
+                        } else {
+                            betNumber = -99
+                        }
+                        checkTeamTaken()
+                    }
+
                     Picker("Bet Type", selection: $betNumber) { // starts at 1 bc "1 leg"
                         ForEach(ticketVM.availableBets(for: groupNumber), id: \.self) { index in //
                             switch index {
@@ -263,6 +283,12 @@ struct BetDetailsView: View {
                     .pickerStyle(WheelPickerStyle())
                     .onChange(of: betNumber) { newValue in
                         print("Selection changed to: \(newValue)")
+//                        if !ticketVM.availableBets(for: groupNumber).isEmpty {
+//                            betNumber = ticketVM.availableBets(for: groupNumber)[0]
+//                        } else {
+//                            betNumber = -99
+//                        }
+                        checkTeamTaken()
                     }
                     .onAppear {
                         print("\(betNumber) is original betNumber")
@@ -271,10 +297,8 @@ struct BetDetailsView: View {
                         } else {
                             betNumber = -99
                         }
-                        
+                        checkTeamTaken()
                     }
-            
-                    
                 }
             }.onAppear {
                 ticketVM.fetchBets(groupNumber: groupNumber)
@@ -304,7 +328,7 @@ struct BetDetailsView: View {
                 }
             
                }, label: {
-                   Text(betNumber > 0 ? "Place Bet" : "Ticket Full")
+                   Text(uploadText)
                        .font(.title)
                        .fontWeight(.bold)
                        .foregroundColor(.white)
@@ -316,9 +340,8 @@ struct BetDetailsView: View {
                        .cornerRadius(10)
                        .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
                })
-        .disabled(betNumber < 0)
+        .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber))
         }
-        
         .onAppear(perform: {
             if betTeamType == .betAwaySpread {
                 chosenSpread = game.awaySpread
@@ -350,10 +373,8 @@ struct BetDetailsView: View {
                groupDict[group] = index
                index += 1
             }
-            
         })
     }
-    
 }
 
 

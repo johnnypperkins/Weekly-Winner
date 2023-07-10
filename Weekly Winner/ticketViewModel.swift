@@ -186,6 +186,20 @@ class ticketViewModel: ObservableObject {
         totalPotentialWon = totalPotentialWonLocal
     }
 
+    func isTeamAvailable(_ team: String,_ groupNumber: Int) -> Bool {
+        let allBetArrays = [betArray1, betArray2, betArray3, betArray4, betArray5, betArray6, betArray7, betArray8]
+
+        for betArray in allBetArrays {
+            for bet in betArray {
+                if bet.teamBetOn == team && bet.groupNumber == groupNumber {
+                    return false
+                }
+            }
+        }
+
+        return true
+    }
+    
     func stopListening() {
         listener?.remove()
     }
