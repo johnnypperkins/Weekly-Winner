@@ -15,7 +15,7 @@ struct ticketView: View {
             .pickerStyle(SegmentedPickerStyle())
             .padding(.horizontal, 10)
             .onChange(of: selectedGroup) { newValue in
-                viewModel.fetchBets(groupNumber: newValue)
+                viewModel.fetchBets(groupNumber: newValue, completion: {})
             }
             Text("Potential Winnings: $\(String(format: "%.0f", viewModel.totalPotentialWon))").font(.custom("Futura", size: 24))
             Text("Total Winnings: $\(String(format: "%.0f", viewModel.totalWon))").font(.custom("Futura", size: 24))
@@ -35,7 +35,7 @@ struct ticketView: View {
             }
         }
         .onAppear {
-            viewModel.fetchBets(groupNumber: selectedGroup) // Fetch bets for selected group on view appear
+            viewModel.fetchBets(groupNumber: selectedGroup, completion: {}) // Fetch bets for selected group on view appear
         }
         .onDisappear {
             viewModel.stopListening() // Stop listening when view disappears

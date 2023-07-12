@@ -29,7 +29,7 @@ class ticketViewModel: ObservableObject {
     private var db = Firestore.firestore()
     private var listener: ListenerRegistration?
 
-    func fetchBets(groupNumber: Int) {
+    func fetchBets(groupNumber: Int, completion: @escaping () -> Void) {
         guard let userId = Auth.auth().currentUser?.uid else { return }
         print("userID:" + userId)
         listener = db.collection("users").document(userId).collection("bets")
@@ -84,6 +84,7 @@ class ticketViewModel: ObservableObject {
             } else {
                 self.isBetsLoaded = true
             }
+            completion()
         }
     }
     
@@ -107,8 +108,8 @@ class ticketViewModel: ObservableObject {
             if let error = error {
                 print("Error removing document: \(error)")
             } else {
-                print("Document successfully removed!")
-                self.fetchBets(groupNumber: bet.groupNumber) // fetch the updated list of bets
+                
+                self.fetchBets(groupNumber: bet.groupNumber) {print("Document successfully removed!")} // fetch the updated list of bets
             }
         }
     }

@@ -248,13 +248,15 @@ struct BetDetailsView: View {
                     }
                     .pickerStyle(WheelPickerStyle())
                     .onChange(of: groupNumber) { newValue in
-                        ticketVM.fetchBets(groupNumber: newValue)
-                        if !ticketVM.availableBets(for: newValue).isEmpty {
-                            betNumber = ticketVM.availableBets(for: groupNumber)[0]
-                        } else {
-                            betNumber = -99
+                        ticketVM.fetchBets(groupNumber: newValue) {
+                            if !ticketVM.availableBets(for: newValue).isEmpty {
+                                betNumber = ticketVM.availableBets(for: groupNumber)[0]
+                            } else {
+                                betNumber = -99
+                            }
+                            checkTeamTaken()
                         }
-                        checkTeamTaken()
+                        
                     }
                     .onAppear {
                         if !ticketVM.availableBets(for: groupNumber).isEmpty {
@@ -292,16 +294,18 @@ struct BetDetailsView: View {
                     }
                     .onAppear {
                         print("\(betNumber) is original betNumber")
-                        if !ticketVM.availableBets(for: groupNumber).isEmpty {
-                            betNumber = ticketVM.availableBets(for: groupNumber)[0]
-                        } else {
-                            betNumber = -99
-                        }
-                        checkTeamTaken()
+                        
                     }
                 }
             }.onAppear {
-                ticketVM.fetchBets(groupNumber: groupNumber)
+                ticketVM.fetchBets(groupNumber: groupNumber) {
+                    if !ticketVM.availableBets(for: groupNumber).isEmpty {
+                        betNumber = ticketVM.availableBets(for: groupNumber)[0]
+                    } else {
+                        betNumber = -99
+                    }
+                    checkTeamTaken()
+                }
                 print("Group Number: \(groupNumber), Bet Number: \(betNumber)")
             }
 
