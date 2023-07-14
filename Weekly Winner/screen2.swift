@@ -243,7 +243,7 @@ struct BetDetailsView: View {
                 if ticketVM.isBetsLoaded {
                     Picker("Group", selection: $groupNumber) {
                         ForEach(0..<viewModel.userGroups.count, id: \.self) { index in
-                            Text(viewModel.userGroups[index]).tag(index)
+                            Text(viewModel.userGroups[index].groupName).tag(index)
                         }
                     }
                     .pickerStyle(WheelPickerStyle())
@@ -325,7 +325,12 @@ struct BetDetailsView: View {
             
         Button(action: {
             print("groupNumber: \(groupNumber), betNumber: \(betNumber)")
-            viewModel.uploadBet(groupNumber: groupNumber, betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread)), betType: .spread)
+            viewModel.uploadBet(groupNumber: groupNumber, betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread)), betType: .spread) {_ in 
+                ticketVM.fetchBets(groupNumber: groupNumber, completion: {
+                    let groupServe = groupService()
+                    groupServe.setPotentialToWin(potential: Int(ticketVM.totalPotentialWon), groupNumber: groupNumber, completion: {_ in })
+                })
+            }
                 withAnimation {
                     dismiss()
                     betTeamType = .None
@@ -370,12 +375,6 @@ struct BetDetailsView: View {
                 originalSpread = game.totalUnder
                 whichTeam = "\(game.homeTeam)/\(game.awayTeam) u"
                 betType = 4
-            }
-            //print("view model.usergroups: \(viewModel.userGroups)")
-            var index = 0
-            for group in viewModel.userGroups {
-               groupDict[group] = index
-               index += 1
             }
         })
     }

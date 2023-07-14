@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct UserProfileView: View {
+    
+    
     var body: some View {
         VStack(spacing: 20) {
             ProfileHeaderView()
@@ -20,8 +22,8 @@ struct UserProfileView: View {
                 MostPopularBetsView()
                     .padding(.horizontal, 20)
                 
-                YourBetsView()
-                    .padding(.horizontal, 20)
+               // YourBetsView()
+                 //   .padding(.horizontal, 20)
             }
             
             Spacer()
@@ -31,31 +33,38 @@ struct UserProfileView: View {
 }
 
 struct ProfileHeaderView: View {
+    //@StateObject var authenticationVM = authenticationViewModel()
+    @StateObject var ticketVM = ticketViewModel()
+    
     var body: some View {
-        ZStack {
+        VStack {
             Color.blue
                 .frame(height: 200)
                 .cornerRadius(20)
                 .shadow(radius: 10)
             
-            VStack(spacing: 10) {
-                Image("profile_image")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 120, height: 120)
-                    .clipShape(Circle())
-                    .shadow(radius: 5)
+            LazyVGrid(columns: Array(repeating: .init(), count: 3), spacing: 20) {
+                // Adding headers
+                Text("Group").font(.headline)
+                Text("Total Won").font(.headline)
+                Text("Total Potential").font(.headline)
                 
-                Text("John Doe")
-                    .font(.title)
-                    .foregroundColor(.white)
-                
-                Text("UI/UX Designer")
-                    .font(.subheadline)
-                    .foregroundColor(.white)
+                // Populating the grid with data
+                ForEach(0..<ticketVM.userGroups.count, id: \.self) { index in
+                    Text(ticketVM.userGroups[index].id ?? "default")
+                    Text(String(ticketVM.userGroups[index].totalWon))
+                    Text(String(ticketVM.userGroups[index].totalPotentialWon))
+                }
+            }
+            .padding() // For adding padding around the grid
+        }
+        .onAppear() {
+            ticketVM.fetchUserGroups {
+                print("were fetched")
             }
         }
     }
+    
 }
 
 struct MostPopularBetsView: View {

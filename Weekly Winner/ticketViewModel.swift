@@ -23,12 +23,42 @@ class ticketViewModel: ObservableObject {
     
     @Published var totalWon: Double = 0.0
     @Published var totalPotentialWon: Double = 0.0
+    @Published var totalWonArray: [Int] = []
     
     @Published var isBetsLoaded = false  // Add this line
 
     private var db = Firestore.firestore()
     private var listener: ListenerRegistration?
+    
+    private let groupServe = groupService()
+    @Published var userGroups: [Group] = []
 
+    func fillTotalsArr() {
+        fetchUserGroups {
+            for index in 0..<self.userGroups.count {
+                self.fetchBets(groupNumber: index, completion: { [self] in
+                    self.calculateTotals(for: index)
+                    totalWonArray.append(Int(self.totalWon))
+                })
+            }
+        }
+    }
+
+    func fetchUserGroups(completion: @escaping () -> Void) {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        groupServe.fetchUserGroups(userID: userId) { groups, error in
+            if let error = error {
+                print("Error fetching user groups: \(error.localizedDescription)")
+            } else if let groups = groups {
+                self.userGroups = groups
+                //self.isGroupsLoaded = true  // Set this to true when data is loaded
+            }
+            completion()
+            //print(groups)
+            //print(userId)
+        }
+    }
+    
     func fetchBets(groupNumber: Int, completion: @escaping () -> Void) {
         guard let userId = Auth.auth().currentUser?.uid else { return }
         print("userID:" + userId)
@@ -109,7 +139,9 @@ class ticketViewModel: ObservableObject {
                 print("Error removing document: \(error)")
             } else {
                 
-                self.fetchBets(groupNumber: bet.groupNumber) {print("Document successfully removed!")} // fetch the updated list of bets
+                self.fetchBets(groupNumber: bet.groupNumber) {print("Document successfully removed!")
+                    self.groupServe.setPotentialToWin(potential: Int(self.totalPotentialWon), groupNumber: bet.groupNumber, completion: {_ in })
+                } // fetch the updated list of bets
             }
         }
     }
@@ -185,6 +217,12 @@ class ticketViewModel: ObservableObject {
 
         totalWon = totalWonLocal
         totalPotentialWon = totalPotentialWonLocal
+    }
+    func returnTotal(groupNumber: Int, completion: @escaping (Int) -> Void) {
+        fetchBets(groupNumber: groupNumber){
+            let result = Int(self.totalWon)
+            completion(result)
+        }
     }
 
     func isTeamAvailable(_ team: String,_ groupNumber: Int) -> Bool {

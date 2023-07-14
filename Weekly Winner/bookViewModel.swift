@@ -13,7 +13,7 @@ class bookViewModel: ObservableObject {
     @Published var NFLgames: [Game] = []
     @Published var NCAAFGames: [Game] = []
     @Published var upcomingGames: [Game] = []
-    @Published var userGroups: [String] = []
+    @Published var userGroups: [Group] = []
     @Published var isGroupsLoaded = false  // Add this line
 
     
@@ -55,7 +55,7 @@ class bookViewModel: ObservableObject {
         
     }
     
-    func uploadBet(groupNumber: Int, betNumber: Int, team: String, betLine: Double, betOdds: Double, betType: BetType) {
+    func uploadBet(groupNumber: Int, betNumber: Int, team: String, betLine: Double, betOdds: Double, betType: BetType, completion: @escaping (Error?) -> Void) {
             // Prepare the data to upload
         let bet = Bet(groupNumber: groupNumber, betNumber: betNumber, weekNumber: 1, betType: betType, teamBetOn: team, betLine: Float(betLine), betOdds: Float(betOdds), result: .notStarted)
             
@@ -64,9 +64,11 @@ class bookViewModel: ObservableObject {
                 if let error = error {
                     // Handle the error
                     print("Error uploading bet: \(error)")
+                    completion(error)
                 } else {
                     // Upload successful
                     print("Bet uploaded successfully")
+                    completion(nil)
                 }
             }
         }

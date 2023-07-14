@@ -35,9 +35,12 @@ struct ticketView: View {
             }
         }
         .onAppear {
+            selectedGroup = 0
             viewModel.fetchBets(groupNumber: selectedGroup, completion: {}) // Fetch bets for selected group on view appear
+            
         }
         .onDisappear {
+            selectedGroup = 0
             viewModel.stopListening() // Stop listening when view disappears
         }
         
