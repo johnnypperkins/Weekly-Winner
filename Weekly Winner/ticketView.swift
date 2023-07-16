@@ -7,16 +7,22 @@ struct ticketView: View {
     
     var body: some View {
         VStack {
-            Picker("Group", selection: $selectedGroup) { // Needs to be dependent on num of groups in. Will change later
-                Text("Global").tag(0)
-                Text("Group 2").tag(1)
-                Text("Group 3").tag(2)
+            if viewModel.isBetsLoaded {
+                Picker("Group", selection: $selectedGroup) {
+                    ForEach(0..<viewModel.userGroups.count, id: \.self) { index in
+                        Text(viewModel.userGroups[index].groupName).tag(index)
+                    }
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .padding(.horizontal, 10)
+                .onChange(of: selectedGroup) { newValue in
+                    viewModel.fetchBets(groupNumber: newValue, completion: {})
+                }
+            } else {
+                Text("loading")
             }
-            .pickerStyle(SegmentedPickerStyle())
-            .padding(.horizontal, 10)
-            .onChange(of: selectedGroup) { newValue in
-                viewModel.fetchBets(groupNumber: newValue, completion: {})
-            }
+            
+            
             Text("Potential Winnings: $\(String(format: "%.0f", viewModel.totalPotentialWon))").font(.custom("Futura", size: 24))
             Text("Total Winnings: $\(String(format: "%.0f", viewModel.totalWon))").font(.custom("Futura", size: 24))
             

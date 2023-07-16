@@ -285,11 +285,6 @@ struct BetDetailsView: View {
                     .pickerStyle(WheelPickerStyle())
                     .onChange(of: betNumber) { newValue in
                         print("Selection changed to: \(newValue)")
-//                        if !ticketVM.availableBets(for: groupNumber).isEmpty {
-//                            betNumber = ticketVM.availableBets(for: groupNumber)[0]
-//                        } else {
-//                            betNumber = -99
-//                        }
                         checkTeamTaken()
                     }
                     .onAppear {

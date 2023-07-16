@@ -32,6 +32,10 @@ class ticketViewModel: ObservableObject {
     
     private let groupServe = groupService()
     @Published var userGroups: [Group] = []
+    
+    init() {
+        fetchUserGroups(completion: {})
+    }
 
     func fillTotalsArr() {
         fetchUserGroups {
