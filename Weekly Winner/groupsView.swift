@@ -11,8 +11,22 @@ struct groupsView: View {
     @State private var searchText = ""
     @State private var myGroups = ["Group 1", "Group 2", "Group 3"] // Replace with your data source
     @State private var isShowingSheet = false
+    @ObservedObject private var viewModel = groupsViewModel()
 
+    init() {
+        viewModel.fetchGroupNames()
+    }
+    
     var body: some View {
+        let keywordBinding = Binding<String> (
+            get: {
+                searchText
+            },
+            set: {
+                searchText = $0
+                viewModel.fetchGroup(from: searchText)
+            }
+        )
         NavigationView {
             VStack {
                 HStack {
@@ -31,11 +45,20 @@ struct groupsView: View {
                 }
                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
                 
-                SearchBar(text: $searchText, placeholder: "Search Groups")
+                SearchBar(text: keywordBinding, placeholder: "Search Groups")
                 
+                ScrollView{
+                    ForEach(viewModel.queriedGroups, id: \.id) { group in
+                        NavigationLink (destination: {
+                            }, label: {
+                                groupBarView(ticket: group)
+                            
+                            })
+                    }
+                }
                 List {
                     Section(header: Text("My Groups")) {
-                        ForEach(myGroups.filter { searchText.isEmpty ? true : $0.contains(searchText) }, id: \.self) { group in
+                        ForEach(viewModel.groupNames, id: \.self) { group in
                             Text(group)
                         }
                     }
@@ -63,6 +86,38 @@ struct SearchBar: View {
                 .padding(.horizontal, 10)
         }
         .padding(.top, 10)
+    }
+}
+
+struct groupBarView: View {
+    
+    var ticket: Ticket
+    var body: some View {
+        ZStack{
+            Rectangle()
+                .foregroundColor(Color.gray.opacity(0.2))
+            HStack{
+                //KFImage(URL(string: user.profileImageUrl))
+//                    .resizable()
+//                    .cornerRadius(25)
+//                    .frame(width: 50, height: 50, alignment: .leading)
+                
+                VStack {
+                    Text("\(ticket.groupName)")
+                        .foregroundColor(Color("Color 1"))
+                        .bold()
+                    
+                    Text("\(ticket.groupSlogan)")
+                        .foregroundColor(Color(.blue))
+                }
+                Spacer()
+            }
+            .frame(alignment: .leading)
+            .padding(.horizontal)
+        }
+        .frame(maxWidth: .infinity, minHeight: 100)
+        .cornerRadius(13)
+        .padding(.horizontal)
     }
 }
 

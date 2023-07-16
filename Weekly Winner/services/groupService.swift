@@ -17,10 +17,11 @@ class groupService {
                     completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No user is currently logged in"])))
                     return
                 }
+        let time = Timestamp()
             var ref: DocumentReference? = nil
             ref = db.collection("groups").addDocument(data: [
                 "groupName": groupName,
-                "dateCreated": Timestamp(),
+                "dateCreated": time,
                 "groupImageURL": "",
                 "groupSlogan": groupSlogan,
                 "groupAdmin": currentUser.uid,
@@ -34,6 +35,13 @@ class groupService {
                         return
                     }
                     self.db.collection("groups").document(groupID).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": currentUser.uid])
+                    let ticket = Ticket(groupName: groupName, dateCreated: time, groupImageURL: "", groupSlogan: groupSlogan, groupAdmin: currentUser.uid)
+                    
+                    do {
+                        Firestore.firestore().collection("groups").document(groupID).updateData(["keywordsForLookup": ticket.keywordsForLookup])
+                    } catch let error {
+                        print("Error updating data: \(error)")
+                    }
                 }
             }
         }

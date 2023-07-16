@@ -17,4 +17,8 @@ struct Ticket: Identifiable, Codable {
     var groupSlogan: String
     var groupAdmin: String
     var password: String?
+    var keywordsForLookup: [String] {
+        [self.groupName.generateStringSequence()].flatMap { $0 }
+    }
 }
+
