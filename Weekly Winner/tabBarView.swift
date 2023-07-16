@@ -75,7 +75,7 @@ struct tabBarView: View {
                             }
                         
                         
-                        screen4()
+                        groupsView()
                             .tabItem {
                                 Image(systemName: "4.square.fill")
                                 Text("Tab 4")

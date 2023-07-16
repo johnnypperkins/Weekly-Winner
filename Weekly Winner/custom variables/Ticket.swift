@@ -9,10 +9,12 @@ import Foundation
 import Firebase
 import FirebaseFirestoreSwift
 
-struct Ticket: Identifiable {
+struct Ticket: Identifiable, Codable {
     @DocumentID var id: String?
-    var groupID: String
-    var overall: Double = 0
-    
-    
+    var groupName: String
+    var dateCreated: Timestamp // will fix later
+    var groupImageURL: String
+    var groupSlogan: String
+    var groupAdmin: String
+    var password: String?
 }
