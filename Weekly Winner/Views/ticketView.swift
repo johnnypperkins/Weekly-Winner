@@ -10,7 +10,7 @@ struct ticketView: View {
             if viewModel.isBetsLoaded {
                 Picker("Group", selection: $selectedGroup) {
                     ForEach(0..<viewModel.userGroups.count, id: \.self) { index in
-                        Text(viewModel.userGroups[index].groupName).tag(index)
+                        Text(viewModel.userGroups[index].id ?? "default").tag(index)
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
@@ -42,7 +42,10 @@ struct ticketView: View {
         }
         .onAppear {
             selectedGroup = 0
-            viewModel.fetchBets(groupNumber: selectedGroup, completion: {}) // Fetch bets for selected group on view appear
+            viewModel.fetchUserGroups {
+                viewModel.fetchBets(groupNumber: selectedGroup, completion: {}) // Fetch bets for selected group on view appear
+            }
+            
             
         }
         .onDisappear {
