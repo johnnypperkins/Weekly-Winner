@@ -36,6 +36,7 @@ class groupService {
                     }
                     self.db.collection("groups").document(groupID).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": currentUser.uid])
                     let ticket = Ticket(groupName: groupName, dateCreated: time, groupImageURL: "", groupSlogan: groupSlogan, groupAdmin: currentUser.uid)
+                    self.joinGroup(userID: currentUser.uid, groupName: groupName)
                     
                     do {
                         Firestore.firestore().collection("groups").document(groupID).updateData(["keywordsForLookup": ticket.keywordsForLookup])
@@ -45,6 +46,46 @@ class groupService {
                 }
             }
         }
+    func groupCount(userID: String, completion: @escaping (Int?, Error?) -> Void) {
+        let db = Firestore.firestore()
+        let userGroupsCollection = db.collection("users").document(userID).collection("groups")
+        
+        userGroupsCollection.getDocuments { snapshot, error in
+            if let error = error {
+                completion(nil, error)
+                return
+            }
+            
+            guard let snapshot = snapshot else {
+                completion(nil, nil)
+                return
+            }
+            
+            let groupCount = snapshot.documents.count
+            completion(groupCount, nil)
+        }
+    }
+    
+    
+    func joinGroup(userID: String, groupName: String) {
+        groupCount(userID: userID) { num, error in
+            let db = Firestore.firestore()
+            let userGroupsCollection = db.collection("users").document(userID).collection("groups")
+            let group = Group(groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: groupName)
+            do {
+                
+                let _ = try userGroupsCollection.addDocument(from: group) { error in
+                    if let error = error {
+                        print("Error uploading group: \(error)")
+                    } else {
+                        print("Group uploaded successfully!")
+                    }
+                }
+            } catch {
+                print("Error encoding group: \(error)")
+            }
+        }
+    }
     
     
     

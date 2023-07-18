@@ -27,7 +27,7 @@ struct groupsView: View {
                 viewModel.fetchGroup(from: searchText)
             }
         )
-        NavigationView {
+        NavigationStack {
             VStack {
                 HStack {
                     Spacer()
@@ -46,15 +46,18 @@ struct groupsView: View {
                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
                 
                 SearchBar(text: keywordBinding, placeholder: "Search Groups")
-                
-                ScrollView{
-                    ForEach(viewModel.queriedGroups, id: \.id) { group in
-                        NavigationLink (destination: {
-                            }, label: {
-                                groupBarView(ticket: group)
-                            
-                            })
-                    }
+                if !viewModel.queriedGroups.isEmpty {
+                    withAnimation {
+                        ScrollView {
+                            ForEach(viewModel.queriedGroups, id: \.id) { group in
+                                NavigationLink(destination: {
+                                    // Destination view code
+                                }) {
+                                    groupBarView(ticket: group)
+                                }
+                            }
+                        }
+                    }.animation(.easeInOut, value: 20)
                 }
                 List {
                     Section(header: Text("My Groups")) {
@@ -68,10 +71,14 @@ struct groupsView: View {
                 createGroupsView()
             })
             .navigationTitle("Groups")
-            
+            .refreshable {
+                await viewModel.fetchGroupNames()
+            }
         }
     }
 }
+
+
 
 struct SearchBar: View {
     @Binding var text: String
