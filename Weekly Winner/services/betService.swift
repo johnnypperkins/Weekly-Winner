@@ -26,15 +26,12 @@ class BetService {
             "betType": bet.betType.rawValue,
             "betLine": bet.betLine,
             "betOdds": bet.betOdds,
-            "result": bet.result.rawValue
+            "result": bet.result.rawValue,
+            "gameID": bet.gameID
         ]
         
         if let teamBetOn = bet.teamBetOn {
             data["teamBetOn"] = teamBetOn
-        }
-        
-        if let totalType = bet.totalType {
-            data["totalType"] = totalType.rawValue
         }
         
         // Upload the data to Firestore
@@ -57,10 +54,10 @@ enum AuthError: Error {
  
 
 // This function converts the difference between the original spread and the chosenSpread into a percentage. Will then be converted into an actual "moneyline"
-func returnOdds(betType: Int, ogSpr: Int, chsSpr: Int) -> Double {
+func returnOdds(betType: BetType, ogSpr: Int, chsSpr: Int) -> Double {
     var chosenSpread = chsSpr
     var originalSpread = ogSpr
-    if betType != 3 {
+    if betType != .under {
         if chosenSpread == originalSpread {
             return 0.5
         } else if chosenSpread == originalSpread - 1 {
@@ -84,7 +81,7 @@ func returnOdds(betType: Int, ogSpr: Int, chsSpr: Int) -> Double {
         } else if chosenSpread == originalSpread + 5 {
             return 0.75
         }
-    } else if betType == 3 {
+    } else if betType == .under {
         if chosenSpread == originalSpread {
             return 0.5
         } else if chosenSpread == originalSpread + 1 {

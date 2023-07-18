@@ -55,9 +55,9 @@ class bookViewModel: ObservableObject {
         
     }
     
-    func uploadBet(groupNumber: Int, betNumber: Int, team: String, betLine: Double, betOdds: Double, betType: BetType, completion: @escaping (Error?) -> Void) {
+    func uploadBet(groupNumber: Int, betNumber: Int, team: String, betLine: Double, betOdds: Double, betType: BetType, gameID: String, completion: @escaping (Error?) -> Void) {
             // Prepare the data to upload
-        let bet = Bet(groupNumber: groupNumber, betNumber: betNumber, weekNumber: 1, betType: betType, teamBetOn: team, betLine: Float(betLine), betOdds: Float(betOdds), result: .notStarted)
+        let bet = Bet(groupNumber: groupNumber, betNumber: betNumber, weekNumber: 1, betType: betType, teamBetOn: team, betLine: Float(betLine), betOdds: Float(betOdds), result: .notStarted, gameID: gameID)
             
             // Perform the upload asynchronously
             betService.uploadBet(bet) { error in

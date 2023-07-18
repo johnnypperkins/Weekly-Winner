@@ -20,19 +20,16 @@ struct Bet: Identifiable, Codable {
     var betLine: Float
     var betOdds: Float
     var result: BetResult
-    var totalType: TotalType?
+    var gameID: String
 }
 
-//enum BetStatus: String, Codable {
-//    case open
-//    case inAction
-//    case closed
-//}
 
 enum BetType: String, Codable {
-    case spread
-    case total
-    case null
+    case betHomeSpread
+    case betAwaySpread
+    case over
+    case under
+    case None
 }
 
 enum BetResult: String, Codable {
@@ -43,15 +40,3 @@ enum BetResult: String, Codable {
     case forcedLoss
 }
 
-enum TotalType: String, Codable {
-    case over
-    case under
-}
-
-enum BetTeamType: String, Codable {
-    case betHomeSpread
-    case betAwaySpread
-    case over
-    case under
-    case None
-}

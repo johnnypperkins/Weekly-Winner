@@ -139,6 +139,19 @@ struct ticketView: View {
         struct BetCard: View {
             let bet: Bet
             @ObservedObject var viewModel: ticketViewModel
+            
+            var extra: String {
+                if bet.betType == .under {
+                    return "u"
+                } else if bet.betType == .over {
+                    return "o"
+                } else {
+                    if bet.betLine >= 0 {
+                        return "+"
+                    }
+                }
+                return ""
+            }
 
             var body: some View {
                 HStack {
@@ -155,7 +168,7 @@ struct ticketView: View {
                     if bet.result == .forcedLoss {
                         Text("-")
                     } else {
-                        Text("\(bet.teamBetOn ?? "Null team") \(bet.betLine >= 0 ? "+" : "")\(bet.betLine, specifier: "%.0f")")
+                        Text("\(bet.teamBetOn ?? "Null team") \(extra)\(bet.betLine, specifier: "%.0f")")
                             .font(.headline)
                             .foregroundColor(K.darkBlue)
                         Spacer()
@@ -178,16 +191,9 @@ struct ticketView: View {
                 .padding()
                 .frame(maxWidth: .infinity)
                 .background(K.veryLightGray)
-//                .overlay(
-//                            RoundSomeCorners(topLeft: 10, topRight: 10, bottomLeft: 10, bottomRight: 10)
-//                                .stroke(Color.gray, lineWidth: 1)
-//                        )
-                //.modifier(ConditionalCornerRadius(topLeft: topLeft, topRight: topRight, bottomLeft: bottomLeft, bottomRight: bottomRight))
             }
         }
-
     }
-    
 }
 
 struct ticketView_Previews: PreviewProvider {
