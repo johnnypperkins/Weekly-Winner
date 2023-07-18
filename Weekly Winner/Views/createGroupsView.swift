@@ -14,6 +14,7 @@ struct createGroupsView: View {
     @State private var isPrivate: Bool = false
     @State private var password: String = ""
     @StateObject private var viewModel = createGroupsViewModel()
+    @Environment(\.dismiss) var dismiss
 
     var body: some View {
         NavigationView {
@@ -33,6 +34,7 @@ struct createGroupsView: View {
 
                 Button(action: {
                     viewModel.uploadGroup(groupName: groupName, groupSlogan: groupSlogan, password: password)
+                    dismiss()
                 }) {
                     Text("Create Group")
                 }
