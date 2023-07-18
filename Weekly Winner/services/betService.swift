@@ -9,6 +9,7 @@ import Foundation
 import Firebase
 
 class BetService {
+    private let db = Firestore.firestore()
     
     func uploadBet(_ bet: Bet, completion: @escaping (Error?) -> Void) {
         guard let userID = Auth.auth().currentUser?.uid else {
@@ -16,7 +17,7 @@ class BetService {
             return
         }
         
-        let db = Firestore.firestore()
+        //let db = Firestore.firestore()
         var ref: DocumentReference? = nil
         
         // Prepare the data to upload
@@ -45,6 +46,35 @@ class BetService {
             }
         }
     }
+    
+    func fetchPopularBets(completion: @escaping ([MostPopularBet]?, Error?) -> Void) {
+        db.collection("Misc").document("PopularGames").collection("games").getDocuments { querySnapshot, error in
+            guard let documents = querySnapshot?.documents else {
+                completion(nil, error)
+                return
+            }
+
+            var popularBets: [MostPopularBet] = []
+
+            for document in documents {
+                let id = document.documentID
+                let teamName = document.data()["teamName"] as? String ?? "null" // default value if not found
+                let numTimesPlaced = document.data()["numTimesPlaced"] as? Int ?? 0 // default value if not found
+                let gameID = document.data()["gameID"] as? String ?? "xyz"// default value if not found
+                let betType = document.data()["betType"] as? String ?? "None"
+                //let groupName = document.data()["groupName"] as? String ?? "null" // default value if not found
+                
+                let popularBet = MostPopularBet(teamName: teamName, betLine: 0, betType: BetType(rawValue: betType) ?? .None, gameID: gameID)
+                popularBets.append(popularBet)
+            }
+            
+            // sorts them based on groupNum
+            //groups.sort { $0.groupNumber < $1.groupNumber }
+
+            completion(popularBets, nil)
+        }
+    }
+    
 }
 
 enum AuthError: Error {
@@ -55,9 +85,9 @@ enum AuthError: Error {
 
 // This function converts the difference between the original spread and the chosenSpread into a percentage. Will then be converted into an actual "moneyline"
 func returnOdds(betType: BetType, ogSpr: Int, chsSpr: Int) -> Double {
-    var chosenSpread = chsSpr
-    var originalSpread = ogSpr
-    if betType != .under {
+    let chosenSpread = chsSpr
+    let originalSpread = ogSpr
+    if betType != .over {
         if chosenSpread == originalSpread {
             return 0.5
         } else if chosenSpread == originalSpread - 1 {
@@ -81,7 +111,7 @@ func returnOdds(betType: BetType, ogSpr: Int, chsSpr: Int) -> Double {
         } else if chosenSpread == originalSpread + 5 {
             return 0.75
         }
-    } else if betType == .under {
+    } else if betType == .over {
         if chosenSpread == originalSpread {
             return 0.5
         } else if chosenSpread == originalSpread + 1 {

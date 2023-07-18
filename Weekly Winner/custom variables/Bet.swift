@@ -40,3 +40,10 @@ enum BetResult: String, Codable {
     case forcedLoss
 }
 
+struct MostPopularBet: Identifiable, Codable {
+    @DocumentID var id: String?
+    var teamName: String
+    var betLine: Int
+    var betType: BetType
+    var gameID: String
+}

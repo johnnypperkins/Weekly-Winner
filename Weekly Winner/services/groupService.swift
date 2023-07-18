@@ -59,12 +59,12 @@ class groupService {
 
             for document in documents {
                 let id = document.documentID
-                let groupNum = document.data()["GroupNum"] as? Int ?? 0 // default value if not found
+                let groupNumber = document.data()["groupNumber"] as? Int ?? 0 // default value if not found
                 let totalWon = document.data()["totalWon"] as? Int ?? 0 // default value if not found
                 let totalPotentialWon = document.data()["totalPotentialWon"] as? Int ?? 0 // default value if not found
                 let groupName = document.data()["groupName"] as? String ?? "null" // default value if not found
                 
-                let group = Group(id: id, groupNumber: groupNum, dateCreated: "today", totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName)
+                let group = Group(id: id, groupNumber: groupNumber, dateCreated: "today", totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName)
                 groups.append(group)
             }
             
@@ -85,7 +85,7 @@ class groupService {
         
         // Query the document where the 'groupNumber' field is equal to the given groupNumber
         db.collection("users").document(userID).collection("groups")
-            .whereField("GroupNum", isEqualTo: groupNumber)
+            .whereField("groupNumber", isEqualTo: groupNumber)
             .getDocuments { (querySnapshot, err) in
                 if let err = err {
                     // Handle the error

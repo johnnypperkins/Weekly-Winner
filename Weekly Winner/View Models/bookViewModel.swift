@@ -15,11 +15,12 @@ class bookViewModel: ObservableObject {
     @Published var upcomingGames: [Game] = []
     @Published var userGroups: [Group] = []
     @Published var isGroupsLoaded = false  // Add this line
+    @Published var mostPopularBets: [MostPopularBet] = []
 
     
     @Published var selectedGameType = "NFL"
     
-    //private let gameServe = gameService()
+
     private let betService = BetService()
     private let groupServe = groupService()
     private let db = Firestore.firestore()
@@ -84,6 +85,16 @@ class bookViewModel: ObservableObject {
             }
             //print(groups)
             //print(userId)
+        }
+    }
+    
+    func fetchMostPopularBets() {
+        betService.fetchPopularBets() { popularBets, error in
+            if let error = error {
+                print("Error fetching popular bets: \(error.localizedDescription)")
+            } else {
+                self.mostPopularBets = popularBets ?? []
+            }
         }
     }
     

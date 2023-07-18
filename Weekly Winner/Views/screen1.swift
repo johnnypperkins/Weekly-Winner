@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct UserProfileView: View {
-    
-    
     var body: some View {
         VStack(spacing: 20) {
             ProfileHeaderView()
@@ -22,8 +20,6 @@ struct UserProfileView: View {
                 MostPopularBetsView()
                     .padding(.horizontal, 20)
                 
-               // YourBetsView()
-                 //   .padding(.horizontal, 20)
             }
             
             Spacer()
@@ -68,40 +64,32 @@ struct ProfileHeaderView: View {
 }
 
 struct MostPopularBetsView: View {
+    @StateObject var bookVM = bookViewModel()
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Most Popular Bets")
                 .font(.headline)
             
-            ForEach(1...5, id: \.self) { index in
-                Text("Bet \(index)")
-                    .font(.subheadline)
+            ForEach(0..<bookVM.mostPopularBets.count, id: \.self) { index in
+                HStack {
+                    Text("\(index + 1)")
+                    Text(bookVM.mostPopularBets[index].teamName)
+                    Text(bookVM.mostPopularBets[index].betType.rawValue)
+                }
+                
             }
+
         }
         .padding()
         .background(Color.white)
         .cornerRadius(10)
         .shadow(radius: 5)
+        .onAppear() {
+            bookVM.fetchMostPopularBets()
+        }
     }
 }
 
-struct YourBetsView: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Your Bets This Week")
-                .font(.headline)
-            
-            ForEach(1...5, id: \.self) { index in
-                Text("Your Bet \(index)")
-                    .font(.subheadline)
-            }
-        }
-        .padding()
-        .background(Color.white)
-        .cornerRadius(10)
-        .shadow(radius: 5)
-    }
-}
 
 struct UserProfileView_Previews: PreviewProvider {
     static var previews: some View {
