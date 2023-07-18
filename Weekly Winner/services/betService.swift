@@ -62,9 +62,9 @@ class BetService {
                 let numTimesPlaced = document.data()["numTimesPlaced"] as? Int ?? 0 // default value if not found
                 let gameID = document.data()["gameID"] as? String ?? "xyz"// default value if not found
                 let betType = document.data()["betType"] as? String ?? "None"
-                //let groupName = document.data()["groupName"] as? String ?? "null" // default value if not found
+                let betLine = document.data()["betLine"] as? Int ?? -99 // default value if not found
                 
-                let popularBet = MostPopularBet(teamName: teamName, betLine: 0, betType: BetType(rawValue: betType) ?? .None, gameID: gameID)
+                let popularBet = MostPopularBet(teamName: teamName, betLine: betLine, betType: BetType(rawValue: betType) ?? .None, gameID: gameID)
                 popularBets.append(popularBet)
             }
             
