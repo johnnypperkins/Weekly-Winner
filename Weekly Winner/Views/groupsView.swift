@@ -16,7 +16,6 @@ struct groupsView: View {
 
     init() {
         viewModel.fetchGroupNames()
-        viewModel.fetchGroupTickets(group: "global")
     }
     
     var body: some View {
@@ -30,72 +29,118 @@ struct groupsView: View {
             }
         )
         NavigationStack {
-            VStack {
-                Picker("Group", selection: $selectedGroup) {
-                    ForEach(0..<viewModel.groupNames.count, id: \.self) { index in
-                        Text(viewModel.groupNames[index]).tag(index)
+            ScrollView{
+                VStack {
+                    Picker("Group", selection: $selectedGroup) {
+                        ForEach(0..<viewModel.groupNames.count+1, id: \.self) { index in
+                            if index == 0 {
+                                Image(systemName: "plus")
+                            }
+                            else{
+                                Text("\(viewModel.groupNames[index-1])").tag(index)
+                                
+                                
+                            }
+                        }
                     }
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .padding(.horizontal, 10)
-                .onChange(of: selectedGroup) { newValue in
-                    viewModel.fetchGroupTickets(group: viewModel.groupNames[selectedGroup])
-                }
-                
-                ForEach(viewModel.rankedGroupTickets) { game in // HARDCODE NCAAF
-                    Button {
+                    .pickerStyle(SegmentedPickerStyle())
+                    .padding(.horizontal, 10)
+                    .onChange(of: selectedGroup) { newValue in
+                        if selectedGroup > 0 {
+                            viewModel.fetchGroupTickets(group: viewModel.groupNames[selectedGroup-1])
+                        }
+                    }
+                    
+                    
+                    if selectedGroup == 0 {
+                        HStack {
+                            Spacer()
+                            
+                            Button {
+                                isShowingSheet.toggle()
+                            } label: {
+                                Image(systemName: "plus")
+                                    .resizable()
+                                    .frame(width: 30, height: 30)
+                                    .padding()
+                                    .foregroundColor(.green)
+                                
+                            }
+                        }
+                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
                         
-                    } label: {
-                        Text(game.groupName)
+                        Text("Find Group")
+                            .font(.title)
+                            .bold()
+                        
+                        SearchBar(text: keywordBinding, placeholder: "Search Groups")
+                        if !viewModel.queriedGroups.isEmpty {
+                            withAnimation {
+                                ScrollView {
+                                    ForEach(viewModel.queriedGroups, id: \.id) { group in
+                                        NavigationLink(destination: {
+                                            // Destination view code
+                                        }) {
+                                            groupBarView(ticket: group)
+                                        }
+                                    }
+                                }
+                            }.animation(.easeInOut, value: 20)
+                        }
+                        
                     }
-
-                }.padding()
-                
-                //                HStack {
-                //                    Spacer()
-                //
-                //                    Button {
-                //                        isShowingSheet.toggle()
-                //                    } label: {
-                //                        Image(systemName: "plus")
-                //                            .resizable()
-                //                            .frame(width: 30, height: 30)
-                //                            .padding()
-                //                            .foregroundColor(.green)
-                //
-                //                    }
-                //                }
-                //                .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
-                //
-                //                SearchBar(text: keywordBinding, placeholder: "Search Groups")
-                //                if !viewModel.queriedGroups.isEmpty {
-                //                    withAnimation {
-                //                        ScrollView {
-                //                            ForEach(viewModel.queriedGroups, id: \.id) { group in
-                //                                NavigationLink(destination: {
-                //                                    // Destination view code
-                //                                }) {
-                //                                    groupBarView(ticket: group)
-                //                                }
-                //                            }
-                //                        }
-                //                    }.animation(.easeInOut, value: 20)
-                //                }
-                //            }
-                //            .sheet(isPresented: $isShowingSheet, content: {
-                //                createGroupsView()
-                //            })
+                    else{
+                        ForEach(viewModel.rankedGroupTickets) { game in // HARDCODE NCAAF
+                            VStack(alignment: .leading, spacing: 0) {
+                                BetCard(group: game, viewModel: viewModel)
+                                    .clipShape(RoundedCorners())
+                                
+                            
+                            }
+                            
+                        }.padding()
+                    }
+                    
+                    
+                    Spacer()
+                }
+                .sheet(isPresented: $isShowingSheet, content: {
+                    createGroupsView()
+                })
             }
             .navigationTitle("Groups")
             .refreshable {
                 await viewModel.fetchGroupNames()
-                viewModel.fetchGroupTickets(group: viewModel.groupNames[selectedGroup])
+                if selectedGroup != 0 {
+                    viewModel.fetchGroupTickets(group: viewModel.groupNames[selectedGroup-1])
+                }
             }
             
         }
     }
 }
 
+
+struct BetCard: View {
+    let group: Group
+    @ObservedObject var viewModel: groupsViewModel
+
+    var body: some View {
+        HStack {
+            Text("\(group.groupNumber)")
+                    .font(.headline)
+                    .foregroundColor(K.darkBlue)
+                Spacer()
+            Text("Projected \(group.totalPotentialWon)")
+                    .foregroundColor(K.darkGreen)
+            Text("\(group.totalWon)")
+                .foregroundColor(.green)
+        }
+        .padding()
+        .frame(maxWidth: .infinity) // Move the frame to the bottom
+        .background(Color(.lightGray)) // changes color based on bet result
+    }
+}
 
 
 struct SearchBar: View {
@@ -129,7 +174,6 @@ struct groupBarView: View {
                 
                 VStack {
                     Text("\(ticket.groupName)")
-                        .foregroundColor(Color("Color 1"))
                         .bold()
                     
                     Text("\(ticket.groupSlogan)")
