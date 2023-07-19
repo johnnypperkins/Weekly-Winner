@@ -24,13 +24,12 @@ struct BettingAppView: View {
                 sideMenuView(bookVM: viewModel, isShowing: $isShowing)
             }
             VStack {
-
                 HStack {
                     Text("Betting App")
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .foregroundColor(.blue)
-                        .padding()
+                        .padding() // Add padding to the top
                     Button(action: {
                         withAnimation(.spring()) {
                             isShowing.toggle()
@@ -40,7 +39,7 @@ struct BettingAppView: View {
                         Image(systemName: "bell")
                             .imageScale(.large)
                     }
-                }
+                }.padding(.top, 50)
                 
                 ScrollView {
                     VStack(spacing: 7.5) {
@@ -195,6 +194,7 @@ struct BetDetailsView: View {
     
     @State private var groupNumber = 0
     @State private var betNumber = -99
+    //@State private var betType: BetType = .None
     @State private var groupDict: [String: Int] = [:]
     @State private var whichTeam = ""
     @State private var extra = "" // to add the extra detail of +, o, u
@@ -204,7 +204,7 @@ struct BetDetailsView: View {
         if betNumber < 0 {
             uploadText = "Ticket Full"
         } else {
-            if ticketVM.isTeamAvailable(whichTeam, groupNumber) {
+            if ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) {
                 uploadText = "Upload Bet"
             } else {
                 uploadText = "Team Taken"
@@ -343,7 +343,7 @@ struct BetDetailsView: View {
                        .cornerRadius(10)
                        .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
                })
-        .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber))
+        .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType))
         }
         .onAppear(perform: {
             if betType == .betAwaySpread {
@@ -374,13 +374,6 @@ struct BetDetailsView: View {
     }
 }
 
-
-
-struct BettingAppView_Previews: PreviewProvider {
-    static var previews: some View {
-        BettingAppView()
-    }
-}
 
 struct BetView: View {
     var teamName: String
@@ -454,4 +447,9 @@ struct BetButton: View {
     }
 }
 
-//
+
+struct BettingAppView_Previews: PreviewProvider {
+    static var previews: some View {
+        BettingAppView()
+    }
+}

@@ -16,41 +16,7 @@ struct tabBarView: View {
     var body: some View {
         NavigationStack{
             ZStack{
-//                if isShowing {
-//                    sideMenuView(bookVM: <#bookViewModel#>, isShowing: $isShowing)
-//                }
                 VStack(spacing: 0) {
-                    HStack {
-                        Button(action: {
-                            authViewModel.signOut()
-                            showContentView.toggle()
-                        }) {
-                            Image(systemName: "gear")
-                                .imageScale(.large)
-                        }
-                        
-                        Spacer()
-                        
-                        Image(systemName: "bitcoinsign")    // Replace "logo" with your actual logo image asset name
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 30)
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            withAnimation(.spring()) {
-                                isShowing.toggle()
-                            }
-                            // Action for right button
-                        }) {
-                            Image(systemName: "bell")
-                                .imageScale(.large)
-                        }
-                    }
-                    .padding()
-                    .background(Color.white)
-                    
                     Spacer()
                     
                     TabView { // the corresponding views go under this. Makes sense - Reid
@@ -96,7 +62,7 @@ struct tabBarView: View {
                     ContentView()
                 }
             }
-        }.edgesIgnoringSafeArea(.bottom)
+        }.edgesIgnoringSafeArea(.all)
     }
 }
 

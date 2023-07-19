@@ -39,7 +39,7 @@ struct ticketView: View {
                 }
                 .padding()
             }
-        }
+        }.padding(.top,20)
         .onAppear {
             selectedGroup = 0
             viewModel.fetchUserGroups {
