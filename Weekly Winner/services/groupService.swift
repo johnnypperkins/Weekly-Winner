@@ -11,6 +11,41 @@ import Firebase
 class groupService {
     private let db = Firestore.firestore()
         
+    
+    func getRankedTickets(groupN: String, completion: @escaping ([Group]?, Error?) -> Void) {
+            let query = db.collectionGroup("groups")
+                .whereField("groupName", isEqualTo: groupN)
+                .order(by: "totalWon", descending: true)
+
+            query.getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    completion(nil, error)
+                    return
+                }
+
+                guard let documents = querySnapshot?.documents else {
+                    completion([], nil) // Empty array if no documents found
+                    return
+                }
+
+                var groups: [Group] = []
+
+                for document in documents {
+                    do {
+                        if let group = try? document.data(as: Group.self, decoder: Firestore.Decoder()) {
+                            groups.append(group)
+                        } else {
+                            print("Document does not exist or could not be parsed.")
+                        }
+                    } catch {
+                        print("Error decoding document: \(error)")
+                    }
+                }
+
+                completion(groups, nil)
+            }
+        }
+    
     func uploadGroup(groupName: String, groupSlogan: String, password: String?, completion: @escaping (Result<String, Error>) -> Void) {
             
         guard let currentUser = Auth.auth().currentUser else {

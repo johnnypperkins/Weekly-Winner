@@ -11,6 +11,8 @@ class groupsViewModel: ObservableObject {
     
     @Published var queriedGroups: [Ticket] = []
     @Published var groupNames: [String] = []
+    @Published var rankedGroupTickets: [Group] = []
+    private let grpService = groupService()
     
     private let db = Firestore.firestore()
     
@@ -24,6 +26,20 @@ class groupsViewModel: ObservableObject {
         }
         print("hereeeee")
     }
+    
+    func fetchGroupTickets(group: String) {
+        grpService.getRankedTickets(groupN: group) { [weak self] (groups, error) in
+                if let error = error {
+                    // Handle error
+                    print("Error fetching groups: \(error)")
+                } else if let groups = groups {
+                    DispatchQueue.main.async {
+                        self?.rankedGroupTickets = groups
+                    }
+                }
+            }
+        }
+    
     
     func fetchGroupNames() {
             guard let currentUser = Auth.auth().currentUser else {

@@ -12,9 +12,11 @@ struct groupsView: View {
     @State private var myGroups = ["Group 1", "Group 2", "Group 3"] // Replace with your data source
     @State private var isShowingSheet = false
     @ObservedObject private var viewModel = groupsViewModel()
+    @State private var selectedGroup = 0
 
     init() {
         viewModel.fetchGroupNames()
+        viewModel.fetchGroupTickets(group: "global")
     }
     
     var body: some View {
@@ -29,51 +31,67 @@ struct groupsView: View {
         )
         NavigationStack {
             VStack {
-                HStack {
-                    Spacer()
-                    
-                    Button {
-                        isShowingSheet.toggle()
-                    } label: {
-                        Image(systemName: "plus")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .padding()
-                            .foregroundColor(.green)
-                        
+                Picker("Group", selection: $selectedGroup) {
+                    ForEach(0..<viewModel.groupNames.count, id: \.self) { index in
+                        Text(viewModel.groupNames[index]).tag(index)
                     }
                 }
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
+                .pickerStyle(SegmentedPickerStyle())
+                .padding(.horizontal, 10)
+                .onChange(of: selectedGroup) { newValue in
+                    viewModel.fetchGroupTickets(group: viewModel.groupNames[selectedGroup])
+                }
                 
-                SearchBar(text: keywordBinding, placeholder: "Search Groups")
-                if !viewModel.queriedGroups.isEmpty {
-                    withAnimation {
-                        ScrollView {
-                            ForEach(viewModel.queriedGroups, id: \.id) { group in
-                                NavigationLink(destination: {
-                                    // Destination view code
-                                }) {
-                                    groupBarView(ticket: group)
-                                }
-                            }
-                        }
-                    }.animation(.easeInOut, value: 20)
-                }
-                List {
-                    Section(header: Text("My Groups")) {
-                        ForEach(viewModel.groupNames, id: \.self) { group in
-                            Text(group)
-                        }
+                ForEach(viewModel.rankedGroupTickets) { game in // HARDCODE NCAAF
+                    Button {
+                        
+                    } label: {
+                        Text(game.groupName)
                     }
-                }
+
+                }.padding()
+                
+                //                HStack {
+                //                    Spacer()
+                //
+                //                    Button {
+                //                        isShowingSheet.toggle()
+                //                    } label: {
+                //                        Image(systemName: "plus")
+                //                            .resizable()
+                //                            .frame(width: 30, height: 30)
+                //                            .padding()
+                //                            .foregroundColor(.green)
+                //
+                //                    }
+                //                }
+                //                .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
+                //
+                //                SearchBar(text: keywordBinding, placeholder: "Search Groups")
+                //                if !viewModel.queriedGroups.isEmpty {
+                //                    withAnimation {
+                //                        ScrollView {
+                //                            ForEach(viewModel.queriedGroups, id: \.id) { group in
+                //                                NavigationLink(destination: {
+                //                                    // Destination view code
+                //                                }) {
+                //                                    groupBarView(ticket: group)
+                //                                }
+                //                            }
+                //                        }
+                //                    }.animation(.easeInOut, value: 20)
+                //                }
+                //            }
+                //            .sheet(isPresented: $isShowingSheet, content: {
+                //                createGroupsView()
+                //            })
             }
-            .sheet(isPresented: $isShowingSheet, content: {
-                createGroupsView()
-            })
             .navigationTitle("Groups")
             .refreshable {
                 await viewModel.fetchGroupNames()
+                viewModel.fetchGroupTickets(group: viewModel.groupNames[selectedGroup])
             }
+            
         }
     }
 }
