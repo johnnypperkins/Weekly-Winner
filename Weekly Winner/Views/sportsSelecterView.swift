@@ -32,28 +32,19 @@ struct sideMenuView: View {
                                 .frame(width: 24, height: 24)
                             
                             Text(option.title)
-                                .font(.system(size: 15, weight: .semibold))
+                                .font(.system(size: bookVM.selectedGameType == option.title ? 20 : 15, weight: bookVM.selectedGameType == option.title ? .bold : .semibold))
                             
                             Spacer()
                         }
                         .foregroundColor(.white)
                         .padding()
                     }
-
                 }
                 Spacer()
-            }
-        }
+            }.padding(.top,50)
+        }//
     }
-//        //@ViewBuilder
-//    func chooseSport(name: String) ->  String {
-//        switch name {
-//        case "Upcoming": "NFL"
-//        case "NFL": "NFL"
-//        case "NCAAF": "NCAAF"
-//        default: ""
-//        }
-//    }
+
     enum GameType: String, CaseIterable, Hashable {
         case collegeFootball = "College Football"
         case nfl = "NFL"

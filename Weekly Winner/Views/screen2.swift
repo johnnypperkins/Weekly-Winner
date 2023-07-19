@@ -7,11 +7,6 @@
 
 import SwiftUI
 
-//enum GameType: String, CaseIterable, Hashable {
-//    case collegeFootball = "College Football"
-//    case nfl = "NFL"
-//}
-
 struct BettingAppView: View {
 //    @State private var selectedGameType = GameType.nfl
     @StateObject private var viewModel = bookViewModel()
@@ -24,39 +19,76 @@ struct BettingAppView: View {
                 sideMenuView(bookVM: viewModel, isShowing: $isShowing)
             }
             VStack {
-                HStack {
-                    Text("Betting App")
+                ZStack {
+                    Text(viewModel.selectedGameType)
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .foregroundColor(.blue)
-                        .padding() // Add padding to the top
-                    Button(action: {
-                        withAnimation(.spring()) {
-                            isShowing.toggle()
+                    
+                    HStack {
+                        Button(action: {
+                            withAnimation(.spring()) {
+                                isShowing.toggle()
+                            }
+                        }) {
+                            Image(systemName: "line.horizontal.3")
+                                .imageScale(.large)
+                                .padding(.leading) // Add padding to the left side of the button
                         }
-                        // Action for right button
-                    }) {
-                        Image(systemName: "bell")
-                            .imageScale(.large)
+                        Spacer()
                     }
-                }.padding(.top, 50)
+                }.padding(.top, 65)
+
+                
+                HStack {
+                    VStack(alignment: .leading) {
+                        HStack{
+                            Text("Team Name") // team name
+                                .font(.subheadline)
+                                .foregroundColor(.black)
+                            
+                            Spacer()
+                            HStack(spacing: 20) {
+                                Text("Spread")
+                                    .foregroundColor(.black)
+                                    .frame(width: 50)
+                                    .font(.subheadline)
+                                Text("Total")
+                                    .foregroundColor(.black)
+                                    .frame(width: 50)
+                                    .font(.subheadline)
+                            }
+                            
+                        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 30, alignment: .center)
+                        .padding(.horizontal)
+                        .background(
+                            RoundedRectangle(cornerRadius: 7.5)
+                                .fill(K.veryLightBlue)
+                        )
+
+                        
+                    }
+                }.padding(.horizontal)
+                .padding(.horizontal)
+                .background(Color.white)
+               
                 
                 ScrollView {
-                    VStack(spacing: 7.5) {
+                    VStack(spacing: 5) {
                         if viewModel.selectedGameType == "NFL" {
                             ForEach(viewModel.NFLgames, id: \.idd) { game in // HARDCODE NCAAF
                                 BetRowView1(game: game)
-                            }.padding()
+                            }.padding(.horizontal)
                         }
                         if viewModel.selectedGameType == "NCAAF" {
                             ForEach(viewModel.NCAAFGames, id: \.idd) { game in // HARDCODE NCAAF
                                 BetRowView1(game: game)
-                            }.padding()
+                            }.padding(.horizontal)
                         }
                         if viewModel.selectedGameType == "Upcoming" {
                             ForEach(viewModel.upcomingGames, id: \.idd) { game in 
                                 BetRowView1(game: game)
-                            }.padding()
+                            }.padding(.horizontal)
                         }
                     }
                 }
@@ -66,7 +98,7 @@ struct BettingAppView: View {
                 .scaleEffect(isShowing ? 0.8 : 1)
             }
             .ignoresSafeArea(.all)
-            .navigationBarHidden(true)
+            .navigationBarHidden(false)
         }
     
     private var filteredGames: [Game] {
@@ -155,9 +187,13 @@ struct BetRowView1: View {
                         }
                     }
                 Text("\(formatDate.format(date: game.commenceTime.dateValue()))")
+                    .font(.footnote)
+                    .foregroundColor(K.veryLightGray)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                //Spacer().frame(height: -5) // Adjust this value to move the Text view up
             }
             
-            Spacer()
+            //Spacer()
         }.padding()
             .background(
                 RoundedRectangle(cornerRadius: 10)
@@ -188,13 +224,11 @@ struct BetDetailsView: View {
     @Environment(\.dismiss) var dismiss
     @State private var chosenSpread: Double = 2
     @State private var originalSpread: Double = 2
-    //@State private var betType = 1
     @ObservedObject var viewModel = bookViewModel()
     @StateObject var ticketVM = ticketViewModel()
     
     @State private var groupNumber = 0
     @State private var betNumber = -99
-    //@State private var betType: BetType = .None
     @State private var groupDict: [String: Int] = [:]
     @State private var whichTeam = ""
     @State private var extra = "" // to add the extra detail of +, o, u
