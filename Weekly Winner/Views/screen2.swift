@@ -259,31 +259,37 @@ struct BetDetailsView: View {
                         }
                         checkTeamTaken()
                     }
-
-                    Picker("Bet Type", selection: $betNumber) { // starts at 1 bc "1 leg"
-                        ForEach(ticketVM.availableBets(for: groupNumber), id: \.self) { index in //
-                            switch index {
-                            case 1: Text("Straight #1").tag(1)
-                            case 2: Text("Straight #2").tag(2)
-                            case 3: Text("Straight #3").tag(3)
-                            case 4: Text("Straight #4").tag(4)
-                            case 5: Text("2leg #1").tag(5)
-                            case 6: Text("2leg #2").tag(6)
-                            case 7: Text("3leg").tag(7)
-                            case 8: Text("5leg").tag(8)
-                            default: EmptyView()
+                    if betNumber >= 0 {
+                        Picker("Bet Type", selection: $betNumber) { // starts at 1 bc "1 leg"
+                            ForEach(ticketVM.availableBets(for: groupNumber), id: \.self) { index in //
+                                switch index {
+                                case 1: Text("Straight #1").tag(1)
+                                case 2: Text("Straight #2").tag(2)
+                                case 3: Text("Straight #3").tag(3)
+                                case 4: Text("Straight #4").tag(4)
+                                case 5: Text("2leg #1").tag(5)
+                                case 6: Text("2leg #2").tag(6)
+                                case 7: Text("3leg").tag(7)
+                                case 8: Text("5leg").tag(8)
+                                default: EmptyView()
+                                }
                             }
                         }
+                        .pickerStyle(WheelPickerStyle())
+                        .onChange(of: betNumber) { newValue in
+                            print("Selection changed to: \(newValue)")
+                            checkTeamTaken()
+                        }
+                        .onAppear {
+                            print("\(betNumber) is original betNumber")
+                            
+                        }
+                    } else {
+                        Picker("Bet Type", selection: $betNumber) {
+                            Text("FULL")
+                        }.pickerStyle(WheelPickerStyle())
                     }
-                    .pickerStyle(WheelPickerStyle())
-                    .onChange(of: betNumber) { newValue in
-                        print("Selection changed to: \(newValue)")
-                        checkTeamTaken()
-                    }
-                    .onAppear {
-                        print("\(betNumber) is original betNumber")
-                        
-                    }
+                    
                 }
             }.onAppear {
                 ticketVM.fetchBets(groupNumber: groupNumber) {
