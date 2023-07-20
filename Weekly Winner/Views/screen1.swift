@@ -15,10 +15,10 @@ struct UserProfileView: View {
     var body: some View {
         VStack(spacing: 20) {
             ProfileHeaderView(authVM: authenticationVM)
-                .padding(.top, 20)
+                .padding(.top, 10)
             
             groupStatusView(ticketVM: ticketVM)
-            
+                .padding(.horizontal)
             Divider()
                 .padding(.horizontal, 20)
             
@@ -27,10 +27,11 @@ struct UserProfileView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                     
             MostPopularBetsView(bookVM: bookVM)
-                
+            Spacer()
 
         }
-        .background(Color(.systemGray6).ignoresSafeArea())
+//        .edgesIgnoringSafeArea(.top)
+//        .background(Color(.systemGray6).ignoresSafeArea())
         .onAppear() {
             authenticationVM.fetchUser()
             ticketVM.fetchUserGroups() {}
@@ -44,47 +45,68 @@ struct ProfileHeaderView: View {
     var body: some View {
         ZStack {
             Color.blue
-                .frame(height: 100)
-                .cornerRadius(20)
+                .frame(height: 65)
+                .cornerRadius(10)
                 .shadow(radius: 10)
             
             Text("\(authVM.currUser?.username ?? "")")
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
-        }
+        }.padding()
     }
 }
 
 struct groupStatusView: View {
     @StateObject var ticketVM: ticketViewModel
-
+    let frameWidth: CGFloat = 65
     var body: some View {
-        VStack {
-            LazyVGrid(columns: Array(repeating: .init(), count: 4), spacing: 20) {
-                // Adding headers
-                Text("Group").font(.headline)
-                Text("Total Won").font(.headline)
-                Text("Total Potential").font(.headline)
-                Text("Rank").font(.headline)
-                
-                // Populating the grid with data
-                ForEach(0..<ticketVM.userGroups.count, id: \.self) { index in
-                    Text(ticketVM.userGroups[index].groupName)
-                    Text(String(ticketVM.userGroups[index].totalWon))
-                    Text(String(ticketVM.userGroups[index].totalPotentialWon))
-                    Text("#1")
-                }
-            }
-            .padding() // For adding padding around the grid
-            .onAppear() {
-                ticketVM.fetchUserGroups {
-                    print("were fetched")
+        VStack(spacing: 0) {
+            ForEach(0...ticketVM.userGroups.count, id: \.self) { index in
+                VStack(spacing: 0) {
+                    HStack(spacing: 5) {
+                        Text(index == 0 ? "Group" : ticketVM.userGroups[index - 1].groupName )
+                            .font(index == 0 ? .headline : .body) // Set the font based on whether it's the title or not
+                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading) // Adjust the width as needed
+                        Spacer()
+                        HStack(spacing: 0) {
+                            Text(index == 0 ? "PW" : String(ticketVM.userGroups[index - 1].totalPotentialWon ))
+                                .font(index == 0 ? .headline : .body) // Set the font based on whether it's the title or not
+                                .frame(width: frameWidth, alignment: .leading) // Adjust the width as needed
+                            
+                            Text(index == 0 ? "TW" : String(ticketVM.userGroups[index - 1].totalWon ))
+                                .font(index == 0 ? .headline : .body) // Set the font based on whether it's the title or not
+                                .frame(width: frameWidth, alignment: .leading) // Adjust the width as needed
+                            
+                            Text(index == 0 ? "Rank" : "#1")
+                                .font(index == 0 ? .headline : .body) // Set the font based on whether it's the title or not
+                                .frame(width: frameWidth, alignment: .leading) // Adjust the width as needed
+                        }
+                    }
+                    .padding(index == 0 ? EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0) : EdgeInsets(top: 15, leading: 0, bottom: 15, trailing: 0))
+                    .padding(.leading) // Add padding to the left of the HStack
+                    .background(index == 0 ? K.veryLightBlue : K.veryLightGray)
+                    .clipShape(RoundSomeCorners(topLeft: index == 0 ? 10 : 0, topRight: index == 0 ? 10 : 0,
+                                                bottomLeft: index == ticketVM.userGroups.count ? 10 : 0, bottomRight: index == ticketVM.userGroups.count ? 10 : 0))
+                    if index != ticketVM.userGroups.count {
+                        Divider()
+                    }
                 }
             }
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 struct MostPopularBetsView: View {
     @StateObject var bookVM: bookViewModel

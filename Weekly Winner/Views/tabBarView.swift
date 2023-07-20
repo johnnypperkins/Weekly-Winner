@@ -17,7 +17,7 @@ struct tabBarView: View {
         NavigationStack{
             ZStack{
                 VStack(spacing: 0) {
-                    Spacer()
+                    //Spacer()
                     
                     TabView { // the corresponding views go under this. Makes sense - Reid
                         UserProfileView()
@@ -25,8 +25,6 @@ struct tabBarView: View {
                                 Image(systemName: "1.square.fill")
                                 Text("Tab 1")
                             }
-                        
-                        
                         BettingAppView()
                             .tabItem {
                                 Image(systemName: "2.square.fill")
@@ -40,23 +38,21 @@ struct tabBarView: View {
                                 Text("Tab 3")
                             }
                         
-                        
                         groupsView()
                             .tabItem {
                                 Image(systemName: "4.square.fill")
                                 Text("Tab 4")
                             }
-                        
-                        
+
                         screen5()
                             .tabItem {
                                 Image(systemName: "5.square.fill")
                                 Text("Tab 5")
                             }
-                        
                     }
+                    .edgesIgnoringSafeArea(.all)
+
                 }
-                .edgesIgnoringSafeArea(.bottom)
                 .navigationBarBackButtonHidden(true)
                 .navigationDestination(isPresented: $showContentView) {
                     ContentView()
