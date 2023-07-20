@@ -10,11 +10,12 @@ import Firebase
 class groupsViewModel: ObservableObject {
     
     @Published var queriedGroups: [Ticket] = []
-    @Published var groupNames: [String] = []
+    @Published var groupNames: [Group] = []
     @Published var rankedGroupTickets: [Group] = []
     private let grpService = groupService()
     
     private let db = Firestore.firestore()
+    
     
     func fetchGroup(from keyword: String) {
         db.collection("groups").whereField("keywordsForLookup", arrayContains: keyword).getDocuments { querySnapshot, error in
@@ -40,6 +41,9 @@ class groupsViewModel: ObservableObject {
             }
         }
     
+    func joinGroup(groupName: String) {
+        grpService.joinGroup(userID: Auth.auth().currentUser!.uid, groupName: groupName)
+    }
     
     func fetchGroupNames() {
             guard let currentUser = Auth.auth().currentUser else {
@@ -56,15 +60,21 @@ class groupsViewModel: ObservableObject {
                     print("Error fetching groups: \(error.localizedDescription)")
                     return
                 }
-                groupNames.removeAll()
-                //var groupNames: [Group] = []
+//               groupNames.removeAll()
+//                var grpNames: [Ticket] = []
+                guard let documents = snapshot?.documents, error == nil else {return}
                 
-                for document in snapshot?.documents ?? [] {
-                    if let groupName = document.data()["groupName"] as? String {
-                        groupNames.append(groupName)
-                    }
+                groupNames = documents.compactMap { snapshot in
+                    print(snapshot)
+                    return try? snapshot.data(as: Group.self)
+                    
                 }
                 
+//                for document in snapshot?.documents ?? [] {
+//                    if let groupName = document.data()["groupName"] as? String {
+//                        groupNames.append(groupName)
+//                    }
+//                }
             }
         }
     }
