@@ -128,6 +128,7 @@ struct groupsView: View {
                 })
                 
             }
+            
             .navigationTitle("Groups")
             .refreshable {
                 await viewModel.fetchGroupNames()
@@ -147,7 +148,7 @@ struct BetCard: View {
 
     var body: some View {
         HStack {
-            Text("\(group.groupNumber)")
+            Text("\(group.groupNumber)") // this needs to be rank johny
                     .font(.headline)
                     .foregroundColor(K.darkBlue)
                 Spacer()
@@ -155,10 +156,12 @@ struct BetCard: View {
                     .foregroundColor(K.darkGreen)
             Text("\(group.totalWon)")
                 .foregroundColor(.green)
-        }.clipShape(RoundedCorner())
-        .padding()
+        }.padding()
+        .background(K.veryLightGray) // changes color based on bet result
+            .cornerRadius(10)
+        
         .frame(maxWidth: .infinity) // Move the frame to the bottom
-        .background(Color(.lightGray)) // changes color based on bet result
+        
     }
 }
 

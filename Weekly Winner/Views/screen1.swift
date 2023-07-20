@@ -22,11 +22,12 @@ struct UserProfileView: View {
             Divider()
                 .padding(.horizontal, 20)
             
-            Text("Most Popular Bets")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .center)
+//            Text("Most Popular Bets")
+//                    .font(.headline)
+//                    .frame(maxWidth: .infinity, alignment: .center)
                     
             MostPopularBetsView(bookVM: bookVM)
+                .padding(.horizontal)
             Spacer()
 
         }
@@ -86,45 +87,41 @@ struct groupStatusView: View {
                     .padding(index == 0 ? EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0) : EdgeInsets(top: 15, leading: 0, bottom: 15, trailing: 0))
                     .padding(.leading) // Add padding to the left of the HStack
                     .background(index == 0 ? K.veryLightBlue : K.veryLightGray)
-                    .clipShape(RoundSomeCorners(topLeft: index == 0 ? 10 : 0, topRight: index == 0 ? 10 : 0,
-                                                bottomLeft: index == ticketVM.userGroups.count ? 10 : 0, bottomRight: index == ticketVM.userGroups.count ? 10 : 0))
+//                    .clipShape(RoundSomeCorners(topLeft: index == 0 ? 10 : 0, topRight: index == 0 ? 10 : 0,
+//                                                bottomLeft: index == ticketVM.userGroups.count ? 10 : 0, bottomRight: index == ticketVM.userGroups.count ? 10 : 0))
                     if index != ticketVM.userGroups.count {
                         Divider()
                     }
                 }
             }
-        }
+        }.cornerRadius(10)
     }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 struct MostPopularBetsView: View {
     @StateObject var bookVM: bookViewModel
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            // Removed the "Most Popular Bets" title
-            
-            ForEach(0..<bookVM.mostPopularBets.count, id: \.self) { index in
-                HStack {
-                    PopularBetView(index: index, bookVM: bookVM)
+        VStack(alignment: .leading, spacing: 0) {
+            ForEach(0...bookVM.mostPopularBets.count, id: \.self) { index in
+                if index == 0 {
+                    HStack{
+                        Spacer()
+                        Text("Most Popular Bets")
+                            .font(.headline)
+                        Spacer()    //.frame(width: .infinity, alignment: .center)
+                    }.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+                        .padding(.leading)
+                        .background(K.veryLightBlue)
+                } else {
+                    HStack {
+                        PopularBetView(index: index, bookVM: bookVM)
+                    }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
+                        .padding(.horizontal)
+                        .background(K.veryLightGray)
                 }
             }
         }
-        .padding(.horizontal, 20) // Add this line
-        .padding()
-        .background(Color.white)
         .cornerRadius(10)
-        .shadow(radius: 5)
     }
 }
 
@@ -134,12 +131,12 @@ struct PopularBetView: View {
     var index: Int
     @StateObject var bookVM: bookViewModel
     private var extra: String {
-        if bookVM.mostPopularBets[index].betType == .over {
+        if bookVM.mostPopularBets[index-1].betType == .over {
             return "o"
-        } else if bookVM.mostPopularBets[index].betType == .under {
+        } else if bookVM.mostPopularBets[index-1].betType == .under {
             return "u"
         } else {
-            if bookVM.mostPopularBets[index].betLine >= 0 {
+            if bookVM.mostPopularBets[index-1].betLine >= 0 {
                 return "+"
             }
         }
@@ -148,9 +145,9 @@ struct PopularBetView: View {
 
     var body: some View {
         HStack {
-            Text("\(index + 1). \(bookVM.mostPopularBets[index].teamName)").frame(width: 275, alignment: .leading)
+            Text("\(index). \(bookVM.mostPopularBets[index-1].teamName)").frame(width: 250, alignment: .leading)
             Spacer()
-            Text("\(extra)\(bookVM.mostPopularBets[index].betLine)").frame(width: 60, alignment: .trailing)
+            Text("\(extra)\(bookVM.mostPopularBets[index-1].betLine)").frame(width: 60, alignment: .trailing)
         }
     }
 }
