@@ -41,7 +41,7 @@ struct SideMenuView: View {
     var body: some View {
         HStack {
             Spacer()
-            VStack {
+            VStack (alignment: .leading, spacing: 5){
 
                 NavigationLink(destination: SettingsView()) {
                     SideMenuButton(title: "Settings")
@@ -50,7 +50,7 @@ struct SideMenuView: View {
                     SideMenuButton(title: "Rules")
                 }
                 NavigationLink(destination: ContactView()) {
-                    SideMenuButton(title: "Contact Us")
+                    SideMenuButton(title: "Contact")
                 }
 
                 Spacer()
@@ -69,7 +69,7 @@ struct SideMenuButton: View {
 
     var body: some View {
         Text(title)
-            .font(.largeTitle) // Make the button text bigger
+            .font(.title2) // Make the button text bigger
             .foregroundColor(.white)
             .padding(.bottom) // Add padding to create space between buttons
     }
