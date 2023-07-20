@@ -255,77 +255,93 @@ struct BetDetailsView: View {
                         betType = .None
                     }
                 } label: {
-                    Image(systemName: "arrow.turn.left.up")
+                    Image(systemName: "xmark")
                         .resizable()
-                        .frame(width: 20,height: 20)
-                        .foregroundColor(.black)
-                }
+                        .frame(width: 20, height: 20)
+                        .foregroundColor(.red)
+                }.padding(.top)
                 Spacer()
+
 
             }.frame(maxWidth:.infinity, alignment: .center)
                 .padding(.leading)
             
-            HStack {
-
-                if ticketVM.isBetsLoaded {
-                    Picker("Group", selection: $groupNumber) {
-                        ForEach(0..<viewModel.userGroups.count, id: \.self) { index in
-                            Text(viewModel.userGroups[index].groupName).tag(index)
+            VStack {
+                HStack {
+                    if ticketVM.isBetsLoaded {
+                        Picker("Group", selection: $groupNumber) {
+                            ForEach(0..<viewModel.userGroups.count, id: \.self) { index in
+                                Text(viewModel.userGroups[index].groupName).tag(index)
+                            }
                         }
-                    }
-                    .pickerStyle(WheelPickerStyle())
-                    .onChange(of: groupNumber) { newValue in
-                        ticketVM.fetchBets(groupNumber: newValue) {
-                            if !ticketVM.availableBets(for: newValue).isEmpty {
+                        .pickerStyle(WheelPickerStyle())
+                        .onChange(of: groupNumber) { newValue in
+                            ticketVM.fetchBets(groupNumber: newValue) {
+                                if !ticketVM.availableBets(for: newValue).isEmpty {
+                                    betNumber = ticketVM.availableBets(for: groupNumber)[0]
+                                } else {
+                                    betNumber = -99
+                                }
+                                checkTeamTaken()
+                            }
+                            
+                        }
+                        .onAppear {
+                            if !ticketVM.availableBets(for: groupNumber).isEmpty {
                                 betNumber = ticketVM.availableBets(for: groupNumber)[0]
                             } else {
                                 betNumber = -99
                             }
                             checkTeamTaken()
                         }
-                        
-                    }
-                    .onAppear {
-                        if !ticketVM.availableBets(for: groupNumber).isEmpty {
-                            betNumber = ticketVM.availableBets(for: groupNumber)[0]
-                        } else {
-                            betNumber = -99
-                        }
-                        checkTeamTaken()
-                    }
-                    if betNumber >= 0 {
-                        Picker("Bet Type", selection: $betNumber) { // starts at 1 bc "1 leg"
-                            ForEach(ticketVM.availableBets(for: groupNumber), id: \.self) { index in //
-                                switch index {
-                                case 1: Text("Straight #1").tag(1)
-                                case 2: Text("Straight #2").tag(2)
-                                case 3: Text("Straight #3").tag(3)
-                                case 4: Text("Straight #4").tag(4)
-                                case 5: Text("2leg #1").tag(5)
-                                case 6: Text("2leg #2").tag(6)
-                                case 7: Text("3leg").tag(7)
-                                case 8: Text("5leg").tag(8)
-                                default: EmptyView()
+                        if betNumber >= 0 {
+                            Picker("Bet Type", selection: $betNumber) { // starts at 1 bc "1 leg"
+                                ForEach(ticketVM.availableBets(for: groupNumber), id: \.self) { index in //
+                                    switch index {
+                                    case 1: Text("Straight #1").tag(1)
+                                    case 2: Text("Straight #2").tag(2)
+                                    case 3: Text("Straight #3").tag(3)
+                                    case 4: Text("Straight #4").tag(4)
+                                    case 5: Text("2leg #1").tag(5)
+                                    case 6: Text("2leg #2").tag(6)
+                                    case 7: Text("3leg").tag(7)
+                                    case 8: Text("5leg").tag(8)
+                                    default: EmptyView()
+                                    }
                                 }
                             }
+                            .pickerStyle(WheelPickerStyle())
+                            .onChange(of: betNumber) { newValue in
+                                print("Selection changed to: \(newValue)")
+                                checkTeamTaken()
+                            }
+                            .onAppear {
+                                print("\(betNumber) is original betNumber")
+                                
+                            }
+                        } else {
+                            Picker("Bet Type", selection: $betNumber) {
+                                Text("FULL")
+                            }.pickerStyle(WheelPickerStyle())
                         }
-                        .pickerStyle(WheelPickerStyle())
-                        .onChange(of: betNumber) { newValue in
-                            print("Selection changed to: \(newValue)")
-                            checkTeamTaken()
-                        }
-                        .onAppear {
-                            print("\(betNumber) is original betNumber")
-                            
-                        }
-                    } else {
-                        Picker("Bet Type", selection: $betNumber) {
-                            Text("FULL")
-                        }.pickerStyle(WheelPickerStyle())
+                        
                     }
-                    
                 }
-            }.onAppear {
+                
+                if betType == .betAwaySpread {
+                    BetView(teamName: game.awayTeam, originalSpread: game.awaySpread, betType: .betAwaySpread, chosenSpread: $chosenSpread)
+                }
+                if betType == .betHomeSpread {
+                    BetView(teamName: game.homeTeam, originalSpread: game.homeSpread, betType: .betHomeSpread, chosenSpread: $chosenSpread)
+                }
+                if betType == .over {
+                    BetView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalOver, betType: .over, chosenSpread: $chosenSpread)
+                }
+                if betType == .under {
+                    BetView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalUnder, betType: .under, chosenSpread: $chosenSpread)
+                }
+            }
+            .onAppear {
                 ticketVM.fetchBets(groupNumber: groupNumber) {
                     if !ticketVM.availableBets(for: groupNumber).isEmpty {
                         betNumber = ticketVM.availableBets(for: groupNumber)[0]
@@ -335,21 +351,11 @@ struct BetDetailsView: View {
                     checkTeamTaken()
                 }
                 print("Group Number: \(groupNumber), Bet Number: \(betNumber)")
-            }
-
-            if betType == .betAwaySpread {
-                BetView(teamName: game.awayTeam, originalSpread: game.awaySpread, betType: .betAwaySpread, chosenSpread: $chosenSpread)
-            }
-            if betType == .betHomeSpread {
-                BetView(teamName: game.homeTeam, originalSpread: game.homeSpread, betType: .betHomeSpread, chosenSpread: $chosenSpread)
-            }
-            if betType == .over {
-                BetView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalOver, betType: .over, chosenSpread: $chosenSpread)
-            }
-            if betType == .under {
-                BetView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalUnder, betType: .under, chosenSpread: $chosenSpread)
-            }
-        
+            } // whole thing
+            //.background(K.veryLightGray)
+            //.cornerRadius(10)
+            .padding()
+                
             
         Button(action: {
             print("groupNumber: \(groupNumber), betNumber: \(betNumber)")
@@ -378,31 +384,28 @@ struct BetDetailsView: View {
                        .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
                })
         .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType))
+        .padding(.horizontal)
         }
         .onAppear(perform: {
             if betType == .betAwaySpread {
                 chosenSpread = game.awaySpread
                 originalSpread = game.awaySpread
                 whichTeam = game.awayTeam
-                //betType = 1
             }
             if betType == .betHomeSpread {
                 chosenSpread = game.homeSpread
                 originalSpread = game.homeSpread
                 whichTeam = game.homeTeam
-                //betType = 2
             }
             if betType == .over {
                 chosenSpread = game.totalOver
                 originalSpread = game.totalOver
                 whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
-                //betType = 3
             }
             if betType == .under {
                 chosenSpread = game.totalUnder
                 originalSpread = game.totalUnder
                 whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
-                //betType = 4
             }
         })
     }
@@ -435,27 +438,52 @@ struct BetView: View {
     @Binding var chosenSpread: Double
 
     var body: some View {
-        VStack{
-            HStack {
-                Text("\(teamName) \(internalExtra)\(String(format: "%.0f", chosenSpread))")
+        VStack (spacing: 0){
+            HStack (spacing: 10) {
+                Text("Team")
+                    .font(.subheadline)
+                    .foregroundColor(.black)
+                    .frame(width: 100, alignment: .leading)
+                Spacer()
+                Text("Spread")
+                    .font(.subheadline)
+                    .foregroundColor(.black)
+                    .frame(width: 50, alignment: .leading)
+                Text("Odds")
+                    .font(.subheadline)
+                    .foregroundColor(.black)
+                    .frame(width: 50, alignment: .trailing)
+            }.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+                .padding(.horizontal)
+                .background(K.veryLightBlue)
+            HStack (spacing: 10){
+                Text("\(teamName)")
                     .font(.title2)
                     .foregroundColor(.blue)
-            }
+                    .frame(width: 100, alignment: .leading)
+                Spacer()
+                Text("\(internalExtra)\(String(format: "%.0f", chosenSpread))")
+                    .font(.title2)
+                    .foregroundColor(.blue)
+                    .frame(width: 50, alignment: .leading)
+                Text("\(percentageToML(percentage: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread))))")
+                    .font(.title2)
+                    .foregroundColor(.green)
+                    .frame(width: 50, alignment: .trailing)
+            }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
+                .padding(.horizontal)
+                .background(K.veryLightGray)
+            
             
             HStack {
                 //Text("Spread/total:")
                   //  .font(.headline)
                 Slider(value: $chosenSpread, in: Double(originalSpread - 5)...Double(originalSpread + 5), step: 1)
                     .accentColor(Color(.green))
-            }
-            .padding()
-            
-            Text("Odds: \(percentageToML(percentage: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread))))") // sample algorithm
-                .font(.largeTitle)
-                .foregroundColor(.green)
-            
-            Divider()
-        }
+            }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
+                .padding(.horizontal)
+                .background(K.veryLightGray)
+        }.cornerRadius(10)
     }
 }
 
