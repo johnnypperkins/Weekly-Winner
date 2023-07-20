@@ -262,22 +262,44 @@ struct BetDetailsView: View {
                 }.padding(.top)
                 Spacer()
 
-
             }.frame(maxWidth:.infinity, alignment: .center)
                 .padding(.leading)
             
             VStack {
-                HStack {
-                    if ticketVM.isBetsLoaded {
-                        Picker("Group", selection: $groupNumber) {
-                            ForEach(0..<viewModel.userGroups.count, id: \.self) { index in
-                                Text(viewModel.userGroups[index].groupName).tag(index)
+                VStack (spacing: 0){
+                    HStack (spacing: 30) {
+                        Spacer()
+                        Text("Group")
+                            .frame(width: 120, alignment: .center)
+                        
+                        Text("Bet")
+                            .frame(width: 120, alignment: .center)
+                        Spacer()
+                    }.padding(.horizontal)
+                        .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+                    .background(K.veryLightBlue)
+                    HStack (spacing: 20){
+                        if ticketVM.isBetsLoaded {
+                            Spacer()
+                            Picker("Group", selection: $groupNumber) {
+                                ForEach(0..<viewModel.userGroups.count, id: \.self) { index in
+                                    Text(viewModel.userGroups[index].groupName).tag(index)
+                                }
                             }
-                        }
-                        .pickerStyle(WheelPickerStyle())
-                        .onChange(of: groupNumber) { newValue in
-                            ticketVM.fetchBets(groupNumber: newValue) {
-                                if !ticketVM.availableBets(for: newValue).isEmpty {
+                            .frame(width: 120, alignment: .center)
+                            .pickerStyle(WheelPickerStyle())
+                            .onChange(of: groupNumber) { newValue in
+                                ticketVM.fetchBets(groupNumber: newValue) {
+                                    if !ticketVM.availableBets(for: newValue).isEmpty {
+                                        betNumber = ticketVM.availableBets(for: groupNumber)[0]
+                                    } else {
+                                        betNumber = -99
+                                    }
+                                    checkTeamTaken()
+                                }
+                            }
+                            .onAppear {
+                                if !ticketVM.availableBets(for: groupNumber).isEmpty {
                                     betNumber = ticketVM.availableBets(for: groupNumber)[0]
                                 } else {
                                     betNumber = -99
@@ -285,31 +307,26 @@ struct BetDetailsView: View {
                                 checkTeamTaken()
                             }
                             
-                        }
-                        .onAppear {
-                            if !ticketVM.availableBets(for: groupNumber).isEmpty {
-                                betNumber = ticketVM.availableBets(for: groupNumber)[0]
-                            } else {
-                                betNumber = -99
-                            }
-                            checkTeamTaken()
-                        }
-                        if betNumber >= 0 {
                             Picker("Bet Type", selection: $betNumber) { // starts at 1 bc "1 leg"
-                                ForEach(ticketVM.availableBets(for: groupNumber), id: \.self) { index in //
-                                    switch index {
-                                    case 1: Text("Straight #1").tag(1)
-                                    case 2: Text("Straight #2").tag(2)
-                                    case 3: Text("Straight #3").tag(3)
-                                    case 4: Text("Straight #4").tag(4)
-                                    case 5: Text("2leg #1").tag(5)
-                                    case 6: Text("2leg #2").tag(6)
-                                    case 7: Text("3leg").tag(7)
-                                    case 8: Text("5leg").tag(8)
-                                    default: EmptyView()
+                                if betNumber >= 0 {
+                                    ForEach(ticketVM.availableBets(for: groupNumber), id: \.self) { index in //
+                                        switch index {
+                                        case 1: Text("Straight #1").tag(1)
+                                        case 2: Text("Straight #2").tag(2)
+                                        case 3: Text("Straight #3").tag(3)
+                                        case 4: Text("Straight #4").tag(4)
+                                        case 5: Text("2leg #1").tag(5)
+                                        case 6: Text("2leg #2").tag(6)
+                                        case 7: Text("3leg").tag(7)
+                                        case 8: Text("5leg").tag(8)
+                                        default: EmptyView()
+                                        }
                                     }
+                                } else {
+                                    Text("FULL")
                                 }
                             }
+                            .frame(width: 120, alignment: .center)
                             .pickerStyle(WheelPickerStyle())
                             .onChange(of: betNumber) { newValue in
                                 print("Selection changed to: \(newValue)")
@@ -317,17 +334,12 @@ struct BetDetailsView: View {
                             }
                             .onAppear {
                                 print("\(betNumber) is original betNumber")
-                                
                             }
-                        } else {
-                            Picker("Bet Type", selection: $betNumber) {
-                                Text("FULL")
-                            }.pickerStyle(WheelPickerStyle())
+                            Spacer()
                         }
-                        
-                    }
-                }
-                
+                    }.padding(.horizontal)
+                    .background(K.veryLightGray)
+                }.cornerRadius(10)
                 if betType == .betAwaySpread {
                     BetView(teamName: game.awayTeam, originalSpread: game.awaySpread, betType: .betAwaySpread, chosenSpread: $chosenSpread)
                 }
