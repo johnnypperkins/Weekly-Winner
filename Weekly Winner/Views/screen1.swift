@@ -125,8 +125,6 @@ struct MostPopularBetsView: View {
     }
 }
 
-
-
 struct PopularBetView: View {
     var index: Int
     @StateObject var bookVM: bookViewModel

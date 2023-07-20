@@ -30,114 +30,132 @@ struct groupsView: View {
             }
         )
         NavigationStack {
-            ScrollView{
-                VStack {
-                    Picker("Group", selection: $selectedGroup) {
-                        ForEach(0..<viewModel.groupNames.count+1, id: \.self) { index in
-                            if index == 0 {
-                                Image(systemName: "plus")
-                            }
-                            else{
-                                Text("\(viewModel.groupNames[index-1].groupName)").tag(index)
-                                
-                                
-                            }
+            VStack {
+                Picker("Group", selection: $selectedGroup) {
+                    ForEach(0..<viewModel.groupNames.count+1, id: \.self) { index in
+                        if index == 0 {
+                            Image(systemName: "plus")
                         }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    .padding(.horizontal, 10)
-                    .onChange(of: selectedGroup) { newValue in
-                        if selectedGroup > 0 {
-                            viewModel.fetchGroupTickets(group: viewModel.groupNames[selectedGroup-1].groupName)
-                        }
-                    }
-                    
-                    
-                    if selectedGroup == 0 {
-                        HStack {
-                            Spacer()
+                        else{
+                            Text("\(viewModel.groupNames[index-1].groupName)").tag(index)
                             
-                            Button {
-                                print(viewModel.groupNames)
-                                isShowingSheet.toggle()
-                            } label: {
-                                Image(systemName: "plus")
-                                    .resizable()
-                                    .frame(width: 30, height: 30)
-                                    .padding()
-                                    .foregroundColor(.green)
-                                
-                            }
+                            
                         }
-                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
+                    }
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .padding(.horizontal, 10)
+                .onChange(of: selectedGroup) { newValue in
+                    if selectedGroup > 0 {
+                        viewModel.fetchGroupTickets(group: viewModel.groupNames[selectedGroup-1].groupName)
+                    }
+                }
+                
+                if selectedGroup == 0 {
+                    HStack {
+                        Spacer()
                         
-                        Text("Find Group")
-                            .font(.title)
-                            .bold()
-                        
-                        SearchBar(text: keywordBinding, placeholder: "Search Groups")
-                        if !viewModel.queriedGroups.isEmpty {
-                            withAnimation {
-                                ScrollView {
-                                    ForEach(viewModel.queriedGroups, id: \.id) { group in
-                                        Button(action: {
-                                            // Destination view code
-                                            isJoinSheetPresented.toggle()
-                                        }) {
-                                            groupBarView(ticket: group)
-                                        }.sheet(isPresented: $isJoinSheetPresented) {
-                                            GroupJoinSheet(ticket: group, viewModel: viewModel, isPresented: $isJoinSheetPresented)
-                                        }
+                        Button {
+                            print(viewModel.groupNames)
+                            isShowingSheet.toggle()
+                        } label: {
+                            Image(systemName: "plus")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                                .padding()
+                                .foregroundColor(.green)
+                            
+                        }
+                    }
+                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
+                    
+                    Text("Find Group")
+                        .font(.title)
+                        .bold()
+                    
+                    SearchBar(text: keywordBinding, placeholder: "Search Groups")
+                    if !viewModel.queriedGroups.isEmpty {
+                        withAnimation {
+                            ScrollView {
+                                ForEach(viewModel.queriedGroups, id: \.id) { group in
+                                    Button(action: {
+                                        // Destination view code
+                                        isJoinSheetPresented.toggle()
+                                    }) {
+                                        groupBarView(ticket: group)
+                                    }.sheet(isPresented: $isJoinSheetPresented) {
+                                        GroupJoinSheet(ticket: group, viewModel: viewModel, isPresented: $isJoinSheetPresented)
                                     }
                                 }
-                            }.animation(.easeInOut, value: 20)
-                        }
-                        
+                            }
+                        }.animation(.easeInOut, value: 20)
                     }
-                    else{
-                        
-                        HStack{
-                            Image(systemName: "photo.circle.fill")
-                                .resizable()
-                                .frame(width: 100,height: 100)
-                                .padding()
-                                .foregroundColor(.blue)
-                            VStack{
-                                Text(viewModel.groupNames[selectedGroup-1].groupName)
-                                    .font(.title2)
+                }else{
+                    HStack{
+                        Image(systemName: "photo.circle.fill")
+                            .resizable()
+                            .frame(width: 50,height: 50)
+                            .padding()
+                            .foregroundColor(.blue)
+                        VStack{
+                            Text(viewModel.groupNames[selectedGroup-1].groupName)
+                                .font(.title2)
+                        }
+                    }
+                    Divider().padding(.horizontal)
+                    VStack(alignment: .leading, spacing: 0) {
+                        HStack {
+                            Text("Rank") // this needs to be rank johny
+                                .font(.headline)
+                                .foregroundColor(K.darkBlue)
+                                .frame(width: 100, alignment: .leading)
+                            Spacer()
+                            Text("PW")
+                                .foregroundColor(K.darkGreen)
+                                .frame(width: 50, alignment: .leading)
+                            Text("TW")
+                                .foregroundColor(.green)
+                                .frame(width: 50, alignment: .leading)
+                        }
+                        .padding(EdgeInsets(top: 7.5, leading: 0, bottom: 7.5, trailing: 0))
+                        .padding(.horizontal)
+                        .background(K.veryLightBlue) // changes color based on bet result
+                        .frame(maxWidth: .infinity) // Move the frame to the bottom
+                        .clipShape(RoundSomeCorners(topLeft: 10,topRight: 10,bottomLeft: 0,bottomRight: 0))
+                        ScrollView {
+                            VStack(alignment: .leading, spacing:0) {
+                                ForEach(viewModel.rankedGroupTickets.indices, id: \.self) { index in
+                                    let game = viewModel.rankedGroupTickets[index]
+                                    BetCard(group: game, viewModel: viewModel)
+                                        .clipShape(RoundSomeCorners(
+                                            topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
+                                            topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
+                                            bottomLeft: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0,
+                                            bottomRight: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0
+                                        ))
+                                    if index != viewModel.rankedGroupTickets.count - 1 {
+                                        Divider()
+                                    }
+                                }
                             }
                         }
-                        Divider()
-                        
-                        ForEach(viewModel.rankedGroupTickets) { game in // HARDCODE NCAAF
-                            VStack(alignment: .leading, spacing: 0) {
-                                BetCard(group: game, viewModel: viewModel)
-                                    .clipShape(RoundedCorners())
-                                
-                            
+                        .refreshable {
+                            await viewModel.fetchGroupNames()
+                            if selectedGroup != 0 {
+                                viewModel.fetchGroupTickets(group: viewModel.groupNames[selectedGroup-1].groupName)
                             }
-                            
-                        }.padding(.top)
+                        }
                     }
-                    
-                    
-                    Spacer()
+                    .padding(.horizontal)
+                    //.clipShape(RoundedRectangle(cornerRadius: 10)) // Apply corner radius to the ScrollView
+
                 }
-                .sheet(isPresented: $isShowingSheet, content: {
-                    createGroupsView()
-                })
-                
+                Spacer()
             }
-            
-            .navigationTitle("Groups")
-            .refreshable {
-                await viewModel.fetchGroupNames()
-                if selectedGroup != 0 {
-                    viewModel.fetchGroupTickets(group: viewModel.groupNames[selectedGroup-1].groupName)
-                }
-            }
-            
-        }
+            .sheet(isPresented: $isShowingSheet, content: {
+                createGroupsView()
+            })
+        }.navigationTitle("Groups")
     }
 }
 
@@ -148,20 +166,21 @@ struct BetCard: View {
 
     var body: some View {
         HStack {
-            Text("\(group.groupNumber)") // this needs to be rank johny
-                    .font(.headline)
-                    .foregroundColor(K.darkBlue)
-                Spacer()
-            Text("Projected \(group.totalPotentialWon)")
-                    .foregroundColor(K.darkGreen)
+            Text("\(group.groupNumber). Username") // this needs to be rank johny
+                .font(.headline)
+                .foregroundColor(K.darkBlue)
+                .frame(width: 150, alignment: .leading)
+            Spacer()
+            Text("\(group.totalPotentialWon)")
+                .foregroundColor(K.darkGreen)
+                .frame(width: 50, alignment: .leading)
             Text("\(group.totalWon)")
                 .foregroundColor(.green)
-        }.padding()
+                .frame(width: 50, alignment: .leading)
+        }
+        .padding()
         .background(K.veryLightGray) // changes color based on bet result
-            .cornerRadius(10)
-        
         .frame(maxWidth: .infinity) // Move the frame to the bottom
-        
     }
 }
 
@@ -181,6 +200,7 @@ struct SearchBar: View {
         .padding(.top, 10)
     }
 }
+
 
 struct groupBarView: View {
     
