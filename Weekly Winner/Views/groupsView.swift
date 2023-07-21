@@ -126,7 +126,7 @@ struct groupsView: View {
                             VStack(alignment: .leading, spacing:0) {
                                 ForEach(viewModel.rankedGroupTickets.indices, id: \.self) { index in
                                     let game = viewModel.rankedGroupTickets[index]
-                                    BetCard(group: game, viewModel: viewModel)
+                                    BetCard(group: game, rank: (index+1), viewModel: viewModel)
                                         .clipShape(RoundSomeCorners(
                                             topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
                                             topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
@@ -162,11 +162,12 @@ struct groupsView: View {
 
 struct BetCard: View {
     let group: Group
+    let rank: Int
     @ObservedObject var viewModel: groupsViewModel
 
     var body: some View {
         HStack {
-            Text("\(group.groupNumber). Username") // this needs to be rank johny
+            Text("\(rank). Username") // this needs to be rank johny
                 .font(.headline)
                 .foregroundColor(K.darkBlue)
                 .frame(width: 150, alignment: .leading)
@@ -268,12 +269,12 @@ struct GroupJoinSheet: View {
                 .font(.subheadline)
             Text("Admin: \(ticket.groupAdmin)")
                 .font(.caption)
-            Button("Join Group") {
-                // Implement the join group functionality here
+            Button(action: {
                 viewModel.joinGroup(groupName: ticket.groupName)
                 isPresented = false
-                
-            }
+            }, label: {
+                Text("Join Group")
+            })
             .padding()
         }
         .padding()
