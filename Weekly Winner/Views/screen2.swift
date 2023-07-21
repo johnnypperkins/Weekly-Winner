@@ -239,7 +239,7 @@ struct BetDetailsView: View {
             uploadText = "Ticket Full"
         } else {
             if ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) {
-                uploadText = "Upload Bet"
+                uploadText = "Place Bet"
             } else {
                 uploadText = "Team Taken"
             }
@@ -266,27 +266,26 @@ struct BetDetailsView: View {
                 .padding(.leading)
             
             VStack {
-                VStack (spacing: 0){
-                    HStack (spacing: 30) {
-                        Spacer()
+                HStack (spacing: 0){
+                    VStack (spacing: 0) {
+                        //Spacer()
+
                         Text("Group")
-                            .frame(width: 120, alignment: .center)
+                            .frame(maxWidth: 200, alignment: .center)
+                            .font(.subheadline)
+                            .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+                            .background(K.veryLightBlue)
                         
-                        Text("Bet")
-                            .frame(width: 120, alignment: .center)
-                        Spacer()
-                    }.padding(.horizontal)
-                        .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
-                    .background(K.veryLightBlue)
-                    HStack (spacing: 20){
+                        //Spacer()
+                        
                         if ticketVM.isBetsLoaded {
-                            Spacer()
+                            //Spacer()
                             Picker("Group", selection: $groupNumber) {
                                 ForEach(0..<viewModel.userGroups.count, id: \.self) { index in
                                     Text(viewModel.userGroups[index].groupName).tag(index)
                                 }
                             }
-                            .frame(width: 120, alignment: .center)
+                            .frame(maxWidth: 200, alignment: .center)
                             .pickerStyle(WheelPickerStyle())
                             .onChange(of: groupNumber) { newValue in
                                 ticketVM.fetchBets(groupNumber: newValue) {
@@ -306,7 +305,18 @@ struct BetDetailsView: View {
                                 }
                                 checkTeamTaken()
                             }
-                            
+                            .background(K.veryLightGray)
+                        }
+                    }//.padding(.horizontal)
+                        //.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+                    //.background(K.veryLightBlue)
+                    VStack (spacing: 0){
+                        Text("Bet")
+                            .frame(maxWidth: 200, alignment: .center)
+                            .font(.subheadline)
+                            .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+                            .background(K.veryLightBlue)
+                        if ticketVM.isBetsLoaded {
                             Picker("Bet Type", selection: $betNumber) { // starts at 1 bc "1 leg"
                                 if betNumber >= 0 {
                                     ForEach(ticketVM.availableBets(for: groupNumber), id: \.self) { index in //
@@ -326,7 +336,7 @@ struct BetDetailsView: View {
                                     Text("FULL")
                                 }
                             }
-                            .frame(width: 120, alignment: .center)
+                            .frame(maxWidth: 200, alignment: .center)
                             .pickerStyle(WheelPickerStyle())
                             .onChange(of: betNumber) { newValue in
                                 print("Selection changed to: \(newValue)")
@@ -335,11 +345,13 @@ struct BetDetailsView: View {
                             .onAppear {
                                 print("\(betNumber) is original betNumber")
                             }
-                            Spacer()
+                            .background(K.veryLightGray)
                         }
-                    }.padding(.horizontal)
-                    .background(K.veryLightGray)
+                    }//.padding(.horizontal)
+                    //.background(K.veryLightGray)
                 }.cornerRadius(10)
+                    // .padding(.horizontal)
+                
                 if betType == .betAwaySpread {
                     BetView(teamName: game.awayTeam, originalSpread: game.awaySpread, betType: .betAwaySpread, chosenSpread: $chosenSpread)
                 }
@@ -367,6 +379,7 @@ struct BetDetailsView: View {
             //.background(K.veryLightGray)
             //.cornerRadius(10)
             .padding()
+            .padding(.horizontal)
                 
             
         Button(action: {
@@ -397,6 +410,7 @@ struct BetDetailsView: View {
                })
         .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType))
         .padding(.horizontal)
+        .padding(.horizontal)
         }
         .onAppear(perform: {
             if betType == .betAwaySpread {
@@ -420,6 +434,7 @@ struct BetDetailsView: View {
                 whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
             }
         })
+        //.padding(.horizontal)
     }
 }
 
@@ -464,7 +479,7 @@ struct BetView: View {
                 Text("Odds")
                     .font(.subheadline)
                     .foregroundColor(.black)
-                    .frame(width: 50, alignment: .trailing)
+                    .frame(width: 65, alignment: .trailing)
             }.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
                 .padding(.horizontal)
                 .background(K.veryLightBlue)
@@ -481,7 +496,7 @@ struct BetView: View {
                 Text("\(percentageToML(percentage: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread))))")
                     .font(.title2)
                     .foregroundColor(.green)
-                    .frame(width: 50, alignment: .trailing)
+                    .frame(width: 65, alignment: .trailing)
             }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
                 .padding(.horizontal)
                 .background(K.veryLightGray)
