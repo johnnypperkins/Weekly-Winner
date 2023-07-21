@@ -19,27 +19,26 @@ struct BettingAppView: View {
                 sideMenuView(bookVM: viewModel, isShowing: $isShowing)
             }
             VStack {
-                ZStack {
-                    Text(viewModel.selectedGameType)
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundColor(.blue)
                     
-                    HStack {
-                        Button(action: {
-                            withAnimation(.spring()) {
-                                isShowing.toggle()
-                            }
-                        }) {
-                            Image(systemName: "line.horizontal.3")
-                                .imageScale(.large)
-                                .padding(.leading) // Add padding to the left side of the button
-                        }
-                        Spacer()
-                    }
-                }.padding(.top, 65)
 
-                
+                HStack {
+                    Button(action: {
+                        withAnimation(.spring()) {
+                            isShowing.toggle()
+                        }
+                    },label:  {
+                        Image(systemName: "line.horizontal.3")
+                            .imageScale(.large)
+                            .foregroundColor(.blue)
+                            .padding(.leading) // Add padding to the left side of the button
+                    })
+                    Spacer()
+                }
+                Text(viewModel.selectedGameType)
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundColor(.blue)
+
                 HStack {
                     VStack(alignment: .leading) {
                         HStack{
@@ -69,7 +68,6 @@ struct BettingAppView: View {
                         
                     }
                 }.padding(.horizontal)
-                .padding(.horizontal)
                 .background(Color.white)
                
                 
@@ -92,12 +90,14 @@ struct BettingAppView: View {
                         }
                     }
                 }
-            }.cornerRadius(isShowing ? 50 : 30)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .cornerRadius(isShowing ? 50 : 30)
                 .blur(radius: isShowing ? 8 : 0)
                 .offset(x:isShowing ? 300 : 0, y: isShowing ? 100 : 0)
                 .scaleEffect(isShowing ? 0.8 : 1)
             }
-            .ignoresSafeArea(.all)
+
             .navigationBarHidden(false)
         }
     
@@ -209,9 +209,14 @@ struct BetRowView1: View {
         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
         .sheet(isPresented: $showingSheet) {
             BetDetailsView(game: game, betType: $betType)
-                .presentationDetents([.medium, .large])
+                .presentationDetents([.medium])
                 .presentationDragIndicator(.hidden)
-                .interactiveDismissDisabled()
+                .onDisappear(){
+                    withAnimation{
+                        betType = .None
+                    }
+                }
+                
         }
     }
 }

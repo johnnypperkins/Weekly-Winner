@@ -42,6 +42,7 @@ class groupsViewModel: ObservableObject {
         }
     
     func joinGroup(groupName: String) {
+        
         grpService.joinGroup(userID: Auth.auth().currentUser!.uid, groupName: groupName)
     }
     

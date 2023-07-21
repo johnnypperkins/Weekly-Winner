@@ -13,10 +13,11 @@ struct groupsView: View {
     @State private var myGroups = ["Group 1", "Group 2", "Group 3"] // Replace with your data source
     @State private var isShowingSheet = false
     @ObservedObject private var viewModel = groupsViewModel()
-    @State private var selectedGroup = 0
+    @State private var selectedGroup = 1
 
     init() {
         viewModel.fetchGroupNames()
+    
     }
     
     var body: some View {
@@ -155,6 +156,11 @@ struct groupsView: View {
             .sheet(isPresented: $isShowingSheet, content: {
                 createGroupsView()
             })
+            .onAppear(){
+                if selectedGroup > 0 {
+                    viewModel.fetchGroupTickets(group: viewModel.groupNames[selectedGroup-1].groupName)
+                }
+            }
         }.navigationTitle("Groups")
     }
 }
@@ -167,7 +173,7 @@ struct BetCard: View {
 
     var body: some View {
         HStack {
-            Text("\(rank). Username") // this needs to be rank johny
+            Text("\(rank). \(group.username)") // this needs to be rank johny
                 .font(.headline)
                 .foregroundColor(K.darkBlue)
                 .frame(width: 150, alignment: .leading)

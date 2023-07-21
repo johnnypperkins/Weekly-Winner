@@ -10,7 +10,13 @@ import Firebase
 
 class groupService {
     private let db = Firestore.firestore()
-        
+    var authData: authenticationViewModel?
+    init() {
+        authData = nil
+        Task{
+            authData = await authenticationViewModel()
+        }
+    }
     
     func getRankedTickets(groupN: String, completion: @escaping ([Group]?, Error?) -> Void) {
             let query = db.collectionGroup("groups")
@@ -101,23 +107,30 @@ class groupService {
         }
     }
     
+    func getUsername() async -> String {
+        return await authData?.username ?? ""
+        }
     
     func joinGroup(userID: String, groupName: String) {
-        groupCount(userID: userID) { num, error in
-            let db = Firestore.firestore()
-            let userGroupsCollection = db.collection("users").document(userID).collection("groups")
-            let group = Group(groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: groupName)
-            do {
-                
-                let _ = try userGroupsCollection.addDocument(from: group) { error in
-                    if let error = error {
-                        print("Error uploading group: \(error)")
-                    } else {
-                        print("Group uploaded successfully!")
+        Task{
+            let username = await self.getUsername() // Access the username asynchronously
+            
+            groupCount(userID: userID) { num, error in
+                let db = Firestore.firestore()
+                let userGroupsCollection = db.collection("users").document(userID).collection("groups")
+                let group = Group(username: username, uid: Auth.auth().currentUser!.uid, groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: groupName)
+                do {
+                    
+                    let _ = try userGroupsCollection.addDocument(from: group) { error in
+                        if let error = error {
+                            print("Error uploading group: \(error)")
+                        } else {
+                            print("Group uploaded successfully!")
+                        }
                     }
+                } catch {
+                    print("Error encoding group: \(error)")
                 }
-            } catch {
-                print("Error encoding group: \(error)")
             }
         }
     }
@@ -125,29 +138,33 @@ class groupService {
     
     
     func fetchUserGroups(userID: String, completion: @escaping ([Group]?, Error?) -> Void) {
-        db.collection("users").document(userID).collection("groups").getDocuments { querySnapshot, error in
-            guard let documents = querySnapshot?.documents else {
-                completion(nil, error)
-                return
-            }
-
-            var groups: [Group] = []
-
-            for document in documents {
-                let id = document.documentID
-                let groupNumber = document.data()["groupNumber"] as? Int ?? 0 // default value if not found
-                let totalWon = document.data()["totalWon"] as? Int ?? 0 // default value if not found
-                let totalPotentialWon = document.data()["totalPotentialWon"] as? Int ?? 0 // default value if not found
-                let groupName = document.data()["groupName"] as? String ?? "null" // default value if not found
-                
-                let group = Group(id: id, groupNumber: groupNumber, dateCreated: "today", totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName)
-                groups.append(group)
-            }
+        Task{
+            let username = await self.getUsername() // Access the username asynchronously
             
-            // sorts them based on groupNum
-            groups.sort { $0.groupNumber < $1.groupNumber }
-
-            completion(groups, nil)
+            db.collection("users").document(userID).collection("groups").getDocuments { querySnapshot, error in
+                guard let documents = querySnapshot?.documents else {
+                    completion(nil, error)
+                    return
+                }
+                
+                var groups: [Group] = []
+                
+                for document in documents {
+                    let id = document.documentID
+                    let groupNumber = document.data()["groupNumber"] as? Int ?? 0 // default value if not found
+                    let totalWon = document.data()["totalWon"] as? Int ?? 0 // default value if not found
+                    let totalPotentialWon = document.data()["totalPotentialWon"] as? Int ?? 0 // default value if not found
+                    let groupName = document.data()["groupName"] as? String ?? "null" // default value if not found
+                    
+                    let group = Group(id: id, username: username, uid: userID, groupNumber: groupNumber, dateCreated: "today", totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName)
+                    groups.append(group)
+                }
+                
+                // sorts them based on groupNum
+                groups.sort { $0.groupNumber < $1.groupNumber }
+                
+                completion(groups, nil)
+            }
         }
     }
     
