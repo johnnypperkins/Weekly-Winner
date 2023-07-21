@@ -22,9 +22,40 @@ struct ticketView: View {
                 Text("loading")
             }
             
-            
-            Text("Potential Winnings: $\(String(format: "%.0f", viewModel.totalPotentialWon))").font(.custom("Futura", size: 24))
-            Text("Total Winnings: $\(String(format: "%.0f", viewModel.totalWon))").font(.custom("Futura", size: 24))
+            HStack (alignment: .center, spacing: 40){
+                VStack (spacing: 0){
+                    Text("Potential").font(.custom("Futura", size: 15))
+                        .frame(width: 120, alignment: .center)
+                    Text("\(String(format: "%.0f", viewModel.totalPotentialWon))")
+                        .font(.custom("Futura", size: 30))
+                        .frame(width: 120, alignment: .center)
+                        .foregroundColor(K.cadetBlue)
+                }.padding(.vertical,5)
+                    .background(
+                        RoundedRectangle(cornerRadius: 7.5)
+                            .fill(K.cadetBlue.opacity(0.15)) // Change the opacity as needed
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 7.5)
+                            .stroke(K.cadetBlue, lineWidth: 2) // Change the color and line width as needed
+                    )
+                    .cornerRadius(7.5)
+                VStack (spacing: 0){
+                    Text("Total").font(.custom("Futura", size: 15)).frame(width: 120, alignment: .center)
+                    Text("\(String(format: "%.0f", viewModel.totalWon))").font(.custom("Futura", size: 30)).frame(width: 120, alignment: .center).foregroundColor(K.lightMoneyGreen)
+                }
+                .padding(.vertical,5)
+                .background(
+                    RoundedRectangle(cornerRadius: 7.5)
+                        .fill(K.lightMoneyGreen.opacity(0.15)) // Change the opacity as needed
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 7.5)
+                        .stroke(K.lightMoneyGreen, lineWidth: 2) // Change the color and line width as needed
+                )
+                .cornerRadius(7.5)
+
+            }.padding([.horizontal,.top])
             
             ScrollView {
                 VStack {

@@ -68,6 +68,7 @@ struct BettingAppView: View {
                         
                     }
                 }.padding(.horizontal)
+                .padding(.horizontal)
                 .background(Color.white)
                
                 

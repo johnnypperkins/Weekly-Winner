@@ -22,7 +22,29 @@ struct K {
     static let lightGreen = Color(hex: "#CCFFCC")
     static let lightRed = Color(hex: "#FFCCCC")
     static let lightYellow = Color(hex: "#FFFFCC")
-}
+    static let midnightBlue = Color(hex: "#1D3557")
+    static let steelBlue = Color(hex: "#457B9D")
+    static let powderBlue = Color(hex: "#A8DADC")
+    static let mediumAquamarine = Color(hex: "#2A9D8F")
+    static let sandyBrown = Color(hex: "#E9C46A")
+    static let sandyTan = Color(hex: "#F4A261")
+    static let burntSienna = Color(hex: "#E76F51")
+    static let charcoal = Color(hex: "#264653")
+    static let jungleGreen = Color(hex: "#2B9348")
+    static let teaGreen = Color(hex: "#99D98C")
+    static let lemonYellow = Color(hex: "#FDE74C")
+    static let coralPink = Color(hex: "#FF6E6E")
+    static let independence = Color(hex: "#5E6472")
+    static let tomatoRed = Color(hex: "#E63946")
+    static let mintCream = Color(hex: "#F1FAEE")
+    static let lightCyan = Color(hex: "#A8DADC")
+    static let cadetBlue = Color(hex: "#457B9D")
+    static let darkMidnightBlue = Color(hex: "#1D3557")
+    static let darkCyan = Color(hex: "#1A535C")
+    static let lightMoneyGreen = Color(hex: "#30DF7A")
+
+} // lmao had gpt make these
+
 
 extension Color {
     init(hex: String) {
@@ -77,4 +99,34 @@ struct formatDate {
     static func format(date: Date) -> String {
         return dateFormatter.string(from: date)
     }
+}
+
+
+import Foundation
+import Combine
+
+class CountdownTimer: ObservableObject {
+    @Published var timeRemaining: String = ""
+    private var timer: AnyCancellable?
+
+    init() {
+        startTimer()
+    }
+
+    private func startTimer() {
+        timer = Timer.publish(every: 1, on: .main, in: .common)
+            .autoconnect()
+            .sink { [weak self] _ in
+                self?.updateTimeRemaining()
+            }
+    }
+
+    private func updateTimeRemaining() {
+        let calendar = Calendar.current
+        let now = Date()
+        let nextSunday = calendar.nextDate(after: now, matching: DateComponents(hour: 0, weekday: 2), matchingPolicy: .nextTime)!
+        let components = calendar.dateComponents([.day, .hour, .minute, .second], from: now, to: nextSunday)
+        timeRemaining = String(format: "%dd %02dh %02dm %02ds", components.day ?? 0, components.hour ?? 0, components.minute ?? 0, components.second ?? 0)
+    }
+
 }

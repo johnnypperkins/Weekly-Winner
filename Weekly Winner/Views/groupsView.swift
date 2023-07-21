@@ -106,7 +106,7 @@ struct groupsView: View {
                     Divider().padding(.horizontal)
                     VStack(alignment: .leading, spacing: 0) {
                         HStack {
-                            Text("Rank") // this needs to be rank johny
+                            Text("Rank")
                                 .font(.headline)
                                 .foregroundColor(K.darkBlue)
                                 .frame(width: 100, alignment: .leading)
@@ -147,6 +147,7 @@ struct groupsView: View {
                             }
                         }
                     }
+                    .padding(.horizontal)
                     .padding(.horizontal)
                     //.clipShape(RoundedRectangle(cornerRadius: 10)) // Apply corner radius to the ScrollView
 

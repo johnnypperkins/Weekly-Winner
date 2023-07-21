@@ -11,15 +11,18 @@ struct UserProfileView: View {
     @StateObject var authenticationVM = authenticationViewModel()
     @StateObject var bookVM = bookViewModel()
     @StateObject var ticketVM = ticketViewModel()
+    @StateObject var countdownTimer = CountdownTimer()
     
     var body: some View {
         VStack(spacing: 20) {
             ProfileHeaderView(authVM: authenticationVM)
                 .padding(.top, 10)
+            Text("Time remaining: \(countdownTimer.timeRemaining)")
             
             groupStatusView(ticketVM: ticketVM)
                 .padding(.horizontal)
-            Divider()
+                .padding(.horizontal)
+            //Divider()
                 .padding(.horizontal, 20)
             
 //            Text("Most Popular Bets")
@@ -28,7 +31,8 @@ struct UserProfileView: View {
                     
             MostPopularBetsView(bookVM: bookVM)
                 .padding(.horizontal)
-            Spacer()
+                .padding(.horizontal)
+            //Spacer()
 
         }
 //        .edgesIgnoringSafeArea(.top)
@@ -60,15 +64,16 @@ struct ProfileHeaderView: View {
 
 struct groupStatusView: View {
     @StateObject var ticketVM: ticketViewModel
-    let frameWidth: CGFloat = 65
+    let frameWidth: CGFloat = 60
     var body: some View {
         VStack(spacing: 0) {
             ForEach(0...ticketVM.userGroups.count, id: \.self) { index in
                 VStack(spacing: 0) {
                     HStack(spacing: 5) {
-                        Text(index == 0 ? "Group" : ticketVM.userGroups[index - 1].groupName )
+                        Text(index == 0 ? "Group" : ticketVM.userGroups[index - 1].groupName)
+                            .lineLimit(1)
                             .font(index == 0 ? .headline : .body) // Set the font based on whether it's the title or not
-                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading) // Adjust the width as needed
+                            .frame(minWidth: 110, maxWidth: .infinity, alignment: .leading) // Adjust the width as needed
                         Spacer()
                         HStack(spacing: 0) {
                             Text(index == 0 ? "PW" : String(ticketVM.userGroups[index - 1].totalPotentialWon ))
@@ -84,13 +89,13 @@ struct groupStatusView: View {
                                 .frame(width: frameWidth, alignment: .leading) // Adjust the width as needed
                         }
                     }
-                    .padding(index == 0 ? EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0) : EdgeInsets(top: 15, leading: 0, bottom: 15, trailing: 0))
+                    .padding(index == 0 ? EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0) : EdgeInsets(top: 7.5, leading: 0, bottom: 7.5, trailing: 0))
                     .padding(.leading) // Add padding to the left of the HStack
                     .background(index == 0 ? K.veryLightBlue : K.veryLightGray)
 //                    .clipShape(RoundSomeCorners(topLeft: index == 0 ? 10 : 0, topRight: index == 0 ? 10 : 0,
 //                                                bottomLeft: index == ticketVM.userGroups.count ? 10 : 0, bottomRight: index == ticketVM.userGroups.count ? 10 : 0))
                     if index != ticketVM.userGroups.count {
-                        Divider()
+                        //Divider()
                     }
                 }
             }
@@ -110,12 +115,12 @@ struct MostPopularBetsView: View {
                             .font(.headline)
                         Spacer()    //.frame(width: .infinity, alignment: .center)
                     }.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
-                        .padding(.leading)
+                        //.padding(.center)
                         .background(K.veryLightBlue)
                 } else {
                     HStack {
                         PopularBetView(index: index, bookVM: bookVM)
-                    }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
+                    }.padding(EdgeInsets(top: 7.5, leading: 0, bottom: 7.5, trailing: 0))
                         .padding(.horizontal)
                         .background(K.veryLightGray)
                 }
@@ -143,7 +148,7 @@ struct PopularBetView: View {
 
     var body: some View {
         HStack {
-            Text("\(index). \(bookVM.mostPopularBets[index-1].teamName)").frame(width: 250, alignment: .leading)
+            Text("\(index). \(bookVM.mostPopularBets[index-1].teamName)").frame(width: 225, alignment: .leading)
             Spacer()
             Text("\(extra)\(bookVM.mostPopularBets[index-1].betLine)").frame(width: 60, alignment: .trailing)
         }
