@@ -25,6 +25,7 @@ struct tabBarView: View {
                                 Image(systemName: "1.square.fill")
                                 Text("Tab 1")
                             }
+                            //.background(K.veryLightBlue.opacity(0.5))
                         BettingAppView()
                             .tabItem {
                                 Image(systemName: "2.square.fill")
@@ -50,7 +51,7 @@ struct tabBarView: View {
                                 Text("Tab 5")
                             }
                     }
-                    .edgesIgnoringSafeArea(.all)
+                    //.edgesIgnoringSafeArea(.all)
 
                 }
                 .navigationBarBackButtonHidden(true)
@@ -58,7 +59,7 @@ struct tabBarView: View {
                     ContentView()
                 }
             }
-        }.edgesIgnoringSafeArea(.all)
+        }//.edgesIgnoringSafeArea(.all)
     }
 }
 

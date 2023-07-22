@@ -23,7 +23,7 @@ struct ContentView: View {
                 }
 
             }.environmentObject(viewModel)
-            //.ignoresSafeArea(.all)
+            .ignoresSafeArea(.all)
         }
             .navigationBarBackButtonHidden()
     }
