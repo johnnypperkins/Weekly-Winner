@@ -13,6 +13,7 @@ import SwiftUI
 struct Bet: Identifiable, Codable {
     @DocumentID var id: String?
     var groupNumber: Int
+    var groupID: String
     var betNumber: Int
     var weekNumber: Int? // I have literally no idea why this was the problem but it was. This needed to be an optional for whatever reason - Reid
     var betType: BetType

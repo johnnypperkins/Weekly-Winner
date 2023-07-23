@@ -28,7 +28,8 @@ class BetService {
             "betLine": bet.betLine,
             "betOdds": bet.betOdds,
             "result": bet.result.rawValue,
-            "gameID": bet.gameID
+            "gameID": bet.gameID,
+            "groupID": bet.groupID
         ]
         
         if let teamBetOn = bet.teamBetOn {

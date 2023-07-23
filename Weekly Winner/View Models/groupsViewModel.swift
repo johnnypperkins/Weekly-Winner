@@ -47,35 +47,28 @@ class groupsViewModel: ObservableObject {
     }
     
     func fetchGroupNames() {
-            guard let currentUser = Auth.auth().currentUser else {
+        guard let currentUser = Auth.auth().currentUser else {
+            return
+        }
+        
+        let db = Firestore.firestore()
+        let groupsCollection = db.collection("users").document(currentUser.uid).collection("groups")
+        
+        groupsCollection.order(by: "groupNumber").getDocuments { [weak self] snapshot, error in
+            guard let self = self else { return }
+            
+            if let error = error {
+                print("Error fetching groups: \(error.localizedDescription)")
                 return
             }
             
-            let db = Firestore.firestore()
-            let groupsCollection = db.collection("users").document(currentUser.uid).collection("groups")
+            guard let documents = snapshot?.documents, error == nil else { return }
             
-            groupsCollection.getDocuments { [weak self] snapshot, error in
-                guard let self = self else { return }
-                
-                if let error = error {
-                    print("Error fetching groups: \(error.localizedDescription)")
-                    return
-                }
-//               groupNames.removeAll()
-//                var grpNames: [Ticket] = []
-                guard let documents = snapshot?.documents, error == nil else {return}
-                
-                groupNames = documents.compactMap { snapshot in
-                    print(snapshot)
-                    return try? snapshot.data(as: Group.self)
-                    
-                }
-                
-//                for document in snapshot?.documents ?? [] {
-//                    if let groupName = document.data()["groupName"] as? String {
-//                        groupNames.append(groupName)
-//                    }
-//                }
+            groupNames = documents.compactMap { snapshot in
+                print(snapshot)
+                return try? snapshot.data(as: Group.self)
             }
         }
     }
+
+}

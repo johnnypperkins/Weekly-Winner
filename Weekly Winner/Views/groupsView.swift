@@ -10,7 +10,6 @@ import SwiftUI
 struct groupsView: View {
     @State private var isJoinSheetPresented = false
     @State private var searchText = ""
-    @State private var myGroups = ["Group 1", "Group 2", "Group 3"] // Replace with your data source
     @State private var isShowingSheet = false
     @State private var isShowingSheetTicket = false
     @ObservedObject private var viewModel = groupsViewModel()
@@ -162,6 +161,13 @@ struct groupsView: View {
             .sheet(isPresented: $isShowingSheet, content: {
                 createGroupsView()
             })
+            .onChange(of: isShowingSheet) { newValue in
+                if newValue == false {
+                    // The sheet was dismissed
+                    selectedGroup = 1
+                    viewModel.fetchGroupTickets(group: viewModel.groupNames[selectedGroup-1].groupName)
+                }
+            }
             .onAppear(){
                 if selectedGroup > 0 {
                     viewModel.fetchGroupTickets(group: viewModel.groupNames[selectedGroup-1].groupName)
@@ -179,7 +185,7 @@ struct BetCard: View {
 
     var body: some View {
         HStack {
-            Text("\(rank). \(group.username)") // this needs to be rank johny
+            Text("\(rank). \(group.username)") 
                 .font(.headline)
                 .foregroundColor(K.darkBlue)
                 .frame(width: 150, alignment: .leading)

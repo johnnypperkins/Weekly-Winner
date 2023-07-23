@@ -233,6 +233,7 @@ struct BetDetailsView: View {
     @State private var originalSpread: Double = 2
     @ObservedObject var viewModel = bookViewModel()
     @StateObject var ticketVM = ticketViewModel()
+    @StateObject var groupsVM = groupsViewModel()
     
     @State private var groupNumber = 0
     @State private var betNumber = -99
@@ -391,7 +392,7 @@ struct BetDetailsView: View {
             
         Button(action: {
             print("groupNumber: \(groupNumber), betNumber: \(betNumber)")
-            viewModel.uploadBet(groupNumber: groupNumber, betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread)), betType: betType, gameID: game.idd ?? "null") {_ in
+            viewModel.uploadBet(groupNumber: groupNumber, groupID: groupsVM.groupNames[groupNumber].groupID, betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread)), betType: betType, gameID: game.idd ?? "null") {_ in
                 ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber, completion: {
                     let groupServe = groupService()
                     groupServe.setPotentialToWin(potential: Int(ticketVM.totalPotentialWon), groupNumber: groupNumber, completion: {_ in })
@@ -440,6 +441,7 @@ struct BetDetailsView: View {
                 originalSpread = game.totalUnder
                 whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
             }
+            groupsVM.fetchGroupNames()
         })
         //.padding(.horizontal)
     }

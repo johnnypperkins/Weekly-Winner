@@ -76,7 +76,7 @@ class groupService {
                         return
                     }
                     self.db.collection("groups").document(groupID).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": currentUser.uid])
-                    let ticket = Ticket(groupName: groupName, dateCreated: time, groupImageURL: "", groupSlogan: groupSlogan, groupAdmin: currentUser.uid)
+                    let ticket = Ticket(id: groupID, groupName: groupName, dateCreated: time, groupImageURL: "", groupSlogan: groupSlogan, groupAdmin: currentUser.uid)
                     self.joinGroup(userID: currentUser.uid, group: ticket)
                     
                     do {
