@@ -17,9 +17,11 @@ struct editProfileView: View {
     @State private var profileImage: Image?
     @StateObject var viewModelAuth = authenticationViewModel()
     @State private var sourceType: UIImagePickerController.SourceType = .photoLibrary
+    @ObservedObject var profileVM: profileViewModel
     
-    init(user1: User) {
+    init(user1: User, profileVM: profileViewModel) {
         user = user1
+        self.profileVM = profileVM
         viewModel = editProfileViewModel(user: user)
     }
     var body: some View {
@@ -45,13 +47,13 @@ struct editProfileView: View {
                                     .aspectRatio(contentMode: .fill)
                                     .frame(width: 100, height: 100)
                                     .clipShape(Circle())
-                                    .foregroundColor(Color("Color 3"))
+                                    .foregroundColor(.blue)
                                     .onTapGesture {
                                         showImagePicker.toggle()
                                     }
                             }
                             Text("Tap to change profile picture")
-                                .foregroundColor(Color("Color 3"))
+                                .foregroundColor(.blue)
                                 .onTapGesture {
                                     showImagePicker.toggle()
                                 }
@@ -93,11 +95,11 @@ struct editProfileView: View {
 //                            }
                         }) {
                             Text("Update Profile")
-                                .foregroundColor(Color("Color 3"))
+                                .foregroundColor(.blue)
                                 .fontWeight(.bold)
                                 .padding(.vertical)
                                 .padding(.horizontal)
-                                .background(Color("Color 2")
+                                .background(Color(.gray)
                                     .clipShape(Capsule())
                                             //shadow
                                     .shadow(color: Color.white.opacity(0.1), radius: 5, x: 0, y: 5))
@@ -109,13 +111,14 @@ struct editProfileView: View {
                     ToolbarItem(placement: .navigationBarLeading) {
                             Button {
                                 // 2
+                                profileVM.fetchUser()
                                 dismiss()
                                 
                             } label: {
                                 HStack {
                                     Image(systemName: "arrowshape.backward.fill")
                                         .resizable()
-                                        .foregroundColor(Color("Color 3"))
+                                        .foregroundColor(.blue)
                                         .padding(.leading)
                                         .frame(width: 40,height: 17)
                                 }

@@ -38,8 +38,8 @@ class editProfileViewModel: ObservableObject {
             
             
             db.collection("users").document(user.uid).updateData([
-                "firstname": firstname,
-                "lastname": lastname,
+                "firstName": firstname,
+                "lastName": lastname,
                 "username": username,
                 "profileImageUrl": profileImgURL,
                 "keywordsForLookup": user1.keywordsForLookup

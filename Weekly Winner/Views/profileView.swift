@@ -30,7 +30,7 @@ struct profileView: View {
         VStack{
             NavigationStack{
                 VStack{
-                    if viewModel.user.isCurrentUser == false {
+                    if user.isCurrentUser == false {
                         HStack {
                             Button {
                                 // 2
@@ -40,7 +40,7 @@ struct profileView: View {
                                 HStack {
                                     Image(systemName: "arrowshape.backward.fill")
                                         .resizable()
-                                        .foregroundColor(Color("Color 1"))
+                                        .foregroundColor(.black)
                                         .padding(.leading)
                                         .frame(width: 40,height: 17)
                                 }
@@ -56,9 +56,9 @@ struct profileView: View {
                             } label: {
                                 HStack{
                                     Text("Block")
-                                        .foregroundColor(Color("Color 3"))
+                                        .foregroundColor(K.darkBlue)
                                     Image(systemName: "flag")
-                                        .foregroundColor(Color("Color 3"))
+                                        .foregroundColor(K.darkBlue)
                             }
 
                                 
@@ -86,16 +86,16 @@ struct profileView: View {
 //                                .cornerRadius(25)
 //                                .padding(.top,25)
                             
-                            if viewModel.user.isCurrentUser == true {
+                            if user.isCurrentUser == true {
                                 NavigationLink {
-                                    editProfileView(user1: viewModel.user)
+                                    editProfileView(user1: viewModel.user, profileVM: viewModel)
                                 } label: {
                                     Text("Edit")
-                                        .foregroundColor(Color("Color 1"))
+                                        .foregroundColor(.blue)
                                         .fontWeight(.bold)
                                         .padding(.vertical)
                                         .padding(.horizontal)
-                                        .background(Color("Color 2")
+                                        .background(Color(.blue)
                                             .clipShape(Capsule())
                                                     //shadow
                                             .shadow(color: Color.white.opacity(0.1), radius: 5, x: 0, y: 5))
@@ -119,22 +119,22 @@ struct profileView: View {
                                 
                                     if viewModel.isBlocked {
                                         Text("Unblock")
-                                            .foregroundColor(Color("Color 1"))
+                                            .foregroundColor(.blue)
                                             .fontWeight(.bold)
                                             .padding(.vertical)
                                             .padding(.horizontal)
-                                            .background(Color("Color 2")
+                                            .background(Color(.blue)
                                                 .clipShape(Capsule())
                                                         //shadow
                                                 .shadow(color: Color.white.opacity(0.1), radius: 5, x: 0, y: 5))
                                     }
                                     else  {
                                         Text("Unavailable")
-                                            .foregroundColor(Color("Color 1"))
+                                            .foregroundColor(K.backgroundBlue)
                                             .fontWeight(.bold)
                                             .padding(.vertical)
                                             .padding(.horizontal)
-                                            .background(Color("Color 2")
+                                            .background(Color(.blue)
                                                 .clipShape(Capsule())
                                                         //shadow
                                                 .shadow(color: Color.white.opacity(0.1), radius: 5, x: 0, y: 5))

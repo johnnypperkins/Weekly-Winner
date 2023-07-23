@@ -11,7 +11,7 @@ import Foundation
 import Firebase
 
 class profileViewModel: ObservableObject {
-    private let uService = userService()
+    private let service = userService()
     @Published var isBlocked: Bool = false
     @Published var isBlockedBy: Bool = false
     @Published var user: User
@@ -25,9 +25,17 @@ class profileViewModel: ObservableObject {
             await self.checkIfBlocked()
             await self.checkIfBlockedBy()
         }
+        print(user.isCurrentUser)
         //self.fetchLikedTweets()
     }
     
+    func fetchUser() {
+            guard let uid = user.id else { return }
+            
+            service.fetchUser(withUid: uid) { user in
+                self.user = user
+            }
+        }
     
     func checkIfBlocked() async {
         guard let currentUserUID = Auth.auth().currentUser?.uid,
