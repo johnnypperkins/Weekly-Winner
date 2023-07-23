@@ -42,7 +42,13 @@ struct ticketView: View {
                     viewModel.fetchBets(uid: uid, groupNumber: newValue, completion: {})
                 }
             } else {
-                Text("loading")
+                if uid != Auth.auth().currentUser?.uid {
+                    Text(viewModel.userGroups[0].groupName)
+                }
+                else{
+                    Text("loading")
+                }
+                
             }
             if uid != Auth.auth().currentUser?.uid {
                 Text(username)

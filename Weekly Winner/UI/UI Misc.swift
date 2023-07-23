@@ -42,6 +42,19 @@ struct K {
     static let darkMidnightBlue = Color(hex: "#1D3557")
     static let darkCyan = Color(hex: "#1A535C")
     static let lightMoneyGreen = Color(hex: "#30DF7A")
+    
+    struct imgNames {
+        static let alertCircle      = "ic_alert_circle"
+        static let info             = "ic_info"
+        static let success          = "ic_succes"
+        static let checkCircle      = "ic_check_circle"
+        static let warning          = "ic_warning"
+    }
+
+    struct appButtonTitle {
+        static let ok               = "Okay"
+        static let cancel           = "Cancel"
+    }
 
 } // lmao had gpt make these
 
