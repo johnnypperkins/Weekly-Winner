@@ -13,6 +13,7 @@ struct Group: Identifiable, Codable {
     @DocumentID var id: String?
     var username: String
     var uid: String
+    var groupID: String
     var groupNumber: Int
     var dateCreated: String = "today" // will fix later
     var totalWon: Int

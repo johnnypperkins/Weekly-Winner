@@ -1,13 +1,36 @@
 import SwiftUI
+import Firebase
 
 struct ticketView: View {
     @ObservedObject var viewModel = ticketViewModel()
     @ObservedObject var bookVM = bookViewModel()
     @State private var selectedGroup = 0 // Variable to track the selected group
+    @ObservedObject var authViewModel = authenticationViewModel()
+    var username: String
+    var uid: String
+    var groupID: String
+    
+    init(username: String, uid: String, groupID: String) {
+        self.username = username
+        self.uid = uid
+        self.groupID = groupID
+        
+        if uid != Auth.auth().currentUser?.uid{
+            viewModel.fetchFriendGroup(uid: uid, with: groupID) { group in
+                
+            }
+        }
+//        else{
+//            viewModel.fetchUserGroups(uid: uid) {
+//                // Completion block, if needed
+//            }
+//        }
+        
+    }
     
     var body: some View {
         VStack {
-            if viewModel.isBetsLoaded {
+            if viewModel.isBetsLoaded && uid == Auth.auth().currentUser?.uid {
                 Picker("Group", selection: $selectedGroup) {
                     ForEach(0..<viewModel.userGroups.count, id: \.self) { index in
                         Text(viewModel.userGroups[index].groupName).tag(index)
@@ -16,10 +39,14 @@ struct ticketView: View {
                 .pickerStyle(SegmentedPickerStyle())
                 .padding(.horizontal, 10)
                 .onChange(of: selectedGroup) { newValue in
-                    viewModel.fetchBets(groupNumber: newValue, completion: {})
+                    viewModel.fetchBets(uid: uid, groupNumber: newValue, completion: {})
                 }
             } else {
                 Text("loading")
+            }
+            if uid != Auth.auth().currentUser?.uid {
+                Text(username)
+                    .font(.title)
             }
             
             HStack (alignment: .center, spacing: 40){
@@ -59,22 +86,27 @@ struct ticketView: View {
             
             ScrollView {
                 VStack {
-                    SectionTitle(title: "Straight #1", betArray: viewModel.betArray1, maxBetsPlaced: 1, viewModel: viewModel)
-                    SectionTitle(title: "Straight #2", betArray: viewModel.betArray2, maxBetsPlaced: 1, viewModel: viewModel)
-                    SectionTitle(title: "Straight #3", betArray: viewModel.betArray3, maxBetsPlaced: 1, viewModel: viewModel)
-                    SectionTitle(title: "Straight #4", betArray: viewModel.betArray4, maxBetsPlaced: 1, viewModel: viewModel)
-                    SectionTitle(title: "2 Leg #1", betArray: viewModel.betArray5, maxBetsPlaced: 2, viewModel: viewModel)
-                    SectionTitle(title: "2 leg #2", betArray: viewModel.betArray6, maxBetsPlaced: 2, viewModel: viewModel)
-                    SectionTitle(title: "3 leg #1", betArray: viewModel.betArray7, maxBetsPlaced: 3, viewModel: viewModel)
-                    SectionTitle(title: "5 leg #1", betArray: viewModel.betArray8, maxBetsPlaced: 5, viewModel: viewModel)
+                    SectionTitle(title: "Straight #1", betArray: viewModel.betArray1, maxBetsPlaced: 1, uid: uid, viewModel: viewModel)
+                    SectionTitle(title: "Straight #2", betArray: viewModel.betArray2, maxBetsPlaced: 1, uid: uid, viewModel: viewModel)
+                    SectionTitle(title: "Straight #3", betArray: viewModel.betArray3, maxBetsPlaced: 1, uid: uid, viewModel: viewModel)
+                    SectionTitle(title: "Straight #4", betArray: viewModel.betArray4, maxBetsPlaced: 1, uid: uid, viewModel: viewModel)
+                    SectionTitle(title: "2 Leg #1", betArray: viewModel.betArray5, maxBetsPlaced: 2, uid: uid, viewModel: viewModel)
+                    SectionTitle(title: "2 leg #2", betArray: viewModel.betArray6, maxBetsPlaced: 2, uid: uid, viewModel: viewModel)
+                    SectionTitle(title: "3 leg #1", betArray: viewModel.betArray7, maxBetsPlaced: 3, uid: uid, viewModel: viewModel)
+                    SectionTitle(title: "5 leg #1", betArray: viewModel.betArray8, maxBetsPlaced: 5, uid: uid, viewModel: viewModel)
                 }
                 .padding()
             }
         }.padding(.top,20)
         .onAppear {
             selectedGroup = 0
-            viewModel.fetchUserGroups {
-                viewModel.fetchBets(groupNumber: selectedGroup, completion: {}) // Fetch bets for selected group on view appear
+            if uid != Auth.auth().currentUser?.uid{
+                viewModel.fetchBets(uid: uid, groupNumber: viewModel.userGroups[0].groupNumber, completion: {})
+            }
+            else{
+                viewModel.fetchUserGroups(uid: uid) {
+                    viewModel.fetchBets(uid: uid, groupNumber: selectedGroup, completion: {}) // Fetch bets for selected group on view appear
+                }
             }
             
             
@@ -92,6 +124,7 @@ struct ticketView: View {
         let title: String
         let betArray: [Bet]
         let maxBetsPlaced: Int
+        let uid: String
        // let totalOdds: Double
         @ObservedObject var viewModel: ticketViewModel
         
@@ -144,7 +177,7 @@ struct ticketView: View {
                     ForEach(0..<totalBetsCount, id: \.self) { index in
                         if index < betArray.count {
                             VStack(alignment: .leading, spacing: 0) {
-                                BetCard(bet: betArray[index], viewModel: viewModel)
+                                BetCard(bet: betArray[index], uid: uid, viewModel: viewModel)
                                     .clipShape(RoundSomeCorners(topLeft: index == 0 ? 10 : 0, topRight: index == 0 ? 10 : 0,
                                                                 bottomLeft: index == totalBetsCount - 1 ? 10 : 0, bottomRight: index == totalBetsCount - 1 ? 10 : 0))
                                 if index != totalBetsCount - 1 {
@@ -169,6 +202,7 @@ struct ticketView: View {
 
         struct BetCard: View {
             let bet: Bet
+            let uid: String
             @ObservedObject var viewModel: ticketViewModel
             
             var extra: String {
@@ -186,7 +220,7 @@ struct ticketView: View {
 
             var body: some View {
                 HStack {
-                    if bet.result == .notStarted { // ONLY SHOWS DELETE BUTTON IF .NOTSTARTED
+                    if bet.result == .notStarted && uid == Auth.auth().currentUser?.uid { // ONLY SHOWS DELETE BUTTON IF .NOTSTARTED
                         Button(action: {
                             self.viewModel.deleteBet(bet: bet)
                         }) {
@@ -229,7 +263,7 @@ struct ticketView: View {
 
 struct ticketView_Previews: PreviewProvider {
     static var previews: some View {
-        ticketView()
+        ticketView(username: "Reid", uid: Auth.auth().currentUser!.uid, groupID: "")
     }
 }
 

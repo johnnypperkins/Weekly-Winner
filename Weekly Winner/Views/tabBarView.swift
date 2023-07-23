@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Firebase
 
 struct tabBarView: View {
     @State private var selectedTab = 0 // which tab selected
@@ -33,7 +34,7 @@ struct tabBarView: View {
                             }
                         
                         
-                        ticketView()
+                        ticketView(username: "", uid: Auth.auth().currentUser!.uid, groupID: "")
                             .tabItem {
                                 Image(systemName: "3.square.fill")
                                 Text("Tab 3")

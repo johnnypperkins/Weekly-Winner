@@ -12,6 +12,7 @@ struct groupsView: View {
     @State private var searchText = ""
     @State private var myGroups = ["Group 1", "Group 2", "Group 3"] // Replace with your data source
     @State private var isShowingSheet = false
+    @State private var isShowingSheetTicket = false
     @ObservedObject private var viewModel = groupsViewModel()
     @State private var selectedGroup = 1
 
@@ -125,18 +126,22 @@ struct groupsView: View {
                         .clipShape(RoundSomeCorners(topLeft: 10,topRight: 10,bottomLeft: 0,bottomRight: 0))
                         ScrollView {
                             VStack(alignment: .leading, spacing:0) {
-                                ForEach(viewModel.rankedGroupTickets.indices, id: \.self) { index in
+                                ForEach(0..<viewModel.rankedGroupTickets.count, id: \.self) { index in
                                     let game = viewModel.rankedGroupTickets[index]
-                                    BetCard(group: game, rank: (index+1), viewModel: viewModel)
-                                        .clipShape(RoundSomeCorners(
-                                            topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
-                                            topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
-                                            bottomLeft: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0,
-                                            bottomRight: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0
-                                        ))
-                                    if index != viewModel.rankedGroupTickets.count - 1 {
-                                        Divider()
-                                    }
+                                    NavigationLink(destination: {
+                                        ticketView(username: game.username, uid: game.uid, groupID: game.groupID)
+                                    }, label: {
+                                        BetCard(group: game, rank: (index+1), viewModel: viewModel)
+                                            .clipShape(RoundSomeCorners(
+                                                topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
+                                                topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
+                                                bottomLeft: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0,
+                                                bottomRight: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0
+                                            ))
+                                        if index != viewModel.rankedGroupTickets.count - 1 {
+                                            Divider()
+                                        }
+                                    }) .id(UUID())
                                 }
                             }
                         }
@@ -277,7 +282,7 @@ struct GroupJoinSheet: View {
             Text("Admin: \(ticket.groupAdmin)")
                 .font(.caption)
             Button(action: {
-                viewModel.joinGroup(groupName: ticket.groupName)
+                viewModel.joinGroup(group: ticket)
                 isPresented = false
             }, label: {
                 Text("Join Group")

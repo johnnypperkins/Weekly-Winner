@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Firebase
 
 struct UserProfileView: View {
     @StateObject var authenticationVM = authenticationViewModel()
@@ -60,7 +61,7 @@ struct UserProfileView: View {
 //        .background(Color(.systemGray6).ignoresSafeArea())
         .onAppear() {
             authenticationVM.fetchUser()
-            ticketVM.fetchUserGroups() {}
+            ticketVM.fetchUserGroups(uid: Auth.auth().currentUser!.uid) {}
             bookVM.fetchMostPopularBets()
         }
     }

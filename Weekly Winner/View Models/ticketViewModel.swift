@@ -33,22 +33,46 @@ class ticketViewModel: ObservableObject {
     private let groupServe = groupService()
     @Published var userGroups: [Group] = []
     
-    init() {
-        fetchUserGroups(completion: {})
-    }
+//    init() {
+//        fetchUserGroups(uid: completion: {})
+//    }
 
-    func fillTotalsArr() {
-        fetchUserGroups {
+    func fillTotalsArr(uid: String) {
+        fetchUserGroups(uid: uid) {
             for index in 0..<self.userGroups.count {
-                self.fetchBets(groupNumber: index, completion: { [self] in
+                self.fetchBets(uid: uid, groupNumber: index, completion: { [self] in
                     self.calculateTotals(for: index)
                     totalWonArray.append(Int(self.totalWon))
                 })
             }
         }
     }
+    
+    func fetchFriendGroup(uid: String, with groupID: String, completion: @escaping (Result<Group, Error>) -> Void) {
+        let db = Firestore.firestore()
+        
+        db.collection("users").document(uid).collection("groups")
+            .whereField("groupID", isEqualTo: groupID)
+            .getDocuments { (querySnapshot, err) in
+                if let err = err {
+                    print("Error getting documents: \(err)")
+                    completion(.failure(err))
+                } else {
+                    for document in querySnapshot!.documents {
+                        do {
+                            let group = try document.data(as: Group.self)
+                            self.userGroups.append(group)
+                            completion(.success(group))
+                        } catch {
+                            print("Error decoding group: \(error)")
+                            completion(.failure(error))
+                        }
+                    }
+                }
+            }
+    }
 
-    func fetchUserGroups(completion: @escaping () -> Void) {
+    func fetchUserGroups(uid: String, completion: @escaping () -> Void) {
         guard let userId = Auth.auth().currentUser?.uid else { return }
         groupServe.fetchUserGroups(userID: userId) { groups, error in
             if let error = error {
@@ -63,10 +87,8 @@ class ticketViewModel: ObservableObject {
         }
     }
     
-    func fetchBets(groupNumber: Int, completion: @escaping () -> Void) {
-        guard let userId = Auth.auth().currentUser?.uid else { return }
-        print("userID:" + userId)
-        listener = db.collection("users").document(userId).collection("bets")
+    func fetchBets(uid: String, groupNumber: Int, completion: @escaping () -> Void) {
+        listener = db.collection("users").document(uid).collection("bets")
         .whereField("groupNumber", isEqualTo: groupNumber)
         .addSnapshotListener { (querySnapshot, error) in
             guard let documents = querySnapshot?.documents else {
@@ -143,7 +165,7 @@ class ticketViewModel: ObservableObject {
                 print("Error removing document: \(error)")
             } else {
                 
-                self.fetchBets(groupNumber: bet.groupNumber) {print("Document successfully removed!")
+                self.fetchBets(uid: userId, groupNumber: bet.groupNumber) {print("Document successfully removed!")
                     self.groupServe.setPotentialToWin(potential: Int(self.totalPotentialWon), groupNumber: bet.groupNumber, completion: {_ in })
                 } // fetch the updated list of bets
             }
@@ -222,8 +244,8 @@ class ticketViewModel: ObservableObject {
         totalWon = totalWonLocal
         totalPotentialWon = totalPotentialWonLocal
     }
-    func returnTotal(groupNumber: Int, completion: @escaping (Int) -> Void) {
-        fetchBets(groupNumber: groupNumber){
+    func returnTotal(uid: String, groupNumber: Int, completion: @escaping (Int) -> Void) {
+        fetchBets(uid: uid, groupNumber: groupNumber){
             let result = Int(self.totalWon)
             completion(result)
         }

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Firebase
 
 struct BettingAppView: View {
 //    @State private var selectedGameType = GameType.nfl
@@ -294,7 +295,7 @@ struct BetDetailsView: View {
                             .frame(maxWidth: 200, alignment: .center)
                             .pickerStyle(WheelPickerStyle())
                             .onChange(of: groupNumber) { newValue in
-                                ticketVM.fetchBets(groupNumber: newValue) {
+                                ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: newValue) {
                                     if !ticketVM.availableBets(for: newValue).isEmpty {
                                         betNumber = ticketVM.availableBets(for: groupNumber)[0]
                                     } else {
@@ -372,7 +373,7 @@ struct BetDetailsView: View {
                 }
             }
             .onAppear {
-                ticketVM.fetchBets(groupNumber: groupNumber) {
+                ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber) {
                     if !ticketVM.availableBets(for: groupNumber).isEmpty {
                         betNumber = ticketVM.availableBets(for: groupNumber)[0]
                     } else {
@@ -391,7 +392,7 @@ struct BetDetailsView: View {
         Button(action: {
             print("groupNumber: \(groupNumber), betNumber: \(betNumber)")
             viewModel.uploadBet(groupNumber: groupNumber, betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread)), betType: betType, gameID: game.idd ?? "null") {_ in
-                ticketVM.fetchBets(groupNumber: groupNumber, completion: {
+                ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber, completion: {
                     let groupServe = groupService()
                     groupServe.setPotentialToWin(potential: Int(ticketVM.totalPotentialWon), groupNumber: groupNumber, completion: {_ in })
                 })

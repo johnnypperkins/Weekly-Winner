@@ -77,7 +77,7 @@ class groupService {
                     }
                     self.db.collection("groups").document(groupID).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": currentUser.uid])
                     let ticket = Ticket(groupName: groupName, dateCreated: time, groupImageURL: "", groupSlogan: groupSlogan, groupAdmin: currentUser.uid)
-                    self.joinGroup(userID: currentUser.uid, groupName: groupName)
+                    self.joinGroup(userID: currentUser.uid, group: ticket)
                     
                     do {
                         Firestore.firestore().collection("groups").document(groupID).updateData(["keywordsForLookup": ticket.keywordsForLookup])
@@ -111,14 +111,14 @@ class groupService {
         return await authData?.username ?? ""
         }
     
-    func joinGroup(userID: String, groupName: String) {
+    func joinGroup(userID: String, group: Ticket) {
         Task{
             let username = await self.getUsername() // Access the username asynchronously
             
             groupCount(userID: userID) { num, error in
                 let db = Firestore.firestore()
                 let userGroupsCollection = db.collection("users").document(userID).collection("groups")
-                let group = Group(username: username, uid: Auth.auth().currentUser!.uid, groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: groupName)
+                let group = Group(username: username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: group.groupName)
                 do {
                     
                     let _ = try userGroupsCollection.addDocument(from: group) { error in
@@ -154,9 +154,10 @@ class groupService {
                     let groupNumber = document.data()["groupNumber"] as? Int ?? 0 // default value if not found
                     let totalWon = document.data()["totalWon"] as? Int ?? 0 // default value if not found
                     let totalPotentialWon = document.data()["totalPotentialWon"] as? Int ?? 0 // default value if not found
-                    let groupName = document.data()["groupName"] as? String ?? "null" // default value if not found
+                    let groupName = document.data()["groupName"] as? String ?? "null"
+                    let groupID = document.data()["groupID"] as? String ?? "null"// default value if not found
                     
-                    let group = Group(id: id, username: username, uid: userID, groupNumber: groupNumber, dateCreated: "today", totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName)
+                    let group = Group(id: id, username: username, uid: userID, groupID: groupID, groupNumber: groupNumber, dateCreated: "today", totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName)
                     groups.append(group)
                 }
                 
