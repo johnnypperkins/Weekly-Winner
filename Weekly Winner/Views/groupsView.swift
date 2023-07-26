@@ -16,7 +16,7 @@ struct groupsView: View {
     @State private var selectedGroup = 1
 
     init() {
-        viewModel.fetchGroupNames()
+        viewModel.fetchGroupNames() {}
     
     }
     
@@ -143,7 +143,7 @@ struct groupsView: View {
                             }
                         }
                         .refreshable {
-                            await viewModel.fetchGroupNames()
+                            await viewModel.fetchGroupNames() {}
                             if selectedGroup != 0 {
                                 viewModel.fetchGroupTickets(ticket: viewModel.ticketGroupNames[selectedGroup-1].groupName)
                             }
@@ -258,12 +258,20 @@ struct GroupJoinSheet: View {
     let group: Group // Groups99
     let viewModel: groupsViewModel
     @Binding var isPresented: Bool
+    @State var canJoin = true
+    @State var adminUsername = ""
+    @ObservedObject private var authVM = authenticationViewModel()
+    
 
     var body: some View {
+        
         VStack {
-            Text("Join Group")
-                .font(.title)
-                .fontWeight(.bold)
+            if (canJoin) {
+                Text("Join Group")
+                    .font(.title)
+                    .fontWeight(.bold)
+            }
+
             VStack {
                 if let imageURL = URL(string: group.groupImageURL), let imageData = try? Data(contentsOf: imageURL), let image = UIImage(data: imageData) {
                     Image(uiImage: image)
@@ -287,17 +295,39 @@ struct GroupJoinSheet: View {
                 .font(.headline)
             Text(group.groupSlogan)
                 .font(.subheadline)
-            Text("Admin: \(group.groupAdmin)")
+            Text("Admin: \(adminUsername)")
                 .font(.caption)
-            Button(action: {
-                viewModel.joinGroup(group: group)
-                isPresented = false
-            }, label: {
-                Text("Join Group")
-            })
-            .padding()
+            if (canJoin) {
+                Button(action: {
+                    viewModel.joinGroup(group: group)
+                    isPresented = false
+                }, label: {
+                    Text("Join Group")
+                })
+                .padding()
+            } else {
+                Text("Already Joined")
+                    .padding()
+            }
+            
         }
         .padding()
+        .onAppear() {
+            viewModel.checkIfGroupAlreadyJoined(group: group) { (alreadyJoined) in
+                if !alreadyJoined {
+                    canJoin = true
+                } else {
+                    canJoin = false
+                }
+            }
+            authVM.fetchUserInformation(uid: group.groupAdmin) { (user) in
+                if let user = user {
+                    adminUsername = user.username
+                } else {
+                    adminUsername = group.groupAdmin
+                }
+            }
+        }
     }
 }
 

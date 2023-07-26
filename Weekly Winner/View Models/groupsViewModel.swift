@@ -12,6 +12,9 @@ class groupsViewModel: ObservableObject {
     @Published var queriedGroups: [Group] = [] // Group99
     @Published var ticketGroupNames: [Ticket] = [] // Ticket99
     @Published var rankedGroupTickets: [Ticket] = [] // Ticket99
+    
+    @Published var canJoinGroup: Bool = true
+    
     private let grpService = groupService()
     
     private let db = Firestore.firestore()
@@ -46,7 +49,20 @@ class groupsViewModel: ObservableObject {
         grpService.joinGroup(userID: Auth.auth().currentUser!.uid, group: group)
     }
     
-    func fetchGroupNames() {
+    func checkIfGroupAlreadyJoined(group: Group, completion: @escaping (Bool) -> Void) {
+        self.fetchGroupNames() {
+            for groupsJoined in self.ticketGroupNames {
+                if group.id == groupsJoined.groupID {
+                    completion(true)
+                    return
+                }
+            }
+            completion(false)
+        }
+    }
+
+
+    func fetchGroupNames(completion: @escaping () -> Void) {
         guard let currentUser = Auth.auth().currentUser else {
             return
         }
@@ -64,11 +80,15 @@ class groupsViewModel: ObservableObject {
             
             guard let documents = snapshot?.documents, error == nil else { return }
             
-            ticketGroupNames = documents.compactMap { snapshot in
+            self.ticketGroupNames = documents.compactMap { snapshot in
                 print(snapshot)
                 return try? snapshot.data(as: Ticket.self) // Ticket99
             }
+
+            // Call the completion closure after fetching and processing
+            completion()
         }
     }
+
 
 }

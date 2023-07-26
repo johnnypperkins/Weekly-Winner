@@ -102,11 +102,40 @@ class authenticationViewModel: ObservableObject {
             }
         }
     
+    func fetchUserInformation(uid: String, completion: @escaping (User?) -> Void) {
+        let db = Firestore.firestore()
+        let userDocument = db.collection("users").document(uid)
+        
+        userDocument.getDocument { (document, error) in
+            if let error = error {
+                print("Error fetching user: \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+            
+            if let document = document, document.exists {
+                do {
+                    let userData = try document.data(as: User.self)
+                    completion(userData)
+                } catch {
+                    print("Error decoding user: \(error)")
+                    completion(nil)
+                }
+            } else {
+                print("Document does not exist")
+                completion(nil)
+            }
+        }
+    }
+
+    
     func signOut() {
         authenticationState = .unauthenticated
         userSession = nil
         currUser = nil
         try? Auth.auth().signOut()
     }
+    
+    
     
 }

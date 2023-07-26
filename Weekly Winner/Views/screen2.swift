@@ -441,7 +441,7 @@ struct BetDetailsView: View {
                 originalSpread = game.totalUnder
                 whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
             }
-            groupsVM.fetchGroupNames()
+            groupsVM.fetchGroupNames() {}
         })
         //.padding(.horizontal)
     }
