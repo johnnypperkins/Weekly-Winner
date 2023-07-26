@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct profileView: View {
     
@@ -88,12 +89,12 @@ struct profileView: View {
 //                            }
 
 
-//                            KFImage(URL(string: viewModel.user.profileImageUrl))
-//                                .resizable()
-//                                .aspectRatio(contentMode: .fill)
-//                                .frame(width: 200,height: 200)
-//                                .cornerRadius(25)
-//                                .padding(.top,25)
+                            KFImage(URL(string: viewModel.user.profileImageUrl))
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 200,height: 200)
+                                .cornerRadius(25)
+                                .padding(.top,25)
                             
                             if user.isCurrentUser == true {
                                 NavigationLink {
@@ -195,6 +196,7 @@ struct profileView: View {
 //           viewModel.stopListening()
 //       }
     }
+    
     }
 struct SideMenuButton: View {
     let title: String

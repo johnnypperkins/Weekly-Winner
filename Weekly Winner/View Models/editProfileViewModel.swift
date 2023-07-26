@@ -29,6 +29,25 @@ class editProfileViewModel: ObservableObject {
     }
     
         
+    func uploadProfileImage(_ image: UIImage, completion: @escaping (String) -> Void) {
+        print("entered1")
+        guard let user = Auth.auth().currentUser else { return }
+        print("entered01")
+        imageUploader.uploadImage(use: "profile", image: image) { profileImageUrl in
+            print("entered2")
+            Firestore.firestore().collection("users").document(user.uid).updateData(["profileImageUrl": profileImageUrl]) { error in
+                print("entered3")
+                if error == nil {
+                    completion(profileImageUrl)
+                } else {
+                    // Handle the error accordingly
+                    print("Error updating the profile image URL: \(error?.localizedDescription ?? "No error description")")
+                }
+            }
+        }
+    }
+
+    
         func updateUserInfo() {
             guard let user = Auth.auth().currentUser else {
                 // User is not authenticated

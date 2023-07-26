@@ -12,7 +12,7 @@ struct User: Identifiable, Decodable, Encodable {
     let username: String
     let firstName: String
     let lastName: String
-    let profileImageUrl: String
+    var profileImageUrl: String
     let email: String
     var keywordsForLookup: [String] {
         [self.firstName.generateStringSequence(), self.lastName.generateStringSequence(), self.username.generateStringSequence()].flatMap { $0 }

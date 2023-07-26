@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-//import Kingfisher
+import Kingfisher
 
 struct editProfileView: View {
     var user: User
@@ -41,8 +41,7 @@ struct editProfileView: View {
                                     }
                             }
                             else {
-//                                KFImage(URL(string: viewModel.profileImgURL))
-                                 Image(systemName: "person.crop.circle")
+                                KFImage(URL(string: viewModel.profileImgURL))
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
                                     .frame(width: 100, height: 100)
@@ -59,10 +58,10 @@ struct editProfileView: View {
                                 }
                         }
                     }
-//                    .sheet(isPresented: $showImagePicker,
-//                            onDismiss: loadImage) {
-//                        imagePicker(image: $selectedImage)
-//                     }
+                    .sheet(isPresented: $showImagePicker,
+                            onDismiss: loadImage) {
+                        imagePicker(image: $selectedImage)
+                     }
                            .padding(.top)
                            .padding(.bottom)
                     
@@ -90,9 +89,15 @@ struct editProfileView: View {
                             // Perform update profile logic here
                             print("Profile updated")
                             viewModel.updateUserInfo()
-//                            if selectedImage != nil {
-//                                viewModelAuth.uploadProfileImage(selectedImage!)
-//                            }
+                            if selectedImage != nil {
+                                viewModel.uploadProfileImage(selectedImage!) {url in
+                                    profileVM.user.profileImageUrl = url
+                                }
+                                
+                            }
+                            withAnimation {
+                                dismiss()
+                            }
                         }) {
                             Text("Update Profile")
                                 .foregroundColor(.blue)
