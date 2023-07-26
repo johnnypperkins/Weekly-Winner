@@ -118,7 +118,7 @@ class groupService {
             groupCount(userID: userID) { num, error in
                 let db = Firestore.firestore()
                 let userGroupsCollection = db.collection("users").document(userID).collection("groups")
-                let group = Group(username: username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: group.groupName)
+                let group = Group(username: username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: group.groupName, rank: -99) // will change the rank
                 do {
                     
                     let _ = try userGroupsCollection.addDocument(from: group) { error in
@@ -156,8 +156,9 @@ class groupService {
                     let totalPotentialWon = document.data()["totalPotentialWon"] as? Int ?? 0 // default value if not found
                     let groupName = document.data()["groupName"] as? String ?? "null"
                     let groupID = document.data()["groupID"] as? String ?? "null"// default value if not found
+                    let rank = document.data()["rank"] as? Int ?? -99 // default value if not found
                     
-                    let group = Group(id: id, username: username, uid: userID, groupID: groupID, groupNumber: groupNumber, dateCreated: "today", totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName)
+                    let group = Group(id: id, username: username, uid: userID, groupID: groupID, groupNumber: groupNumber, dateCreated: "today", totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName, rank: rank)
                     groups.append(group)
                 }
                 

@@ -19,4 +19,5 @@ struct Group: Identifiable, Codable {
     var totalWon: Int
     var totalPotentialWon: Int
     var groupName: String
+    var rank: Int
 }

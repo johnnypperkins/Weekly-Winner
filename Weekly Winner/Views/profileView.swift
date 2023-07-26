@@ -10,6 +10,7 @@ import SwiftUI
 struct profileView: View {
     
     @ObservedObject var viewModel: profileViewModel
+    @ObservedObject var viewModel2 = authenticationViewModel()
     @State var scrollViewOffset: CGFloat = 0
     //@State private var isShowingEditProfile: Bool = false
     @State private var isProfileEditing = false
@@ -78,7 +79,15 @@ struct profileView: View {
                                 .fontWeight(.bold)
                                 .padding(.bottom,0.5)
                             
-                            
+//                            NavigationLink(destination: authenticationView()) {
+//                                Button(action: {
+//                                    viewModel2.signOut()
+//                                }) {
+//                                    Text("Sign out")
+//                                }
+//                            }
+
+
 //                            KFImage(URL(string: viewModel.user.profileImageUrl))
 //                                .resizable()
 //                                .aspectRatio(contentMode: .fill)

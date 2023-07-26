@@ -116,7 +116,7 @@ struct groupStatusView: View {
                                 .font(index == 0 ? .headline : .body) // Set the font based on whether it's the title or not
                                 .frame(width: frameWidth, alignment: .leading) // Adjust the width as needed
                                 .foregroundColor(index == 0 ? Color.black : K.lightMoneyGreen)
-                            Text(index == 0 ? "Rank" : "#1")
+                            Text(index == 0 ? "Rank" : String(ticketVM.userGroups[index - 1].rank))
                                 .font(index == 0 ? .headline : .body) // Set the font based on whether it's the title or not
                                 .frame(width: frameWidth, alignment: .center) // Adjust the width as needed
                         }

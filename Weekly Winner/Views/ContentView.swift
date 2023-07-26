@@ -14,18 +14,18 @@ struct ContentView: View {
             VStack {
                 if viewModel.userSession != nil { // changing from currUser to userSession bc immediate - Reid
                     tabBarView()
-                    
+
                 }
                     else{
-                   //. print("Login")
-                    authenticationView()
-                
+//                   . print("Login")
+                authenticationView()
                 }
 
             }.environmentObject(viewModel)
             .ignoresSafeArea(.all)
         }
             .navigationBarBackButtonHidden()
+            
     }
 }
 
