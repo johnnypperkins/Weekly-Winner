@@ -5,20 +5,20 @@
 //  Created by Johnny Perkins on 6/17/23.
 //
 
+
 import Foundation
 import Firebase
 import FirebaseFirestoreSwift
 
 struct Ticket: Identifiable, Codable {
     @DocumentID var id: String?
+    var username: String
+    var uid: String
+    var groupID: String
+    var groupNumber: Int
+    var dateCreated: String = "today" // will fix later
+    var totalWon: Int
+    var totalPotentialWon: Int
     var groupName: String
-    var dateCreated: Timestamp // will fix later
-    var groupImageURL: String
-    var groupSlogan: String
-    var groupAdmin: String
-    var password: String?
-    var keywordsForLookup: [String] {
-        [self.groupName.generateStringSequence()].flatMap { $0 }
-    }
+    var rank: Int
 }
-

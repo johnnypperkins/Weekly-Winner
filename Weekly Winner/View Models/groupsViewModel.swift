@@ -9,9 +9,9 @@ import Firebase
 
 class groupsViewModel: ObservableObject {
     
-    @Published var queriedGroups: [Ticket] = []
-    @Published var groupNames: [Group] = []
-    @Published var rankedGroupTickets: [Group] = []
+    @Published var queriedGroups: [Group] = [] // Group99
+    @Published var ticketGroupNames: [Ticket] = [] // Ticket99
+    @Published var rankedGroupTickets: [Ticket] = [] // Ticket99
     private let grpService = groupService()
     
     private let db = Firestore.firestore()
@@ -21,27 +21,27 @@ class groupsViewModel: ObservableObject {
         db.collection("groups").whereField("keywordsForLookup", arrayContains: keyword).getDocuments { querySnapshot, error in
             guard let documents = querySnapshot?.documents, error == nil else {return}
             self.queriedGroups = documents.compactMap { queryDocumentSnapshot in
-                try? queryDocumentSnapshot.data(as: Ticket.self)
+                try? queryDocumentSnapshot.data(as: Group.self) // Group99
             }
             print("here")
         }
         print("hereeeee")
     }
     
-    func fetchGroupTickets(group: String) {
-        grpService.getRankedTickets(groupN: group) { [weak self] (groups, error) in
+    func fetchGroupTickets(ticket: String) {
+        grpService.getRankedTickets(groupN: ticket) { [weak self] (tickets, error) in
                 if let error = error {
                     // Handle error
                     print("Error fetching groups: \(error)")
-                } else if let groups = groups {
+                } else if let tickets = tickets {
                     DispatchQueue.main.async {
-                        self?.rankedGroupTickets = groups
+                        self?.rankedGroupTickets = tickets
                     }
                 }
             }
         }
     
-    func joinGroup(group: Ticket) {
+    func joinGroup(group: Group) { // Group99
         
         grpService.joinGroup(userID: Auth.auth().currentUser!.uid, group: group)
     }
@@ -64,9 +64,9 @@ class groupsViewModel: ObservableObject {
             
             guard let documents = snapshot?.documents, error == nil else { return }
             
-            groupNames = documents.compactMap { snapshot in
+            ticketGroupNames = documents.compactMap { snapshot in
                 print(snapshot)
-                return try? snapshot.data(as: Group.self)
+                return try? snapshot.data(as: Ticket.self) // Ticket99
             }
         }
     }

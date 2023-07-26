@@ -16,7 +16,7 @@ struct ticketView: View {
         self.groupID = groupID
         
         if uid != Auth.auth().currentUser?.uid{
-            viewModel.fetchFriendGroup(uid: uid, with: groupID) { group in
+            viewModel.fetchFriendTicket(uid: uid, with: groupID) { group in
                 
             }
         }
@@ -32,8 +32,8 @@ struct ticketView: View {
         VStack {
             if viewModel.isBetsLoaded && uid == Auth.auth().currentUser?.uid {
                 Picker("Group", selection: $selectedGroup) {
-                    ForEach(0..<viewModel.userGroups.count, id: \.self) { index in
-                        Text(viewModel.userGroups[index].groupName).tag(index)
+                    ForEach(0..<viewModel.userTickets.count, id: \.self) { index in
+                        Text(viewModel.userTickets[index].groupName).tag(index)
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
@@ -43,7 +43,7 @@ struct ticketView: View {
                 }
             } else {
                 if uid != Auth.auth().currentUser?.uid {
-                    Text(viewModel.userGroups[0].groupName)
+                    Text(viewModel.userTickets[0].groupName)
                 }
                 else{
                     Text("loading")
@@ -107,7 +107,7 @@ struct ticketView: View {
         .onAppear {
             selectedGroup = 0
             if uid != Auth.auth().currentUser?.uid{
-                viewModel.fetchBets(uid: uid, groupNumber: viewModel.userGroups[0].groupNumber, completion: {})
+                viewModel.fetchBets(uid: uid, groupNumber: viewModel.userTickets[0].groupNumber, completion: {})
             }
             else{
                 viewModel.fetchUserGroups(uid: uid) {

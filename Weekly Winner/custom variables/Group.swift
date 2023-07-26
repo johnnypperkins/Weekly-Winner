@@ -11,13 +11,13 @@ import FirebaseFirestoreSwift
 
 struct Group: Identifiable, Codable {
     @DocumentID var id: String?
-    var username: String
-    var uid: String
-    var groupID: String
-    var groupNumber: Int
-    var dateCreated: String = "today" // will fix later
-    var totalWon: Int
-    var totalPotentialWon: Int
     var groupName: String
-    var rank: Int
+    var dateCreated: Timestamp // will fix later
+    var groupImageURL: String
+    var groupSlogan: String
+    var groupAdmin: String // userID
+    var password: String?
+    var keywordsForLookup: [String] {
+        [self.groupName.generateStringSequence()].flatMap { $0 }
+    }
 }

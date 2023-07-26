@@ -33,12 +33,12 @@ struct groupsView: View {
         NavigationStack {
             VStack {
                 Picker("Group", selection: $selectedGroup) {
-                    ForEach(0..<viewModel.groupNames.count+1, id: \.self) { index in
+                    ForEach(0..<viewModel.ticketGroupNames.count+1, id: \.self) { index in
                         if index == 0 {
                             Image(systemName: "plus")
                         }
                         else{
-                            Text("\(viewModel.groupNames[index-1].groupName)").tag(index)
+                            Text("\(viewModel.ticketGroupNames[index-1].groupName)").tag(index)
                             
                             
                         }
@@ -48,7 +48,7 @@ struct groupsView: View {
                 .padding(.horizontal, 10)
                 .onChange(of: selectedGroup) { newValue in
                     if selectedGroup > 0 {
-                        viewModel.fetchGroupTickets(group: viewModel.groupNames[selectedGroup-1].groupName)
+                        viewModel.fetchGroupTickets(ticket: viewModel.ticketGroupNames[selectedGroup-1].groupName)
                     }
                 }
                 
@@ -57,7 +57,7 @@ struct groupsView: View {
                         Spacer()
                         
                         Button {
-                            print(viewModel.groupNames)
+                            print(viewModel.ticketGroupNames)
                             isShowingSheet.toggle()
                         } label: {
                             Image(systemName: "plus")
@@ -83,9 +83,9 @@ struct groupsView: View {
                                         // Destination view code
                                         isJoinSheetPresented.toggle()
                                     }) {
-                                        groupBarView(ticket: group)
+                                        groupBarView(group: group)
                                     }.sheet(isPresented: $isJoinSheetPresented) {
-                                        GroupJoinSheet(ticket: group, viewModel: viewModel, isPresented: $isJoinSheetPresented)
+                                        GroupJoinSheet(group: group, viewModel: viewModel, isPresented: $isJoinSheetPresented)
                                     }
                                 }
                             }
@@ -99,7 +99,7 @@ struct groupsView: View {
                             .padding()
                             .foregroundColor(.blue)
                         VStack{
-                            Text(viewModel.groupNames[selectedGroup-1].groupName)
+                            Text(viewModel.ticketGroupNames[selectedGroup-1].groupName)
                                 .font(.title2)
                         }
                     }
@@ -124,13 +124,11 @@ struct groupsView: View {
                         .frame(maxWidth: .infinity) // Move the frame to the bottom
                         .clipShape(RoundSomeCorners(topLeft: 10,topRight: 10,bottomLeft: 0,bottomRight: 0))
                         ScrollView {
-                            VStack(alignment: .leading, spacing:0) {
+                            VStack(alignment: .leading, spacing: 0) {
                                 ForEach(0..<viewModel.rankedGroupTickets.count, id: \.self) { index in
-                                    let game = viewModel.rankedGroupTickets[index]
-                                    NavigationLink(destination: {
-                                        ticketView(username: game.username, uid: game.uid, groupID: game.groupID)
-                                    }, label: {
-                                        BetCard(group: game, rank: (index+1), viewModel: viewModel)
+                                    let ticket = viewModel.rankedGroupTickets[index]
+                                    NavigationLink(destination: ticketView(username: ticket.username, uid: ticket.uid, groupID: ticket.groupID), label: {
+                                        BetCard(ticket: ticket, rank: (index+1), viewModel: viewModel)
                                             .clipShape(RoundSomeCorners(
                                                 topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
                                                 topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
@@ -147,9 +145,13 @@ struct groupsView: View {
                         .refreshable {
                             await viewModel.fetchGroupNames()
                             if selectedGroup != 0 {
-                                viewModel.fetchGroupTickets(group: viewModel.groupNames[selectedGroup-1].groupName)
+                                viewModel.fetchGroupTickets(ticket: viewModel.ticketGroupNames[selectedGroup-1].groupName)
                             }
                         }
+                       
+                        // .clipShape(RoundedRectangle(cornerRadius: 10)) // Apply corner radius to the ScrollView
+
+
                     }
                     .padding(.horizontal)
                     .padding(.horizontal)
@@ -165,12 +167,12 @@ struct groupsView: View {
                 if newValue == false {
                     // The sheet was dismissed
                     selectedGroup = 1
-                    viewModel.fetchGroupTickets(group: viewModel.groupNames[selectedGroup-1].groupName)
+                    viewModel.fetchGroupTickets(ticket: viewModel.ticketGroupNames[selectedGroup-1].groupName)
                 }
             }
             .onAppear(){
                 if selectedGroup > 0 {
-                    viewModel.fetchGroupTickets(group: viewModel.groupNames[selectedGroup-1].groupName)
+                    viewModel.fetchGroupTickets(ticket: viewModel.ticketGroupNames[selectedGroup-1].groupName)
                 }
             }
         }.navigationTitle("Groups")
@@ -179,21 +181,21 @@ struct groupsView: View {
 
 
 struct BetCard: View {
-    let group: Group
+    let ticket: Ticket // Ticket99
     let rank: Int
     @ObservedObject var viewModel: groupsViewModel
 
     var body: some View {
         HStack {
-            Text("\(rank). \(group.username)") 
+            Text("\(rank). \(ticket.username)")
                 .font(.headline)
                 .foregroundColor(K.darkBlue)
                 .frame(width: 150, alignment: .leading)
             Spacer()
-            Text("\(group.totalPotentialWon)")
+            Text("\(ticket.totalPotentialWon)")
                 .foregroundColor(K.darkGreen)
                 .frame(width: 50, alignment: .leading)
-            Text("\(group.totalWon)")
+            Text("\(ticket.totalWon)")
                 .foregroundColor(.green)
                 .frame(width: 50, alignment: .leading)
         }
@@ -223,7 +225,7 @@ struct SearchBar: View {
 
 struct groupBarView: View {
     
-    var ticket: Ticket
+    var group: Group // Groups99
     var body: some View {
         ZStack{
             Rectangle()
@@ -235,10 +237,10 @@ struct groupBarView: View {
 //                    .frame(width: 50, height: 50, alignment: .leading)
                 
                 VStack {
-                    Text("\(ticket.groupName)")
+                    Text("\(group.groupName)")
                         .bold()
                     
-                    Text("\(ticket.groupSlogan)")
+                    Text("\(group.groupSlogan)")
                         .foregroundColor(Color(.blue))
                 }
                 Spacer()
@@ -253,7 +255,7 @@ struct groupBarView: View {
 }
 
 struct GroupJoinSheet: View {
-    let ticket: Ticket
+    let group: Group // Groups99
     let viewModel: groupsViewModel
     @Binding var isPresented: Bool
 
@@ -263,7 +265,7 @@ struct GroupJoinSheet: View {
                 .font(.title)
                 .fontWeight(.bold)
             VStack {
-                if let imageURL = URL(string: ticket.groupImageURL), let imageData = try? Data(contentsOf: imageURL), let image = UIImage(data: imageData) {
+                if let imageURL = URL(string: group.groupImageURL), let imageData = try? Data(contentsOf: imageURL), let image = UIImage(data: imageData) {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFit()
@@ -281,14 +283,14 @@ struct GroupJoinSheet: View {
                         .shadow(radius: 3)
                 }
             }
-            Text(ticket.groupName)
+            Text(group.groupName)
                 .font(.headline)
-            Text(ticket.groupSlogan)
+            Text(group.groupSlogan)
                 .font(.subheadline)
-            Text("Admin: \(ticket.groupAdmin)")
+            Text("Admin: \(group.groupAdmin)")
                 .font(.caption)
             Button(action: {
-                viewModel.joinGroup(group: ticket)
+                viewModel.joinGroup(group: group)
                 isPresented = false
             }, label: {
                 Text("Join Group")

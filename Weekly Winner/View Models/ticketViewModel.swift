@@ -26,12 +26,13 @@ class ticketViewModel: ObservableObject {
     @Published var totalWonArray: [Int] = []
     
     @Published var isBetsLoaded = false  // Add this line
+    @Published var isTicketEnabled = false
 
     private var db = Firestore.firestore()
     private var listener: ListenerRegistration?
     
     private let groupServe = groupService()
-    @Published var userGroups: [Group] = []
+    @Published var userTickets: [Ticket] = [] // Ticket99
     
 //    init() {
 //        fetchUserGroups(uid: completion: {})
@@ -39,7 +40,7 @@ class ticketViewModel: ObservableObject {
 
     func fillTotalsArr(uid: String) {
         fetchUserGroups(uid: uid) {
-            for index in 0..<self.userGroups.count {
+            for index in 0..<self.userTickets.count {
                 self.fetchBets(uid: uid, groupNumber: index, completion: { [self] in
                     self.calculateTotals(for: index)
                     totalWonArray.append(Int(self.totalWon))
@@ -48,7 +49,7 @@ class ticketViewModel: ObservableObject {
         }
     }
     
-    func fetchFriendGroup(uid: String, with groupID: String, completion: @escaping (Result<Group, Error>) -> Void) {
+    func fetchFriendTicket(uid: String, with groupID: String, completion: @escaping (Result<Ticket, Error>) -> Void) { // Ticket99
         let db = Firestore.firestore()
         
         db.collection("users").document(uid).collection("groups")
@@ -60,9 +61,9 @@ class ticketViewModel: ObservableObject {
                 } else {
                     for document in querySnapshot!.documents {
                         do {
-                            let group = try document.data(as: Group.self)
-                            self.userGroups.append(group)
-                            completion(.success(group))
+                            let ticket = try document.data(as: Ticket.self) // Ticket99
+                            self.userTickets.append(ticket)
+                            completion(.success(ticket))
                         } catch {
                             print("Error decoding group: \(error)")
                             completion(.failure(error))
@@ -74,11 +75,11 @@ class ticketViewModel: ObservableObject {
 
     func fetchUserGroups(uid: String, completion: @escaping () -> Void) {
         guard let userId = Auth.auth().currentUser?.uid else { return }
-        groupServe.fetchUserGroups(userID: userId) { groups, error in
+        groupServe.fetchUserGroups(userID: userId) { tickets, error in
             if let error = error {
                 print("Error fetching user groups: \(error.localizedDescription)")
-            } else if let groups = groups {
-                self.userGroups = groups
+            } else if let tickets = tickets {
+                self.userTickets = tickets
                 //self.isGroupsLoaded = true  // Set this to true when data is loaded
             }
             completion()

@@ -289,8 +289,8 @@ struct BetDetailsView: View {
                         if ticketVM.isBetsLoaded {
                             //Spacer()
                             Picker("Group", selection: $groupNumber) {
-                                ForEach(0..<viewModel.userGroups.count, id: \.self) { index in
-                                    Text(viewModel.userGroups[index].groupName).tag(index)
+                                ForEach(0..<viewModel.userTickets.count, id: \.self) { index in
+                                    Text(viewModel.userTickets[index].groupName).tag(index)
                                 }
                             }
                             .frame(maxWidth: 200, alignment: .center)
@@ -392,7 +392,7 @@ struct BetDetailsView: View {
             
         Button(action: {
             print("groupNumber: \(groupNumber), betNumber: \(betNumber)")
-            viewModel.uploadBet(groupNumber: groupNumber, groupID: groupsVM.groupNames[groupNumber].groupID, betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread)), betType: betType, gameID: game.idd ?? "null") {_ in
+            viewModel.uploadBet(groupNumber: groupNumber, groupID: groupsVM.ticketGroupNames[groupNumber].groupID, betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread)), betType: betType, gameID: game.idd ?? "null") {_ in
                 ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber, completion: {
                     let groupServe = groupService()
                     groupServe.setPotentialToWin(potential: Int(ticketVM.totalPotentialWon), groupNumber: groupNumber, completion: {_ in })

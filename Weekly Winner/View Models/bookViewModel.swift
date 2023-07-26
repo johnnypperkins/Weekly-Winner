@@ -13,8 +13,8 @@ class bookViewModel: ObservableObject {
     @Published var NFLgames: [Game] = []
     @Published var NCAAFGames: [Game] = []
     @Published var upcomingGames: [Game] = []
-    @Published var userGroups: [Group] = []
-    @Published var isGroupsLoaded = false  // Add this line
+    @Published var userTickets: [Ticket] = [] //ticket99
+    @Published var isTicketsLoaded = false  // Add this line
     @Published var mostPopularBets: [MostPopularBet] = []
 
     
@@ -76,12 +76,12 @@ class bookViewModel: ObservableObject {
     
     func fetchUserGroups() {
         guard let userId = Auth.auth().currentUser?.uid else { return }
-        groupServe.fetchUserGroups(userID: userId) { groups, error in
+        groupServe.fetchUserGroups(userID: userId) { tickets, error in
             if let error = error {
                 print("Error fetching user groups: \(error.localizedDescription)")
-            } else if let groups = groups {
-                self.userGroups = groups
-                self.isGroupsLoaded = true  // Set this to true when data is loaded
+            } else if let tickets = tickets {
+                self.userTickets = tickets
+                self.isTicketsLoaded = true  // Set this to true when data is loaded
             }
             //print(groups)
             //print(userId)

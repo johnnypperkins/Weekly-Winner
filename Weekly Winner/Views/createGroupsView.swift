@@ -33,7 +33,7 @@ struct createGroupsView: View {
                 }
 
                 Button(action: {
-                    viewModel.uploadGroup(groupName: groupName, groupSlogan: groupSlogan, password: password)
+                    viewModel.createGroup(groupName: groupName, groupSlogan: groupSlogan, password: password)
                     dismiss()
                 }) {
                     Text("Create Group")

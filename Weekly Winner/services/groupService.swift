@@ -18,7 +18,7 @@ class groupService {
         }
     }
     
-    func getRankedTickets(groupN: String, completion: @escaping ([Group]?, Error?) -> Void) {
+    func getRankedTickets(groupN: String, completion: @escaping ([Ticket]?, Error?) -> Void) { // Ticket99
             let query = db.collectionGroup("groups")
                 .whereField("groupName", isEqualTo: groupN)
                 .order(by: "totalWon", descending: true)
@@ -34,12 +34,12 @@ class groupService {
                     return
                 }
 
-                var groups: [Group] = []
+                var tickets: [Ticket] = [] // Ticket99
 
                 for document in documents {
                     do {
-                        if let group = try? document.data(as: Group.self, decoder: Firestore.Decoder()) {
-                            groups.append(group)
+                        if let ticket = try? document.data(as: Ticket.self, decoder: Firestore.Decoder()) { // Ticket99
+                            tickets.append(ticket)
                         } else {
                             print("Document does not exist or could not be parsed.")
                         }
@@ -48,11 +48,11 @@ class groupService {
                     }
                 }
 
-                completion(groups, nil)
+                completion(tickets, nil)
             }
         }
     
-    func uploadGroup(groupName: String, groupSlogan: String, password: String?, completion: @escaping (Result<String, Error>) -> Void) {
+    func createGroup(groupName: String, groupSlogan: String, password: String?, completion: @escaping (Result<String, Error>) -> Void) {
             
         guard let currentUser = Auth.auth().currentUser else {
                     completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No user is currently logged in"])))
@@ -76,17 +76,18 @@ class groupService {
                         return
                     }
                     self.db.collection("groups").document(groupID).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": currentUser.uid])
-                    let ticket = Ticket(id: groupID, groupName: groupName, dateCreated: time, groupImageURL: "", groupSlogan: groupSlogan, groupAdmin: currentUser.uid)
-                    self.joinGroup(userID: currentUser.uid, group: ticket)
+                    let group = Group(id: groupID, groupName: groupName, dateCreated: time, groupImageURL: "", groupSlogan: groupSlogan, groupAdmin: currentUser.uid)
+                    self.joinGroup(userID: currentUser.uid, group: group)
                     
                     do {
-                        Firestore.firestore().collection("groups").document(groupID).updateData(["keywordsForLookup": ticket.keywordsForLookup])
+                        Firestore.firestore().collection("groups").document(groupID).updateData(["keywordsForLookup": group.keywordsForLookup])
                     } catch let error {
                         print("Error updating data: \(error)")
                     }
                 }
             }
         }
+    
     func groupCount(userID: String, completion: @escaping (Int?, Error?) -> Void) {
         let db = Firestore.firestore()
         let userGroupsCollection = db.collection("users").document(userID).collection("groups")
@@ -111,21 +112,21 @@ class groupService {
         return await authData?.username ?? ""
         }
     
-    func joinGroup(userID: String, group: Ticket) {
+    func joinGroup(userID: String, group: Group) {
         Task{
             let username = await self.getUsername() // Access the username asynchronously
             
             groupCount(userID: userID) { num, error in
                 let db = Firestore.firestore()
                 let userGroupsCollection = db.collection("users").document(userID).collection("groups")
-                let group = Group(username: username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: group.groupName, rank: -99) // will change the rank
-                do {
+                let ticket = Ticket(username: username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: group.groupName, rank: -99) // will change the rank
+                do { // Ticket99
                     
-                    let _ = try userGroupsCollection.addDocument(from: group) { error in
+                    let _ = try userGroupsCollection.addDocument(from: ticket) { error in
                         if let error = error {
                             print("Error uploading group: \(error)")
                         } else {
-                            print("Group uploaded successfully!")
+                            print("Joined group successfully!")
                         }
                     }
                 } catch {
@@ -137,7 +138,7 @@ class groupService {
     
     
     
-    func fetchUserGroups(userID: String, completion: @escaping ([Group]?, Error?) -> Void) {
+    func fetchUserGroups(userID: String, completion: @escaping ([Ticket]?, Error?) -> Void) { // Ticket99
         Task{
             let username = await self.getUsername() // Access the username asynchronously
             
@@ -147,7 +148,7 @@ class groupService {
                     return
                 }
                 
-                var groups: [Group] = []
+                var tickets: [Ticket] = [] // Ticket99
                 
                 for document in documents {
                     let id = document.documentID
@@ -158,14 +159,14 @@ class groupService {
                     let groupID = document.data()["groupID"] as? String ?? "null"// default value if not found
                     let rank = document.data()["rank"] as? Int ?? -99 // default value if not found
                     
-                    let group = Group(id: id, username: username, uid: userID, groupID: groupID, groupNumber: groupNumber, dateCreated: "today", totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName, rank: rank)
-                    groups.append(group)
+                    let ticket = Ticket(id: id, username: username, uid: userID, groupID: groupID, groupNumber: groupNumber, dateCreated: "today", totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName, rank: rank)
+                    tickets.append(ticket) // Ticket99
                 }
                 
                 // sorts them based on groupNum
-                groups.sort { $0.groupNumber < $1.groupNumber }
+                tickets.sort { $0.groupNumber < $1.groupNumber }
                 
-                completion(groups, nil)
+                completion(tickets, nil)
             }
         }
     }
