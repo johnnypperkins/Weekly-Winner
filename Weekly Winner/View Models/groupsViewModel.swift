@@ -14,10 +14,17 @@ class groupsViewModel: ObservableObject {
     @Published var rankedGroupTickets: [Ticket] = [] // Ticket99
     
     @Published var canJoinGroup: Bool = true
+    @Published var groupsFetched = false
     
     private let grpService = groupService()
     
     private let db = Firestore.firestore()
+    
+    init() {
+        fetchGroupNames() {
+            self.groupsFetched = true
+        }
+    }
     
     
     func fetchGroup(from keyword: String) {
@@ -63,6 +70,7 @@ class groupsViewModel: ObservableObject {
 
 
     func fetchGroupNames(completion: @escaping () -> Void) {
+        print("Fetch started")
         guard let currentUser = Auth.auth().currentUser else {
             return
         }
@@ -84,11 +92,10 @@ class groupsViewModel: ObservableObject {
                 print(snapshot)
                 return try? snapshot.data(as: Ticket.self) // Ticket99
             }
+            print("tickets: \(ticketGroupNames)")
 
             // Call the completion closure after fetching and processing
             completion()
         }
     }
-
-
 }

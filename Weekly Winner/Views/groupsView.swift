@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import FirebaseAuth
+import Firebase
 
 struct groupsView: View {
     @State private var isJoinSheetPresented = false
@@ -14,6 +16,7 @@ struct groupsView: View {
     @State private var isShowingSheetTicket = false
     @ObservedObject private var viewModel = groupsViewModel()
     @State private var selectedGroup = 1
+    //@State private var groupsFetched = false
 
     init() {
         viewModel.fetchGroupNames() {}
@@ -31,151 +34,166 @@ struct groupsView: View {
             }
         )
         NavigationStack {
-            VStack {
-                Picker("Group", selection: $selectedGroup) {
-                    ForEach(0..<viewModel.ticketGroupNames.count+1, id: \.self) { index in
-                        if index == 0 {
-                            Image(systemName: "plus")
-                        }
-                        else{
-                            Text("\(viewModel.ticketGroupNames[index-1].groupName)").tag(index)
-                            
-                            
+            if (viewModel.ticketGroupNames.count > 0) {
+                VStack {
+                    Picker("Group", selection: $selectedGroup) {
+                        ForEach(0..<viewModel.ticketGroupNames.count+1, id: \.self) { index in
+                            if index == 0 {
+                                Image(systemName: "plus")
+                            }
+                            else{
+                                Text("\(viewModel.ticketGroupNames[index-1].groupName)").tag(index)
+                            }
                         }
                     }
+                    .pickerStyle(SegmentedPickerStyle())
+                    .padding(.horizontal, 10)
+                    .onChange(of: selectedGroup) { newValue in
+                        if selectedGroup > 0 {
+                            viewModel.fetchGroupTickets(ticket: viewModel.ticketGroupNames[selectedGroup-1].groupName)
+                        }
+                    }
+                    
+                    if selectedGroup == 0 {
+                        HStack {
+                            Spacer()
+                            
+                            Button {
+                                print(viewModel.ticketGroupNames)
+                                isShowingSheet.toggle()
+                            } label: {
+                                Image(systemName: "plus")
+                                    .resizable()
+                                    .frame(width: 30, height: 30)
+                                    .padding()
+                                    .foregroundColor(.green)
+                                
+                            }
+                        }
+                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
+                        
+                        Text("Find Group")
+                            .font(.title)
+                            .bold()
+                        
+                        SearchBar(text: keywordBinding, placeholder: "Search Groups")
+                        if !viewModel.queriedGroups.isEmpty {
+                            withAnimation {
+                                ScrollView {
+                                    ForEach(viewModel.queriedGroups, id: \.id) { group in
+                                        Button(action: {
+                                            // Destination view code
+                                            isJoinSheetPresented.toggle()
+                                        }) {
+                                            groupBarView(group: group)
+                                        }.sheet(isPresented: $isJoinSheetPresented) {
+                                            GroupJoinSheet(group: group, viewModel: viewModel, isPresented: $isJoinSheetPresented)
+                                        }
+                                    }
+                                }
+                            }.animation(.easeInOut, value: 20)
+                        }
+                    }else{
+                        HStack{
+                            Image(systemName: "photo.circle.fill")
+                                .resizable()
+                                .frame(width: 50,height: 50)
+                                .padding()
+                                .foregroundColor(.blue)
+                            VStack{
+                                Text(viewModel.ticketGroupNames[selectedGroup-1].groupName)
+                                    .font(.title2)
+                            }
+                        }
+                        Divider().padding(.horizontal)
+                        VStack(alignment: .leading, spacing: 0) {
+                            HStack {
+                                Text("Rank")
+                                    .font(.headline)
+                                    .foregroundColor(K.darkBlue)
+                                    .frame(width: 100, alignment: .leading)
+                                Spacer()
+                                Text("PW")
+                                    .foregroundColor(K.darkGreen)
+                                    .frame(width: 50, alignment: .leading)
+                                Text("TW")
+                                    .foregroundColor(.green)
+                                    .frame(width: 50, alignment: .leading)
+                            }
+                            .padding(EdgeInsets(top: 7.5, leading: 0, bottom: 7.5, trailing: 0))
+                            .padding(.horizontal)
+                            .background(K.veryLightBlue) // changes color based on bet result
+                            .frame(maxWidth: .infinity) // Move the frame to the bottom
+                            .clipShape(RoundSomeCorners(topLeft: 10,topRight: 10,bottomLeft: 0,bottomRight: 0))
+                            ScrollView {
+                                VStack(alignment: .leading, spacing: 0) {
+                                    ForEach(0..<viewModel.rankedGroupTickets.count, id: \.self) { index in
+                                        let ticket = viewModel.rankedGroupTickets[index]
+                                        if (ticket.uid != Auth.auth().currentUser?.uid) {
+                                            NavigationLink(destination: ticketView(username: ticket.username, uid: ticket.uid, groupID: ticket.groupID), label: {
+                                                BetCard(ticket: ticket, rank: (index+1), ownCard: false, viewModel: viewModel)
+                                                    .clipShape(RoundSomeCorners(
+                                                        topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
+                                                        topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
+                                                        bottomLeft: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0,
+                                                        bottomRight: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0
+                                                    ))
+                                            }) .id(UUID())
+                                        } else { // doesnt click if its yourself
+                                            BetCard(ticket: ticket, rank: (index+1), ownCard: true, viewModel: viewModel)
+                                                .clipShape(RoundSomeCorners(
+                                                    topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
+                                                    topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
+                                                    bottomLeft: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0,
+                                                    bottomRight: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0
+                                                ))
+                                        }
+                                        if index != viewModel.rankedGroupTickets.count - 1 {
+                                            Divider()
+                                        }
+                                    }
+                                }
+                            }
+                            .refreshable {
+                                await viewModel.fetchGroupNames() {}
+                                if selectedGroup != 0 {
+                                    viewModel.fetchGroupTickets(ticket: viewModel.ticketGroupNames[selectedGroup-1].groupName)
+                                }
+                            }
+                            
+                            // .clipShape(RoundedRectangle(cornerRadius: 10)) // Apply corner radius to the ScrollView
+                            
+                            
+                        }
+                        .padding(.horizontal)
+                        .padding(.horizontal)
+                        //.clipShape(RoundedRectangle(cornerRadius: 10)) // Apply corner radius to the ScrollView
+                        
+                    }
+                    Spacer()
                 }
-                .pickerStyle(SegmentedPickerStyle())
-                .padding(.horizontal, 10)
-                .onChange(of: selectedGroup) { newValue in
+                .sheet(isPresented: $isShowingSheet, content: {
+                    createGroupsView()
+                })
+                .onChange(of: isShowingSheet) { newValue in
+                    if newValue == false {
+                        // The sheet was dismissed
+                        selectedGroup = 1
+                        viewModel.fetchGroupTickets(ticket: viewModel.ticketGroupNames[selectedGroup-1].groupName)
+                    }
+                }
+                .onAppear(){
                     if selectedGroup > 0 {
                         viewModel.fetchGroupTickets(ticket: viewModel.ticketGroupNames[selectedGroup-1].groupName)
                     }
                 }
-                
-                if selectedGroup == 0 {
-                    HStack {
-                        Spacer()
-                        
-                        Button {
-                            print(viewModel.ticketGroupNames)
-                            isShowingSheet.toggle()
-                        } label: {
-                            Image(systemName: "plus")
-                                .resizable()
-                                .frame(width: 30, height: 30)
-                                .padding()
-                                .foregroundColor(.green)
-                            
-                        }
-                    }
-                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
-                    
-                    Text("Find Group")
-                        .font(.title)
-                        .bold()
-                    
-                    SearchBar(text: keywordBinding, placeholder: "Search Groups")
-                    if !viewModel.queriedGroups.isEmpty {
-                        withAnimation {
-                            ScrollView {
-                                ForEach(viewModel.queriedGroups, id: \.id) { group in
-                                    Button(action: {
-                                        // Destination view code
-                                        isJoinSheetPresented.toggle()
-                                    }) {
-                                        groupBarView(group: group)
-                                    }.sheet(isPresented: $isJoinSheetPresented) {
-                                        GroupJoinSheet(group: group, viewModel: viewModel, isPresented: $isJoinSheetPresented)
-                                    }
-                                }
-                            }
-                        }.animation(.easeInOut, value: 20)
-                    }
-                }else{
-                    HStack{
-                        Image(systemName: "photo.circle.fill")
-                            .resizable()
-                            .frame(width: 50,height: 50)
-                            .padding()
-                            .foregroundColor(.blue)
-                        VStack{
-                            Text(viewModel.ticketGroupNames[selectedGroup-1].groupName)
-                                .font(.title2)
-                        }
-                    }
-                    Divider().padding(.horizontal)
-                    VStack(alignment: .leading, spacing: 0) {
-                        HStack {
-                            Text("Rank")
-                                .font(.headline)
-                                .foregroundColor(K.darkBlue)
-                                .frame(width: 100, alignment: .leading)
-                            Spacer()
-                            Text("PW")
-                                .foregroundColor(K.darkGreen)
-                                .frame(width: 50, alignment: .leading)
-                            Text("TW")
-                                .foregroundColor(.green)
-                                .frame(width: 50, alignment: .leading)
-                        }
-                        .padding(EdgeInsets(top: 7.5, leading: 0, bottom: 7.5, trailing: 0))
-                        .padding(.horizontal)
-                        .background(K.veryLightBlue) // changes color based on bet result
-                        .frame(maxWidth: .infinity) // Move the frame to the bottom
-                        .clipShape(RoundSomeCorners(topLeft: 10,topRight: 10,bottomLeft: 0,bottomRight: 0))
-                        ScrollView {
-                            VStack(alignment: .leading, spacing: 0) {
-                                ForEach(0..<viewModel.rankedGroupTickets.count, id: \.self) { index in
-                                    let ticket = viewModel.rankedGroupTickets[index]
-                                    NavigationLink(destination: ticketView(username: ticket.username, uid: ticket.uid, groupID: ticket.groupID), label: {
-                                        BetCard(ticket: ticket, rank: (index+1), viewModel: viewModel)
-                                            .clipShape(RoundSomeCorners(
-                                                topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
-                                                topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
-                                                bottomLeft: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0,
-                                                bottomRight: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0
-                                            ))
-                                        if index != viewModel.rankedGroupTickets.count - 1 {
-                                            Divider()
-                                        }
-                                    }) .id(UUID())
-                                }
-                            }
-                        }
-                        .refreshable {
-                            await viewModel.fetchGroupNames() {}
-                            if selectedGroup != 0 {
-                                viewModel.fetchGroupTickets(ticket: viewModel.ticketGroupNames[selectedGroup-1].groupName)
-                            }
-                        }
-                       
-                        // .clipShape(RoundedRectangle(cornerRadius: 10)) // Apply corner radius to the ScrollView
-
-
-                    }
-                    .padding(.horizontal)
-                    .padding(.horizontal)
-                    //.clipShape(RoundedRectangle(cornerRadius: 10)) // Apply corner radius to the ScrollView
-
-                }
-                Spacer()
-            }
-            .sheet(isPresented: $isShowingSheet, content: {
-                createGroupsView()
-            })
-            .onChange(of: isShowingSheet) { newValue in
-                if newValue == false {
-                    // The sheet was dismissed
-                    selectedGroup = 1
-                    viewModel.fetchGroupTickets(ticket: viewModel.ticketGroupNames[selectedGroup-1].groupName)
-                }
-            }
-            .onAppear(){
-                if selectedGroup > 0 {
-                    viewModel.fetchGroupTickets(ticket: viewModel.ticketGroupNames[selectedGroup-1].groupName)
-                }
             }
         }.navigationTitle("Groups")
+            .onAppear() {
+                viewModel.fetchGroupNames() {
+                    
+                }
+            }
     }
 }
 
@@ -183,27 +201,43 @@ struct groupsView: View {
 struct BetCard: View {
     let ticket: Ticket // Ticket99
     let rank: Int
+    let ownCard: Bool
     @ObservedObject var viewModel: groupsViewModel
 
     var body: some View {
-        HStack {
-            Text("\(rank). \(ticket.username)")
-                .font(.headline)
-                .foregroundColor(K.darkBlue)
-                .frame(width: 150, alignment: .leading)
-            Spacer()
-            Text("\(ticket.totalPotentialWon)")
-                .foregroundColor(K.darkGreen)
-                .frame(width: 50, alignment: .leading)
-            Text("\(ticket.totalWon)")
-                .foregroundColor(.green)
-                .frame(width: 50, alignment: .leading)
+        ZStack {
+            HStack {
+                Text("\(rank). \(ticket.username)")
+                    .font(.headline)
+                    .foregroundColor(K.darkBlue)
+                    .frame(width: 150, alignment: .leading)
+                Spacer()
+                Text("\(ticket.totalPotentialWon)")
+                    .foregroundColor(K.darkGreen)
+                    .frame(width: 50, alignment: .leading)
+                Text("\(ticket.totalWon)")
+                    .foregroundColor(.green)
+                    .frame(width: 50, alignment: .leading)
+            }
+            .padding()
+            .background(!ownCard ? K.veryLightGray : K.cadetBlue.opacity(0.25)) // changes color based on bet result
+            .frame(maxWidth: .infinity) // Move the frame to the bottom
+            
+            // Arrow
+            if (!ownCard) {
+                HStack {
+                    Spacer()
+                    Image(systemName: "chevron.right") // Use any image you'd like
+                        .resizable()
+                        .frame(width: 10, height: 15) // Adjust size to your liking
+                        .foregroundColor(.gray) // Choose color
+                        .padding(.trailing,7.5) // Add padding to move away from the edge
+                }
+            }
         }
-        .padding()
-        .background(K.veryLightGray) // changes color based on bet result
-        .frame(maxWidth: .infinity) // Move the frame to the bottom
     }
 }
+
 
 
 struct SearchBar: View {
