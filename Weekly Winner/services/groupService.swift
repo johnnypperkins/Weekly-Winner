@@ -140,6 +140,12 @@ class groupService {
         }
     }
     
+    func leaveGroup(group: Group) {
+     //1. go through database collection("users").document(userID).collection("groups") and delete the group that has the same document ID as group.groupID
+        // 2. Go into collection("users").document(userID).collection("bets") and delete any of the bet documents that have the same field "groupID" as the group.groupID
+        // 3. Go into collection("groups").document(group.groupID).collection("members") and delete the member document that has the same document ID as the current user ID
+    }
+    
     
     
     func fetchUserGroups(userID: String, completion: @escaping ([Ticket]?, Error?) -> Void) { // Ticket99

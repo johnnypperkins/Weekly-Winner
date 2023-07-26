@@ -34,15 +34,15 @@ struct groupsView: View {
             }
         )
         NavigationStack {
-            if (viewModel.ticketGroupNames.count > 0) {
+            if (viewModel.userTickets.count > 0) {
                 VStack {
                     Picker("Group", selection: $selectedGroup) {
-                        ForEach(0..<viewModel.ticketGroupNames.count+1, id: \.self) { index in
+                        ForEach(0..<viewModel.userTickets.count+1, id: \.self) { index in
                             if index == 0 {
                                 Image(systemName: "plus")
                             }
                             else{
-                                Text("\(viewModel.ticketGroupNames[index-1].groupName)").tag(index)
+                                Text("\(viewModel.userTickets[index-1].groupName)").tag(index)
                             }
                         }
                     }
@@ -50,7 +50,7 @@ struct groupsView: View {
                     .padding(.horizontal, 10)
                     .onChange(of: selectedGroup) { newValue in
                         if selectedGroup > 0 {
-                            viewModel.fetchGroupTickets(ticket: viewModel.ticketGroupNames[selectedGroup-1].groupName)
+                            viewModel.fetchGroupTickets(ticket: viewModel.userTickets[selectedGroup-1].groupName)
                         }
                     }
                     
@@ -59,7 +59,7 @@ struct groupsView: View {
                             Spacer()
                             
                             Button {
-                                print(viewModel.ticketGroupNames)
+                                print(viewModel.userTickets)
                                 isShowingSheet.toggle()
                             } label: {
                                 Image(systemName: "plus")
@@ -77,17 +77,25 @@ struct groupsView: View {
                             .bold()
                         
                         SearchBar(text: keywordBinding, placeholder: "Search Groups")
+                        if (viewModel.userTickets.count >= P.maxNumGroupsCanJoin) {
+                            Text("Max Groups Joined")
+                                .foregroundColor(Color.red)
+                        }
                         if !viewModel.queriedGroups.isEmpty {
                             withAnimation {
                                 ScrollView {
                                     ForEach(viewModel.queriedGroups, id: \.id) { group in
-                                        Button(action: {
-                                            // Destination view code
-                                            isJoinSheetPresented.toggle()
-                                        }) {
+                                        if (viewModel.userTickets.count < P.maxNumGroupsCanJoin) {
+                                            Button(action: {
+                                                // Destination view code
+                                                isJoinSheetPresented.toggle()
+                                            }) {
+                                                groupBarView(group: group)
+                                            }.sheet(isPresented: $isJoinSheetPresented) {
+                                                GroupJoinSheet(group: group, viewModel: viewModel, isPresented: $isJoinSheetPresented)
+                                            }
+                                        } else {
                                             groupBarView(group: group)
-                                        }.sheet(isPresented: $isJoinSheetPresented) {
-                                            GroupJoinSheet(group: group, viewModel: viewModel, isPresented: $isJoinSheetPresented)
                                         }
                                     }
                                 }
@@ -101,8 +109,18 @@ struct groupsView: View {
                                 .padding()
                                 .foregroundColor(.blue)
                             VStack{
-                                Text(viewModel.ticketGroupNames[selectedGroup-1].groupName)
+                                Text(viewModel.userTickets[selectedGroup-1].groupName)
                                     .font(.title2)
+                            }
+                            if(viewModel.userTickets[selectedGroup-1].groupID != "global") {
+                                Button(action: {
+                                    viewModel.leaveGroup(ticket: viewModel.userTickets[selectedGroup-1]) {
+                                        selectedGroup = 1
+                                        viewModel.fetchGroupNames() {}
+                                    }
+                                }) {
+                                    Text("Leave Group") // will add design later obv
+                                }
                             }
                         }
                         Divider().padding(.horizontal)
@@ -157,7 +175,7 @@ struct groupsView: View {
                             .refreshable {
                                 await viewModel.fetchGroupNames() {}
                                 if selectedGroup != 0 {
-                                    viewModel.fetchGroupTickets(ticket: viewModel.ticketGroupNames[selectedGroup-1].groupName)
+                                    viewModel.fetchGroupTickets(ticket: viewModel.userTickets[selectedGroup-1].groupName)
                                 }
                             }
                             
@@ -179,12 +197,12 @@ struct groupsView: View {
                     if newValue == false {
                         // The sheet was dismissed
                         selectedGroup = 1
-                        viewModel.fetchGroupTickets(ticket: viewModel.ticketGroupNames[selectedGroup-1].groupName)
+                        viewModel.fetchGroupTickets(ticket: viewModel.userTickets[selectedGroup-1].groupName)
                     }
                 }
                 .onAppear(){
                     if selectedGroup > 0 {
-                        viewModel.fetchGroupTickets(ticket: viewModel.ticketGroupNames[selectedGroup-1].groupName)
+                        viewModel.fetchGroupTickets(ticket: viewModel.userTickets[selectedGroup-1].groupName)
                     }
                 }
             }

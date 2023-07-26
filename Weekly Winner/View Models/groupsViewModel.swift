@@ -10,7 +10,7 @@ import Firebase
 class groupsViewModel: ObservableObject {
     
     @Published var queriedGroups: [Group] = [] // Group99
-    @Published var ticketGroupNames: [Ticket] = [] // Ticket99
+    @Published var userTickets: [Ticket] = [] // Ticket99
     @Published var rankedGroupTickets: [Ticket] = [] // Ticket99
     
     @Published var canJoinGroup: Bool = true
@@ -58,7 +58,7 @@ class groupsViewModel: ObservableObject {
     
     func checkIfGroupAlreadyJoined(group: Group, completion: @escaping (Bool) -> Void) {
         self.fetchGroupNames() {
-            for groupsJoined in self.ticketGroupNames {
+            for groupsJoined in self.userTickets {
                 if group.id == groupsJoined.groupID {
                     completion(true)
                     return
@@ -88,14 +88,91 @@ class groupsViewModel: ObservableObject {
             
             guard let documents = snapshot?.documents, error == nil else { return }
             
-            self.ticketGroupNames = documents.compactMap { snapshot in
+            self.userTickets = documents.compactMap { snapshot in
                 print(snapshot)
                 return try? snapshot.data(as: Ticket.self) // Ticket99
             }
-            print("tickets: \(ticketGroupNames)")
+            print("tickets: \(userTickets)")
 
             // Call the completion closure after fetching and processing
             completion()
+        }
+    }
+    
+    func leaveGroup(ticket: Ticket, completion: @escaping () -> Void) {
+        // Get a reference to Firestore and the current user
+        guard let currentUser = Auth.auth().currentUser?.uid else {
+            print("No current user")
+            return
+        }
+        let db = Firestore.firestore()
+
+        // Step 1: Delete the group from the user's groups
+        print(currentUser + "is current user")
+        print(ticket.groupID + "is group id")
+
+        db.collection("users").document(currentUser).collection("groups").whereField("groupID", isEqualTo: ticket.groupID).getDocuments { (snapshot, error) in
+            if let error = error {
+                print("Error getting documents: \(error)")
+            } else {
+                for document in snapshot!.documents {
+                    document.reference.delete { err in
+                        if let err = err {
+                            print("Error removing document: \(err)")
+                        } else {
+                            print("Document successfully removed!")
+                        }
+                    }
+                }
+            }
+        }
+
+        // Step 2: Delete any bets related to this group
+        db.collection("users").document(currentUser).collection("bets").whereField("groupID", isEqualTo: ticket.groupID)
+            .getDocuments { (snapshot, error) in
+                if let error = error {
+                    print("Error getting bets: \(error.localizedDescription)")
+                } else {
+                    snapshot?.documents.forEach { document in
+                        document.reference.delete()
+                    }
+                }
+            }
+
+        // Step 3: Remove the user from the group's members
+        db.collection("groups").document(ticket.groupID).collection("members").document(currentUser).delete { error in
+            if let error = error {
+                print("Error removing user from group: \(error.localizedDescription)")
+            } else {
+                print("User successfully removed from group!")
+                // Proceed with deleting the group only after successful removal of the user.
+                deleteGroupIfNeeded(groupID: ticket.groupID)
+            }
+        }
+        
+        func deleteGroupIfNeeded(groupID: String) {
+            db.collection("groups").document(groupID).getDocument { document, error in
+                if let error = error {
+                    print("Error fetching group: \(error.localizedDescription)")
+                    return
+                }
+                guard let document = document, document.exists, let members = document.get("members") as? [String] else {
+                    // If the group still has members, we don't delete it.
+                    return
+                }
+                print("Members: \(members)") // Debug line
+                print("Members count: \(members.count)") // Debug line
+                if members.isEmpty {
+                    // If no members left, delete the group.
+                    document.reference.delete { error in
+                        if let error = error {
+                            print("Error deleting group: \(error.localizedDescription)")
+                        } else {
+                            print("Group successfully deleted!")
+                        }
+                    }
+                }
+            }
         }
     }
 }

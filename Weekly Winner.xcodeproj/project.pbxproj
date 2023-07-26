@@ -232,7 +232,6 @@
 				865C4A7B2A32893100C3C626 /* User.swift */,
 				8662510F2A3E862400708495 /* Ticket.swift */,
 				3CB1AC8A2A61602700C931CA /* Group.swift */,
-				866251112A3E892E00708495 /* Bet.swift */,
 			);
 			path = "custom variables";
 			sourceTree = "<group>";
@@ -264,6 +263,7 @@
 				3CAA9A2F2A64B590000146FA /* View Models */,
 				3CAA9A2E2A64B582000146FA /* Views */,
 				865C4A7E2A32C00B00C3C626 /* custom variables */,
+				866251112A3E892E00708495 /* Bet.swift */,
 				864A2D642A6D8052000FBA35 /* CustomAlert */,
 				865C4A7D2A32BFF500C3C626 /* services */,
 				3C91B6C42A58B9E700398F53 /* UI */,

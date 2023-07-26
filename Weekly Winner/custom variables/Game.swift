@@ -21,3 +21,7 @@ struct Game: Identifiable, Decodable {
     var totalOver: Double
     var totalUnder: Double
 }
+
+struct P {
+    static let maxNumGroupsCanJoin = 5
+}
