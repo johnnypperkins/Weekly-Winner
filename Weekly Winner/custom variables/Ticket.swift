@@ -21,4 +21,5 @@ struct Ticket: Identifiable, Codable {
     var totalPotentialWon: Int
     var groupName: String
     var rank: Int
+    var isEnabled: Bool
 }

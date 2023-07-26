@@ -15,11 +15,12 @@ class profileViewModel: ObservableObject {
     @Published var isBlocked: Bool = false
     @Published var isBlockedBy: Bool = false
     @Published var user: User
-    
+    @Published var profileImageURLHolder: String
     
     init(user: User) {
         //self.getCountOfStringsInArrayField(user1: user)
         self.user = user
+        self.profileImageURLHolder = user.profileImageUrl
         //self.isFollow = uService.isFollowed(id: user.id!)
         Task{
             await self.checkIfBlocked()
@@ -34,6 +35,7 @@ class profileViewModel: ObservableObject {
             
             service.fetchUser(withUid: uid) { user in
                 self.user = user
+                self.profileImageURLHolder = user.profileImageUrl
             }
         }
     

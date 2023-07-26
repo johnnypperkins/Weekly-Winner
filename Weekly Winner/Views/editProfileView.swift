@@ -91,13 +91,15 @@ struct editProfileView: View {
                             viewModel.updateUserInfo()
                             if selectedImage != nil {
                                 viewModel.uploadProfileImage(selectedImage!) {url in
-                                    profileVM.user.profileImageUrl = url
+                                    profileVM.profileImageURLHolder = url
+                                    
+                                }
+                                withAnimation {
+                                    dismiss()
                                 }
                                 
                             }
-                            withAnimation {
-                                dismiss()
-                            }
+                            
                         }) {
                             Text("Update Profile")
                                 .foregroundColor(.blue)
@@ -116,7 +118,6 @@ struct editProfileView: View {
                     ToolbarItem(placement: .navigationBarLeading) {
                             Button {
                                 // 2
-                                profileVM.fetchUser()
                                 dismiss()
                                 
                             } label: {

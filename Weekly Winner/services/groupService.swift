@@ -115,11 +115,14 @@ class groupService {
     func joinGroup(userID: String, group: Group) {
         Task{
             let username = await self.getUsername() // Access the username asynchronously
-            
+            var enabled = false
             groupCount(userID: userID) { num, error in
+                if group.groupAdmin == userID {
+                    enabled = true
+                }
                 let db = Firestore.firestore()
                 let userGroupsCollection = db.collection("users").document(userID).collection("groups")
-                let ticket = Ticket(username: username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: group.groupName, rank: -99) // will change the rank
+                let ticket = Ticket(username: username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: group.groupName, rank: -99, isEnabled: enabled) // will change the rank
                 do { // Ticket99
                     
                     let _ = try userGroupsCollection.addDocument(from: ticket) { error in
@@ -127,6 +130,7 @@ class groupService {
                             print("Error uploading group: \(error)")
                         } else {
                             print("Joined group successfully!")
+                            self.db.collection("groups").document(group.id!).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": userID])
                         }
                     }
                 } catch {
@@ -157,9 +161,10 @@ class groupService {
                     let totalPotentialWon = document.data()["totalPotentialWon"] as? Int ?? 0 // default value if not found
                     let groupName = document.data()["groupName"] as? String ?? "null"
                     let groupID = document.data()["groupID"] as? String ?? "null"// default value if not found
-                    let rank = document.data()["rank"] as? Int ?? -99 // default value if not found
+                    let rank = document.data()["rank"] as? Int ?? -99
+                    let isEnabled = document.data()["isEnabled"] as? Bool ?? false// default value if not found
                     
-                    let ticket = Ticket(id: id, username: username, uid: userID, groupID: groupID, groupNumber: groupNumber, dateCreated: "today", totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName, rank: rank)
+                    let ticket = Ticket(id: id, username: username, uid: userID, groupID: groupID, groupNumber: groupNumber, dateCreated: "today", totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName, rank: rank, isEnabled: isEnabled)
                     tickets.append(ticket) // Ticket99
                 }
                 

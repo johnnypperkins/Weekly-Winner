@@ -89,7 +89,7 @@ struct profileView: View {
 //                            }
 
 
-                            KFImage(URL(string: viewModel.user.profileImageUrl))
+                            KFImage(URL(string: viewModel.profileImageURLHolder))
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .frame(width: 200,height: 200)
