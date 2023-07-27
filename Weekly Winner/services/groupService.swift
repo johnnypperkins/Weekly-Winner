@@ -77,7 +77,10 @@ class groupService {
                     }
                     self.db.collection("groups").document(groupID).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": currentUser.uid])
                     let group = Group(id: groupID, groupName: groupName, dateCreated: time, groupImageURL: "", groupSlogan: groupSlogan, groupAdmin: currentUser.uid)
-                    self.joinGroup(userID: currentUser.uid, group: group)
+                    self.joinGroup(userID: currentUser.uid, group: group){error in
+                        
+                    }
+                        
                     
                     do {
                         Firestore.firestore().collection("groups").document(groupID).updateData(["keywordsForLookup": group.keywordsForLookup])
@@ -112,7 +115,7 @@ class groupService {
         return await authData?.username ?? ""
         }
     
-    func joinGroup(userID: String, group: Group) {
+    func joinGroup(userID: String, group: Group, completion: @escaping (Error?) -> Void) {
         Task{
             let username = await self.getUsername() // Access the username asynchronously
             var enabled = false
@@ -136,15 +139,64 @@ class groupService {
                 } catch {
                     print("Error encoding group: \(error)")
                 }
+                completion(error)
             }
+            completion(nil)
         }
     }
     
-    func leaveGroup(group: Group) {
-     //1. go through database collection("users").document(userID).collection("groups") and delete the group that has the same document ID as group.groupID
-        // 2. Go into collection("users").document(userID).collection("bets") and delete any of the bet documents that have the same field "groupID" as the group.groupID
-        // 3. Go into collection("groups").document(group.groupID).collection("members") and delete the member document that has the same document ID as the current user ID
+
+    func leaveGroup(ticket: Ticket, userID: String, completion: @escaping (Error?) -> Void) {
+        let db = Firestore.firestore()
+
+        // Create a dispatch group to synchronize your async calls
+        let groupLeave = DispatchGroup()
+        
+        // Enter the group
+        groupLeave.enter()
+        db.collection("users").document(userID).collection("groups").whereField("groupID", isEqualTo: ticket.groupID).getDocuments { (snapshot, error) in
+            if let error = error {
+                completion(error)
+            } else {
+                for doc in snapshot!.documents {
+                    doc.reference.delete()
+                }
+                // Leave the group after finishing
+                groupLeave.leave()
+            }
+        }
+
+        // Enter the group
+        groupLeave.enter()
+        db.collection("users").document(userID).collection("bets").whereField("groupID", isEqualTo: ticket.groupID).getDocuments() { (snapshot, error) in
+            if let error = error {
+                completion(error)
+            } else {
+                for document in snapshot!.documents {
+                    document.reference.delete()
+                }
+                // Leave the group after finishing
+                groupLeave.leave()
+            }
+        }
+
+        // Enter the group
+        groupLeave.enter()
+        db.collection("groups").document(ticket.groupID).collection("members").document(userID).delete() { err in
+            if let err = err {
+                completion(err)
+            } else {
+                // Leave the group after finishing
+                groupLeave.leave()
+            }
+        }
+
+        // Call completion when all tasks are done
+        groupLeave.notify(queue: .main) {
+            completion(nil)
+        }
     }
+
     
     
     

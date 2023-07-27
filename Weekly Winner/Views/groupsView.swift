@@ -114,9 +114,8 @@ struct groupsView: View {
                             }
                             if(viewModel.userTickets[selectedGroup-1].groupID != "global") {
                                 Button(action: {
-                                    viewModel.leaveGroup(ticket: viewModel.userTickets[selectedGroup-1]) {
-                                        selectedGroup = 1
-                                        viewModel.fetchGroupNames() {}
+                                    selectedGroup -= 1
+                                    viewModel.leaveGroup(ticket: viewModel.userTickets[selectedGroup]) {
                                     }
                                 }) {
                                     Text("Leave Group") // will add design later obv
