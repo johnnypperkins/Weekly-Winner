@@ -32,7 +32,7 @@ class bookViewModel: ObservableObject {
         getGames(whichSport: "NCAAF") {
             self.combineGames()
         }
-        fetchUserGroups()
+        fetchUserTickets()
     }
     
     enum GameType: String, CaseIterable, Hashable {
@@ -74,9 +74,9 @@ class bookViewModel: ObservableObject {
             }
         }
     
-    func fetchUserGroups() {
+    func fetchUserTickets() {
         guard let userId = Auth.auth().currentUser?.uid else { return }
-        groupServe.fetchUserGroups(userID: userId) { tickets, error in
+        groupServe.fetchUserTickets(userID: userId) { tickets, error in
             if let error = error {
                 print("Error fetching user groups: \(error.localizedDescription)")
             } else if let tickets = tickets {

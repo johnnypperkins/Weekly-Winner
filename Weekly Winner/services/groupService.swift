@@ -91,7 +91,7 @@ class groupService {
             }
         }
     
-    func groupCount(userID: String, completion: @escaping (Int?, Error?) -> Void) {
+    func ticketCount(userID: String, completion: @escaping (Int?, Error?) -> Void) {
         let db = Firestore.firestore()
         let userGroupsCollection = db.collection("users").document(userID).collection("groups")
         
@@ -106,8 +106,8 @@ class groupService {
                 return
             }
             
-            let groupCount = snapshot.documents.count
-            completion(groupCount, nil)
+            let ticketCount = snapshot.documents.count
+            completion(ticketCount, nil)
         }
     }
     
@@ -116,35 +116,42 @@ class groupService {
         }
     
     func joinGroup(userID: String, group: Group, completion: @escaping (Error?) -> Void) {
-        Task{
+        Task {
             let username = await self.getUsername() // Access the username asynchronously
             var enabled = false
-            groupCount(userID: userID) { num, error in
+            ticketCount(userID: userID) { num, error in
                 if group.groupAdmin == userID {
                     enabled = true
                 }
                 let db = Firestore.firestore()
-                let userGroupsCollection = db.collection("users").document(userID).collection("groups")
-                let ticket = Ticket(username: username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: group.groupName, rank: -99, isEnabled: enabled) // will change the rank
-                do { // Ticket99
-                    
-                    let _ = try userGroupsCollection.addDocument(from: ticket) { error in
-                        if let error = error {
-                            print("Error uploading group: \(error)")
-                        } else {
-                            print("Joined group successfully!")
-                            self.db.collection("groups").document(group.id!).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": userID])
+                db.collection("groups").document(group.id!).collection("members").getDocuments { (snapshot, error) in
+                    if let error = error {
+                        print("Error getting documents: \(error)")
+                    } else {
+                        let rank = (snapshot?.documents.count)! + 1 ?? -99
+                        let userGroupsCollection = db.collection("users").document(userID).collection("groups")
+                        let ticket = Ticket(username: username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: group.groupName, rank: rank, isEnabled: enabled)
+                        do {
+                            let _ = try userGroupsCollection.addDocument(from: ticket) { error in
+                                if let error = error {
+                                    print("Error uploading group: \(error)")
+                                } else {
+                                    print("Joined group successfully!")
+                                    self.db.collection("groups").document(group.id!).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": userID])
+                                }
+                            }
+                        } catch {
+                            print("Error encoding group: \(error)")
                         }
+                        completion(error)
                     }
-                } catch {
-                    print("Error encoding group: \(error)")
                 }
-                completion(error)
             }
             completion(nil)
         }
     }
-    
+
+
 
     func leaveGroup(ticket: Ticket, userID: String, completion: @escaping (Error?) -> Void) {
         let db = Firestore.firestore()
@@ -200,7 +207,7 @@ class groupService {
     
     
     
-    func fetchUserGroups(userID: String, completion: @escaping ([Ticket]?, Error?) -> Void) { // Ticket99
+    func fetchUserTickets(userID: String, completion: @escaping ([Ticket]?, Error?) -> Void) { // Ticket99
         Task{
             let username = await self.getUsername() // Access the username asynchronously
             

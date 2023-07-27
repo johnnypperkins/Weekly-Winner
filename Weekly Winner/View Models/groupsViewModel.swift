@@ -21,7 +21,7 @@ class groupsViewModel: ObservableObject {
     private let db = Firestore.firestore()
     
     init() {
-        fetchGroupNames() {
+        fetchUserTickets() {
             self.groupsFetched = true
         }
     }
@@ -54,14 +54,14 @@ class groupsViewModel: ObservableObject {
     func joinGroup(group: Group) { // Group99
         
         grpService.joinGroup(userID: Auth.auth().currentUser!.uid, group: group){ error in
-            self.fetchGroupNames() {
+            self.fetchUserTickets() {
                 print(self.userTickets)
             }
         }
     }
     
     func checkIfGroupAlreadyJoined(group: Group, completion: @escaping (Bool) -> Void) {
-        self.fetchGroupNames() {
+        self.fetchUserTickets() {
             for groupsJoined in self.userTickets {
                 if group.id == groupsJoined.groupID {
                     completion(true)
@@ -73,7 +73,7 @@ class groupsViewModel: ObservableObject {
     }
 
 
-    func fetchGroupNames(completion: @escaping () -> Void) {
+    func fetchUserTickets(completion: @escaping () -> Void) {
         print("Fetch started")
         guard let currentUser = Auth.auth().currentUser else {
             return
@@ -110,7 +110,7 @@ class groupsViewModel: ObservableObject {
             return
         }
         grpService.leaveGroup(ticket: ticket, userID: currentUser) { error in
-            self.fetchGroupNames() {
+            self.fetchUserTickets() {
                 
             }
         }

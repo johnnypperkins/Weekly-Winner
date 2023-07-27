@@ -19,7 +19,7 @@ struct groupsView: View {
     //@State private var groupsFetched = false
 
     init() {
-        viewModel.fetchGroupNames() {}
+        viewModel.fetchUserTickets() {}
     
     }
     
@@ -172,7 +172,7 @@ struct groupsView: View {
                                 }
                             }
                             .refreshable {
-                                await viewModel.fetchGroupNames() {}
+                                await viewModel.fetchUserTickets() {}
                                 if selectedGroup != 0 {
                                     viewModel.fetchGroupTickets(ticket: viewModel.userTickets[selectedGroup-1].groupName)
                                 }
@@ -207,8 +207,7 @@ struct groupsView: View {
             }
         }.navigationTitle("Groups")
             .onAppear() {
-                viewModel.fetchGroupNames() {
-                    
+                viewModel.fetchUserTickets() {
                 }
             }
     }

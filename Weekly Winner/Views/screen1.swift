@@ -12,6 +12,7 @@ struct UserProfileView: View {
     @StateObject var authenticationVM = authenticationViewModel()
     @StateObject var bookVM = bookViewModel()
     @StateObject var ticketVM = ticketViewModel()
+    @StateObject var groupsVM = groupsViewModel()
     @StateObject var countdownTimer = CountdownTimer()
     
     var body: some View {
@@ -35,33 +36,25 @@ struct UserProfileView: View {
                     .background(K.veryLightGray)
             }
             
-
             ProfileHeaderView(authVM: authenticationVM)
                 .padding(.top, 10)
                 .padding(.horizontal)
-            //Text("Time remaining: \(countdownTimer.timeRemaining)")
             
-            groupStatusView(ticketVM: ticketVM)
+            groupStatusView(groupsVM: groupsVM)
                 .padding(.horizontal)
                 .padding(.horizontal)
             //Divider()
                 .padding(.horizontal, 20)
             
-//            Text("Most Popular Bets")
-//                    .font(.headline)
-//                    .frame(maxWidth: .infinity, alignment: .center)
-                    
             MostPopularBetsView(bookVM: bookVM)
                 .padding(.horizontal)
                 .padding(.horizontal)
             Spacer()
 
         }
-//        .edgesIgnoringSafeArea(.top)
-//        .background(Color(.systemGray6).ignoresSafeArea())
         .onAppear() {
             authenticationVM.fetchUser()
-            ticketVM.fetchUserGroups(uid: Auth.auth().currentUser!.uid) {}
+            groupsVM.fetchUserTickets() {}
             bookVM.fetchMostPopularBets()
         }
     }
@@ -95,28 +88,28 @@ struct ProfileHeaderView: View {
 
 
 struct groupStatusView: View {
-    @StateObject var ticketVM: ticketViewModel
+    @StateObject var groupsVM: groupsViewModel
     let frameWidth: CGFloat = 60
     var body: some View {
         VStack(spacing: 0) {
-            ForEach(0...ticketVM.userTickets.count, id: \.self) { index in
+            ForEach(0...groupsVM.userTickets.count, id: \.self) { index in
                 VStack(spacing: 0) {
                     HStack(spacing: 5) {
-                        Text(index == 0 ? "Group" : ticketVM.userTickets[index - 1].groupName)
+                        Text(index == 0 ? "Group" : groupsVM.userTickets[index - 1].groupName)
                             .lineLimit(1)
                             .font(index == 0 ? .headline : .body) // Set the font based on whether it's the title or not
                             .frame(minWidth: 110, maxWidth: .infinity, alignment: .leading) // Adjust the width as needed
                         Spacer()
                         HStack(spacing: 0) {
-                            Text(index == 0 ? "PW" : String(ticketVM.userTickets[index - 1].totalPotentialWon ))
+                            Text(index == 0 ? "PW" : String(groupsVM.userTickets[index - 1].totalPotentialWon ))
                                 .font(index == 0 ? .headline : .body) // Set the font based on whether it's the title or not
                                 .frame(width: frameWidth, alignment: .leading) // Adjust the width as needed
                                 .foregroundColor(index == 0 ? Color.black : K.darkMidnightBlue)
-                            Text(index == 0 ? "TW" : String(ticketVM.userTickets[index - 1].totalWon ))
+                            Text(index == 0 ? "TW" : String(groupsVM.userTickets[index - 1].totalWon ))
                                 .font(index == 0 ? .headline : .body) // Set the font based on whether it's the title or not
                                 .frame(width: frameWidth, alignment: .leading) // Adjust the width as needed
                                 .foregroundColor(index == 0 ? Color.black : K.lightMoneyGreen)
-                            Text(index == 0 ? "Rank" : String(ticketVM.userTickets[index - 1].rank))
+                            Text(index == 0 ? "Rank" : String(groupsVM.userTickets[index - 1].rank))
                                 .font(index == 0 ? .headline : .body) // Set the font based on whether it's the title or not
                                 .frame(width: frameWidth, alignment: .center) // Adjust the width as needed
                         }
@@ -124,11 +117,6 @@ struct groupStatusView: View {
                     .padding(index == 0 ? EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0) : EdgeInsets(top: 7.5, leading: 0, bottom: 7.5, trailing: 0))
                     .padding(.leading) // Add padding to the left of the HStack
                     .background(index != 0 ? K.veryLightBlue.opacity(0.5) : K.veryLightGray)
-//                    .clipShape(RoundSomeCorners(topLeft: index == 0 ? 10 : 0, topRight: index == 0 ? 10 : 0,
-//                                                bottomLeft: index == ticketVM.userGroups.count ? 10 : 0, bottomRight: index == ticketVM.userGroups.count ? 10 : 0))
-//                    if index != ticketVM.userTickets.count {
-//                        //Divider()
-//                    }
                 }
             }
         }.cornerRadius(5)

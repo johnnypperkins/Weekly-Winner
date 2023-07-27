@@ -20,11 +20,6 @@ struct ticketView: View {
                 
             }
         }
-//        else{
-//            viewModel.fetchUserGroups(uid: uid) {
-//                // Completion block, if needed
-//            }
-//        }
         
     }
     
@@ -110,7 +105,7 @@ struct ticketView: View {
                 viewModel.fetchBets(uid: uid, groupNumber: viewModel.userTickets[0].groupNumber, completion: {})
             }
             else{
-                viewModel.fetchUserGroups(uid: uid) {
+                viewModel.fetchUserTickets(uid: uid) {
                     viewModel.fetchBets(uid: uid, groupNumber: selectedGroup, completion: {}) // Fetch bets for selected group on view appear
                 }
             }

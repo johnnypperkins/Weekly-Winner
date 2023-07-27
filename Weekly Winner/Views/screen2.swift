@@ -143,12 +143,12 @@ struct BetRowView1: View {
                     
                     Spacer()
                     HStack(spacing: 20) {
-                        BetButton(betType: .betHomeSpread, currentBetType: $betType, title: titleStringH) { // home spread
+                        PlaceBetButton(betType: .betHomeSpread, currentBetType: $betType, title: titleStringH) { // home spread
                             betType = .betHomeSpread
                             showingSheet.toggle()
                         }
                         
-                        BetButton(betType: .over, currentBetType: $betType, title: "o" + String(format: "%.0f", game.totalOver)) { // over
+                        PlaceBetButton(betType: .over, currentBetType: $betType, title: "o" + String(format: "%.0f", game.totalOver)) { // over
                             betType = .over
                             showingSheet.toggle()
                         }
@@ -164,12 +164,12 @@ struct BetRowView1: View {
                         .foregroundColor(.white)
                     Spacer()
                     HStack(spacing: 20) {
-                        BetButton(betType: .betAwaySpread, currentBetType: $betType, title: titleStringA) {
+                        PlaceBetButton(betType: .betAwaySpread, currentBetType: $betType, title: titleStringA) {
                             betType = .betAwaySpread
                             showingSheet.toggle()
                         }
                         
-                        BetButton(betType: .under, currentBetType: $betType, title: "u" + String(format: "%.0f", game.totalUnder)) {
+                        PlaceBetButton(betType: .under, currentBetType: $betType, title: "u" + String(format: "%.0f", game.totalUnder)) {
                             betType = .under
                             showingSheet.toggle()
                         }
@@ -229,8 +229,8 @@ struct BetDetailsView: View {
     @Binding var betType: BetType
     
     @Environment(\.dismiss) var dismiss
-    @State private var chosenSpread: Double = 2
-    @State private var originalSpread: Double = 2
+    @State private var chosenSpread: Double = -99
+    @State private var originalSpread: Double = -99
     @ObservedObject var viewModel = bookViewModel()
     @StateObject var ticketVM = ticketViewModel()
     @StateObject var groupsVM = groupsViewModel()
@@ -361,16 +361,16 @@ struct BetDetailsView: View {
                     // .padding(.horizontal)
                 
                 if betType == .betAwaySpread {
-                    BetView(teamName: game.awayTeam, originalSpread: game.awaySpread, betType: .betAwaySpread, chosenSpread: $chosenSpread)
+                    BetSliderView(teamName: game.awayTeam, originalSpread: game.awaySpread, betNumber: $betNumber, betType: .betAwaySpread, chosenSpread: $chosenSpread)
                 }
                 if betType == .betHomeSpread {
-                    BetView(teamName: game.homeTeam, originalSpread: game.homeSpread, betType: .betHomeSpread, chosenSpread: $chosenSpread)
+                    BetSliderView(teamName: game.homeTeam, originalSpread: game.homeSpread, betNumber: $betNumber, betType: .betHomeSpread, chosenSpread: $chosenSpread)
                 }
                 if betType == .over {
-                    BetView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalOver, betType: .over, chosenSpread: $chosenSpread)
+                    BetSliderView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalOver, betNumber: $betNumber, betType: .over, chosenSpread: $chosenSpread)
                 }
                 if betType == .under {
-                    BetView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalUnder, betType: .under, chosenSpread: $chosenSpread)
+                    BetSliderView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalUnder, betNumber: $betNumber, betType: .under, chosenSpread: $chosenSpread)
                 }
             }
             .onAppear {
@@ -441,16 +441,16 @@ struct BetDetailsView: View {
                 originalSpread = game.totalUnder
                 whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
             }
-            groupsVM.fetchGroupNames() {}
+            groupsVM.fetchUserTickets() {}
         })
-        //.padding(.horizontal)
     }
 }
 
 
-struct BetView: View {
+struct BetSliderView: View {
     var teamName: String
     var originalSpread: Double
+    @Binding var betNumber: Int
     //var extra: String
     var internalExtra: String {
         if chosenSpread < 0 {
@@ -470,7 +470,7 @@ struct BetView: View {
                     }
                 }
     }
-    var betType: BetType // 1 AS, 2 HS, 3 O, 4 U
+    var betType: BetType
     @Binding var chosenSpread: Double
 
     var body: some View {
@@ -512,9 +512,7 @@ struct BetView: View {
             
             
             HStack {
-                //Text("Spread/total:")
-                  //  .font(.headline)
-                Slider(value: $chosenSpread, in: Double(originalSpread - 5)...Double(originalSpread + 5), step: 1)
+                Slider(value: $chosenSpread, in: Double(originalSpread - parlayNumToSpread(parlayNum: betNumber))...Double(originalSpread + parlayNumToSpread(parlayNum: betNumber)), step: 1)
                     .accentColor(Color(.green))
             }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
                 .padding(.horizontal)
@@ -523,7 +521,7 @@ struct BetView: View {
     }
 }
 
-struct BetButton: View {
+struct PlaceBetButton: View {
     let betType: BetType
     @Binding var currentBetType: BetType
     let title: String

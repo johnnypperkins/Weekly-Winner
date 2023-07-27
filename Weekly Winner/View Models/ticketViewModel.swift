@@ -34,12 +34,9 @@ class ticketViewModel: ObservableObject {
     private let groupServe = groupService()
     @Published var userTickets: [Ticket] = [] // Ticket99
     
-//    init() {
-//        fetchUserGroups(uid: completion: {})
-//    }
 
     func fillTotalsArr(uid: String) {
-        fetchUserGroups(uid: uid) {
+        fetchUserTickets(uid: uid) {
             for index in 0..<self.userTickets.count {
                 self.fetchBets(uid: uid, groupNumber: index, completion: { [self] in
                     self.calculateTotals(for: index)
@@ -73,9 +70,9 @@ class ticketViewModel: ObservableObject {
             }
     }
 
-    func fetchUserGroups(uid: String, completion: @escaping () -> Void) {
+    func fetchUserTickets(uid: String, completion: @escaping () -> Void) {
         guard let userId = Auth.auth().currentUser?.uid else { return }
-        groupServe.fetchUserGroups(userID: userId) { tickets, error in
+        groupServe.fetchUserTickets(userID: userId) { tickets, error in
             if let error = error {
                 print("Error fetching user groups: \(error.localizedDescription)")
             } else if let tickets = tickets {
