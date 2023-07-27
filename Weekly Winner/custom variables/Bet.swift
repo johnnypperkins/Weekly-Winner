@@ -176,9 +176,9 @@ func parlayNumToSpread(parlayNum: Int) -> Double {
     } else if parlayNum == 5 || parlayNum == 6 {
         return 4
     } else if parlayNum == 7 {
-        return 3
+        return 1
     } else if parlayNum == 8 {
-        return 2
+        return -1
     }
     return 5
 }

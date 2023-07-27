@@ -349,11 +349,39 @@ struct BetDetailsView: View {
                             .onChange(of: betNumber) { newValue in
                                 print("Selection changed to: \(newValue)")
                                 checkTeamTaken()
+                                if newValue == 8 {
+                                    if betType == .betAwaySpread {
+                                        chosenSpread = game.awaySpread + 1
+                                    }
+                                    if betType == .betHomeSpread {
+                                        chosenSpread = game.homeSpread + 1
+                                    }
+                                    if betType == .over {
+                                        chosenSpread = game.totalOver - 1
+                                    }
+                                    if betType == .under {
+                                        chosenSpread = game.totalUnder + 1
+                                    }
+                                } else {
+                                    if betType == .betAwaySpread {
+                                        chosenSpread = game.awaySpread
+                                    }
+                                    if betType == .betHomeSpread {
+                                        chosenSpread = game.homeSpread
+                                    }
+                                    if betType == .over {
+                                        chosenSpread = game.totalOver
+                                    }
+                                    if betType == .under {
+                                        chosenSpread = game.totalUnder
+                                    }
+                                }
                             }
                             .onAppear {
                                 print("\(betNumber) is original betNumber")
                             }
                             .background(K.veryLightGray)
+
                         }
                     }//.padding(.horizontal)
                     //.background(K.veryLightGray)
@@ -470,9 +498,16 @@ struct BetSliderView: View {
                     }
                 }
     }
+    var step: Int {
+        if betType == .over {
+            return -1
+        } else {
+            return 1
+        }
+    }
     var betType: BetType
     @Binding var chosenSpread: Double
-
+    
     var body: some View {
         VStack (spacing: 0){
             HStack (spacing: 10) {
@@ -481,7 +516,7 @@ struct BetSliderView: View {
                     .foregroundColor(.black)
                     .frame(width: 100, alignment: .leading)
                 Spacer()
-                Text("Spread")
+                Text(betType == .over || betType == .under ? "Total" : "Spread")
                     .font(.subheadline)
                     .foregroundColor(.black)
                     .frame(width: 50, alignment: .leading)
@@ -497,6 +532,7 @@ struct BetSliderView: View {
                     .font(.title2)
                     .foregroundColor(.blue)
                     .frame(width: 100, alignment: .leading)
+                    .minimumScaleFactor(0.5)
                 Spacer()
                 Text("\(internalExtra)\(String(format: "%.0f", chosenSpread))")
                     .font(.title2)
@@ -512,7 +548,7 @@ struct BetSliderView: View {
             
             
             HStack {
-                Slider(value: $chosenSpread, in: Double(originalSpread - parlayNumToSpread(parlayNum: betNumber))...Double(originalSpread + parlayNumToSpread(parlayNum: betNumber)), step: 1)
+                Slider(value: $chosenSpread, in: betType == .over ? Double(originalSpread - 10)...Double(originalSpread + parlayNumToSpread(parlayNum: betNumber)) : Double(originalSpread - parlayNumToSpread(parlayNum: betNumber))...Double(originalSpread + 10), step: 1)
                     .accentColor(Color(.green))
             }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
                 .padding(.horizontal)
