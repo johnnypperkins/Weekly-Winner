@@ -19,7 +19,7 @@ struct ButtonComponent: View {
                 Text(title)
             })
             .frame(width: 120.0, height: 45.0)
-            .background(Color("Color 3"))
+            .background(.black)
             .foregroundColor(.white)
             .font(.title2)
             .clipShape(Capsule())

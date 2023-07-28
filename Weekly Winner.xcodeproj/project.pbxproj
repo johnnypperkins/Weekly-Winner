@@ -36,6 +36,7 @@
 		8668B30F2A2EE62700A1B343 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8668B30E2A2EE62700A1B343 /* Game.swift */; };
 		8668B3112A2EE9CF00A1B343 /* bookViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8668B3102A2EE9CF00A1B343 /* bookViewModel.swift */; };
 		8668B3132A2EF06A00A1B343 /* gameService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8668B3122A2EF06A00A1B343 /* gameService.swift */; };
+		866C52562A737B27008BE839 /* settingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866C52552A737B27008BE839 /* settingsView.swift */; };
 		867801552A213010006FE479 /* Weekly_WinnerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801542A213010006FE479 /* Weekly_WinnerApp.swift */; };
 		867801572A213010006FE479 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801562A213010006FE479 /* ContentView.swift */; };
 		867801592A213015006FE479 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 867801582A213015006FE479 /* Assets.xcassets */; };
@@ -106,6 +107,7 @@
 		8668B30E2A2EE62700A1B343 /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		8668B3102A2EE9CF00A1B343 /* bookViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = bookViewModel.swift; sourceTree = "<group>"; };
 		8668B3122A2EF06A00A1B343 /* gameService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = gameService.swift; sourceTree = "<group>"; };
+		866C52552A737B27008BE839 /* settingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = settingsView.swift; sourceTree = "<group>"; };
 		867801512A213010006FE479 /* Weekly Winner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Weekly Winner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		867801542A213010006FE479 /* Weekly_WinnerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weekly_WinnerApp.swift; sourceTree = "<group>"; };
 		867801562A213010006FE479 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -181,6 +183,7 @@
 				867801852A213F99006FE479 /* groupsView.swift */,
 				867801892A213FB1006FE479 /* profileView.swift */,
 				864A2D6B2A6D8370000FBA35 /* editProfileView.swift */,
+				866C52552A737B27008BE839 /* settingsView.swift */,
 				867801562A213010006FE479 /* ContentView.swift */,
 				8678017F2A213CB9006FE479 /* tabBarView.swift */,
 			);
@@ -463,6 +466,7 @@
 				863FC0532A466FD500405F2A /* groupService.swift in Sources */,
 				865C4A782A327CC200C3C626 /* authenticationViewModel.swift in Sources */,
 				864A2D6A2A6D82CF000FBA35 /* editProfileViewModel.swift in Sources */,
+				866C52562A737B27008BE839 /* settingsView.swift in Sources */,
 				863FF91F2A5B0FDC00942CE7 /* sportsSelectorViewModel.swift in Sources */,
 				865C4A7C2A32893100C3C626 /* User.swift in Sources */,
 				863FF91D2A5B0FA200942CE7 /* sportsSelecterView.swift in Sources */,

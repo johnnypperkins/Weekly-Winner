@@ -148,7 +148,7 @@ struct groupsView: View {
                                         let ticket = viewModel.rankedGroupTickets[index]
                                         if (ticket.uid != Auth.auth().currentUser?.uid) {
                                             NavigationLink(destination: ticketView(username: ticket.username, uid: ticket.uid, groupID: ticket.groupID), label: {
-                                                BetCard(ticket: ticket, rank: (index+1), ownCard: false, viewModel: viewModel)
+                                                BetCard(viewModel: viewModel, ticket: ticket, rank: (index+1), ownCard: false)
                                                     .clipShape(RoundSomeCorners(
                                                         topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
                                                         topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
@@ -157,7 +157,7 @@ struct groupsView: View {
                                                     ))
                                             }) .id(UUID())
                                         } else { // doesnt click if its yourself
-                                            BetCard(ticket: ticket, rank: (index+1), ownCard: true, viewModel: viewModel)
+                                            BetCard(viewModel: viewModel, ticket: ticket, rank: (index+1), ownCard: true)
                                                 .clipShape(RoundSomeCorners(
                                                     topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
                                                     topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
@@ -174,7 +174,7 @@ struct groupsView: View {
                             .refreshable {
                                 await viewModel.fetchUserTickets() {}
                                 if selectedGroup != 0 {
-                                    viewModel.fetchGroupTickets(ticket: viewModel.userTickets[selectedGroup-1].groupName)
+                                    viewModel.fetchGroupTickets(ticket: viewModel.userTickets[selectedGroup-1].groupID)
                                 }
                             }
                             
@@ -201,8 +201,10 @@ struct groupsView: View {
                 }
                 .onAppear(){
                     if selectedGroup > 0 {
-                        viewModel.fetchGroupTickets(ticket: viewModel.userTickets[selectedGroup-1].groupName)
+                        viewModel.fetchGroupTickets(ticket: viewModel.userTickets[selectedGroup-1].groupID)
                     }
+                    
+                    viewModel.getGroupAdmin(groupID: viewModel.userTickets[selectedGroup-1].groupID)
                 }
             }
         }.navigationTitle("Groups")
@@ -215,14 +217,25 @@ struct groupsView: View {
 
 
 struct BetCard: View {
-    let ticket: Ticket // Ticket99
+    @ObservedObject var viewModel: groupsViewModel
+    let ticket: Ticket
     let rank: Int
     let ownCard: Bool
-    @ObservedObject var viewModel: groupsViewModel
+    @State private var isEnabled: Bool = false // New State variable
 
     var body: some View {
         ZStack {
             HStack {
+                Toggle(isOn: $isEnabled) {
+                    Text("Enabled")
+                }
+                .onChange(of: isEnabled) { newValue in
+                    // when isEnabled changes, update it in Firestore or in your view model
+                    viewModel.updateIsEnabled(ticket: ticket, isEnabled: newValue) {value in
+//                        viewModel.fetchGroupTickets(ticket: ticket.groupID)
+                    }
+                }
+                
                 Text("\(rank). \(ticket.username)")
                     .font(.headline)
                     .foregroundColor(K.darkBlue)
@@ -251,6 +264,9 @@ struct BetCard: View {
                 }
             }
         }
+        .onAppear {
+            isEnabled = ticket.isEnabled
+        }
     }
 }
 
@@ -278,6 +294,7 @@ struct groupBarView: View {
     var group: Group // Groups99
     var body: some View {
         ZStack{
+            
             Rectangle()
                 .foregroundColor(Color.gray.opacity(0.2))
             HStack{

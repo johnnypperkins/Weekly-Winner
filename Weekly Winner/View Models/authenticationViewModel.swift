@@ -77,6 +77,9 @@ class authenticationViewModel: ObservableObject {
 
                     self.authenticationState = .authenticated
                     print("sign in successful")
+                    joinGlobal { error in
+                        
+                    }
                 }
             }
         }
@@ -127,13 +130,57 @@ class authenticationViewModel: ObservableObject {
             }
         }
     }
+    private let db = Firestore.firestore()
+    func joinGlobal(completion: @escaping (Error?) -> Void) {
+        Task {
+            let username = username // Access the username asynchronously
+            var enabled = false
+            let db = Firestore.firestore()
+            db.collection("groups").document("global").collection("members").getDocuments { (snapshot, error) in
+                if let error = error {
+                    print("Error getting documents: \(error)")
+                } else {
+                    let rank = (snapshot?.documents.count)! + 1 ?? -99
+                    let userGroupsCollection = db.collection("users").document(Auth.auth().currentUser!.uid).collection("groups")
+                    let ticket = Ticket(username: username, uid: Auth.auth().currentUser!.uid, groupID: "global", groupNumber: 0, totalWon: 0, totalPotentialWon: 0, groupName: "global", rank: String(rank), isEnabled: enabled)
+                    do {
+                        let _ = try userGroupsCollection.addDocument(from: ticket) { error in
+                            if let error = error {
+                                print("Error uploading group: \(error)")
+                            } else {
+                                print("Joined group successfully!")
+                                self.db.collection("groups").document("global").collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": Auth.auth().currentUser!.uid])
+                            }
+                        }
+                    } catch {
+                        print("Error encoding group: \(error)")
+                    }
+                    completion(error)
+                }
+            }
+        }
+        completion(nil)
+    }
 
+//
+//    func signOut() {
+//        authenticationState = .unauthenticated
+//        userSession = nil
+//        currUser = nil
+//        try? Auth.auth().signOut()
+//    }
     
     func signOut() {
-        authenticationState = .unauthenticated
         userSession = nil
-        currUser = nil
         try? Auth.auth().signOut()
+    }
+    
+    func deleteAccount() async -> Bool {
+        Task {
+            try await Auth.auth().currentUser?.delete()
+        }
+        userSession = nil
+        return true
     }
     
     

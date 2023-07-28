@@ -15,7 +15,7 @@ class groupsViewModel: ObservableObject {
     
     @Published var canJoinGroup: Bool = true
     @Published var groupsFetched = false
-    
+    @Published var groupAdmin = ""
     private let grpService = groupService()
     
     private let db = Firestore.firestore()
@@ -26,6 +26,37 @@ class groupsViewModel: ObservableObject {
         }
     }
     
+    func updateIsEnabled(ticket: Ticket, isEnabled: Bool, completion: @escaping (Error?) -> Void) {
+        // Assuming you have already initialized Firebase with appropriate configurations
+        
+        let db = Firestore.firestore()
+        let groupDocRef = db.collection("users").document(ticket.uid).collection("groups").document(ticket.id!)
+        
+        groupDocRef.updateData(["isEnabled": isEnabled]) { error in
+            if let error = error {
+                completion(error)
+            } else {
+                completion(nil)
+            }
+        }
+    }
+    
+    func getGroupAdmin(groupID: String) {
+            let db = Firestore.firestore()
+            let docRef = db.collection("groups").document(groupID)
+
+            docRef.getDocument { (document, error) in
+                if let document = document, document.exists {
+                    let dataDescription = document.data().flatMap(String.init(describing:)) ?? "nil"
+                    print("Document data: \(dataDescription)")
+                    if let groupAdmin = document.get("groupAdmin") as? String {
+                        self.groupAdmin = groupAdmin
+                    }
+                } else {
+                    print("Document does not exist")
+                }
+            }
+        }
     
     func fetchGroup(from keyword: String) {
         db.collection("groups").whereField("keywordsForLookup", arrayContains: keyword).getDocuments { querySnapshot, error in
@@ -39,13 +70,15 @@ class groupsViewModel: ObservableObject {
     }
     
     func fetchGroupTickets(ticket: String) {
-        grpService.getRankedTickets(groupN: ticket) { [weak self] (tickets, error) in
+        grpService.getRankedTickets(groupID: ticket) { [weak self] (tickets, error) in
                 if let error = error {
                     // Handle error
                     print("Error fetching groups: \(error)")
                 } else if let tickets = tickets {
                     DispatchQueue.main.async {
                         self?.rankedGroupTickets = tickets
+                        print(tickets)
+                        print("newwwwwwwwjjwefijwefkmwkfmkwfmkwefmwekfmwlkfmlwklfmwelfmkselfmswe")
                     }
                 }
             }

@@ -67,6 +67,22 @@ struct profileView: View {
                             }
                         }.padding()
                     }
+                    else {
+                        HStack {
+                            Spacer()
+                            
+                            NavigationLink(destination: {
+                                settingsView()
+                            } ,label: {
+                                Image(systemName: "gearshape")
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+                                    .padding()
+                                    .foregroundColor(.black)
+                            }).id(UUID())
+
+                        }
+                    }
                     ScrollViewReader { proxyReader in
                         ScrollView {
                             //if let user = authInfo.currUser {

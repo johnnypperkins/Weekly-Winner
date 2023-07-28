@@ -20,6 +20,6 @@ struct Ticket: Identifiable, Codable {
     var totalWon: Int
     var totalPotentialWon: Int
     var groupName: String
-    var rank: Int
+    var rank: String
     var isEnabled: Bool
 }

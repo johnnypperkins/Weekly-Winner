@@ -59,7 +59,7 @@ struct CustomAlertView: View {
                 else {
                     Text(title)
                         .font(.title)
-                        .foregroundColor(Color("Color 3"))
+                        .foregroundColor(.black)
                         .lineLimit(1)
                         .fixedSize(horizontal: false, vertical: true)
                         .frame(height: 50)
@@ -70,7 +70,7 @@ struct CustomAlertView: View {
                 GeometryReader { reader in
                     ScrollView {
                         Text(message)
-                            .foregroundColor(Color("Color 3"))
+                            .foregroundColor(.black)
                             .lineLimit(nil)
                             .fixedSize(horizontal: false, vertical: true)
                             .frame(width: reader.size.width-50, height: 100)
