@@ -46,12 +46,15 @@ class authenticationViewModel: ObservableObject {
                 userSession = authResult!.user // added - Reid
                 let user = authResult!.user
                 
-                
+
                 
                 let newUser = User(username: username, firstName: firstName, lastName: lastName, profileImageUrl: "", email: email)
                 await uploadUser(newUser)
                 
                 authenticationState = .authenticated
+                joinGlobal { error in
+                 print(error)
+                }
             } catch let error {
                 // Handle signup error
                 print("Signup error: \(error.localizedDescription)")
@@ -77,9 +80,7 @@ class authenticationViewModel: ObservableObject {
 
                     self.authenticationState = .authenticated
                     print("sign in successful")
-                    joinGlobal { error in
-                        
-                    }
+
                 }
             }
         }
@@ -142,7 +143,7 @@ class authenticationViewModel: ObservableObject {
                 } else {
                     let rank = (snapshot?.documents.count)! + 1 ?? -99
                     let userGroupsCollection = db.collection("users").document(Auth.auth().currentUser!.uid).collection("groups")
-                    let ticket = Ticket(username: username, uid: Auth.auth().currentUser!.uid, groupID: "global", groupNumber: 0, totalWon: 0, totalPotentialWon: 0, groupName: "global", rank: String(rank), isEnabled: enabled)
+                    let ticket = Ticket(username: username, uid: Auth.auth().currentUser!.uid, groupID: "global", groupNumber: 0, totalWon: 0, totalPotentialWon: 0, groupName: "global", rank: String(rank), isEnabled: enabled, groupAdmin: "GOD")
                     do {
                         let _ = try userGroupsCollection.addDocument(from: ticket) { error in
                             if let error = error {

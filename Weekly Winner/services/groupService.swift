@@ -132,7 +132,7 @@ class groupService {
                     } else {
                         let rank = (snapshot?.documents.count)! + 1 ?? -99
                         let userGroupsCollection = db.collection("users").document(userID).collection("groups")
-                        let ticket = Ticket(username: username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: group.groupName, rank: String(rank), isEnabled: enabled)
+                        let ticket = Ticket(username: username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: group.groupName, rank: String(rank), isEnabled: enabled, groupAdmin: group.groupAdmin)
                         do {
                             let _ = try userGroupsCollection.addDocument(from: ticket) { error in
                                 if let error = error {
@@ -230,8 +230,9 @@ class groupService {
                     let groupID = document.data()["groupID"] as? String ?? "null"// default value if not found
                     let rank = document.data()["rank"] as? Int ?? -99
                     let isEnabled = document.data()["isEnabled"] as? Bool ?? false// default value if not found
+                    let groupAdmin = document.data()["groupAdmin"] as? String ?? "null"// default value if not found
                     
-                    let ticket = Ticket(id: id, username: username, uid: userID, groupID: groupID, groupNumber: groupNumber, dateCreated: "today", totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName, rank: String(rank), isEnabled: isEnabled)
+                    let ticket = Ticket(id: id, username: username, uid: userID, groupID: groupID, groupNumber: groupNumber, dateCreated: "today", totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName, rank: String(rank), isEnabled: isEnabled, groupAdmin: groupAdmin)
                     tickets.append(ticket) // Ticket99
                 }
                 

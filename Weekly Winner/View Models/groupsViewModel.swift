@@ -69,8 +69,8 @@ class groupsViewModel: ObservableObject {
         print("hereeeee")
     }
     
-    func fetchGroupTickets(ticket: String) {
-        grpService.getRankedTickets(groupID: ticket) { [weak self] (tickets, error) in
+    func fetchGroupTickets(groupID: String, completion: @escaping () -> Void){
+        grpService.getRankedTickets(groupID: groupID) { [weak self] (tickets, error) in
                 if let error = error {
                     // Handle error
                     print("Error fetching groups: \(error)")

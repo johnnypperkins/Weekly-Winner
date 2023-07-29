@@ -50,7 +50,10 @@ struct groupsView: View {
                     .padding(.horizontal, 10)
                     .onChange(of: selectedGroup) { newValue in
                         if selectedGroup > 0 {
-                            viewModel.fetchGroupTickets(ticket: viewModel.userTickets[selectedGroup-1].groupName)
+                            viewModel.fetchGroupTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {
+                               print("\(selectedGroup) is selected")
+                               print("\(newValue) is NV")
+                            }
                         }
                     }
                     
@@ -174,7 +177,7 @@ struct groupsView: View {
                             .refreshable {
                                 await viewModel.fetchUserTickets() {}
                                 if selectedGroup != 0 {
-                                    viewModel.fetchGroupTickets(ticket: viewModel.userTickets[selectedGroup-1].groupID)
+                                    viewModel.fetchGroupTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
                                 }
                             }
                             
@@ -196,15 +199,15 @@ struct groupsView: View {
                     if newValue == false {
                         // The sheet was dismissed
                         selectedGroup = 1
-                        viewModel.fetchGroupTickets(ticket: viewModel.userTickets[selectedGroup-1].groupName)
+                        viewModel.fetchGroupTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
                     }
                 }
                 .onAppear(){
                     if selectedGroup > 0 {
-                        viewModel.fetchGroupTickets(ticket: viewModel.userTickets[selectedGroup-1].groupID)
+                        viewModel.fetchGroupTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {
+                            viewModel.getGroupAdmin(groupID: viewModel.userTickets[selectedGroup-1].groupID) // keeps saying index out of range
+                        }
                     }
-                    
-                    viewModel.getGroupAdmin(groupID: viewModel.userTickets[selectedGroup-1].groupID)
                 }
             }
         }.navigationTitle("Groups")
@@ -226,13 +229,15 @@ struct BetCard: View {
     var body: some View {
         ZStack {
             HStack {
-                Toggle(isOn: $isEnabled) {
-                    Text("Enabled")
-                }
-                .onChange(of: isEnabled) { newValue in
-                    // when isEnabled changes, update it in Firestore or in your view model
-                    viewModel.updateIsEnabled(ticket: ticket, isEnabled: newValue) {value in
-//                        viewModel.fetchGroupTickets(ticket: ticket.groupID)
+                if(!ownCard && ticket.groupAdmin == Auth.auth().currentUser?.uid) {
+                    Toggle(isOn: $isEnabled) {
+                        Text("Enabled")
+                    }
+                    .onChange(of: isEnabled) { newValue in
+                        // when isEnabled changes, update it in Firestore or in your view model
+                        viewModel.updateIsEnabled(ticket: ticket, isEnabled: newValue) {value in
+                            viewModel.fetchGroupTickets(groupID: ticket.groupID) {}
+                        }
                     }
                 }
                 
