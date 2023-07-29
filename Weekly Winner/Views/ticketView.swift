@@ -49,55 +49,65 @@ struct ticketView: View {
                 Text(username)
                     .font(.title)
             }
-            
-            HStack (alignment: .center, spacing: 40){
-                VStack (spacing: 0){
-                    Text("Potential").font(.custom("Futura", size: 15))
-                        .frame(width: 120, alignment: .center)
-                    Text("\(String(format: "%.0f", viewModel.totalPotentialWon))")
-                        .font(.custom("Futura", size: 30))
-                        .frame(width: 120, alignment: .center)
-                        .foregroundColor(K.cadetBlue)
-                }.padding(.vertical,5)
-                    .background(
-                        RoundedRectangle(cornerRadius: 7.5)
-                            .fill(K.cadetBlue.opacity(0.15)) // Change the opacity as needed
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 7.5)
-                            .stroke(K.cadetBlue, lineWidth: 2) // Change the color and line width as needed
-                    )
-                    .cornerRadius(7.5)
-                VStack (spacing: 0){
-                    Text("Total").font(.custom("Futura", size: 15)).frame(width: 120, alignment: .center)
-                    Text("\(String(format: "%.0f", viewModel.totalWon))").font(.custom("Futura", size: 30)).frame(width: 120, alignment: .center).foregroundColor(K.lightMoneyGreen)
-                }
-                .padding(.vertical,5)
-                .background(
-                    RoundedRectangle(cornerRadius: 7.5)
-                        .fill(K.lightMoneyGreen.opacity(0.15)) // Change the opacity as needed
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 7.5)
-                        .stroke(K.lightMoneyGreen, lineWidth: 2) // Change the color and line width as needed
-                )
-                .cornerRadius(7.5)
+            if (viewModel.isBetsLoaded) {
+                if (viewModel.userTickets[selectedGroup].isEnabled) {
+                    HStack (alignment: .center, spacing: 40){
+                        VStack (spacing: 0){
+                            Text("Potential").font(.custom("Futura", size: 15))
+                                .frame(width: 120, alignment: .center)
+                            Text("\(String(format: "%.0f", viewModel.totalPotentialWon))")
+                                .font(.custom("Futura", size: 30))
+                                .frame(width: 120, alignment: .center)
+                                .foregroundColor(K.cadetBlue)
+                        }.padding(.vertical,5)
+                            .background(
+                                RoundedRectangle(cornerRadius: 7.5)
+                                    .fill(K.cadetBlue.opacity(0.15)) // Change the opacity as needed
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 7.5)
+                                    .stroke(K.cadetBlue, lineWidth: 2) // Change the color and line width as needed
+                            )
+                            .cornerRadius(7.5)
+                        VStack (spacing: 0){
+                            Text("Total").font(.custom("Futura", size: 15)).frame(width: 120, alignment: .center)
+                            Text("\(String(format: "%.0f", viewModel.totalWon))").font(.custom("Futura", size: 30)).frame(width: 120, alignment: .center).foregroundColor(K.lightMoneyGreen)
+                        }
+                        .padding(.vertical,5)
+                        .background(
+                            RoundedRectangle(cornerRadius: 7.5)
+                                .fill(K.lightMoneyGreen.opacity(0.15)) // Change the opacity as needed
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 7.5)
+                                .stroke(K.lightMoneyGreen, lineWidth: 2) // Change the color and line width as needed
+                        )
+                        .cornerRadius(7.5)
 
-            }.padding([.horizontal,.top])
-            
-            ScrollView {
-                VStack {
-                    SectionTitle(title: "Straight #1", betArray: viewModel.betArray1, maxBetsPlaced: 1, uid: uid, viewModel: viewModel)
-                    SectionTitle(title: "Straight #2", betArray: viewModel.betArray2, maxBetsPlaced: 1, uid: uid, viewModel: viewModel)
-                    SectionTitle(title: "Straight #3", betArray: viewModel.betArray3, maxBetsPlaced: 1, uid: uid, viewModel: viewModel)
-                    SectionTitle(title: "Straight #4", betArray: viewModel.betArray4, maxBetsPlaced: 1, uid: uid, viewModel: viewModel)
-                    SectionTitle(title: "2 Leg #1", betArray: viewModel.betArray5, maxBetsPlaced: 2, uid: uid, viewModel: viewModel)
-                    SectionTitle(title: "2 leg #2", betArray: viewModel.betArray6, maxBetsPlaced: 2, uid: uid, viewModel: viewModel)
-                    SectionTitle(title: "3 leg #1", betArray: viewModel.betArray7, maxBetsPlaced: 3, uid: uid, viewModel: viewModel)
-                    SectionTitle(title: "5 leg #1", betArray: viewModel.betArray8, maxBetsPlaced: 5, uid: uid, viewModel: viewModel)
+                    }.padding([.horizontal,.top])
+                    
+                    ScrollView {
+                        VStack {
+                            SectionTitle(title: "Straight #1", betArray: viewModel.betArray1, maxBetsPlaced: 1, uid: uid, viewModel: viewModel)
+                            SectionTitle(title: "Straight #2", betArray: viewModel.betArray2, maxBetsPlaced: 1, uid: uid, viewModel: viewModel)
+                            SectionTitle(title: "Straight #3", betArray: viewModel.betArray3, maxBetsPlaced: 1, uid: uid, viewModel: viewModel)
+                            SectionTitle(title: "Straight #4", betArray: viewModel.betArray4, maxBetsPlaced: 1, uid: uid, viewModel: viewModel)
+                            SectionTitle(title: "2 Leg #1", betArray: viewModel.betArray5, maxBetsPlaced: 2, uid: uid, viewModel: viewModel)
+                            SectionTitle(title: "2 leg #2", betArray: viewModel.betArray6, maxBetsPlaced: 2, uid: uid, viewModel: viewModel)
+                            SectionTitle(title: "3 leg #1", betArray: viewModel.betArray7, maxBetsPlaced: 3, uid: uid, viewModel: viewModel)
+                            SectionTitle(title: "5 leg #1", betArray: viewModel.betArray8, maxBetsPlaced: 5, uid: uid, viewModel: viewModel)
+                        }
+                        .padding()
+                    }
+                } else {
+                    Text("Ticket Disabled")
                 }
-                .padding()
+            } else {
+                Text("FreeWager")
             }
+            
+            
+           
         }.padding(.top,20)
         .onAppear {
             selectedGroup = 0
@@ -109,8 +119,6 @@ struct ticketView: View {
                     viewModel.fetchBets(uid: uid, groupNumber: selectedGroup, completion: {}) // Fetch bets for selected group on view appear
                 }
             }
-            
-            
         }
         .onDisappear {
             selectedGroup = 0

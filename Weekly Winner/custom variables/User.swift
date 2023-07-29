@@ -34,3 +34,16 @@ extension String { // Lmao what is this johnny
         return sequences
     }
 }
+
+
+class UserData: ObservableObject {
+    @Published var username: String
+
+    init(username: String) {
+        self.username = username
+    }
+
+    // Singleton instance
+    static let shared = UserData(username: "")
+}
+

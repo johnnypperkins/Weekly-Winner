@@ -18,41 +18,82 @@ class groupService {
         }
     }
     
-    func getRankedTickets(groupID: String, completion: @escaping ([Ticket]?, Error?) -> Void) { // Ticket99
-            let query = db.collectionGroup("groups")
-                .whereField("groupID", isEqualTo: groupID)
-                .order(by: "isEnabled", descending: true)
-                .order(by: "totalWon", descending: true)
-                
+    func getRankedTickets(groupID: String, completion: @escaping ([Ticket]?, Error?) -> Void) {
+        let query = db.collectionGroup("groups")
+            .whereField("groupID", isEqualTo: groupID)
+            .order(by: "isEnabled", descending: true)
+            .order(by: "totalWon", descending: true)
 
-            query.getDocuments { (querySnapshot, error) in
-                if let error = error {
-                    completion(nil, error)
-                    return
-                }
-
-                guard let documents = querySnapshot?.documents else {
-                    completion([], nil) // Empty array if no documents found
-                    return
-                }
-
-                var tickets: [Ticket] = [] // Ticket99
-
-                for document in documents {
-                    do {
-                        if let ticket = try? document.data(as: Ticket.self, decoder: Firestore.Decoder()) { // Ticket99
-                            tickets.append(ticket)
-                        } else {
-                            print("Document does not exist or could not be parsed.")
-                        }
-                    } catch {
-                        print("Error decoding document: \(error)")
-                    }
-                }
-
-                completion(tickets, nil)
+        query.getDocuments { (querySnapshot, error) in
+            if let error = error {
+                completion(nil, error)
+                return
             }
+
+            guard let documents = querySnapshot?.documents else {
+                completion([], nil) // Empty array if no documents found
+                return
+            }
+            
+            var tickets: [Ticket] = []
+            var totalsArray: [Int] = []
+            var ranksArray: [String] = []
+
+            // Step 1: Fill the totalsArray with all totals
+            for document in documents {
+                let data = document.data()
+                let totalWon = data["totalWon"] as! Int
+                totalsArray.append(totalWon)
+            }
+
+            // Step 2: Create ranksArray based on totalsArray
+            var lastTotal = Int.max
+            var rank = 0
+            var tieCount = 1
+            for total in totalsArray {
+                if total == lastTotal {
+                    tieCount += 1
+                    ranksArray[ranksArray.count - 1] = "T\(rank)"
+                    ranksArray.append("T\(rank)")
+                } else {
+                    rank += tieCount
+                    tieCount = 1
+                    ranksArray.append("\(rank)")
+                    lastTotal = total
+                }
+            }
+
+            
+            // Step 3: Fill the tickets array and assign ranks from ranksArray
+            for (index, document) in documents.enumerated() {
+                let data = document.data()
+                var ticket = Ticket(
+                    id: document.documentID,
+                    username: data["username"] as! String,
+                    uid: data["uid"] as! String,
+                    groupID: data["groupID"] as! String,
+                    groupNumber: data["groupNumber"] as! Int,
+                    dateCreated: data["dateCreated"] as! String,
+                    totalWon: data["totalWon"] as! Int,
+                    totalPotentialWon: data["totalPotentialWon"] as! Int,
+                    groupName: data["groupName"] as! String,
+                    rank: ranksArray[index],
+                    isEnabled: data["isEnabled"] as! Bool,
+                    groupAdmin: data["groupAdmin"] as! String
+                )
+                tickets.append(ticket)
+            }
+            
+            completion(tickets, nil)
         }
+    }
+
+
+
+
+
+
+
     
     func createGroup(groupName: String, groupSlogan: String, password: String?, completion: @escaping (Result<String, Error>) -> Void) {
             
@@ -119,37 +160,37 @@ class groupService {
     
     func joinGroup(userID: String, group: Group, completion: @escaping (Error?) -> Void) {
         Task {
-            let username = await self.getUsername() // Access the username asynchronously
-            var enabled = false
-            ticketCount(userID: userID) { num, error in
-                if group.groupAdmin == userID {
-                    enabled = true
-                }
-                let db = Firestore.firestore()
-                db.collection("groups").document(group.id!).collection("members").getDocuments { (snapshot, error) in
-                    if let error = error {
-                        print("Error getting documents: \(error)")
-                    } else {
-                        let rank = (snapshot?.documents.count)! + 1 ?? -99
-                        let userGroupsCollection = db.collection("users").document(userID).collection("groups")
-                        let ticket = Ticket(username: username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: group.groupName, rank: String(rank), isEnabled: enabled, groupAdmin: group.groupAdmin)
-                        do {
-                            let _ = try userGroupsCollection.addDocument(from: ticket) { error in
-                                if let error = error {
-                                    print("Error uploading group: \(error)")
-                                } else {
-                                    print("Joined group successfully!")
-                                    self.db.collection("groups").document(group.id!).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": userID])
+                
+                var enabled = false
+                ticketCount(userID: userID) { num, error in
+                    if group.groupAdmin == userID {
+                        enabled = true
+                    }
+                    let db = Firestore.firestore()
+                    db.collection("groups").document(group.id!).collection("members").getDocuments { (snapshot, error) in
+                        if let error = error {
+                            print("Error getting documents: \(error)")
+                        } else {
+                            let rank = (snapshot?.documents.count)! + 1 ?? -99
+                            let userGroupsCollection = db.collection("users").document(userID).collection("groups")
+                            let ticket = Ticket(username: UserData.shared.username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: group.groupName, rank: String(rank), isEnabled: enabled, groupAdmin: group.groupAdmin)
+                            do {
+                                let _ = try userGroupsCollection.addDocument(from: ticket) { error in
+                                    if let error = error {
+                                        print("Error uploading group: \(error)")
+                                    } else {
+                                        print("Joined group successfully!")
+                                        self.db.collection("groups").document(group.id!).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": userID])
+                                    }
                                 }
+                            } catch {
+                                print("Error encoding group: \(error)")
                             }
-                        } catch {
-                            print("Error encoding group: \(error)")
+                            completion(error)
                         }
-                        completion(error)
                     }
                 }
-            }
-            completion(nil)
+                completion(nil)
         }
     }
 

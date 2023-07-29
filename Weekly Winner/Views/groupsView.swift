@@ -50,11 +50,12 @@ struct groupsView: View {
                     .padding(.horizontal, 10)
                     .onChange(of: selectedGroup) { newValue in
                         if selectedGroup > 0 {
-                            viewModel.fetchGroupTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {
-                               print("\(selectedGroup) is selected")
-                               print("\(newValue) is NV")
+                            viewModel.fetchRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {
+                               
                             }
                         }
+                        print("\(selectedGroup) is selected")
+                        print("\(newValue) is NV")
                     }
                     
                     if selectedGroup == 0 {
@@ -151,7 +152,7 @@ struct groupsView: View {
                                         let ticket = viewModel.rankedGroupTickets[index]
                                         if (ticket.uid != Auth.auth().currentUser?.uid) {
                                             NavigationLink(destination: ticketView(username: ticket.username, uid: ticket.uid, groupID: ticket.groupID), label: {
-                                                BetCard(viewModel: viewModel, ticket: ticket, rank: (index+1), ownCard: false)
+                                                BetCard(viewModel: viewModel, ticket: ticket, rank: (ticket.rank), ownCard: false)
                                                     .clipShape(RoundSomeCorners(
                                                         topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
                                                         topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
@@ -160,7 +161,7 @@ struct groupsView: View {
                                                     ))
                                             }) .id(UUID())
                                         } else { // doesnt click if its yourself
-                                            BetCard(viewModel: viewModel, ticket: ticket, rank: (index+1), ownCard: true)
+                                            BetCard(viewModel: viewModel, ticket: ticket, rank: (ticket.rank), ownCard: true)
                                                 .clipShape(RoundSomeCorners(
                                                     topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
                                                     topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
@@ -177,7 +178,8 @@ struct groupsView: View {
                             .refreshable {
                                 await viewModel.fetchUserTickets() {}
                                 if selectedGroup != 0 {
-                                    viewModel.fetchGroupTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
+                                    print("refresh ranked")
+                                    viewModel.fetchRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
                                 }
                             }
                             
@@ -199,12 +201,14 @@ struct groupsView: View {
                     if newValue == false {
                         // The sheet was dismissed
                         selectedGroup = 1
-                        viewModel.fetchGroupTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
+                        print("onChange ranked")
+                        viewModel.fetchRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
                     }
                 }
                 .onAppear(){
                     if selectedGroup > 0 {
-                        viewModel.fetchGroupTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {
+                        print("on appear ranked")
+                        viewModel.fetchRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {
                             viewModel.getGroupAdmin(groupID: viewModel.userTickets[selectedGroup-1].groupID) // keeps saying index out of range
                         }
                     }
@@ -222,24 +226,22 @@ struct groupsView: View {
 struct BetCard: View {
     @ObservedObject var viewModel: groupsViewModel
     let ticket: Ticket
-    let rank: Int
+    let rank: String
     let ownCard: Bool
     @State private var isEnabled: Bool = false // New State variable
+//    @State private var oldValue: Bool = false
 
     var body: some View {
         ZStack {
             HStack {
                 if(!ownCard && ticket.groupAdmin == Auth.auth().currentUser?.uid) {
-                    Toggle(isOn: $isEnabled) {
+                    Toggle(isOn: Binding(get: { self.ticket.isEnabled }, set: { newValue in
+                        viewModel.updateIsEnabled(ticket: self.ticket, isEnabled: newValue) {_ in }
+                    })) {
                         Text("Enabled")
                     }
-                    .onChange(of: isEnabled) { newValue in
-                        // when isEnabled changes, update it in Firestore or in your view model
-                        viewModel.updateIsEnabled(ticket: ticket, isEnabled: newValue) {value in
-                            viewModel.fetchGroupTickets(groupID: ticket.groupID) {}
-                        }
-                    }
                 }
+
                 
                 Text("\(rank). \(ticket.username)")
                     .font(.headline)

@@ -20,6 +20,32 @@ class groupsViewModel: ObservableObject {
     
     private let db = Firestore.firestore()
     
+    // In ViewModel
+
+//    var rankedGroupTickets: [(rank: String, ticket: Ticket)] {
+//        var lastScore: Double? = nil
+//        var currentRank: Int = 1
+//        var increaseRank: Bool = true
+//        var rankedTickets: [(rank: String, ticket: Ticket)] = []
+//
+//        for ticket in tickets.sorted(by: { $0.totalWon > $1.totalWon }) {
+//            if let lastScore = lastScore, lastScore == ticket.totalWon {
+//                increaseRank = false
+//            } else {
+//                if !increaseRank {
+//                    currentRank += 1
+//                }
+//                increaseRank = true
+//            }
+//
+//            let displayRank = increaseRank ? String(currentRank) : "T\(currentRank)"
+//            rankedTickets.append((rank: displayRank, ticket: ticket))
+//            lastScore = ticket.totalWon
+//        }
+//        return rankedTickets
+//    }
+
+    
     init() {
         fetchUserTickets() {
             self.groupsFetched = true
@@ -69,7 +95,7 @@ class groupsViewModel: ObservableObject {
         print("hereeeee")
     }
     
-    func fetchGroupTickets(groupID: String, completion: @escaping () -> Void){
+    func fetchRankedTickets(groupID: String, completion: @escaping () -> Void){
         grpService.getRankedTickets(groupID: groupID) { [weak self] (tickets, error) in
                 if let error = error {
                     // Handle error
@@ -77,8 +103,8 @@ class groupsViewModel: ObservableObject {
                 } else if let tickets = tickets {
                     DispatchQueue.main.async {
                         self?.rankedGroupTickets = tickets
-                        print(tickets)
-                        print("newwwwwwwwjjwefijwefkmwkfmkwfmkwefmwekfmwlkfmlwklfmwelfmkselfmswe")
+                        //print(tickets)
+                        print("test print")
                     }
                 }
             }
@@ -174,4 +200,6 @@ class groupsViewModel: ObservableObject {
             }
         }
     }
+    
+    
 }

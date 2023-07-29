@@ -35,7 +35,7 @@ class authenticationViewModel: ObservableObject {
     
     init() {
         self.userSession = Auth.auth().currentUser
-        self.fetchUser()
+        self.fetchUser() {}
     }
     
     func signUp() async {
@@ -76,7 +76,7 @@ class authenticationViewModel: ObservableObject {
                     // Sign-in successful
                     self.userSession = authResult!.user  // Set placeholder user session
 
-                    self.fetchUser() // sets user to user instead of nil
+                    self.fetchUser() { } // sets user to user instead of nil
 
                     self.authenticationState = .authenticated
                     print("sign in successful")
@@ -97,12 +97,14 @@ class authenticationViewModel: ObservableObject {
             }
         }
     
-    func fetchUser() {
+    func fetchUser(completion: @escaping () -> Void) {
             guard let uid = self.userSession?.uid else { return }
             
             service.fetchUser(withUid: uid) { user in
-                print(user)
+                //print(user)
                 self.currUser = user
+                UserData.shared.username = self.currUser!.username
+                //print(UserData.shared.username)
             }
         }
     

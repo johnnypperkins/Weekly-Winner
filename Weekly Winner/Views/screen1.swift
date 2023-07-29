@@ -53,7 +53,11 @@ struct UserProfileView: View {
 
         }
         .onAppear() {
-            authenticationVM.fetchUser()
+            print("appeared")
+            authenticationVM.fetchUser() {
+                
+                print("\(UserData.shared.username) is username")
+            }
             groupsVM.fetchUserTickets() {}
             bookVM.fetchMostPopularBets()
         }
