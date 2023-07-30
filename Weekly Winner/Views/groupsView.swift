@@ -150,6 +150,7 @@ struct groupsView: View {
                                 VStack(alignment: .leading, spacing: 0) {
                                     ForEach(0..<viewModel.rankedGroupTickets.count, id: \.self) { index in
                                         let ticket = viewModel.rankedGroupTickets[index]
+                                        
                                         if (ticket.uid != Auth.auth().currentUser?.uid) {
                                             NavigationLink(destination: ticketView(username: ticket.username, uid: ticket.uid, groupID: ticket.groupID), label: {
                                                 BetCard(viewModel: viewModel, ticket: ticket, rank: (ticket.rank), ownCard: false)
@@ -159,7 +160,7 @@ struct groupsView: View {
                                                         bottomLeft: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0,
                                                         bottomRight: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0
                                                     ))
-                                            }) .id(UUID())
+                                            }).id(UUID())
                                         } else { // doesnt click if its yourself
                                             BetCard(viewModel: viewModel, ticket: ticket, rank: (ticket.rank), ownCard: true)
                                                 .clipShape(RoundSomeCorners(
@@ -228,6 +229,13 @@ struct BetCard: View {
     let ticket: Ticket
     let rank: String
     let ownCard: Bool
+    var adminCard: Bool {
+        if ticket.groupAdmin == ticket.uid {
+            return true
+        } else {
+            return false
+        }
+    }
     @State private var isEnabled: Bool = false // New State variable
 //    @State private var oldValue: Bool = false
 
@@ -235,18 +243,23 @@ struct BetCard: View {
         ZStack {
             HStack {
                 if(!ownCard && ticket.groupAdmin == Auth.auth().currentUser?.uid) {
-                    Toggle(isOn: Binding(get: { self.ticket.isEnabled }, set: { newValue in
-                        viewModel.updateIsEnabled(ticket: self.ticket, isEnabled: newValue) {_ in }
-                    })) {
-                        Text("Enabled")
-                    }
+//                    Toggle(isOn: Binding(get: { self.ticket.isEnabled }, set: { newValue in
+//                        viewModel.updateIsEnabled(ticket: self.ticket, isEnabled: newValue) {_ in }
+//                    })) {
+//                        Text("Enabled")
+//                    }
+                    Button(ticket.isEnabled ? "E" : "D", action: {
+                        viewModel.updateIsEnabled(ticket: self.ticket, isEnabled: ticket.isEnabled ? false : true) {_ in
+                            viewModel.fetchRankedTickets(groupID: ticket.groupID) {}
+                        }
+                    }).foregroundColor(!ticket.isEnabled ? Color.red : K.darkGreen)
                 }
 
-                
-                Text("\(rank). \(ticket.username)")
-                    .font(.headline)
+                Text("\(rank). \(ticket.username) \(adminCard ? "(A)" : "")")
+                    .font(.subheadline)
                     .foregroundColor(K.darkBlue)
                     .frame(width: 150, alignment: .leading)
+                    .lineLimit(1)
                 Spacer()
                 Text("\(ticket.totalPotentialWon)")
                     .foregroundColor(K.darkGreen)
@@ -258,9 +271,10 @@ struct BetCard: View {
             .padding()
             .background(!ownCard ? K.veryLightGray : K.cadetBlue.opacity(0.25)) // changes color based on bet result
             .frame(maxWidth: .infinity) // Move the frame to the bottom
+            .opacity(ticket.isEnabled || ticket.groupAdmin == Auth.auth().currentUser?.uid ? 1 : 0.66)
             
             // Arrow
-            if (!ownCard) {
+            if (!ownCard && ticket.isEnabled) {
                 HStack {
                     Spacer()
                     Image(systemName: "chevron.right") // Use any image you'd like

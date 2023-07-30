@@ -37,30 +37,56 @@ class groupService {
             
             var tickets: [Ticket] = []
             var totalsArray: [Int] = []
+            var enabledStatusArray: [Bool] = []
             var ranksArray: [String] = []
 
             // Step 1: Fill the totalsArray with all totals
             for document in documents {
                 let data = document.data()
                 let totalWon = data["totalWon"] as! Int
+                let isEnabled = data["isEnabled"] as! Bool
                 totalsArray.append(totalWon)
+                enabledStatusArray.append(isEnabled)
             }
 
             // Step 2: Create ranksArray based on totalsArray
             var lastTotal = Int.max
             var rank = 0
             var tieCount = 1
-            for total in totalsArray {
-                if total == lastTotal {
-                    tieCount += 1
-                    ranksArray[ranksArray.count - 1] = "T\(rank)"
-                    ranksArray.append("T\(rank)")
-                } else {
-                    rank += tieCount
-                    tieCount = 1
-                    ranksArray.append("\(rank)")
-                    lastTotal = total
+            for (index, total) in totalsArray.enumerated() {
+                if enabledStatusArray[index] == true {
+                    if total == lastTotal {
+                        tieCount += 1
+                        ranksArray[ranksArray.count - 1] = "T\(rank)"
+                        ranksArray.append("T\(rank)")
+                    } else {
+                        rank += tieCount
+                        tieCount = 1
+                        ranksArray.append("\(rank)")
+                        lastTotal = total
+                    }
+                    print("The index is \(index) and the total is \(total)")
                 }
+                
+            }
+            tieCount = 1
+            lastTotal = Int.max
+            
+            for (index, total) in totalsArray.enumerated() {
+                if enabledStatusArray[index] == false {
+                    if total == lastTotal {
+                        tieCount += 1
+                        ranksArray[ranksArray.count - 1] = "T\(rank)"
+                        ranksArray.append("T\(rank)")
+                    } else {
+                        rank += tieCount
+                        tieCount = 1
+                        ranksArray.append("\(rank)")
+                        lastTotal = total
+                    }
+                    print("The index is \(index) and the total is \(total)")
+                }
+                
             }
 
             
@@ -77,7 +103,7 @@ class groupService {
                     totalWon: data["totalWon"] as! Int,
                     totalPotentialWon: data["totalPotentialWon"] as! Int,
                     groupName: data["groupName"] as! String,
-                    rank: ranksArray[index],
+                    rank: ranksArray[index], //data["rank"] as! String,
                     isEnabled: data["isEnabled"] as! Bool,
                     groupAdmin: data["groupAdmin"] as! String
                 )
@@ -133,6 +159,9 @@ class groupService {
                 }
             }
         }
+    
+
+
     
     func ticketCount(userID: String, completion: @escaping (Int?, Error?) -> Void) {
         let db = Firestore.firestore()

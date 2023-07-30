@@ -23,4 +23,25 @@ class createGroupsViewModel: ObservableObject {
                 }
             }
         }
+    
+    func checkIfGroupNameTaken(_ groupName: String, completion: @escaping (Bool) -> Void) {
+        let db = Firestore.firestore()
+        let groupRef = db.collection("groups")
+        let query = groupRef.whereField("groupName", isEqualTo: groupName)
+        
+        query.getDocuments { (snapshot, error) in
+            if let error = error {
+                print("Error getting documents: \(error)")
+                completion(false)
+            } else {
+                if let snapshot = snapshot, snapshot.documents.count > 0 {
+                    // Group name exists in the collection
+                    completion(true)
+                } else {
+                    // Group name doesn't exist
+                    completion(false)
+                }
+            }
+        }
+    }
 }
