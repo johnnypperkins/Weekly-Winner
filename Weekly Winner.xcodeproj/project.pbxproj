@@ -37,6 +37,7 @@
 		8668B3112A2EE9CF00A1B343 /* bookViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8668B3102A2EE9CF00A1B343 /* bookViewModel.swift */; };
 		8668B3132A2EF06A00A1B343 /* gameService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8668B3122A2EF06A00A1B343 /* gameService.swift */; };
 		866C52562A737B27008BE839 /* settingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866C52552A737B27008BE839 /* settingsView.swift */; };
+		866C525B2A7712F1008BE839 /* Poppins-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 866C525A2A7712F1008BE839 /* Poppins-Light.ttf */; };
 		867801552A213010006FE479 /* Weekly_WinnerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801542A213010006FE479 /* Weekly_WinnerApp.swift */; };
 		867801572A213010006FE479 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801562A213010006FE479 /* ContentView.swift */; };
 		867801592A213015006FE479 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 867801582A213015006FE479 /* Assets.xcassets */; };
@@ -108,6 +109,9 @@
 		8668B3102A2EE9CF00A1B343 /* bookViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = bookViewModel.swift; sourceTree = "<group>"; };
 		8668B3122A2EF06A00A1B343 /* gameService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = gameService.swift; sourceTree = "<group>"; };
 		866C52552A737B27008BE839 /* settingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = settingsView.swift; sourceTree = "<group>"; };
+		866C52582A7709D9008BE839 /* Jura-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Jura-Regular.ttf"; sourceTree = "<group>"; };
+		866C52592A770B4E008BE839 /* Weekly-Winner-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Weekly-Winner-Info.plist"; sourceTree = SOURCE_ROOT; };
+		866C525A2A7712F1008BE839 /* Poppins-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Light.ttf"; sourceTree = "<group>"; };
 		867801512A213010006FE479 /* Weekly Winner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Weekly Winner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		867801542A213010006FE479 /* Weekly_WinnerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weekly_WinnerApp.swift; sourceTree = "<group>"; };
 		867801562A213010006FE479 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -167,6 +171,7 @@
 			children = (
 				3C91B6C52A58BA0E00398F53 /* UI Misc.swift */,
 				3C91B6C72A58BE6D00398F53 /* RoundingUI.swift */,
+				866C52572A7709BA008BE839 /* Fonts */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -240,6 +245,15 @@
 			path = "custom variables";
 			sourceTree = "<group>";
 		};
+		866C52572A7709BA008BE839 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				866C52582A7709D9008BE839 /* Jura-Regular.ttf */,
+				866C525A2A7712F1008BE839 /* Poppins-Light.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 		867801482A213010006FE479 = {
 			isa = PBXGroup;
 			children = (
@@ -263,6 +277,7 @@
 		867801532A213010006FE479 /* Weekly Winner */ = {
 			isa = PBXGroup;
 			children = (
+				866C52592A770B4E008BE839 /* Weekly-Winner-Info.plist */,
 				867801542A213010006FE479 /* Weekly_WinnerApp.swift */,
 				3CAA9A2F2A64B590000146FA /* View Models */,
 				3CAA9A2E2A64B582000146FA /* Views */,
@@ -425,6 +440,7 @@
 				8678015D2A213015006FE479 /* Preview Assets.xcassets in Resources */,
 				8678018C2A21662D006FE479 /* GoogleService-Info.plist in Resources */,
 				867801592A213015006FE479 /* Assets.xcassets in Resources */,
+				866C525B2A7712F1008BE839 /* Poppins-Light.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -645,6 +661,7 @@
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Weekly-Winner-Info.plist";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -686,6 +703,7 @@
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Weekly-Winner-Info.plist";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;

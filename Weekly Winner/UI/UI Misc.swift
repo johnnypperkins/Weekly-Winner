@@ -139,7 +139,7 @@ class CountdownTimer: ObservableObject {
         let now = Date()
         let nextSunday = calendar.nextDate(after: now, matching: DateComponents(hour: 0, weekday: 2), matchingPolicy: .nextTime)!
         let components = calendar.dateComponents([.day, .hour, .minute, .second], from: now, to: nextSunday)
-        timeRemaining = String(format: "%dd %02dh %02dm %02ds", components.day ?? 0, components.hour ?? 0, components.minute ?? 0, components.second ?? 0)
+        timeRemaining = String(format: "%d : %02d : %02d : %02d", components.day ?? 0, components.hour ?? 0, components.minute ?? 0, components.second ?? 0)
     }
 
 }

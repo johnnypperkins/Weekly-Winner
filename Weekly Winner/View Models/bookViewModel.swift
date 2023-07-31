@@ -16,6 +16,7 @@ class bookViewModel: ObservableObject {
     @Published var userTickets: [Ticket] = [] //ticket99
     @Published var isTicketsLoaded = false  // Add this line
     @Published var mostPopularBets: [MostPopularBet] = []
+    @Published var arePopularBetsLoaded = false
 
     
     @Published var selectedGameType = "NFL"
@@ -94,6 +95,7 @@ class bookViewModel: ObservableObject {
                 print("Error fetching popular bets: \(error.localizedDescription)")
             } else {
                 self.mostPopularBets = popularBets ?? []
+                self.arePopularBetsLoaded = true
             }
         }
     }
