@@ -199,7 +199,7 @@ struct profileView: View {
                         }
                     }
                 }.navigationBarBackButtonHidden()
-            }
+            }.padding(.top, 65)
        }.onAppear {
 //           viewModel.startListening()
 //           Task{

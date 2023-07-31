@@ -105,10 +105,9 @@ struct ticketView: View {
             } else {
                 Text("FreeWager")
             }
-            
-            
            
-        }.padding(.top,20)
+        }.padding(.top, 75)
+            //.background(K.finalColor.backgroundBlue)
         .onAppear {
             selectedGroup = 0
             if uid != Auth.auth().currentUser?.uid{

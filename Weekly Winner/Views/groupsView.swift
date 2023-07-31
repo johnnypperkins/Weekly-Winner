@@ -219,7 +219,7 @@ struct groupsView: View {
             .onAppear() {
                 viewModel.fetchUserTickets() {
                 }
-            }
+            }.padding(.top, 75)
     }
 }
 

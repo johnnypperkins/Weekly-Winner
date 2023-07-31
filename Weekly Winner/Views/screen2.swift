@@ -20,26 +20,27 @@ struct BettingAppView: View {
                 sideMenuView(bookVM: viewModel, isShowing: $isShowing)
             }
             VStack {
-                    
 
-                HStack {
-                    Button(action: {
-                        withAnimation(.spring()) {
-                            isShowing.toggle()
-                        }
-                    },label:  {
-                        Image(systemName: "line.horizontal.3")
-                            .imageScale(.large)
-                            .foregroundColor(.blue)
-                            .padding(.leading) // Add padding to the left side of the button
-                    })
-                    Spacer()
+                ZStack {
+                    HStack {
+                        Button(action: {
+                            withAnimation(.spring()) {
+                                isShowing.toggle()
+                            }
+                        },label:  {
+                            Image(systemName: "line.horizontal.3")
+                                .imageScale(.large)
+                                .foregroundColor(.blue)
+                                .padding(.leading) // Add padding to the left side of the button
+                        })
+                        Spacer()
+                    }
+                    Text(viewModel.selectedGameType)
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .foregroundColor(K.finalColor.titleBlue)
                 }
-                Text(viewModel.selectedGameType)
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundColor(.blue)
-
+                
                 HStack {
                     VStack(alignment: .leading) {
                         HStack{
@@ -70,7 +71,7 @@ struct BettingAppView: View {
                     }
                 }.padding(.horizontal)
                 .padding(.horizontal)
-                .background(Color.white)
+                //.background(Color.white)
                
                 
                 ScrollView {
@@ -94,14 +95,16 @@ struct BettingAppView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(K.finalColor.backgroundBlue)
             .cornerRadius(isShowing ? 50 : 30)
                 .blur(radius: isShowing ? 8 : 0)
                 .offset(x:isShowing ? 300 : 0, y: isShowing ? 100 : 0)
                 .scaleEffect(isShowing ? 0.8 : 1)
-            }
+        }.background(K.finalColor.backgroundBlue)
+            .padding(.top, 60)
 
             .navigationBarHidden(false)
-        }
+    }
     
     private var filteredGames: [Game] {
         switch viewModel.selectedGameType {

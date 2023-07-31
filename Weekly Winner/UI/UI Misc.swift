@@ -43,6 +43,23 @@ struct K {
     static let darkCyan = Color(hex: "#1A535C")
     static let lightMoneyGreen = Color(hex: "#30DF7A")
     
+    struct finalColor {
+        static let titleBlue = Color(hex: "#4F91FF")
+        static let backgroundBlue = Color(hex: "#050C42")
+        static let cardBlue = Color(hex: "#202456")
+        static let tabSelectedBlue = Color(hex: "#75B5FB")
+        static let potentialOrange = Color(hex: "#FF8D07")
+        static let winningGreen = Color(hex: "#3EDC06")
+        static let textWhite = Color(hex: "#FFFFFF")
+        static let deleteRed = Color(hex: "#D22222")
+        static let otherPurple = Color(hex: "#9C63FB")
+        static let otherBeige = Color(hex: "#F8A680")
+    }
+    
+    struct finalUIColor {
+        static let tabSelectedBlue = UIColor(hex: "#75B5FB")
+    }
+    
     struct imgNames {
         static let alertCircle      = "ic_alert_circle"
         static let info             = "ic_info"
@@ -83,6 +100,21 @@ extension Color {
             blue:  Double(b) / 255,
             opacity: Double(a) / 255
         )
+    }
+}
+
+extension UIColor {
+    convenience init(hex: String) {
+        let scanner = Scanner(string: hex.replacingOccurrences(of: "#", with: ""))
+        var hexNumber: UInt64 = 0
+        if scanner.scanHexInt64(&hexNumber) {
+            let r = CGFloat((hexNumber & 0xff0000) >> 16) / 255
+            let g = CGFloat((hexNumber & 0x00ff00) >> 8) / 255
+            let b = CGFloat(hexNumber & 0x0000ff) / 255
+            self.init(red: r, green: g, blue: b, alpha: 1.0)
+        } else {
+            self.init(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
+        }
     }
 }
 

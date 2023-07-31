@@ -17,28 +17,24 @@ struct UserProfileView: View {
     @StateObject var countdownTimer = CountdownTimer()
     
     var body: some View {
-        VStack() {
-            
-            
+        VStack(spacing: 15) {
+            //Spacer()
             ProfileHeaderView(authVM: authenticationVM)
                 .padding(.top, 10)
-                .padding(.horizontal,16)
+                .padding(.horizontal)
             
             countDown()
                 .padding(.top)
-            
-            
+            //Spacer()
             yourGroups(groupsVM: groupsVM)
-                .padding(.horizontal,16)
-            
-             //   mostPopularBets(bookVM: bookVM)
-            MostPopularBetsView(bookVM: bookVM)
                 .padding(.horizontal)
+            
+            MostPopularBetsView(bookVM: bookVM)
                 .padding(.horizontal)
             Spacer()
 
         }
-        .background(Color(red: 0.03, green: 0.03, blue: 0.03))
+        .background(K.finalColor.backgroundBlue)
         .onAppear() {
             print("appeared")
             authenticationVM.fetchUser() {
@@ -47,188 +43,83 @@ struct UserProfileView: View {
             }
             groupsVM.fetchUserTickets() {}
             bookVM.fetchMostPopularBets()
+        }.padding(.top, 35)
+        //Spacer()
+    }
+}
+
+
+struct ProfileHeaderView: View {
+    @StateObject var authVM: authenticationViewModel
+    var body: some View {
+        HStack() {
+            if authVM.currUser?.profileImageUrl != nil {
+                KFImage(URL(string: authVM.currUser?.profileImageUrl ?? "sampleImage"))
+                    .resizable()
+                    .clipShape(Circle())
+                    .foregroundColor(.clear)
+                    .frame(width: 30, height: 30)
+            }else {
+                Image("sampleImage")
+                    .resizable()
+                    .foregroundColor(.clear)
+                    .frame(width: 30, height: 30)
+            }
+            
+            Text(authVM.currUser?.username ?? "nil")
+                .font(Font.custom("Lexend Deca", size: 16).weight(.medium))
+                .foregroundColor(Color(red: 0.94, green: 0.94, blue: 0.94))
+            
+                .frame(height: 30)
+
+            Spacer()
+            
+            Text("FreeWager")
+                .font(Font.system(size: 24).weight(.semibold))
+                .foregroundColor(K.finalColor.titleBlue)
         }
     }
 }
 
-struct mostPopularBets: View {
-    @ObservedObject var bookVM: bookViewModel
-    
-    
+struct countDown: View {
+    @StateObject var countdownTimer = CountdownTimer()
   var body: some View {
-    VStack(alignment: .leading, spacing: 16) {
-        Text("Most Popular Bets")
-            .font(Font.custom("Lexend Deca", size: 24).weight(.medium))
-            .foregroundColor(.white)
-        LazyHStack(spacing: 20) {
-            ForEach(0...bookVM.mostPopularBets.count, id: \.self) { index in
-                VStack(spacing: 2.74) {
-                  VStack(spacing: 3.74) {
-                      if bookVM.arePopularBetsLoaded == true {
-                          Text("\(bookVM.mostPopularBets[index].betLine)")
-                      }
-//                     PopularBetView(index: index, bookVM: bookVM)
-                  }
-                  .frame(width: 87.57)
-                }
-                .padding(
-                  EdgeInsets(top: 4.56, leading: 9.12, bottom: 4.56, trailing: 9.12)
-                )
-                .frame(height: 83)
-                .background(Color(red: 0.13, green: 0.13, blue: 0.13))
-                .cornerRadius(9.12)
+    ZStack() {
+      VStack() {
+          HStack{
+              Text("Weekly Wages Countdown")
+                  .font(Font.custom("Poppins-Light", size: 16))
+                  .foregroundColor(.white)
+              Spacer()
+          }.frame(minWidth: 0, maxWidth: .infinity)
+              .padding(.horizontal)
+            VStack(spacing: 5) {
+                Text(countdownTimer.timeRemaining)
+                    .font(Font.custom("Jura-Regular", size: 28))
+                    .foregroundColor(.white)
             }
-        }
-//      Text("Most Popular Bets")
-//        .font(Font.custom("Lexend Deca", size: 24).weight(.medium))
-//        .foregroundColor(.white)
-//      VStack(alignment: .leading, spacing: 13) {
-//        HStack(alignment: .top, spacing: 13) {
-//          VStack(spacing: 2.74) {
-//            VStack(spacing: 3.74) {
-//              Text("U59")
-//                .font(Font.custom("Poppins", size: 16).weight(.medium))
-//                .foregroundColor(.white)
-//              Text("KC Chiefs / Det Lions")
-//                .font(Font.custom("Poppins", size: 12))
-//                .foregroundColor(.white)
-//            }
-//            .frame(width: 87.57)
-//          }
-//          .padding(
-//            EdgeInsets(top: 4.56, leading: 9.12, bottom: 4.56, trailing: 9.12)
-//          )
-//          .frame(height: 83)
-//          .background(Color(red: 0.13, green: 0.13, blue: 0.13))
-//          .cornerRadius(9.12)
-//          HStack(spacing: 0) {
-//            HStack(spacing: 0) {
-//              ZStack() {
-//                Text("+0")
-//                  .font(Font.custom("Poppins", size: 16).weight(.medium))
-//                  .foregroundColor(.white)
-//                  .offset(x: 0, y: -10.50)
-//                Text("Den Broncos")
-//                  .font(Font.custom("Poppins", size: 12))
-//                  .foregroundColor(.white)
-//                  .offset(x: 0, y: 13.50)
-//              }
-//              .frame(maxWidth: .infinity, maxHeight: .infinity)
-//            }
-//            .padding(EdgeInsets(top: 0, leading: 7, bottom: 0, trailing: 7))
-//            .frame(maxWidth: .infinity, maxHeight: .infinity)
-//          }
-//          .padding(
-//            EdgeInsets(top: 22, leading: 9.18, bottom: 22, trailing: 8.82)
-//          )
-//          .frame(width: 106, height: 83)
-//          .background(Color(red: 0.13, green: 0.13, blue: 0.13))
-//          .cornerRadius(9.12)
-//          HStack(spacing: 0) {
-//            HStack(spacing: 0) {
-//              ZStack() {
-//                Text("-1")
-//                  .font(Font.custom("Poppins", size: 16).weight(.medium))
-//                  .foregroundColor(.white)
-//                  .offset(x: 0.50, y: -10.50)
-//                Text("KC Chiefs")
-//                  .font(Font.custom("Poppins", size: 12))
-//                  .foregroundColor(.white)
-//                  .offset(x: 0, y: 13.50)
-//              }
-//              .frame(maxWidth: .infinity, maxHeight: .infinity)
-//            }
-//            .padding(EdgeInsets(top: 0, leading: 6, bottom: 2, trailing: 5))
-//            .frame(maxWidth: .infinity, maxHeight: .infinity)
-//          }
-//          .padding(
-//            EdgeInsets(top: 20, leading: 19.18, bottom: 20, trailing: 19.82)
-//          )
-//          .frame(width: 106, height: 83)
-//          .background(Color(red: 0.13, green: 0.13, blue: 0.13))
-//          .cornerRadius(9.12)
-//        }
-//        HStack(alignment: .top, spacing: 13) {
-//          VStack(spacing: 2.74) {
-//            VStack(spacing: 3.74) {
-//              Text("U59")
-//                .font(Font.custom("Poppins", size: 16).weight(.medium))
-//                .foregroundColor(.white)
-//              Text("KC Chiefs / Det Lions")
-//                .font(Font.custom("Poppins", size: 12))
-//                .foregroundColor(.white)
-//            }
-//            .frame(width: 87.57)
-//          }
-//          .padding(
-//            EdgeInsets(top: 4.56, leading: 9.12, bottom: 4.56, trailing: 9.12)
-//          )
-//          .frame(height: 83)
-//          .background(Color(red: 0.13, green: 0.13, blue: 0.13))
-//          .cornerRadius(9.12)
-//          HStack(spacing: 0) {
-//            HStack(spacing: 0) {
-//              ZStack() {
-//                Text("+0")
-//                  .font(Font.custom("Poppins", size: 16).weight(.medium))
-//                  .foregroundColor(.white)
-//                  .offset(x: 0, y: -10.50)
-//                Text("Den Broncos")
-//                  .font(Font.custom("Poppins", size: 12))
-//                  .foregroundColor(.white)
-//                  .offset(x: 0, y: 13.50)
-//              }
-//              .frame(maxWidth: .infinity, maxHeight: .infinity)
-//            }
-//            .padding(EdgeInsets(top: 0, leading: 7, bottom: 0, trailing: 7))
-//            .frame(maxWidth: .infinity, maxHeight: .infinity)
-//          }
-//          .padding(
-//            EdgeInsets(top: 22, leading: 9.18, bottom: 22, trailing: 8.82)
-//          )
-//          .frame(width: 106, height: 83)
-//          .background(Color(red: 0.13, green: 0.13, blue: 0.13))
-//          .cornerRadius(9.12)
-//          HStack(spacing: 0) {
-//            HStack(spacing: 0) {
-//              ZStack() {
-//                Text("-1")
-//                  .font(Font.custom("Poppins", size: 16).weight(.medium))
-//                  .foregroundColor(.white)
-//                  .offset(x: 0.50, y: -10.50)
-//                Text("KC Chiefs")
-//                  .font(Font.custom("Poppins", size: 12))
-//                  .foregroundColor(.white)
-//                  .offset(x: 0, y: 13.50)
-//              }
-//              .frame(maxWidth: .infinity, maxHeight: .infinity)
-//            }
-//            .padding(EdgeInsets(top: 0, leading: 6, bottom: 2, trailing: 5))
-//            .frame(maxWidth: .infinity, maxHeight: .infinity)
-//          }
-//          .padding(
-//            EdgeInsets(top: 20, leading: 19.18, bottom: 20, trailing: 19.82)
-//          )
-//          .frame(width: 106, height: 83)
-//          .background(Color(red: 0.13, green: 0.13, blue: 0.13))
-//          .cornerRadius(9.12)
-//        }
-//      }
+          .frame(height: 32)
+          
+      }
+      .frame(height: 71)
     }
-    .frame(width: 343.82, height: 225);
+    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 104, maxHeight: 104)
+    .background(K.finalColor.titleBlue)
+    .cornerRadius(10)
+    .padding(.horizontal, 16)
   }
 }
 
 struct yourGroups: View {
     @StateObject var groupsVM: groupsViewModel
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .center, spacing: 12) {
             Text("Your Groups")
                 .font(Font.custom("Lexend Deca", size: 24).weight(.medium))
                 .foregroundColor(.white)
             
             ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack {
+                HStack {
                     ForEach(0..<groupsVM.userTickets.count, id: \.self) { index in
                         // Use your custom view or data here.
                         // Replace `Text("Item \(index)")` with your custom view
@@ -315,127 +206,40 @@ struct yourGroups: View {
     }
 }
 
-struct countDown: View {
-    @StateObject var countdownTimer = CountdownTimer()
-  var body: some View {
-    ZStack() {
-      VStack() {
-          HStack{
-              Text("Weekly Wages Countdown")
-                  .font(Font.custom("Poppins-Light", size: 16))
-                  .foregroundColor(.white)
-              Spacer()
-          }.frame(minWidth: 0, maxWidth: .infinity)
-              .padding(.horizontal)
-            VStack(spacing: 5) {
-                Text(countdownTimer.timeRemaining)
-                    .font(Font.custom("Jura-Regular", size: 28))
-                    .foregroundColor(.white)
-            }
-          .frame(height: 32)
-          
-      }
-      .frame(height: 71)
-    }
-    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 104, maxHeight: 104)
-    .background(Color(red: 0.14, green: 0.61, blue: 0.85))
-    .cornerRadius(10)
-    .padding(.horizontal, 16)
-  }
-}
-
-struct ProfileHeaderView: View {
-    @StateObject var authVM: authenticationViewModel
-    var body: some View {
-        HStack() {
-            if authVM.currUser?.profileImageUrl != nil {
-                KFImage(URL(string: authVM.currUser?.profileImageUrl ?? "sampleImage"))
-                    .resizable()
-                    .clipShape(Circle())
-                    .foregroundColor(.clear)
-                    .frame(width: 30, height: 30)
-            }else {
-                Image("sampleImage")
-                    .resizable()
-                    .foregroundColor(.clear)
-                    .frame(width: 30, height: 30)
-            }
-            
-            Text(authVM.currUser?.username ?? "nil")
-                .font(Font.custom("Lexend Deca", size: 16).weight(.medium))
-                .foregroundColor(Color(red: 0.94, green: 0.94, blue: 0.94))
-            
-                .frame(height: 30)
-
-            Spacer()
-            
-            Text("FreeWager")
-                .font(Font.system(size: 24).weight(.semibold))
-                .foregroundColor(Color(red: 0.14, green: 0.61, blue: 0.85))
-                
-        }
-            
-    }
-}
-
-
-struct groupStatusView: View {
-    @StateObject var groupsVM: groupsViewModel
-    let frameWidth: CGFloat = 60
-    var body: some View {
-        VStack(spacing: 0) {
-            ForEach(0...groupsVM.userTickets.count, id: \.self) { index in
-                VStack(spacing: 0) {
-                    HStack(spacing: 5) {
-                        Text(index == 0 ? "Group" : groupsVM.userTickets[index - 1].groupName)
-                            .lineLimit(1)
-                            .font(index == 0 ? .headline : .body) // Set the font based on whether it's the title or not
-                            .frame(minWidth: 110, maxWidth: .infinity, alignment: .leading) // Adjust the width as needed
-                        Spacer()
-                        HStack(spacing: 0) {
-                            Text(index == 0 ? "PW" : String(groupsVM.userTickets[index - 1].totalPotentialWon ))
-                                .font(index == 0 ? .headline : .body) // Set the font based on whether it's the title or not
-                                .frame(width: frameWidth, alignment: .leading) // Adjust the width as needed
-                                .foregroundColor(index == 0 ? Color.black : K.darkMidnightBlue)
-                            Text(index == 0 ? "TW" : String(groupsVM.userTickets[index - 1].totalWon ))
-                                .font(index == 0 ? .headline : .body) // Set the font based on whether it's the title or not
-                                .frame(width: frameWidth, alignment: .leading) // Adjust the width as needed
-                                .foregroundColor(index == 0 ? Color.black : K.lightMoneyGreen)
-                            Text(index == 0 ? "Rank" : String(groupsVM.userTickets[index - 1].rank))
-                                .font(index == 0 ? .headline : .body) // Set the font based on whether it's the title or not
-                                .frame(width: frameWidth, alignment: .center) // Adjust the width as needed
-                        }
-                    }
-                    .padding(index == 0 ? EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0) : EdgeInsets(top: 7.5, leading: 0, bottom: 7.5, trailing: 0))
-                    .padding(.leading) // Add padding to the left of the HStack
-                    .background(index != 0 ? K.veryLightBlue.opacity(0.5) : K.veryLightGray)
-                }
-            }
-        }.cornerRadius(5)
-    }
-}
-
 struct MostPopularBetsView: View {
     @StateObject var bookVM: bookViewModel
     var body: some View {
-        VStack{
+        VStack (alignment: .center, spacing: 15) {
             Text("Most Popular Bets")
                     .font(Font.custom("Lexend Deca", size: 24).weight(.medium))
                     .foregroundColor(.white)
-            LazyHStack{
+            HStack{
                 ForEach(0...bookVM.mostPopularBets.count/2, id: \.self) { index in
+                    
                     if index != 0 {
+                        Spacer()
                         PopularBetView(index: index, bookVM: bookVM)
                     }
+                    if index == bookVM.mostPopularBets.count/2 {
+                        Spacer()
+                    }
+                    
                 }
+                
             }
-            .padding(.top)
-            LazyHStack{
+            //.padding(.top)
+            HStack{
+
                 ForEach(bookVM.mostPopularBets.count/2...bookVM.mostPopularBets.count, id: \.self) { index in
                     if index != bookVM.mostPopularBets.count/2 {
+                        Spacer()
                         PopularBetView(index: index, bookVM: bookVM)
                     }
+                    if index == bookVM.mostPopularBets.count {
+                        Spacer()
+                    }
                 }
+
             }
         }
     }
@@ -461,10 +265,10 @@ struct PopularBetView: View {
     var body: some View {
         
         VStack(spacing: 1) {
-            HStack{
-                Text("#\(index)")
-                Spacer()
-            }.frame(alignment: .top)
+//            HStack{
+//                Text("#\(index)")
+//                Spacer()
+//            }.frame(alignment: .top)
             VStack(spacing: 3.74) {
                 Text("\(extra)\(bookVM.mostPopularBets[index-1].betLine)")
                     .font(Font.custom("Poppins", size: 16).weight(.medium))
@@ -476,24 +280,13 @@ struct PopularBetView: View {
             .frame(width: 87.57)
         }
         .padding(
-            EdgeInsets(top: 4.56, leading: 9.12, bottom: 4.56, trailing: 9.12)
+            EdgeInsets(top: 0, leading: 9.12, bottom: 0, trailing: 9.12)
         )
         .frame(height: 83)
-        .background(Color(red: 0.13, green: 0.13, blue: 0.13))
+        .background(K.finalColor.cardBlue)
         .cornerRadius(9.12)
     }
     
-}
-
-struct ClockView: View {
-    @StateObject var countdownTimer: CountdownTimer
-    var body: some View {
-        HStack {
-            Spacer()
-            Text("\(countdownTimer.timeRemaining)")
-            Spacer()
-        }
-    }
 }
 
 struct UserProfileView_Previews: PreviewProvider {

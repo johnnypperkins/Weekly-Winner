@@ -23,39 +23,58 @@ struct tabBarView: View {
                     TabView {
                         if let user = authViewModel.currUser {// the corresponding views go under this. Makes sense - Reid
                             UserProfileView()
+                                .ignoresSafeArea(.all)
                                 .tabItem {
-                                    CustomTabBarItem(index: 0, selectedTab: $selectedTab, item: TabItem(title: "Home", icon: Image(systemName: "house.fill"), color: .red))
+                                    CustomTabBarItem(index: 0, selectedTab: $selectedTab, item: TabItem(title: "Home", icon: Image(systemName: "house.fill")))
                                 }
+                                //.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
                                                 .tag(0)
                             //.background(K.veryLightBlue.opacity(0.5))
                             BettingAppView()
+                                .ignoresSafeArea(.all)
                                 .tabItem {
-                                    CustomTabBarItem(index: 1, selectedTab: $selectedTab, item: TabItem(title: "Bets", icon: Image(systemName: "dollarsign.circle.fill"), color: .green))
-                                }
+                                    CustomTabBarItem(index: 1, selectedTab: $selectedTab, item: TabItem(title: "Bets", icon: Image(systemName: "dollarsign.circle.fill")))
+                                }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
                                                 .tag(1)
                             
                             
                             ticketView(username: "", uid: Auth.auth().currentUser!.uid, groupID: "")
+                                .ignoresSafeArea(.all)
+                                //.padding(.top)
                                 .tabItem {
-                                    CustomTabBarItem(index: 2, selectedTab: $selectedTab, item: TabItem(title: "Tickets", icon: Image(systemName: "ticket.fill"), color: .blue))
-                                }
+                                    CustomTabBarItem(index: 2, selectedTab: $selectedTab, item: TabItem(title: "Tickets", icon: Image(systemName: "ticket.fill")))
+                                }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
                                                 .tag(2)
                             
                             groupsView()
+                                .ignoresSafeArea(.all)
                                 .tabItem {
-                                    CustomTabBarItem(index: 3, selectedTab: $selectedTab, item: TabItem(title: "Groups", icon: Image(systemName: "person.3.fill"), color: .purple))
-                                }
+                                    CustomTabBarItem(index: 3, selectedTab: $selectedTab, item: TabItem(title: "Groups", icon: Image(systemName: "person.3.fill")))
+                                }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
                                                 .tag(3)
                             
                             profileView(user: authViewModel.currUser!)
+                                //.ignoresSafeArea(.all)
                                 .tabItem {
-                                    CustomTabBarItem(index: 4, selectedTab: $selectedTab, item: TabItem(title: "Profile", icon: Image(systemName: "person.crop.circle.fill"), color: .orange))
-                                }
+                                    CustomTabBarItem(index: 4, selectedTab: $selectedTab, item: TabItem(title: "Profile", icon: Image(systemName: "person.crop.circle.fill")))
+                                }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
                                                 .tag(4)
                         }
                         else {
                             EmptyView()
                         }
+                    }.onAppear() {
+//                        let standardAppearance = UITabBarAppearance()
+//                        standardAppearance.backgroundColor = UIColor(K.finalColor.backgroundBlue)
+//                                        let itemAppearance = UITabBarItemAppearance()
+//                                        itemAppearance.normal.iconColor = UIColor(Color.white)
+//                        itemAppearance.selected.iconColor = UIColor(K.finalColor.tabSelectedBlue)
+//                        itemAppearance.normal.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+//                        itemAppearance.selected.titleTextAttributes = [NSAttributedString.Key.foregroundColor: K.finalUIColor.tabSelectedBlue]
+//                                        standardAppearance.inlineLayoutAppearance = itemAppearance
+//                                        standardAppearance.stackedLayoutAppearance = itemAppearance
+//                                        standardAppearance.compactInlineLayoutAppearance = itemAppearance
+//                                        UITabBar.appearance().standardAppearance = standardAppearance
                     }
                     //.edgesIgnoringSafeArea(.all)
 
@@ -72,7 +91,7 @@ struct tabBarView: View {
 struct TabItem {
     let title: String
     let icon: Image
-    let color: Color
+    //let color: Color
 }
 
 struct CustomTabBarItem: View {
@@ -87,9 +106,8 @@ struct CustomTabBarItem: View {
                 .cornerRadius(5)
             Text(item.title)
                 .font(Font.custom("Lexend Deca", size: 9.54).weight(.light))
-                .foregroundColor(selectedTab == index ? item.color : .white)
         }
-        .padding(EdgeInsets(top: 3.08, leading: 20.66, bottom: 2.63, trailing: 20.90))
+        //.padding(EdgeInsets(top: 7, leading: 20.66, bottom: 0, trailing: 20.90))
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onTapGesture {
             selectedTab = index
