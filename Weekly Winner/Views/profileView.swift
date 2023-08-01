@@ -68,138 +68,31 @@ struct profileView: View {
                         }.padding()
                     }
                     else {
-                        HStack {
-                            Spacer()
-                            
-                            NavigationLink(destination: {
-                                settingsView()
-                            } ,label: {
-                                Image(systemName: "gearshape")
-                                    .resizable()
-                                    .frame(width: 20, height: 20)
-                                    .padding()
-                                    .foregroundColor(.black)
-                            }).id(UUID())
+                        ZStack {
+                            Text("My Profile")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
+                                .foregroundColor(.white)
 
+                            HStack {
+                                Spacer()
+
+                                NavigationLink(destination: settingsView(), label: {
+                                    Image(systemName: "gearshape")
+                                        .resizable()
+                                        .frame(width: 20, height: 20)
+                                        .padding()
+                                        .foregroundColor(.white)
+                                }).id(UUID())
+                            }
                         }
                     }
-                    ScrollViewReader { proxyReader in
-                        ScrollView {
-                            //if let user = authInfo.currUser {
-                            
-                            Text(viewModel.user.firstName)
-                                .font(.largeTitle)
-                                .fontWeight(.bold)
-                                .padding(.bottom,0.5)
-                            Text(viewModel.user.lastName)
-                                .font(.largeTitle)
-                                .fontWeight(.bold)
-                                .padding(.bottom,0.5)
-                            
-//                            NavigationLink(destination: authenticationView()) {
-//                                Button(action: {
-//                                    viewModel2.signOut()
-//                                }) {
-//                                    Text("Sign out")
-//                                }
-//                            }
-
-
-                            KFImage(URL(string: viewModel.profileImageURLHolder))
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 200,height: 200)
-                                .cornerRadius(25)
-                                .padding(.top,25)
-                            
-                            if user.isCurrentUser == true {
-                                NavigationLink {
-                                    editProfileView(user1: viewModel.user, profileVM: viewModel)
-                                } label: {
-                                    Text("Edit")
-                                        .foregroundColor(.blue)
-                                        .fontWeight(.bold)
-                                        .padding(.vertical)
-                                        .padding(.horizontal)
-                                        .background(Color(.blue)
-                                            .clipShape(Capsule())
-                                                    //shadow
-                                            .shadow(color: Color.white.opacity(0.1), radius: 5, x: 0, y: 5))
-                                }.id(UUID())
-                                
-                            }
-                            else {
-                                Button(action: {
-                                    
-                                    
-                                     if viewModel.isBlocked {
-                                        viewModel.unblock()
-                                    }
-                                    else  {
-                                       
-                                    }
-                                    
-                                    
-                                }, label: {
-                                    
-                                
-                                    if viewModel.isBlocked {
-                                        Text("Unblock")
-                                            .foregroundColor(.blue)
-                                            .fontWeight(.bold)
-                                            .padding(.vertical)
-                                            .padding(.horizontal)
-                                            .background(Color(.blue)
-                                                .clipShape(Capsule())
-                                                        //shadow
-                                                .shadow(color: Color.white.opacity(0.1), radius: 5, x: 0, y: 5))
-                                    }
-                                    else  {
-                                        Text("Unavailable")
-                                            .foregroundColor(K.backgroundBlue)
-                                            .fontWeight(.bold)
-                                            .padding(.vertical)
-                                            .padding(.horizontal)
-                                            .background(Color(.blue)
-                                                .clipShape(Capsule())
-                                                        //shadow
-                                                .shadow(color: Color.white.opacity(0.1), radius: 5, x: 0, y: 5))
-                                    }
-                                    
-                                })
-                            }
-                            //.sheet(isPresented: $isShowingEditProfile) {
-                            // editProfileView()
-                            //}
-                            
-//                            Text("Friends")
-//                                .font(.title)
-//                                .fontWeight(.semibold)
-//
-//                            NavigationLink(destination: {friendsList(user: viewModel.user)}, label: {
-//                                Text("\(viewModel.followerCount)")
-//                                    .foregroundColor(Color("Color 3"))
-//                            }).id(UUID())
-                            VStack{
-                                
-                                Divider()
-                                
-                                Text("Recent Comments")
-                                    .bold()
-                                    .padding()
-                                
-                            }
-//                            VStack{
-//                                ForEach(viewModel.comments) { comment in
-//                                    selfCommentView(comment: comment)
-//                                        //.padding(.top)
-//
-//                                }
-//                            }
-                        }
-                    }
+                    ProfileStatsView(viewModel: viewModel, user: user)
+                        .padding(.vertical)
                 }.navigationBarBackButtonHidden()
-            }.padding(.top, 65)
+                    .navigationBarHidden(true)
+            }
+            .navigationBarTitle("")
+                        .navigationBarHidden(true)
        }.onAppear {
 //           viewModel.startListening()
 //           Task{
@@ -208,6 +101,7 @@ struct profileView: View {
            
            
        }.navigationBarBackButtonHidden()
+            .navigationBarHidden(true)
 //        .onDisappear {
 //           viewModel.stopListening()
 //       }
@@ -223,6 +117,160 @@ struct SideMenuButton: View {
             .foregroundColor(.white)
             .padding(.bottom) // Add padding to create space between buttons
     }
+}
+
+struct ProfileStatsView: View {
+    @StateObject var viewModel: profileViewModel
+    var user: User
+  var body: some View {
+    VStack(spacing: 30) {
+      VStack(spacing: 16) {
+            KFImage(URL(string: viewModel.profileImageURLHolder))
+                .resizable()
+                .clipShape(Circle())
+                .aspectRatio(contentMode: .fill)
+                .foregroundColor(.clear)
+                .frame(width: 78, height: 78)
+              
+          Text(user.username)
+              .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+              .foregroundColor(.white)
+          
+          Text(user.firstName + " " + user.lastName)
+              .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
+              .foregroundColor(.white)
+          
+//        Text("Member Since : Aug 09, 2023")
+//          .font(Font.custom("Lexend Deca", size: 14).weight(.light))
+//          .foregroundColor(.white)
+          
+          if user.isCurrentUser == true {
+              NavigationLink {
+                  editProfileView(user1: viewModel.user, profileVM: viewModel)
+              } label: {
+                  Text("Edit")
+                      .foregroundColor(.blue)
+                      .fontWeight(.bold)
+                      .padding(.vertical)
+                      .padding(.horizontal)
+                      .background(Color(.blue)
+                          .clipShape(Capsule())
+                                  //shadow
+                          .shadow(color: Color.white.opacity(0.1), radius: 5, x: 0, y: 5))
+              }.id(UUID())
+              
+          }
+          else {
+              Button(action: {
+                  
+                  
+                   if viewModel.isBlocked {
+                      viewModel.unblock()
+                  }
+                  else  {
+                     
+                  }
+                  
+                  
+              }, label: {
+                  
+              
+                  if viewModel.isBlocked {
+                      Text("Unblock")
+                          .foregroundColor(.blue)
+                          .fontWeight(.bold)
+                          .padding(.vertical)
+                          .padding(.horizontal)
+                          .background(Color(.blue)
+                              .clipShape(Capsule())
+                                      //shadow
+                              .shadow(color: Color.white.opacity(0.1), radius: 5, x: 0, y: 5))
+                  }
+                  else  {
+                      Text("Unavailable")
+                          .foregroundColor(K.backgroundBlue)
+                          .fontWeight(.bold)
+                          .padding(.vertical)
+                          .padding(.horizontal)
+                          .background(Color(.blue)
+                              .clipShape(Capsule())
+                                      //shadow
+                              .shadow(color: Color.white.opacity(0.1), radius: 5, x: 0, y: 5))
+                  }
+                  
+              })
+          }
+      }
+      .frame(maxWidth: .infinity)
+      HStack(alignment: .top, spacing: 6) {
+        VStack(spacing: 5) {
+          Text("$ 799")
+            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+            .foregroundColor(.white)
+          Text("Most Wons")
+            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
+            .foregroundColor(.white)
+        }
+        Rectangle()
+          .foregroundColor(.clear)
+          .frame(width: 35, height: 0)
+          .overlay(
+            Rectangle()
+              .stroke(Color(red: 0.31, green: 0.30, blue: 0.43), lineWidth: 0.50)
+          )
+          .rotationEffect(.degrees(-90))
+        VStack(spacing: 5) {
+          Text("$ 192")
+            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+            .foregroundColor(.white)
+          Text("Least Wons")
+            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
+            .foregroundColor(.white)
+        }
+        Rectangle()
+          .foregroundColor(.clear)
+          .frame(width: 35, height: 0)
+          .overlay(
+            Rectangle()
+              .stroke(Color(red: 0.31, green: 0.30, blue: 0.43), lineWidth: 0.50)
+          )
+          .rotationEffect(.degrees(-90))
+        VStack(spacing: 5) {
+          Text("$ 80")
+                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+            .foregroundColor(.white)
+          Text("Average Wons")
+            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
+            .foregroundColor(.white)
+        }
+        Rectangle()
+          .foregroundColor(.clear)
+          .frame(width: 35, height: 0)
+          .overlay(
+            Rectangle()
+              .stroke(Color(red: 0.31, green: 0.30, blue: 0.43), lineWidth: 0.50)
+          )
+          .rotationEffect(.degrees(-90))
+        VStack(spacing: 5) {
+          Text("#36")
+            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+            .foregroundColor(.white)
+          Text("Highest Rank")
+            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
+            .foregroundColor(.white)
+        }
+      }
+      .padding(EdgeInsets(top: 7, leading: 10, bottom: 7, trailing: 10))
+      .frame(maxWidth: .infinity)
+      .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+      .cornerRadius(10)
+      .overlay(
+        RoundedRectangle(cornerRadius: 10)
+          .inset(by: 0.50)
+          .stroke(Color(red: 0.31, green: 0.30, blue: 0.43), lineWidth: 0.50)
+      )
+    }
+  }
 }
 
 struct SettingsView: View {

@@ -25,7 +25,7 @@ struct editProfileView: View {
         viewModel = editProfileViewModel(user: user)
     }
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack{
                 Form {
                     Section {

@@ -18,7 +18,7 @@ struct createGroupsView: View {
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
 
             Form {
                 Section {
