@@ -30,65 +30,71 @@ struct BettingAppView: View {
                         },label:  {
                             Image(systemName: "line.horizontal.3")
                                 .imageScale(.large)
-                                .foregroundColor(.blue)
+                                .foregroundColor(.white)
                                 .padding(.leading) // Add padding to the left side of the button
                         })
                         Spacer()
                     }
                     Text(viewModel.selectedGameType)
-                        .font(.largeTitle)
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
                         .fontWeight(.bold)
-                        .foregroundColor(K.finalColor.titleBlue)
+                        .foregroundColor(K.finalColor.textWhite)
                 }
                 
-                HStack {
-                    VStack(alignment: .leading) {
-                        HStack{
-                            Text("Team Name") // team name
-                                .font(.subheadline)
-                                .foregroundColor(.black)
-                            
-                            Spacer()
-                            HStack(spacing: 20) {
-                                Text("Spread")
-                                    .foregroundColor(.black)
-                                    .frame(width: 50)
-                                    .font(.subheadline)
-                                Text("Total")
-                                    .foregroundColor(.black)
-                                    .frame(width: 50)
-                                    .font(.subheadline)
-                            }
-                            
-                        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 30, alignment: .center)
-                        .padding(.horizontal)
-                        .background(
-                            RoundedRectangle(cornerRadius: 7.5)
-                                .fill(K.veryLightBlue)
-                        )
-
-                        
+//                HStack {
+//                    VStack(alignment: .leading) {
+//
+//
+//
+//                    }
+//                }.padding(.horizontal)
+//                //.padding(.horizontal)
+//                .background(Color.white)
+//
+                HStack{
+                    Text("Team Name") // team name
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                        .foregroundColor(K.finalColor.textWhite)
+                        .padding(.leading)
+                    Spacer()
+                    HStack(spacing: 15) {
+                        Text("Spr")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                            .foregroundColor(K.finalColor.textWhite)
+                            .frame(width: 50, alignment: .center)
+                        Text("Tot")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                            .foregroundColor(K.finalColor.textWhite)
+                            .frame(width: 50, alignment: .center)
+                            .padding(.trailing, 9)
                     }
-                }.padding(.horizontal)
+                    
+                    Divider()
+                }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 30, alignment: .center)
                 .padding(.horizontal)
-                //.background(Color.white)
+                .overlay(
+                        Rectangle()
+                            .frame(height: 1)
+                            //.padding(.top, 100)
+                            .padding(.horizontal)
+                            .foregroundColor(.white), alignment: .bottom)
                
                 
                 ScrollView {
                     VStack(spacing: 5) {
                         if viewModel.selectedGameType == "NFL" {
                             ForEach(viewModel.NFLgames, id: \.idd) { game in // HARDCODE NCAAF
-                                BetRowView1(game: game)
+                                gameRowView(game: game)
                             }.padding(.horizontal)
                         }
                         if viewModel.selectedGameType == "NCAAF" {
                             ForEach(viewModel.NCAAFGames, id: \.idd) { game in // HARDCODE NCAAF
-                                BetRowView1(game: game)
+                                gameRowView(game: game)
                             }.padding(.horizontal)
                         }
                         if viewModel.selectedGameType == "Upcoming" {
                             ForEach(viewModel.upcomingGames, id: \.idd) { game in 
-                                BetRowView1(game: game)
+                                gameRowView(game: game)
                             }.padding(.horizontal)
                         }
                     }
@@ -101,8 +107,7 @@ struct BettingAppView: View {
                 .offset(x:isShowing ? 300 : 0, y: isShowing ? 100 : 0)
                 .scaleEffect(isShowing ? 0.8 : 1)
         }.background(K.finalColor.backgroundBlue)
-            .padding(.top, 60)
-
+            .padding(.top, 65)
             .navigationBarHidden(false)
     }
     
@@ -122,7 +127,30 @@ struct BettingAppView: View {
     }
 }
 
-struct BetRowView1: View {
+struct PlaceBetButton: View {
+    let betType: BetType
+    @Binding var currentBetType: BetType
+    let title: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                //.frame(minWidth: 35, maxWidth: 35, alignment: .center)
+                .foregroundColor(K.finalColor.titleBlue)
+                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                
+        }
+        .frame(width: 50, height: 30)
+        .animation(.spring(), value: 4)
+        .background(Color(currentBetType == betType ? .white : .clear))
+        .cornerRadius(currentBetType == betType ? 7.5 : 7.5)
+        .shadow(color: currentBetType == betType ? K.veryLightBlue : .clear, radius: 3)
+        .scaleEffect(currentBetType == betType ? 1.05 : 1.0)
+    }
+}
+
+struct gameRowView: View {
     let game: Game
     @State private var showingAway = false
     @State private var showingTotal = false
@@ -138,14 +166,14 @@ struct BetRowView1: View {
     var body: some View {
       
         HStack {
-            VStack(alignment: .leading) {
+            VStack() {
                 HStack{
                     Text(game.homeTeam) // team name
-                        .font(.headline)
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                         .foregroundColor(.white)
                     
                     Spacer()
-                    HStack(spacing: 20) {
+                    HStack(spacing: 15) {
                         PlaceBetButton(betType: .betHomeSpread, currentBetType: $betType, title: titleStringH) { // home spread
                             betType = .betHomeSpread
                             showingSheet.toggle()
@@ -158,15 +186,15 @@ struct BetRowView1: View {
                     }
                     
                 }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
-                
-                Divider()
+
+                //Divider()
                 
                 HStack {
                     Text(game.awayTeam)
                         .font(.headline)
                         .foregroundColor(.white)
                     Spacer()
-                    HStack(spacing: 20) {
+                    HStack(spacing: 15) {
                         PlaceBetButton(betType: .betAwaySpread, currentBetType: $betType, title: titleStringA) {
                             betType = .betAwaySpread
                             showingSheet.toggle()
@@ -192,28 +220,35 @@ struct BetRowView1: View {
                         }
                     }
                 Text("\(formatDate.format(date: game.commenceTime.dateValue()))")
-                    .font(.footnote)
-                    .foregroundColor(K.veryLightGray)
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                    .foregroundColor(K.finalColor.textWhite)
                     .frame(maxWidth: .infinity, alignment: .center)
                 //Spacer().frame(height: -5) // Adjust this value to move the Text view up
             }
             
             //Spacer()
-        }.padding()
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(
-                        LinearGradient(
-                            gradient: Gradient(colors: [Color.green, Color.blue]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-            )
-        .padding()
+        }.padding(.horizontal)
+            .padding(EdgeInsets(top: 7.5, leading: 0, bottom: 4, trailing: 0))
+            //.padding(.top)
+//        .background(
+//            RoundedRectangle(cornerRadius: 10)
+//                .fill(
+//                    LinearGradient(
+//                        gradient: Gradient(colors: [Color.green, Color.blue]),
+//                        startPoint: .topLeading,
+//                        endPoint: .bottomTrailing
+//                    )
+//                )
+//        )
+            .background(K.finalColor.cardBlue)
+            .cornerRadius(10)
+        .padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
+        
         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
         .sheet(isPresented: $showingSheet) {
             BetDetailsView(game: game, betType: $betType)
+                .background(K.finalColor.backgroundBlue)
+                //.shadow(color: .white, radius: 5)
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.hidden)
                 .onDisappear(){
@@ -221,7 +256,6 @@ struct BetRowView1: View {
                         betType = .None
                     }
                 }
-                
         }
     }
 }
@@ -419,6 +453,7 @@ struct BetDetailsView: View {
             //.cornerRadius(10)
             .padding()
             .padding(.horizontal)
+            //.background(K.finalColor.titleBlue)
                 
             
         Button(action: {
@@ -436,20 +471,21 @@ struct BetDetailsView: View {
             
                }, label: {
                    Text(uploadText)
-                       .font(.title)
-                       .fontWeight(.bold)
                        .foregroundColor(.white)
+                       //.font(.custom(K.customFonts.lexendDecaMedium, 20.0)) This is retarded why is this not working
                        .padding()
                        .frame(maxWidth: .infinity)
-                       .background(
-                           LinearGradient(gradient: Gradient(colors: [.blue, .purple]), startPoint: .leading, endPoint: .trailing)
-                       )
+//                       .background(
+//                           LinearGradient(gradient: Gradient(colors: [.blue, .purple]), startPoint: .leading, endPoint: .trailing)
+//                       )
+                       .background(K.finalColor.titleBlue)
                        .cornerRadius(10)
                        .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
                })
         .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType))
         .padding(.horizontal)
         .padding(.horizontal)
+        .background(K.finalColor.backgroundBlue)
         }
         .onAppear(perform: {
             if betType == .betAwaySpread {
@@ -560,27 +596,7 @@ struct BetSliderView: View {
     }
 }
 
-struct PlaceBetButton: View {
-    let betType: BetType
-    @Binding var currentBetType: BetType
-    let title: String
-    let action: () -> Void
 
-    var body: some View {
-        Button(action: action) {
-            Text(title)
-                .frame(minWidth: 35, maxWidth: 35, alignment: .center)
-                .foregroundColor(.blue)
-                .padding(10)
-                .background(Color(currentBetType == betType ? .gray : .white))
-                .cornerRadius(currentBetType == betType ? 20 : 10)
-                .shadow(color: currentBetType == betType ? .gray : .clear, radius: 5)
-                .scaleEffect(currentBetType == betType ? 0.9 : 1.0)
-        }
-        .frame(width: 50, height: 45)
-        .animation(.spring(), value: 4)
-    }
-}
 
 
 struct BettingAppView_Previews: PreviewProvider {

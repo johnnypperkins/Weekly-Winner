@@ -72,8 +72,17 @@ struct K {
         static let ok               = "Okay"
         static let cancel           = "Cancel"
     }
+    
+    struct customFonts {
+        static let juraRegular = "Jura-Regular"
+        static let poppinsLight = "Poppins-Light"
+        static let poppinsMedium = "Poppins-Medium"
+        static let poppinsRegular = "Poppins-Regular"
+        static let lexendDecaMedium = "LexendDeca-Medium"
+        static let lexendDecaSB = "LexendDeca-SemiBold"
+    }
 
-} // lmao had gpt make these
+}
 
 
 extension Color {

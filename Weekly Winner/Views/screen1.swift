@@ -67,15 +67,14 @@ struct ProfileHeaderView: View {
             }
             
             Text(authVM.currUser?.username ?? "nil")
-                .font(Font.custom("Lexend Deca", size: 16).weight(.medium))
+                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                 .foregroundColor(Color(red: 0.94, green: 0.94, blue: 0.94))
-            
                 .frame(height: 30)
 
             Spacer()
             
             Text("FreeWager")
-                .font(Font.system(size: 24).weight(.semibold))
+                .font(.custom(K.customFonts.lexendDecaSB, size: 24))
                 .foregroundColor(K.finalColor.titleBlue)
         }
     }
@@ -85,23 +84,23 @@ struct countDown: View {
     @StateObject var countdownTimer = CountdownTimer()
   var body: some View {
     ZStack() {
-      VStack() {
+        VStack(alignment: .center) {
           HStack{
-              Text("Weekly Wages Countdown")
-                  .font(Font.custom("Poppins-Light", size: 16))
+              Text("Weekly Countdown")
+                  .font(.custom(K.customFonts.poppinsRegular, size: 16))
                   .foregroundColor(.white)
-              Spacer()
+              //Spacer()
           }.frame(minWidth: 0, maxWidth: .infinity)
               .padding(.horizontal)
-            VStack(spacing: 5) {
+            VStack(spacing: 0) {
                 Text(countdownTimer.timeRemaining)
-                    .font(Font.custom("Jura-Regular", size: 28))
+                    .font(.custom(K.customFonts.juraRegular, size: 28))
                     .foregroundColor(.white)
             }
-          .frame(height: 32)
+          .frame(height: 25)
           
       }
-      .frame(height: 71)
+      .frame(height: 60)
     }
     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 104, maxHeight: 104)
     .background(K.finalColor.titleBlue)
@@ -115,7 +114,7 @@ struct yourGroups: View {
     var body: some View {
         VStack(alignment: .center, spacing: 12) {
             Text("Your Groups")
-                .font(Font.custom("Lexend Deca", size: 24).weight(.medium))
+                .font(.custom(K.customFonts.lexendDecaMedium, size: 24).weight(.medium))
                 .foregroundColor(.white)
             
             ScrollView(.horizontal, showsIndicators: false) {
@@ -127,13 +126,13 @@ struct yourGroups: View {
                             VStack(alignment: .leading, spacing: 7) {
                                 HStack(alignment: .top) {
                                     Text(groupsVM.userTickets[index].groupName)
-                                        .font(Font.custom("Poppins", size: 14).weight(.medium))
+                                        .font(.custom(K.customFonts.poppinsMedium, size: 14))
                                         .foregroundColor(.white)
                                     
                                     Spacer()
                                     
                                     Text("#\(groupsVM.userTickets[index].rank)")
-                                        .font(Font.custom("Poppins", size: 14).weight(.medium))
+                                        .font(.custom(K.customFonts.poppinsMedium, size: 14))
                                         .foregroundColor(.white)
                                     
                                 }
@@ -148,24 +147,24 @@ struct yourGroups: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 HStack() {
                                     Text("Potential")
-                                        .font(Font.custom("Poppins", size: 12))
+                                        .font(.custom(K.customFonts.poppinsRegular, size: 12))
                                         .foregroundColor(.white)
                                     
                                     Spacer()
                                     
                                     Text("\(groupsVM.userTickets[index].totalPotentialWon)")
-                                        .font(Font.custom("Poppins", size: 14))
+                                        .font(.custom(K.customFonts.poppinsRegular, size: 14))
                                         .foregroundColor(.white)
                                 }
                                 HStack() {
                                     Text("Total Won")
-                                        .font(Font.custom("Poppins", size: 12))
+                                        .font(.custom(K.customFonts.poppinsRegular, size: 12))
                                         .foregroundColor(.white)
                                     
                                     Spacer()
                                     
                                     Text("\(groupsVM.userTickets[index].totalWon)")
-                                        .font(Font.custom("Poppins", size: 14))
+                                        .font(.custom(K.customFonts.poppinsRegular, size: 14))
                                         .foregroundColor(.white)
                                 }
                             }
@@ -211,7 +210,7 @@ struct MostPopularBetsView: View {
     var body: some View {
         VStack (alignment: .center, spacing: 15) {
             Text("Most Popular Bets")
-                    .font(Font.custom("Lexend Deca", size: 24).weight(.medium))
+                .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
                     .foregroundColor(.white)
             HStack{
                 ForEach(0...bookVM.mostPopularBets.count/2, id: \.self) { index in
@@ -271,10 +270,10 @@ struct PopularBetView: View {
 //            }.frame(alignment: .top)
             VStack(spacing: 3.74) {
                 Text("\(extra)\(bookVM.mostPopularBets[index-1].betLine)")
-                    .font(Font.custom("Poppins", size: 16).weight(.medium))
+                    .font(.custom(K.customFonts.poppinsMedium, size: 16))
                     .foregroundColor(.white)
                 Text("\(bookVM.mostPopularBets[index-1].teamName)")
-                    .font(Font.custom("Poppins", size: 12))
+                    .font(.custom(K.customFonts.poppinsRegular, size: 12))
                     .foregroundColor(.white)
             }
             .frame(width: 87.57)
