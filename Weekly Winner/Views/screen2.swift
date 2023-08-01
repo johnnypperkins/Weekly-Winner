@@ -316,10 +316,11 @@ struct BetDetailsView: View {
                         //Spacer()
 
                         Text("Group")
-                            .frame(maxWidth: 200, alignment: .center)
-                            .font(.subheadline)
-                            .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
-                            .background(K.veryLightBlue)
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                            .foregroundColor(K.finalColor.textWhite)
+                            .frame(maxWidth: 200, alignment: .leading)
+                            .padding(EdgeInsets(top: 5, leading: 5, bottom: 0, trailing: 0))
+                            .background(K.finalColor.backgroundBlue)
                         
                         //Spacer()
                         
@@ -328,6 +329,8 @@ struct BetDetailsView: View {
                             Picker("Group", selection: $groupNumber) {
                                 ForEach(0..<viewModel.userTickets.count, id: \.self) { index in
                                     Text(viewModel.userTickets[index].groupName).tag(index)
+                                        .foregroundColor(K.finalColor.textWhite)
+                                        .font(.custom(K.customFonts.lexendDecaLight, size: 16))
                                 }
                             }
                             .frame(maxWidth: 200, alignment: .center)
@@ -336,6 +339,7 @@ struct BetDetailsView: View {
                                 ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: newValue) {
                                     if !ticketVM.availableBets(for: newValue).isEmpty {
                                         betNumber = ticketVM.availableBets(for: groupNumber)[0]
+                                            
                                     } else {
                                         betNumber = -99
                                     }
@@ -350,17 +354,18 @@ struct BetDetailsView: View {
                                 }
                                 checkTeamTaken()
                             }
-                            .background(K.veryLightGray)
+                            .background(K.finalColor.backgroundBlue)
                         }
                     }//.padding(.horizontal)
                         //.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
                     //.background(K.veryLightBlue)
                     VStack (spacing: 0){
                         Text("Bet")
-                            .frame(maxWidth: 200, alignment: .center)
-                            .font(.subheadline)
-                            .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
-                            .background(K.veryLightBlue)
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                            .foregroundColor(K.finalColor.textWhite)
+                            .frame(maxWidth: 200, alignment: .leading)
+                            .padding(EdgeInsets(top: 5, leading: 5, bottom: 0, trailing: 0))
+                            //.background(K.veryLightBlue)
                         if ticketVM.isBetsLoaded {
                             Picker("Bet Type", selection: $betNumber) { // starts at 1 bc "1 leg"
                                 if betNumber >= 0 {
@@ -376,9 +381,12 @@ struct BetDetailsView: View {
                                         case 8: Text("5leg").tag(8)
                                         default: EmptyView()
                                         }
-                                    }
+                                    }.foregroundColor(K.finalColor.textWhite)
+                                        .font(.custom(K.customFonts.lexendDecaLight, size: 16))
                                 } else {
                                     Text("FULL")
+                                        .foregroundColor(K.finalColor.textWhite)
+                                        .font(.custom(K.customFonts.lexendDecaLight, size: 16))
                                 }
                             }
                             .frame(maxWidth: 200, alignment: .center)
@@ -417,7 +425,7 @@ struct BetDetailsView: View {
                             .onAppear {
                                 print("\(betNumber) is original betNumber")
                             }
-                            .background(K.veryLightGray)
+                            //.background(K.veryLightGray)
 
                         }
                     }//.padding(.horizontal)
@@ -472,7 +480,7 @@ struct BetDetailsView: View {
                }, label: {
                    Text(uploadText)
                        .foregroundColor(.white)
-                       //.font(.custom(K.customFonts.lexendDecaMedium, 20.0)) This is retarded why is this not working
+                       .font(.custom(K.customFonts.lexendDecaMedium, size: 20.0))
                        .padding()
                        .frame(maxWidth: .infinity)
 //                       .background(

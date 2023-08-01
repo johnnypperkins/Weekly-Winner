@@ -80,6 +80,7 @@ struct K {
         static let poppinsRegular = "Poppins-Regular"
         static let lexendDecaMedium = "LexendDeca-Medium"
         static let lexendDecaSB = "LexendDeca-SemiBold"
+        static let lexendDecaLight = "LexendDeca-Light"
     }
 
 }
