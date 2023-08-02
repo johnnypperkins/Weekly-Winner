@@ -30,7 +30,7 @@ struct profileView: View {
     
     var body: some View {
         VStack{
-            NavigationStack{
+//            NavigationStack{
                 VStack{
                     if user.isCurrentUser == false {
                         HStack {
@@ -88,11 +88,38 @@ struct profileView: View {
                     }
                     ProfileStatsView(viewModel: viewModel, user: user)
                         .padding(.vertical)
-                }.navigationBarBackButtonHidden()
-                    .navigationBarHidden(true)
-            }
-            .navigationBarTitle("")
-                        .navigationBarHidden(true)
+                    
+                        HStack() {
+                          Text("Group Stats")
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                            .foregroundColor(.white)
+                            
+                            Spacer()
+                          ZStack() {
+                            Rectangle()
+                              .foregroundColor(.clear)
+                              .frame(width: 113, height: 40)
+                              .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                              .cornerRadius(6)
+                            HStack() {
+                              Text("Global")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
+                                .foregroundColor(.white)
+                                Spacer()
+                                
+                                Image(systemName: "chevron.down")
+                                    .frame(width: 24, height: 24)
+                            }.padding(.horizontal)
+               
+                          }
+                          .frame(width: 113, height: 40)
+                          .cornerRadius(14)
+                        }.frame(minWidth: 0, maxWidth: .infinity)
+                        .padding(.horizontal)
+                }
+//            }
+//            .navigationBarTitle("")
+//                        .navigationBarHidden(true)
        }.onAppear {
 //           viewModel.startListening()
 //           Task{
@@ -100,8 +127,8 @@ struct profileView: View {
 //           }
            
            
-       }.navigationBarBackButtonHidden()
-            .navigationBarHidden(true)
+       }.frame(minHeight: 0, maxHeight: .infinity)
+            .background(Color(red: 0.02, green: 0.05, blue: 0.26))
 //        .onDisappear {
 //           viewModel.stopListening()
 //       }
