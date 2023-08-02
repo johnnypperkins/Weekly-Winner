@@ -54,7 +54,7 @@ struct tabBarView: View {
                                                 .tag(3)
                             
                             profileView(user: authViewModel.currUser!)
-                                //.ignoresSafeArea(.all)
+                                .ignoresSafeArea(.all)
                                 .tabItem {
                                     CustomTabBarItem(index: 4, selectedTab: $selectedTab, item: TabItem(title: "Profile", icon: Image(systemName: "person.crop.circle.fill")))
                                 }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
@@ -64,17 +64,7 @@ struct tabBarView: View {
                             EmptyView()
                         }
                     }.onAppear() {
-//                        let standardAppearance = UITabBarAppearance()
-//                        standardAppearance.backgroundColor = UIColor(K.finalColor.backgroundBlue)
-//                                        let itemAppearance = UITabBarItemAppearance()
-//                                        itemAppearance.normal.iconColor = UIColor(Color.white)
-//                        itemAppearance.selected.iconColor = UIColor(K.finalColor.tabSelectedBlue)
-//                        itemAppearance.normal.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
-//                        itemAppearance.selected.titleTextAttributes = [NSAttributedString.Key.foregroundColor: K.finalUIColor.tabSelectedBlue]
-//                                        standardAppearance.inlineLayoutAppearance = itemAppearance
-//                                        standardAppearance.stackedLayoutAppearance = itemAppearance
-//                                        standardAppearance.compactInlineLayoutAppearance = itemAppearance
-//                                        UITabBar.appearance().standardAppearance = standardAppearance
+
                     }
                     //.edgesIgnoringSafeArea(.all)
 

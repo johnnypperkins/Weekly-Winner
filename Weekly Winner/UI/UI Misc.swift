@@ -132,10 +132,10 @@ extension UIColor {
 extension Color {
     static func backgroundForBetResult(_ result: BetResult) -> Color {
         switch result {
-        case .notStarted: return K.veryLightBlue
-        case .inAction: return K.lightYellow
-        case .loss: return K.lightRed
-        case .win: return K.lightGreen
+        case .notStarted: return K.finalColor.backgroundBlue
+        case .inAction: return K.finalColor.potentialOrange
+        case .loss: return K.finalColor.deleteRed
+        case .win: return K.finalColor.winningGreen
         case .forcedLoss: return K.lightRed
         // add other cases as needed
         }

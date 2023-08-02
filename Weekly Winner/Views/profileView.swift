@@ -29,7 +29,7 @@ struct profileView: View {
     }
     
     var body: some View {
-        VStack{
+        VStack {
 //            NavigationStack{
                 VStack{
                     if user.isCurrentUser == false {
@@ -84,7 +84,7 @@ struct profileView: View {
                                         .foregroundColor(.white)
                                 }).id(UUID())
                             }
-                        }
+                        }.padding(.top, 40)
                     }
                     ProfileStatsView(viewModel: viewModel, user: user)
                         .padding(.vertical)
@@ -117,6 +117,7 @@ struct profileView: View {
                         }.frame(minWidth: 0, maxWidth: .infinity)
                         .padding(.horizontal)
                 }
+            Spacer()
 //            }
 //            .navigationBarTitle("")
 //                        .navigationBarHidden(true)

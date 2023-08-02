@@ -88,7 +88,7 @@ struct BettingAppView: View {
                             }.padding(.horizontal)
                         }
                     }
-                }
+                }.padding(.top,10)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(K.finalColor.backgroundBlue)
