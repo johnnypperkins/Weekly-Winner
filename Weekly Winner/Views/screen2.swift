@@ -41,16 +41,6 @@ struct BettingAppView: View {
                         .foregroundColor(K.finalColor.textWhite)
                 }
                 
-//                HStack {
-//                    VStack(alignment: .leading) {
-//
-//
-//
-//                    }
-//                }.padding(.horizontal)
-//                //.padding(.horizontal)
-//                .background(Color.white)
-//
                 HStack{
                     Text("Team Name") // team name
                         .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
@@ -243,19 +233,17 @@ struct gameRowView: View {
             .background(K.finalColor.cardBlue)
             .cornerRadius(10)
         .padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
-        
         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
         .sheet(isPresented: $showingSheet) {
             BetDetailsView(game: game, betType: $betType)
-                .background(K.finalColor.backgroundBlue)
-                //.shadow(color: .white, radius: 5)
-                .presentationDetents([.medium])
-                .presentationDragIndicator(.hidden)
-                .onDisappear(){
-                    withAnimation{
-                        betType = .None
-                    }
+            .presentationDetents([.medium])
+            .presentationDragIndicator(.hidden)
+            .background(K.finalColor.backgroundBlue)
+            .onDisappear(){
+                withAnimation{
+                    betType = .None
                 }
+            }
         }
     }
 }
@@ -292,232 +280,255 @@ struct BetDetailsView: View {
     }
     
     var body: some View {
-        VStack {
-            HStack{
-                Button {
-                    withAnimation {
-                        dismiss()
-                        betType = .None
-                    }
-                } label: {
-                    Image(systemName: "xmark")
-                        .resizable()
-                        .frame(width: 20, height: 20)
-                        .foregroundColor(.red)
-                }.padding(.top)
-                Spacer()
-
-            }.frame(maxWidth:.infinity, alignment: .center)
-                .padding(.leading)
-            
+        ZStack {
+            K.finalColor.backgroundBlue.ignoresSafeArea(.all)
             VStack {
-                HStack (spacing: 0){
-                    VStack (spacing: 0) {
-                        //Spacer()
-
-                        Text("Group")
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                            .foregroundColor(K.finalColor.textWhite)
-                            .frame(maxWidth: 200, alignment: .leading)
-                            .padding(EdgeInsets(top: 5, leading: 5, bottom: 0, trailing: 0))
-                            .background(K.finalColor.backgroundBlue)
-                        
-                        //Spacer()
-                        
-                        if ticketVM.isBetsLoaded {
-                            //Spacer()
-                            Picker("Group", selection: $groupNumber) {
-                                ForEach(0..<viewModel.userTickets.count, id: \.self) { index in
-                                    Text(viewModel.userTickets[index].groupName).tag(index)
-                                        .foregroundColor(K.finalColor.textWhite)
-                                        .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-                                }
+                //K.finalColor.backgroundBlue
+                
+                VStack {
+                    HStack (spacing: 0){
+                        ZStack {
+                            VStack {
+                                
                             }
-                            .frame(maxWidth: 200, alignment: .center)
-                            .pickerStyle(WheelPickerStyle())
-                            .onChange(of: groupNumber) { newValue in
-                                ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: newValue) {
-                                    if !ticketVM.availableBets(for: newValue).isEmpty {
-                                        betNumber = ticketVM.availableBets(for: groupNumber)[0]
+                        }
+                        ZStack(alignment: .topLeading) {
+                            if ticketVM.isBetsLoaded {
+                                //Spacer()
+                                Picker("Group", selection: $groupNumber) {
+                                    ForEach(0..<viewModel.userTickets.count, id: \.self) { index in
+                                        Text(viewModel.userTickets[index].groupName).tag(index)
+                                            .foregroundColor(K.finalColor.textWhite)
+                                            .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                    }
+                                }
+                                .frame(maxWidth: 200, alignment: .center)
+                                .pickerStyle(WheelPickerStyle())
+                                .onChange(of: groupNumber) { newValue in
+                                    ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: newValue) {
+                                        if !ticketVM.availableBets(for: newValue).isEmpty {
+                                            betNumber = ticketVM.availableBets(for: groupNumber)[0]
                                             
+                                        } else {
+                                            betNumber = -99
+                                        }
+                                        checkTeamTaken()
+                                    }
+                                }
+                                .onAppear {
+                                    if !ticketVM.availableBets(for: groupNumber).isEmpty {
+                                        betNumber = ticketVM.availableBets(for: groupNumber)[0]
                                     } else {
                                         betNumber = -99
                                     }
                                     checkTeamTaken()
                                 }
-                            }
-                            .onAppear {
-                                if !ticketVM.availableBets(for: groupNumber).isEmpty {
-                                    betNumber = ticketVM.availableBets(for: groupNumber)[0]
-                                } else {
-                                    betNumber = -99
-                                }
-                                checkTeamTaken()
-                            }
-                            .background(K.finalColor.backgroundBlue)
-                        }
-                    }//.padding(.horizontal)
-                        //.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
-                    //.background(K.veryLightBlue)
-                    VStack (spacing: 0){
-                        Text("Bet")
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                            .foregroundColor(K.finalColor.textWhite)
-                            .frame(maxWidth: 200, alignment: .leading)
-                            .padding(EdgeInsets(top: 5, leading: 5, bottom: 0, trailing: 0))
-                            //.background(K.veryLightBlue)
-                        if ticketVM.isBetsLoaded {
-                            Picker("Bet Type", selection: $betNumber) { // starts at 1 bc "1 leg"
-                                if betNumber >= 0 {
-                                    ForEach(ticketVM.availableBets(for: groupNumber), id: \.self) { index in //
-                                        switch index {
-                                        case 1: Text("Straight #1").tag(1)
-                                        case 2: Text("Straight #2").tag(2)
-                                        case 3: Text("Straight #3").tag(3)
-                                        case 4: Text("Straight #4").tag(4)
-                                        case 5: Text("2leg #1").tag(5)
-                                        case 6: Text("2leg #2").tag(6)
-                                        case 7: Text("3leg").tag(7)
-                                        case 8: Text("5leg").tag(8)
-                                        default: EmptyView()
-                                        }
-                                    }.foregroundColor(K.finalColor.textWhite)
-                                        .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-                                } else {
-                                    Text("FULL")
+                                .background(K.finalColor.backgroundBlue)
+                                VStack {
+                                    Text("Group")
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                                         .foregroundColor(K.finalColor.textWhite)
-                                        .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                        .frame(maxWidth: 200, alignment: .leading)
+                                        .padding(EdgeInsets(top: 70, leading: 15, bottom: 2.5, trailing: 0))
+                                        .background(K.finalColor.backgroundBlue)
+                                    //                                    .overlay(
+                                    //                                            Rectangle()
+                                    //                                                .frame(height: 1)
+                                    //                                                //.padding(.top, 100)
+                                    //                                                .padding(EdgeInsets(top: 5, leading: 5, bottom: 0, trailing: 5))
+                                    //                                                .foregroundColor(.white), alignment: .bottom)
                                 }
+                                
                             }
-                            .frame(maxWidth: 200, alignment: .center)
-                            .pickerStyle(WheelPickerStyle())
-                            .onChange(of: betNumber) { newValue in
-                                print("Selection changed to: \(newValue)")
-                                checkTeamTaken()
-                                if newValue == 8 {
-                                    if betType == .betAwaySpread {
-                                        chosenSpread = game.awaySpread + 1
-                                    }
-                                    if betType == .betHomeSpread {
-                                        chosenSpread = game.homeSpread + 1
-                                    }
-                                    if betType == .over {
-                                        chosenSpread = game.totalOver - 1
-                                    }
-                                    if betType == .under {
-                                        chosenSpread = game.totalUnder + 1
-                                    }
-                                } else {
-                                    if betType == .betAwaySpread {
-                                        chosenSpread = game.awaySpread
-                                    }
-                                    if betType == .betHomeSpread {
-                                        chosenSpread = game.homeSpread
-                                    }
-                                    if betType == .over {
-                                        chosenSpread = game.totalOver
-                                    }
-                                    if betType == .under {
-                                        chosenSpread = game.totalUnder
+                            
+                            
+                        }.background(Color.white)
+                        ZStack(alignment: .topLeading) {
+                            //.background(K.veryLightBlue)
+                            if ticketVM.isBetsLoaded {
+                                Picker("Bet Type", selection: $betNumber) { // starts at 1 bc "1 leg"
+                                    if betNumber >= 0 {
+                                        ForEach(ticketVM.availableBets(for: groupNumber), id: \.self) { index in //
+                                            switch index {
+                                            case 1: Text("Straight #1").tag(1)
+                                            case 2: Text("Straight #2").tag(2)
+                                            case 3: Text("Straight #3").tag(3)
+                                            case 4: Text("Straight #4").tag(4)
+                                            case 5: Text("2leg #1").tag(5)
+                                            case 6: Text("2leg #2").tag(6)
+                                            case 7: Text("3leg").tag(7)
+                                            case 8: Text("5leg").tag(8)
+                                            default: EmptyView()
+                                            }
+                                        }.foregroundColor(K.finalColor.textWhite)
+                                            .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                    } else {
+                                        Text("FULL")
+                                            .foregroundColor(K.finalColor.textWhite)
+                                            .font(.custom(K.customFonts.lexendDecaLight, size: 16))
                                     }
                                 }
+                                .frame(maxWidth: 200, alignment: .center)
+                                .pickerStyle(WheelPickerStyle())
+                                .onChange(of: betNumber) { newValue in
+                                    print("Selection changed to: \(newValue)")
+                                    checkTeamTaken()
+                                    if newValue == 8 {
+                                        if betType == .betAwaySpread {
+                                            chosenSpread = game.awaySpread + 1
+                                        }
+                                        if betType == .betHomeSpread {
+                                            chosenSpread = game.homeSpread + 1
+                                        }
+                                        if betType == .over {
+                                            chosenSpread = game.totalOver - 1
+                                        }
+                                        if betType == .under {
+                                            chosenSpread = game.totalUnder + 1
+                                        }
+                                    } else {
+                                        if betType == .betAwaySpread {
+                                            chosenSpread = game.awaySpread
+                                        }
+                                        if betType == .betHomeSpread {
+                                            chosenSpread = game.homeSpread
+                                        }
+                                        if betType == .over {
+                                            chosenSpread = game.totalOver
+                                        }
+                                        if betType == .under {
+                                            chosenSpread = game.totalUnder
+                                        }
+                                    }
+                                }
+                                .onAppear {
+                                    print("\(betNumber) is original betNumber")
+                                }
+                                
+                                VStack {
+                                    Text("Bet")
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                        .foregroundColor(K.finalColor.textWhite)
+                                        .frame(maxWidth: 200, alignment: .leading)
+                                        .padding(EdgeInsets(top: 70, leading: 15, bottom: 0, trailing: 0))
+                                        .background(K.finalColor.backgroundBlue)
+                                }
+                                ZStack {
+                                    HStack (){
+                                        Spacer()
+                                        Button {
+                                            withAnimation {
+                                                dismiss()
+                                                betType = .None
+                                            }
+                                        } label: {
+                                            Image(systemName: "xmark")
+                                                .resizable()
+                                                .frame(width: 15, height: 15)
+                                                .foregroundColor(.white)
+                                        }.padding([.top, .trailing])
+                                    }
+                                    
+                                    
+                                }
+                                //                                HStack {
+                                //                                    Spacer()
+                                //                                    Text("Bet Details")
+                                //                                        .foregroundColor(K.finalColor.textWhite)
+                                //                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                //                                    Spacer()
+                                //                                }
                             }
-                            .onAppear {
-                                print("\(betNumber) is original betNumber")
-                            }
-                            //.background(K.veryLightGray)
-
                         }
-                    }//.padding(.horizontal)
-                    //.background(K.veryLightGray)
-                }.cornerRadius(10)
-                    // .padding(.horizontal)
+                        
+                    }.cornerRadius(10)
+                    
+                    if betType == .betAwaySpread {
+                        BetSliderView(teamName: game.awayTeam, originalSpread: game.awaySpread, betNumber: $betNumber, betType: .betAwaySpread, chosenSpread: $chosenSpread)
+                    }
+                    if betType == .betHomeSpread {
+                        BetSliderView(teamName: game.homeTeam, originalSpread: game.homeSpread, betNumber: $betNumber, betType: .betHomeSpread, chosenSpread: $chosenSpread)
+                    }
+                    if betType == .over {
+                        BetSliderView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalOver, betNumber: $betNumber, betType: .over, chosenSpread: $chosenSpread)
+                    }
+                    if betType == .under {
+                        BetSliderView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalUnder, betNumber: $betNumber, betType: .under, chosenSpread: $chosenSpread)
+                    }
+                }
+                .onAppear {
+                    ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber) {
+                        if !ticketVM.availableBets(for: groupNumber).isEmpty {
+                            betNumber = ticketVM.availableBets(for: groupNumber)[0]
+                        } else {
+                            betNumber = -99
+                        }
+                        checkTeamTaken()
+                    }
+                    print("Group Number: \(groupNumber), Bet Number: \(betNumber)")
+                } // whole thing
+                //.background(K.veryLightGray)
+                //.cornerRadius(10)
+                //.padding()
+                .padding(.horizontal)
+                .background(K.finalColor.backgroundBlue)
                 
+                
+                Button(action: {
+                    print("groupNumber: \(groupNumber), betNumber: \(betNumber)")
+                    viewModel.uploadBet(groupNumber: groupNumber, groupID: groupsVM.userTickets[groupNumber].groupID, betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread)), betType: betType, gameID: game.idd ?? "null") {_ in
+                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber, completion: {
+                            let groupServe = groupService()
+                            groupServe.setPotentialToWin(potential: Int(ticketVM.totalPotentialWon), groupNumber: groupNumber, completion: {_ in })
+                        })
+                    }
+                    withAnimation {
+                        dismiss()
+                        betType = .None
+                    }
+                    
+                }, label: {
+                    Text(uploadText)
+                        .foregroundColor(.white)
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 20.0))
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                    //                       .background(
+                    //                           LinearGradient(gradient: Gradient(colors: [.blue, .purple]), startPoint: .leading, endPoint: .trailing)
+                    //                       )
+                        .background(K.finalColor.titleBlue)
+                        .cornerRadius(10)
+                        .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
+                })
+                .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType))
+                .padding(.horizontal)
+                //.padding(.horizontal)
+                .background(K.finalColor.backgroundBlue)
+            }
+            .onAppear(perform: {
                 if betType == .betAwaySpread {
-                    BetSliderView(teamName: game.awayTeam, originalSpread: game.awaySpread, betNumber: $betNumber, betType: .betAwaySpread, chosenSpread: $chosenSpread)
+                    chosenSpread = game.awaySpread
+                    originalSpread = game.awaySpread
+                    whichTeam = game.awayTeam
                 }
                 if betType == .betHomeSpread {
-                    BetSliderView(teamName: game.homeTeam, originalSpread: game.homeSpread, betNumber: $betNumber, betType: .betHomeSpread, chosenSpread: $chosenSpread)
+                    chosenSpread = game.homeSpread
+                    originalSpread = game.homeSpread
+                    whichTeam = game.homeTeam
                 }
                 if betType == .over {
-                    BetSliderView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalOver, betNumber: $betNumber, betType: .over, chosenSpread: $chosenSpread)
+                    chosenSpread = game.totalOver
+                    originalSpread = game.totalOver
+                    whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
                 }
                 if betType == .under {
-                    BetSliderView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalUnder, betNumber: $betNumber, betType: .under, chosenSpread: $chosenSpread)
+                    chosenSpread = game.totalUnder
+                    originalSpread = game.totalUnder
+                    whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
                 }
-            }
-            .onAppear {
-                ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber) {
-                    if !ticketVM.availableBets(for: groupNumber).isEmpty {
-                        betNumber = ticketVM.availableBets(for: groupNumber)[0]
-                    } else {
-                        betNumber = -99
-                    }
-                    checkTeamTaken()
-                }
-                print("Group Number: \(groupNumber), Bet Number: \(betNumber)")
-            } // whole thing
-            //.background(K.veryLightGray)
-            //.cornerRadius(10)
-            .padding()
-            .padding(.horizontal)
-            //.background(K.finalColor.titleBlue)
-                
-            
-        Button(action: {
-            print("groupNumber: \(groupNumber), betNumber: \(betNumber)")
-            viewModel.uploadBet(groupNumber: groupNumber, groupID: groupsVM.userTickets[groupNumber].groupID, betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread)), betType: betType, gameID: game.idd ?? "null") {_ in
-                ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber, completion: {
-                    let groupServe = groupService()
-                    groupServe.setPotentialToWin(potential: Int(ticketVM.totalPotentialWon), groupNumber: groupNumber, completion: {_ in })
-                })
-            }
-                withAnimation {
-                    dismiss()
-                    betType = .None
-                }
-            
-               }, label: {
-                   Text(uploadText)
-                       .foregroundColor(.white)
-                       .font(.custom(K.customFonts.lexendDecaMedium, size: 20.0))
-                       .padding()
-                       .frame(maxWidth: .infinity)
-//                       .background(
-//                           LinearGradient(gradient: Gradient(colors: [.blue, .purple]), startPoint: .leading, endPoint: .trailing)
-//                       )
-                       .background(K.finalColor.titleBlue)
-                       .cornerRadius(10)
-                       .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
-               })
-        .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType))
-        .padding(.horizontal)
-        .padding(.horizontal)
-        .background(K.finalColor.backgroundBlue)
+                groupsVM.fetchUserTickets() {}
+            })
         }
-        .onAppear(perform: {
-            if betType == .betAwaySpread {
-                chosenSpread = game.awaySpread
-                originalSpread = game.awaySpread
-                whichTeam = game.awayTeam
-            }
-            if betType == .betHomeSpread {
-                chosenSpread = game.homeSpread
-                originalSpread = game.homeSpread
-                whichTeam = game.homeTeam
-            }
-            if betType == .over {
-                chosenSpread = game.totalOver
-                originalSpread = game.totalOver
-                whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
-            }
-            if betType == .under {
-                chosenSpread = game.totalUnder
-                originalSpread = game.totalUnder
-                whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
-            }
-            groupsVM.fetchUserTickets() {}
-        })
     }
 }
 
@@ -559,47 +570,47 @@ struct BetSliderView: View {
         VStack (spacing: 0){
             HStack (spacing: 10) {
                 Text("Team")
-                    .font(.subheadline)
-                    .foregroundColor(.black)
+                    .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                    .foregroundColor(.white)
                     .frame(width: 100, alignment: .leading)
                 Spacer()
                 Text(betType == .over || betType == .under ? "Total" : "Spread")
-                    .font(.subheadline)
-                    .foregroundColor(.black)
-                    .frame(width: 50, alignment: .leading)
+                    .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                    .foregroundColor(.white)
+                    .frame(width: 55, alignment: .leading)
                 Text("Odds")
-                    .font(.subheadline)
-                    .foregroundColor(.black)
+                    .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                    .foregroundColor(.white)
                     .frame(width: 65, alignment: .trailing)
             }.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
                 .padding(.horizontal)
-                .background(K.veryLightBlue)
+                .background(K.finalColor.backgroundBlue)
             HStack (spacing: 10){
                 Text("\(teamName)")
-                    .font(.title2)
-                    .foregroundColor(.blue)
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                    .foregroundColor(.white)
                     .frame(width: 100, alignment: .leading)
                     .minimumScaleFactor(0.5)
                 Spacer()
                 Text("\(internalExtra)\(String(format: "%.0f", chosenSpread))")
-                    .font(.title2)
-                    .foregroundColor(.blue)
-                    .frame(width: 50, alignment: .leading)
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                    .foregroundColor(.white)
+                    .frame(width: 55, alignment: .leading)
                 Text("\(percentageToML(percentage: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread))))")
-                    .font(.title2)
-                    .foregroundColor(.green)
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                    .foregroundColor(.white)
                     .frame(width: 65, alignment: .trailing)
             }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
                 .padding(.horizontal)
-                .background(K.veryLightGray)
+                .background(K.finalColor.backgroundBlue)
             
             
             HStack {
                 Slider(value: $chosenSpread, in: betType == .over ? Double(originalSpread - 10)...Double(originalSpread + parlayNumToSpread(parlayNum: betNumber)) : Double(originalSpread - parlayNumToSpread(parlayNum: betNumber))...Double(originalSpread + 10), step: 1)
-                    .accentColor(Color(.green))
+                    .accentColor(K.finalColor.titleBlue)
             }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
                 .padding(.horizontal)
-                .background(K.veryLightGray)
+                //.background(K.finalColor.cardBlue)
         }.cornerRadius(10)
     }
 }
