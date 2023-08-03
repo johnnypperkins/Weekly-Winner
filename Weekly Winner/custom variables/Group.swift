@@ -21,3 +21,12 @@ struct Group: Identifiable, Codable {
         [self.groupName.generateStringSequence()].flatMap { $0 }
     }
 }
+
+struct GroupStats {
+    var groupID: String
+    var average: Double
+    var median: Double
+    var max: Int
+    var min: Int
+    var avgRank: Int
+}

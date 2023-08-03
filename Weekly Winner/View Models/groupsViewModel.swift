@@ -56,9 +56,9 @@ class groupsViewModel: ObservableObject {
         // Assuming you have already initialized Firebase with appropriate configurations
         
         let db = Firestore.firestore()
-        let groupDocRef = db.collection("users").document(ticket.uid).collection("groups").document(ticket.id!)
+        let ticketDocRef = db.collection("users").document(ticket.uid).collection("tickets").document("week").collection("currentWeekTickets").document(ticket.id!)
         
-        groupDocRef.updateData(["isEnabled": isEnabled]) { error in
+        ticketDocRef.updateData(["isEnabled": isEnabled]) { error in
             if let error = error {
                 completion(error)
             } else {
@@ -139,9 +139,9 @@ class groupsViewModel: ObservableObject {
         }
         
         let db = Firestore.firestore()
-        let groupsCollection = db.collection("users").document(currentUser.uid).collection("groups")
+        let ticketsCollection = db.collection("users").document(currentUser.uid).collection("tickets").document("week").collection("currentWeekTickets")
         
-        groupsCollection.order(by: "groupNumber").getDocuments { [weak self] snapshot, error in
+        ticketsCollection.order(by: "groupNumber").getDocuments { [weak self] snapshot, error in
             guard let self = self else { return }
             
             if let error = error {

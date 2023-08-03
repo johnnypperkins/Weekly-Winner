@@ -37,7 +37,7 @@ class BetService {
         }
         
         // Upload the data to Firestore
-        ref = db.collection("users").document(userID).collection("bets").addDocument(data: data) { error in
+        ref = db.collection("users").document(userID).collection("bets").document("week").collection("currentWeekBets").addDocument(data: data) { error in
             if let error = error {
                 // Handle the error
                 completion(error)
@@ -74,6 +74,15 @@ class BetService {
 
             completion(popularBets, nil)
         }
+    }
+    
+    func fetchGroupStatistics(groupID: String, completion: @escaping ([GroupStats]?, Error?) -> Void) {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            completion(AuthError.userNotFound)
+            return
+        }
+        
+        
     }
     
 }

@@ -19,19 +19,22 @@ class groupService {
     }
     
     func getRankedTickets(groupID: String, completion: @escaping ([Ticket]?, Error?) -> Void) {
-        let query = db.collectionGroup("groups")
+        let query = db.collectionGroup("currentWeekTickets")
             .whereField("groupID", isEqualTo: groupID)
             .order(by: "isEnabled", descending: true)
             .order(by: "totalWon", descending: true)
 
+        //print("here at ranked docs")
         query.getDocuments { (querySnapshot, error) in
             if let error = error {
                 completion(nil, error)
+                print("ERRRROR is \(error)")
                 return
             }
 
             guard let documents = querySnapshot?.documents else {
                 completion([], nil) // Empty array if no documents found
+                print("ERROR 222")
                 return
             }
             
@@ -108,6 +111,7 @@ class groupService {
                     groupAdmin: data["groupAdmin"] as! String
                 )
                 tickets.append(ticket)
+                print("\(tickets) are tickets")
             }
             
             completion(tickets, nil)
@@ -165,7 +169,7 @@ class groupService {
     
     func ticketCount(userID: String, completion: @escaping (Int?, Error?) -> Void) {
         let db = Firestore.firestore()
-        let userGroupsCollection = db.collection("users").document(userID).collection("groups")
+        let userGroupsCollection = db.collection("users").document(userID).collection("tickets").document("week").collection("currentWeekTickets")
         
         userGroupsCollection.getDocuments { snapshot, error in
             if let error = error {
@@ -201,10 +205,10 @@ class groupService {
                             print("Error getting documents: \(error)")
                         } else {
                             let rank = (snapshot?.documents.count)! + 1 ?? -99
-                            let userGroupsCollection = db.collection("users").document(userID).collection("groups")
+                            let userTicketsCollection = db.collection("users").document(userID).collection("tickets").document("week").collection("currentWeekTickets")
                             let ticket = Ticket(username: UserData.shared.username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: group.groupName, rank: String(rank), isEnabled: enabled, groupAdmin: group.groupAdmin)
                             do {
-                                let _ = try userGroupsCollection.addDocument(from: ticket) { error in
+                                let _ = try userTicketsCollection.addDocument(from: ticket) { error in
                                     if let error = error {
                                         print("Error uploading group: \(error)")
                                     } else {
@@ -233,7 +237,7 @@ class groupService {
         
         // Enter the group
         groupLeave.enter()
-        db.collection("users").document(userID).collection("groups").whereField("groupID", isEqualTo: ticket.groupID).getDocuments { (snapshot, error) in
+        db.collection("users").document(userID).collection("tickets").document("week").collection("currentWeekTickets").whereField("groupID", isEqualTo: ticket.groupID).getDocuments { (snapshot, error) in
             if let error = error {
                 completion(error)
             } else {
@@ -247,7 +251,7 @@ class groupService {
 
         // Enter the group
         groupLeave.enter()
-        db.collection("users").document(userID).collection("bets").whereField("groupID", isEqualTo: ticket.groupID).getDocuments() { (snapshot, error) in
+        db.collection("users").document(userID).collection("bets").document("week").collection("currentWeekBets").whereField("groupID", isEqualTo: ticket.groupID).getDocuments() { (snapshot, error) in
             if let error = error {
                 completion(error)
             } else {
@@ -283,7 +287,7 @@ class groupService {
         Task{
             let username = await self.getUsername() // Access the username asynchronously
             
-            db.collection("users").document(userID).collection("groups").getDocuments { querySnapshot, error in
+            db.collection("users").document(userID).collection("tickets").document("week").collection("currentWeekTickets").getDocuments { querySnapshot, error in
                 guard let documents = querySnapshot?.documents else {
                     completion(nil, error)
                     return
@@ -323,7 +327,7 @@ class groupService {
         let db = Firestore.firestore()
         
         // Query the document where the 'groupNumber' field is equal to the given groupNumber
-        db.collection("users").document(userID).collection("groups")
+        db.collection("users").document(userID).collection("tickets").document("week").collection("currentWeekTickets")
             .whereField("groupNumber", isEqualTo: groupNumber)
             .getDocuments { (querySnapshot, err) in
                 if let err = err {

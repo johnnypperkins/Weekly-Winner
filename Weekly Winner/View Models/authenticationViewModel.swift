@@ -137,22 +137,22 @@ class authenticationViewModel: ObservableObject {
     func joinGlobal(completion: @escaping (Error?) -> Void) {
         Task {
             let username = username // Access the username asynchronously
-            var enabled = false
+            var enabled = true
             let db = Firestore.firestore()
-            db.collection("groups").document("global").collection("members").getDocuments { (snapshot, error) in
+            db.collection("groups").document("Global").collection("members").getDocuments { (snapshot, error) in
                 if let error = error {
                     print("Error getting documents: \(error)")
                 } else {
                     let rank = (snapshot?.documents.count)! + 1 ?? -99
-                    let userGroupsCollection = db.collection("users").document(Auth.auth().currentUser!.uid).collection("groups")
-                    let ticket = Ticket(username: username, uid: Auth.auth().currentUser!.uid, groupID: "global", groupNumber: 0, totalWon: 0, totalPotentialWon: 0, groupName: "global", rank: String(rank), isEnabled: enabled, groupAdmin: "GOD")
+                    let userTicketsCollection = db.collection("users").document(Auth.auth().currentUser!.uid).collection("tickets").document("week").collection("currentWeekTickets")
+                    let ticket = Ticket(username: username, uid: Auth.auth().currentUser!.uid, groupID: "Global", groupNumber: 0, totalWon: 0, totalPotentialWon: 0, groupName: "Global", rank: String(rank), isEnabled: enabled, groupAdmin: "GOD")
                     do {
-                        let _ = try userGroupsCollection.addDocument(from: ticket) { error in
+                        let _ = try userTicketsCollection.addDocument(from: ticket) { error in
                             if let error = error {
                                 print("Error uploading group: \(error)")
                             } else {
                                 print("Joined group successfully!")
-                                self.db.collection("groups").document("global").collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": Auth.auth().currentUser!.uid])
+                                self.db.collection("groups").document("Global").collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": Auth.auth().currentUser!.uid])
                             }
                         }
                     } catch {

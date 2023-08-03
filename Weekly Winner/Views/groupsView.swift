@@ -116,7 +116,7 @@ struct groupsView: View {
                                 Text(viewModel.userTickets[selectedGroup-1].groupName)
                                     .font(.title2)
                             }
-                            if(viewModel.userTickets[selectedGroup-1].groupID != "global") {
+                            if(viewModel.userTickets[selectedGroup-1].groupID != "Global") {
                                 Button(action: {
                                     selectedGroup -= 1
                                     viewModel.leaveGroup(ticket: viewModel.userTickets[selectedGroup]) {
@@ -150,7 +150,6 @@ struct groupsView: View {
                                 VStack(alignment: .leading, spacing: 0) {
                                     ForEach(0..<viewModel.rankedGroupTickets.count, id: \.self) { index in
                                         let ticket = viewModel.rankedGroupTickets[index]
-                                        
                                         if (ticket.uid != Auth.auth().currentUser?.uid) {
                                             NavigationLink(destination: ticketView(username: ticket.username, uid: ticket.uid, groupID: ticket.groupID), label: {
                                                 BetCard(viewModel: viewModel, ticket: ticket, rank: (ticket.rank), ownCard: false)
@@ -182,6 +181,8 @@ struct groupsView: View {
                                     print("refresh ranked")
                                     viewModel.fetchRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
                                 }
+                            }.onAppear() {
+                                print("\(viewModel.rankedGroupTickets.count) is count")
                             }
                             
                             // .clipShape(RoundedRectangle(cornerRadius: 10)) // Apply corner radius to the ScrollView

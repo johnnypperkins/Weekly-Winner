@@ -49,7 +49,7 @@ class ticketViewModel: ObservableObject {
     func fetchFriendTicket(uid: String, with groupID: String, completion: @escaping (Result<Ticket, Error>) -> Void) { // Ticket99
         let db = Firestore.firestore()
         
-        db.collection("users").document(uid).collection("groups")
+        db.collection("users").document(uid).collection("tickets").document("week").collection("currentWeekTickets")
             .whereField("groupID", isEqualTo: groupID)
             .getDocuments { (querySnapshot, err) in
                 if let err = err {
@@ -86,7 +86,7 @@ class ticketViewModel: ObservableObject {
     }
     
     func fetchBets(uid: String, groupNumber: Int, completion: @escaping () -> Void) {
-        listener = db.collection("users").document(uid).collection("bets")
+        listener = db.collection("users").document(uid).collection("bets").document("week").collection("currentWeekBets")
         .whereField("groupNumber", isEqualTo: groupNumber)
         .addSnapshotListener { (querySnapshot, error) in
             guard let documents = querySnapshot?.documents else {
@@ -158,7 +158,7 @@ class ticketViewModel: ObservableObject {
     func deleteBet(bet: Bet) {
         guard let userId = Auth.auth().currentUser?.uid else { return }
         
-        db.collection("users").document(userId).collection("bets").document(bet.id ?? "").delete { error in
+        db.collection("users").document(userId).collection("bets").document("week").collection("currentWeekBets").document(bet.id ?? "").delete { error in
             if let error = error {
                 print("Error removing document: \(error)")
             } else {
