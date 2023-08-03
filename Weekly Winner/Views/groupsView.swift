@@ -8,6 +8,7 @@
 import SwiftUI
 import FirebaseAuth
 import Firebase
+import Kingfisher
 
 struct groupsView: View {
     @State private var isJoinSheetPresented = false
@@ -227,9 +228,11 @@ struct groupsView: View {
 
 struct BetCard: View {
     @ObservedObject var viewModel: groupsViewModel
+//    @ObservedObject var profileViewModel: profileViewModel
     let ticket: Ticket
     let rank: String
     let ownCard: Bool
+    @State private var profileImageURL = ""
     var adminCard: Bool {
         if ticket.groupAdmin == ticket.uid {
             return true
@@ -255,12 +258,18 @@ struct BetCard: View {
                         }
                     }).foregroundColor(!ticket.isEnabled ? Color.red : K.darkGreen)
                 }
-
+                KFImage(URL(string: profileImageURL))
+                    .resizable()
+                    .clipShape(Circle())
+                    .aspectRatio(contentMode: .fill)
+                    //.foregroundColor(.clear)
+                    .frame(width: 30, height: 30)
                 Text("\(rank). \(ticket.username) \(adminCard ? "(A)" : "")")
                     .font(.subheadline)
                     .foregroundColor(K.darkBlue)
-                    .frame(width: 150, alignment: .leading)
+                    .frame(width: 135, alignment: .leading)
                     .lineLimit(1)
+                
                 Spacer()
                 Text("\(ticket.totalPotentialWon)")
                     .foregroundColor(K.darkGreen)
@@ -288,6 +297,16 @@ struct BetCard: View {
         }
         .onAppear {
             isEnabled = ticket.isEnabled
+            print(ticket.uid)
+            viewModel.fetchUserProfilePic(uid: ticket.uid) { (profileImageUrl, error) in
+                if let error = error {
+                    print("Error fetching profile image URL: \(error)")
+                   
+                } else if let profileImageUrl = profileImageUrl {
+                    print("Profile image URL: \(profileImageUrl)")
+                    self.profileImageURL = profileImageUrl
+                }
+            }
         }
     }
 }

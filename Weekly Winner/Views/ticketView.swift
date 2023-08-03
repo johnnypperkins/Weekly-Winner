@@ -27,10 +27,8 @@ struct ticketView: View {
         ZStack {
             K.finalColor.backgroundBlue.ignoresSafeArea(.all)
             VStack {
-                Text("Tickets").font(.custom(K.customFonts.lexendDecaMedium, size: 20)).foregroundColor(K.finalColor.textWhite).padding(.bottom)
-                
                 if viewModel.isBetsLoaded && uid == Auth.auth().currentUser?.uid {
-                    //ScrollView(.horizontal, showsIndicators: false) {
+                    Text("Tickets").font(.custom(K.customFonts.lexendDecaMedium, size: 20)).foregroundColor(K.finalColor.textWhite).padding(.bottom)
                     if (viewModel.userTickets.count <= 3) {
                         HStack(alignment: .center, spacing: 10) {
                             Spacer()
@@ -73,17 +71,16 @@ struct ticketView: View {
                     
                 } else {
                     if uid != Auth.auth().currentUser?.uid {
-                        Text(viewModel.userTickets[0].groupName)
+                        Text(viewModel.userTickets[0].groupName).font(.custom(K.customFonts.lexendDecaMedium, size: 20)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
+                        Text(username).font(.custom(K.customFonts.lexendDecaMedium, size: 15)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
+                            
                     }
                     else{
                         Text("loading")
                     }
                     
                 }
-                if uid != Auth.auth().currentUser?.uid {
-                    Text(username)
-                        .font(.title)
-                }
+
                 if (viewModel.isBetsLoaded) {
                     if (viewModel.userTickets[selectedGroup].isEnabled) {
                         HStack (alignment: .center, spacing: 23){
@@ -129,14 +126,15 @@ struct ticketView: View {
                             }
                             .padding()
                         }
+
                     } else {
                         Text("Ticket Disabled")
                     }
                 } else {
                     Text("FreeWager")
                 }
-                
-            }.padding(.top, 75)
+                Spacer()
+            }.padding(.top, uid == Auth.auth().currentUser?.uid ? 75 : 0)
             //.background(K.finalColor.backgroundBlue)
                 .onAppear {
                     selectedGroup = 0

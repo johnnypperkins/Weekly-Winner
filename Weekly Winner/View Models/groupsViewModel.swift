@@ -52,6 +52,21 @@ class groupsViewModel: ObservableObject {
         }
     }
     
+    func fetchUserProfilePic(uid: String, completion: @escaping (String?, Error?) -> Void) {
+        let db = Firestore.firestore()
+        let userRef = db.collection("users").document(uid)
+
+        userRef.getDocument { (documentSnapshot, error) in
+            if let error = error {
+                print("Error checking if blocked: \(error.localizedDescription)")
+                completion(nil, error)
+            } else {
+                let profileImageUrl = documentSnapshot?.data()?["profileImageUrl"] as? String
+                completion(profileImageUrl, nil)
+            }
+        }
+    }
+    
     func updateIsEnabled(ticket: Ticket, isEnabled: Bool, completion: @escaping (Error?) -> Void) {
         // Assuming you have already initialized Firebase with appropriate configurations
         

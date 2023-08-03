@@ -89,7 +89,7 @@ struct profileView: View {
                                         .foregroundColor(.white)
                                 }).id(UUID())
                             }
-                        }.padding(.top, 40)
+                        }.padding(.top, 50) // has to be at least 50 so doesnt interfere with safe area
                     }
                     ProfileStatsView(viewModel: viewModel, user: user)
                         .padding(.vertical)

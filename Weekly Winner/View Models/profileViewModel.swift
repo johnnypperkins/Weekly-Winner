@@ -39,6 +39,9 @@ class profileViewModel: ObservableObject {
             }
         }
     
+
+
+    
     func checkIfBlocked() async {
         guard let currentUserUID = Auth.auth().currentUser?.uid,
               let blockedUserID = user.id else {
