@@ -76,14 +76,14 @@ class BetService {
         }
     }
     
-    func fetchGroupStatistics(groupID: String, completion: @escaping ([GroupStats]?, Error?) -> Void) {
-        guard let userID = Auth.auth().currentUser?.uid else {
-            completion(AuthError.userNotFound)
-            return
-        }
-        
-        
-    }
+//    func fetchGroupStatistics(groupID: String, completion: @escaping ([GroupStats]?, Error?) -> Void) {
+//        guard let userID = Auth.auth().currentUser?.uid else {
+//            completion(group, AuthError.userNotFound)
+//            return
+//        }
+//        
+//        
+//    }
     
 }
 

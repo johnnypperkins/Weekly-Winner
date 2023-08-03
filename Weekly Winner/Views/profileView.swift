@@ -12,12 +12,17 @@ struct profileView: View {
     
     @ObservedObject var viewModel: profileViewModel
     @ObservedObject var viewModel2 = authenticationViewModel()
+    @StateObject var groupsVM = groupsViewModel()
     @State var scrollViewOffset: CGFloat = 0
     //@State private var isShowingEditProfile: Bool = false
     @State private var isProfileEditing = false
     @Environment(\.dismiss) private var dismiss
-     private var user: User
-
+    private var user: User
+    
+    @State private var showDropdown = false
+    @State private var selectedGroup = "global"
+    var onOptionSelected: ((_ option: Ticket) -> Void)?
+    
     
     init(user: User) {
         viewModel = profileViewModel(user: user)
@@ -30,7 +35,7 @@ struct profileView: View {
     
     var body: some View {
         VStack {
-//            NavigationStack{
+            NavigationStack{
                 VStack{
                     if user.isCurrentUser == false {
                         HStack {
@@ -61,8 +66,8 @@ struct profileView: View {
                                         .foregroundColor(K.darkBlue)
                                     Image(systemName: "flag")
                                         .foregroundColor(K.darkBlue)
-                            }
-
+                                }
+                                
                                 
                             }
                         }.padding()
@@ -72,10 +77,10 @@ struct profileView: View {
                             Text("My Profile")
                                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
                                 .foregroundColor(.white)
-
+                            
                             HStack {
                                 Spacer()
-
+                                
                                 NavigationLink(destination: settingsView(), label: {
                                     Image(systemName: "gearshape")
                                         .resizable()
@@ -88,54 +93,234 @@ struct profileView: View {
                     }
                     ProfileStatsView(viewModel: viewModel, user: user)
                         .padding(.vertical)
-                    
-                        HStack() {
-                          Text("Group Stats")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                            .foregroundColor(.white)
+                        .padding(.horizontal,20.5)
+                    ZStack {
+                        VStack {
+                            HStack {
+                                Text("Group Stats")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                    .foregroundColor(.white)
+                                    
+                                Spacer()
+
+                                Button(action: {
+                                    withAnimation {
+                                        showDropdown.toggle()
+                                    }
+                                }) {
+                                    ZStack() {
+                                        Rectangle()
+                                            .foregroundColor(.clear)
+                                            .frame(width: 113, height: 40)
+                                            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                            .cornerRadius(6)
+                                        
+                                        HStack() {
+                                            Text(selectedGroup)
+                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14)) // change this to your custom font
+                                                .foregroundColor(.white)
+                                            Spacer()
+                                            if showDropdown{
+                                                withAnimation(){
+                                                    Image(systemName: "chevron.down")
+                                                        .frame(width: 24, height: 24)
+                                                }
+                                            }
+                                            else {
+                                                withAnimation(){
+                                                    Image(systemName: "chevron.up")
+                                                        .frame(width: 24, height: 24)
+                                                }
+                                            }
+                                        }.padding(.horizontal)
+                                    }
+                                    .frame(width: 113, height: 40)
+                                    .cornerRadius(14)
+                                }
+                            }
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .padding(.horizontal)
                             
-                            Spacer()
-                          ZStack() {
-                            Rectangle()
-                              .foregroundColor(.clear)
-                              .frame(width: 113, height: 40)
-                              .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                              .cornerRadius(6)
-                            HStack() {
-                              Text("Global")
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
-                                .foregroundColor(.white)
+                            groupStats()
+                                .padding(.all,16)
+                        }
+                        
+                        // Dropdown outside of VStack
+                        if showDropdown {
+                            HStack{
                                 Spacer()
                                 
-                                Image(systemName: "chevron.down")
-                                    .frame(width: 24, height: 24)
-                            }.padding(.horizontal)
-               
-                          }
-                          .frame(width: 113, height: 40)
-                          .cornerRadius(14)
-                        }.frame(minWidth: 0, maxWidth: .infinity)
-                        .padding(.horizontal)
+                                Dropdown(options: groupsVM.userTickets, onOptionSelected: { option in
+                                    withAnimation(){
+                                        showDropdown = false
+                                        selectedGroup = option.groupName
+                                    }
+                                    self.onOptionSelected?(option)
+                                })
+                                .frame(maxWidth: 113, alignment: .trailing)
+                                .padding(.top,30 /*desired dropdown menu position from the top*/)
+                                .padding(.trailing,16 /*desired dropdown menu position from the trailing edge*/)
+                            }.frame(minWidth: 0, maxWidth: .infinity)
+                        }
+                    }
+
                 }
-            Spacer()
-//            }
-//            .navigationBarTitle("")
-//                        .navigationBarHidden(true)
-       }.onAppear {
-//           viewModel.startListening()
-//           Task{
-//               await viewModel.getCountOfStringsInArrayField(user1: user)
-//           }
-           
-           
-       }.frame(minHeight: 0, maxHeight: .infinity)
+                Spacer()
+            }
+            //            .navigationBarTitle("")
+            //                        .navigationBarHidden(true)
+        }.onAppear {
+            //           viewModel.startListening()
+            //           Task{
+            //               await viewModel.getCountOfStringsInArrayField(user1: user)
+            //           }
+            
+            
+        }.frame(minHeight: 0, maxHeight: .infinity)
             .background(Color(red: 0.02, green: 0.05, blue: 0.26))
-//        .onDisappear {
-//           viewModel.stopListening()
-//       }
+        //        .onDisappear {
+        //           viewModel.stopListening()
+        //       }
     }
     
+}
+
+struct groupStats: View {
+  var body: some View {
+      VStack() {
+        HStack() {
+          Text("Most Won")
+            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
+            .foregroundColor(.white)
+            
+            Spacer()
+            
+          Text("$200")
+            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+            .foregroundColor(.white)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal)
+        .padding(.vertical, 13)
+          Rectangle()
+            .foregroundColor(.clear)
+            .frame(minWidth: 0,maxWidth: .infinity, minHeight: 0, maxHeight: 0.5)
+            .overlay(Rectangle()
+            .stroke(.white, lineWidth: 0.4))
+            .padding(.horizontal)
+          HStack() {
+            Text("Least Won")
+              .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
+              .foregroundColor(.white)
+              
+              Spacer()
+              
+            Text("$30")
+              .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+              .foregroundColor(.white)
+          }
+          .padding(.horizontal)
+          .frame(maxWidth: .infinity)
+          .padding(.vertical, 13)
+
+          Rectangle()
+            .foregroundColor(.clear)
+            .frame(minWidth: 0,maxWidth: .infinity, minHeight: 0, maxHeight: 0.5)
+            .overlay(Rectangle()
+            .stroke(.white, lineWidth: 0.4))
+            .padding(.horizontal)
+        HStack() {
+          Text("Average Won")
+            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
+            .foregroundColor(.white)
+            
+            Spacer()
+            
+          Text("$100")
+            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+            .foregroundColor(.white)
+        }.padding(.horizontal)
+              .padding(.vertical, 13)
+        .frame(maxWidth: .infinity)
+          Rectangle()
+            .foregroundColor(.clear)
+            .frame(minWidth: 0,maxWidth: .infinity, minHeight: 0, maxHeight: 0.5)
+            .overlay(Rectangle()
+            .stroke(.white, lineWidth: 0.4))
+            .padding(.horizontal)
+        HStack() {
+          Text("Highest Ranking")
+            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
+            .foregroundColor(.white)
+            
+            Spacer()
+            
+          Text("#32")
+                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+            .foregroundColor(.white)
+        }.padding(.horizontal)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 13)
+      }
+      .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+      .cornerRadius(10)
+  }
+}
+
+struct Dropdown: View {
+    var options: [Ticket]
+    var onOptionSelected: ((_ option: Ticket) -> Void)?
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(0..<self.options.count, id: \.self) { num in
+                    if num != 0{
+                        Divider()
+                            .bold()
+                    }
+                    DropdownRow(option: options[num], onOptionSelected: self.onOptionSelected)
+                }
+            }
+        }
+        .frame(minHeight: CGFloat(options.count) * 40, maxHeight: CGFloat(options.count) * 40)
+        .padding(.vertical, 5)
+        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+        .cornerRadius(14)
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(Color(red: 0.31, green: 0.30, blue: 0.43), lineWidth: 0.50)
+                
+        )
     }
+}
+
+struct DropdownRow: View {
+    var option: Ticket
+    var onOptionSelected: ((_ option: Ticket) -> Void)?
+
+    var body: some View {
+        Button(action: {
+            if let onOptionSelected = self.onOptionSelected {
+                onOptionSelected(self.option)
+            }
+        }) {
+            HStack {
+                Text(self.option.groupName)
+                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
+                    .foregroundColor(Color.white)
+                
+                Spacer()
+            }
+        }.frame(height: 30)
+        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+        .padding(.horizontal, 16)
+        .padding(.vertical, 5)
+    }
+}
+
+
+
 struct SideMenuButton: View {
     let title: String
 
@@ -161,7 +346,7 @@ struct ProfileStatsView: View {
                 .frame(width: 78, height: 78)
               
           Text(user.username)
-              .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+              .font(Font.custom(K.customFonts.lexendDecaSB, size: 18))
               .foregroundColor(.white)
           
           Text(user.firstName + " " + user.lastName)
@@ -176,16 +361,17 @@ struct ProfileStatsView: View {
               NavigationLink {
                   editProfileView(user1: viewModel.user, profileVM: viewModel)
               } label: {
-                  Text("Edit")
-                      .foregroundColor(.blue)
+                  Text("Edit profile")
+                      .foregroundColor(.white)
                       .fontWeight(.bold)
-                      .padding(.vertical)
-                      .padding(.horizontal)
-                      .background(Color(.blue)
-                          .clipShape(Capsule())
+                      .padding()
+                      .background(K.finalColor.titleBlue)
+                      .cornerRadius(10)
                                   //shadow
-                          .shadow(color: Color.white.opacity(0.1), radius: 5, x: 0, y: 5))
-              }.id(UUID())
+                      .shadow(color: Color.white.opacity(0.1), radius: 5, x: 0, y: 5)
+              }
+              .id(UUID())
+              
               
           }
           else {
