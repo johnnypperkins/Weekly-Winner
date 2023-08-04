@@ -111,7 +111,7 @@ class groupService {
                     groupAdmin: data["groupAdmin"] as! String
                 )
                 tickets.append(ticket)
-                print("\(tickets) are tickets")
+//                print("\(tickets) are tickets")
             }
             
             completion(tickets, nil)

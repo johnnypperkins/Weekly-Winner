@@ -108,7 +108,7 @@ struct groupsView: View {
                                 }
                         }
                         
-                        }.padding(.horizontal, 10)
+                        }.padding(.horizontal, 16)
                     
                     }
                     if selectedGroup == 0 {
@@ -163,13 +163,17 @@ struct groupsView: View {
                             HStack{
                                 Image(systemName: "photo.circle.fill")
                                     .resizable()
-                                    .frame(width: 50,height: 50)
-                                    .padding()
-                                    .foregroundColor(.blue)
-                                VStack{
-                                    Text(viewModel.userTickets[selectedGroup-1].groupName)
-                                        .font(.title2)
-                                }
+                                    .aspectRatio(contentMode: .fill)
+                                    .clipShape(Circle())
+                                    .frame(width: 50, height: 50)
+                                
+                                Text(viewModel.userTickets[selectedGroup-1].groupName)
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18).weight(.medium))
+                                    .foregroundColor(.white)
+                                    .padding(.leading)
+                                
+                                Spacer()
+                                
                                 if(viewModel.userTickets[selectedGroup-1].groupID != "Global") {
                                     Button(action: {
                                         selectedGroup -= 1
@@ -177,10 +181,17 @@ struct groupsView: View {
                                         }
                                     }) {
                                         Text("Leave Group") // will add design later obv
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
+                                            .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
                                     }
                                 }
-                            }
+                                
+                            }.padding(.bottom)
+                                .padding(.horizontal,16)
                             HStack {
+                                Text("Members")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                    .foregroundColor(.white)
                                 Spacer()
                                 Button(action: {
                                     showingChat = false
@@ -198,8 +209,8 @@ struct groupsView: View {
                                         .frame(width: 20, height: 20)
                                         .foregroundColor(showingChat ? .blue : .gray)
                                 }
-                            }.padding(EdgeInsets(top: 80, leading: 0, bottom: 0, trailing: 15))
-
+                            }.padding(EdgeInsets(top: 80, leading: 16, bottom: 0, trailing: 16))
+                            
                         }
                         
                         Divider().padding(.horizontal)
@@ -213,8 +224,7 @@ struct groupsView: View {
                             
                             
                         }
-                        .padding(.horizontal)
-                        .padding(.horizontal)
+                        .padding(.horizontal,16)
                         //.clipShape(RoundedRectangle(cornerRadius: 10)) // Apply corner radius to the ScrollView
                         
                     }
@@ -245,6 +255,7 @@ struct groupsView: View {
                 viewModel.fetchUserTickets() {
                 }
             }.padding(.top, 75)
+            .background(Color(red: 0.02, green: 0.05, blue: 0.26))
     }
 }
 
@@ -273,10 +284,9 @@ struct leaderboardView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(0..<viewModel.rankedGroupTickets.count, id: \.self) { index in
-                    let ticket = viewModel.rankedGroupTickets[index]
-                    if (ticket.uid != Auth.auth().currentUser?.uid) {
-                        NavigationLink(destination: ticketView(username: ticket.username, uid: ticket.uid, groupID: ticket.groupID), label: {
-                            BetCard(viewModel: viewModel, ticket: ticket, rank: (ticket.rank), ownCard: false)
+                    if (viewModel.rankedGroupTickets[index].uid != Auth.auth().currentUser?.uid) {
+                        NavigationLink(destination: ticketView(username: viewModel.rankedGroupTickets[index].username, uid: viewModel.rankedGroupTickets[index].uid, groupID: viewModel.rankedGroupTickets[index].groupID), label: {
+                            BetCard(viewModel: viewModel, ticket: viewModel.rankedGroupTickets[index], rank: (viewModel.rankedGroupTickets[index].rank), ownCard: false)
                                 .clipShape(RoundSomeCorners(
                                     topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
                                     topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
@@ -284,8 +294,9 @@ struct leaderboardView: View {
                                     bottomRight: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0
                                 ))
                         }).id(UUID())
-                    } else { // doesnt click if its yourself
-                        BetCard(viewModel: viewModel, ticket: ticket, rank: (ticket.rank), ownCard: true)
+                    } else {
+                        // doesnt click if its yourself
+                        BetCard(viewModel: viewModel, ticket: viewModel.rankedGroupTickets[index], rank: (viewModel.rankedGroupTickets[index].rank), ownCard: true)
                             .clipShape(RoundSomeCorners(
                                 topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
                                 topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
@@ -297,6 +308,9 @@ struct leaderboardView: View {
                         Divider()
                     }
                 }
+            }.onAppear(){
+                viewModel.printTickets(ticket: viewModel.rankedGroupTickets)
+                
             }
         }
         .refreshable {

@@ -67,6 +67,15 @@ class groupsViewModel: ObservableObject {
         }
     }
     
+    func printTicket(ticket: Ticket) {
+        print(ticket)
+        print("single debugger")
+    }
+    func printTickets(ticket: [Ticket]) {
+        print(ticket)
+        print("multi debugger")
+    }
+    
     func updateIsEnabled(ticket: Ticket, isEnabled: Bool, completion: @escaping (Error?) -> Void) {
         // Assuming you have already initialized Firebase with appropriate configurations
         
@@ -116,14 +125,15 @@ class groupsViewModel: ObservableObject {
                     // Handle error
                     print("Error fetching groups: \(error)")
                 } else if let tickets = tickets {
-                    DispatchQueue.main.async {
+//                    DispatchQueue.main.async {
                         self?.rankedGroupTickets = tickets
-                        //print(tickets)
+                        print(tickets)
                         print("test print")
                     }
-                }
+//                }
             }
         }
+    
     
     func joinGroup(group: Group) { // Group99
         
