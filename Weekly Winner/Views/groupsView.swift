@@ -24,7 +24,7 @@ struct groupsView: View {
     init() {
         viewModel.fetchUserTickets() {}
         
-    
+        viewModel.fetchRankedTickets(groupID: "Global") {}
     }
     
     var body: some View {
@@ -260,7 +260,7 @@ struct groupsView: View {
 }
 
 struct leaderboardView: View {
-    let viewModel: groupsViewModel
+    @ObservedObject var viewModel: groupsViewModel
     @Binding var selectedGroup: Int
     var body: some View {
         HStack {
