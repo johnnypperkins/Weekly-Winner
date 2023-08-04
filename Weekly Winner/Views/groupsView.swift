@@ -16,11 +16,14 @@ struct groupsView: View {
     @State private var isShowingSheet = false
     @State private var isShowingSheetTicket = false
     @ObservedObject private var viewModel = groupsViewModel()
+    @ObservedObject private var chatVM = chatViewModel()
     @State private var selectedGroup = 1
+    @State private var showingChat: Bool = false
     //@State private var groupsFetched = false
 
     init() {
         viewModel.fetchUserTickets() {}
+        
     
     }
     
@@ -37,28 +40,77 @@ struct groupsView: View {
         NavigationStack {
             if (viewModel.userTickets.count > 0) {
                 VStack {
-                    Picker("Group", selection: $selectedGroup) {
-                        ForEach(0..<viewModel.userTickets.count+1, id: \.self) { index in
-                            if index == 0 {
+                    if viewModel.userTickets.count <= 2 {
+                        ZStack {
+                                Button(action: {
+                                    selectedGroup = 0
+                                }) {
+                                    Image(systemName: "plus")
+                                        .foregroundColor(.white)
+                                        .frame(width: 45, height: 30, alignment: .center)
+                                        .background(selectedGroup == 0 ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                        .cornerRadius(5)
+                                    Spacer()
+                                }
+                                    Spacer()
+                                    HStack {
+                                        ForEach(1..<viewModel.userTickets.count+1, id: \.self) { index in
+                                            Button(action: {
+                                                self.selectedGroup = index
+                                                viewModel.fetchRankedTickets(groupID: viewModel.userTickets[index-1].groupID) {}
+                                                showingChat = false
+                                                print("\(selectedGroup) is selected")
+                                            }) {
+                                                Text(viewModel.userTickets[index-1].groupName)
+                                                    .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                                    .foregroundColor(.white)
+                                                    .frame(width: 105, height: 30, alignment: .center)
+                                                    .background(selectedGroup == index ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                                    .cornerRadius(5)
+                                            }
+                                        }
+                                    }
+                                Spacer()
+
+                        }.padding(.horizontal, 10)
+                        
+                    } else {
+                        
+                        HStack(spacing: 10) {
+                            Button(action: {
+                                selectedGroup = 0
+                            }) {
                                 Image(systemName: "plus")
+                                    .foregroundColor(.white)
+                                    .frame(width: 45, height: 30, alignment: .center)
+                                    .background(selectedGroup == 0 ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                    .cornerRadius(5)
                             }
-                            else{
-                                Text("\(viewModel.userTickets[index-1].groupName)").tag(index)
-                            }
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack {
+                                    ForEach(1..<viewModel.userTickets.count+1, id: \.self) { index in
+                                        
+                                        Button(action: {
+                                            self.selectedGroup = index
+                                            viewModel.fetchRankedTickets(groupID: viewModel.userTickets[index-1].groupID) {}
+                                            showingChat = false
+                                            print("\(selectedGroup) is selected")
+                                        }) {
+                                            Text(viewModel.userTickets[index-1].groupName)
+                                                .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                                .foregroundColor(.white)
+                                                .frame(width: 105, height: 30, alignment: .center)
+                                                .background(selectedGroup == index ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                                .cornerRadius(5)
+                                        }
+                                        
+                                    }
+                                }
                         }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    .padding(.horizontal, 10)
-                    .onChange(of: selectedGroup) { newValue in
-                        if selectedGroup > 0 {
-                            viewModel.fetchRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {
-                               
-                            }
-                        }
-                        print("\(selectedGroup) is selected")
-                        print("\(newValue) is NV")
-                    }
+                        
+                        }.padding(.horizontal, 10)
                     
+                    }
                     if selectedGroup == 0 {
                         HStack {
                             Spacer()
@@ -107,85 +159,56 @@ struct groupsView: View {
                             }.animation(.easeInOut, value: 20)
                         }
                     }else{
-                        HStack{
-                            Image(systemName: "photo.circle.fill")
-                                .resizable()
-                                .frame(width: 50,height: 50)
-                                .padding()
-                                .foregroundColor(.blue)
-                            VStack{
-                                Text(viewModel.userTickets[selectedGroup-1].groupName)
-                                    .font(.title2)
-                            }
-                            if(viewModel.userTickets[selectedGroup-1].groupID != "Global") {
-                                Button(action: {
-                                    selectedGroup -= 1
-                                    viewModel.leaveGroup(ticket: viewModel.userTickets[selectedGroup]) {
+                        ZStack {
+                            HStack{
+                                Image(systemName: "photo.circle.fill")
+                                    .resizable()
+                                    .frame(width: 50,height: 50)
+                                    .padding()
+                                    .foregroundColor(.blue)
+                                VStack{
+                                    Text(viewModel.userTickets[selectedGroup-1].groupName)
+                                        .font(.title2)
+                                }
+                                if(viewModel.userTickets[selectedGroup-1].groupID != "Global") {
+                                    Button(action: {
+                                        selectedGroup -= 1
+                                        viewModel.leaveGroup(ticket: viewModel.userTickets[selectedGroup]) {
+                                        }
+                                    }) {
+                                        Text("Leave Group") // will add design later obv
                                     }
-                                }) {
-                                    Text("Leave Group") // will add design later obv
                                 }
                             }
+                            HStack {
+                                Spacer()
+                                Button(action: {
+                                    showingChat = false
+                                }) {
+                                    Image(systemName: showingChat ? "ticket.fill" : "ticket") // Assuming "ticket" and "ticket.fill" are your symbols
+                                        .resizable()
+                                        .frame(width: 20, height: 20)
+                                        .foregroundColor(showingChat ? .gray : .blue)
+                                }
+                                Button(action: {
+                                    showingChat = true
+                                }) {
+                                    Image(systemName: showingChat ? "message.fill" : "message") // Assuming "message" and "message.fill" are your symbols
+                                        .resizable()
+                                        .frame(width: 20, height: 20)
+                                        .foregroundColor(showingChat ? .blue : .gray)
+                                }
+                            }.padding(EdgeInsets(top: 80, leading: 0, bottom: 0, trailing: 15))
+
                         }
+                        
                         Divider().padding(.horizontal)
                         VStack(alignment: .leading, spacing: 0) {
-                            HStack {
-                                Text("Rank")
-                                    .font(.headline)
-                                    .foregroundColor(K.darkBlue)
-                                    .frame(width: 100, alignment: .leading)
-                                Spacer()
-                                Text("PW")
-                                    .foregroundColor(K.darkGreen)
-                                    .frame(width: 50, alignment: .leading)
-                                Text("TW")
-                                    .foregroundColor(.green)
-                                    .frame(width: 50, alignment: .leading)
+                            if !showingChat {
+                                leaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup)
+                            } else {
+                                chatView(viewModel: chatVM, selectedGroup: $selectedGroup, groupsViewModel: viewModel)
                             }
-                            .padding(EdgeInsets(top: 7.5, leading: 0, bottom: 7.5, trailing: 0))
-                            .padding(.horizontal)
-                            .background(K.veryLightBlue) // changes color based on bet result
-                            .frame(maxWidth: .infinity) // Move the frame to the bottom
-                            .clipShape(RoundSomeCorners(topLeft: 10,topRight: 10,bottomLeft: 0,bottomRight: 0))
-                            ScrollView {
-                                VStack(alignment: .leading, spacing: 0) {
-                                    ForEach(0..<viewModel.rankedGroupTickets.count, id: \.self) { index in
-                                        let ticket = viewModel.rankedGroupTickets[index]
-                                        if (ticket.uid != Auth.auth().currentUser?.uid) {
-                                            NavigationLink(destination: ticketView(username: ticket.username, uid: ticket.uid, groupID: ticket.groupID), label: {
-                                                BetCard(viewModel: viewModel, ticket: ticket, rank: (ticket.rank), ownCard: false)
-                                                    .clipShape(RoundSomeCorners(
-                                                        topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
-                                                        topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
-                                                        bottomLeft: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0,
-                                                        bottomRight: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0
-                                                    ))
-                                            }).id(UUID())
-                                        } else { // doesnt click if its yourself
-                                            BetCard(viewModel: viewModel, ticket: ticket, rank: (ticket.rank), ownCard: true)
-                                                .clipShape(RoundSomeCorners(
-                                                    topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
-                                                    topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
-                                                    bottomLeft: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0,
-                                                    bottomRight: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0
-                                                ))
-                                        }
-                                        if index != viewModel.rankedGroupTickets.count - 1 {
-                                            Divider()
-                                        }
-                                    }
-                                }
-                            }
-                            .refreshable {
-                                await viewModel.fetchUserTickets() {}
-                                if selectedGroup != 0 {
-                                    print("refresh ranked")
-                                    viewModel.fetchRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
-                                }
-                            }.onAppear() {
-                                print("\(viewModel.rankedGroupTickets.count) is count")
-                            }
-                            
                             // .clipShape(RoundedRectangle(cornerRadius: 10)) // Apply corner radius to the ScrollView
                             
                             
@@ -224,6 +247,72 @@ struct groupsView: View {
             }.padding(.top, 75)
     }
 }
+
+struct leaderboardView: View {
+    let viewModel: groupsViewModel
+    @Binding var selectedGroup: Int
+    var body: some View {
+        HStack {
+            Text("Rank")
+                .font(.headline)
+                .foregroundColor(K.darkBlue)
+                .frame(width: 100, alignment: .leading)
+            Spacer()
+            Text("PW")
+                .foregroundColor(K.darkGreen)
+                .frame(width: 50, alignment: .leading)
+            Text("TW")
+                .foregroundColor(.green)
+                .frame(width: 50, alignment: .leading)
+        }
+        .padding(EdgeInsets(top: 7.5, leading: 0, bottom: 7.5, trailing: 0))
+        .padding(.horizontal)
+        .background(K.veryLightBlue) // changes color based on bet result
+        .frame(maxWidth: .infinity) // Move the frame to the bottom
+        .clipShape(RoundSomeCorners(topLeft: 10,topRight: 10,bottomLeft: 0,bottomRight: 0))
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(0..<viewModel.rankedGroupTickets.count, id: \.self) { index in
+                    let ticket = viewModel.rankedGroupTickets[index]
+                    if (ticket.uid != Auth.auth().currentUser?.uid) {
+                        NavigationLink(destination: ticketView(username: ticket.username, uid: ticket.uid, groupID: ticket.groupID), label: {
+                            BetCard(viewModel: viewModel, ticket: ticket, rank: (ticket.rank), ownCard: false)
+                                .clipShape(RoundSomeCorners(
+                                    topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
+                                    topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
+                                    bottomLeft: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0,
+                                    bottomRight: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0
+                                ))
+                        }).id(UUID())
+                    } else { // doesnt click if its yourself
+                        BetCard(viewModel: viewModel, ticket: ticket, rank: (ticket.rank), ownCard: true)
+                            .clipShape(RoundSomeCorners(
+                                topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
+                                topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
+                                bottomLeft: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0,
+                                bottomRight: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0
+                            ))
+                    }
+                    if index != viewModel.rankedGroupTickets.count - 1 {
+                        Divider()
+                    }
+                }
+            }
+        }
+        .refreshable {
+            await viewModel.fetchUserTickets() {}
+            if selectedGroup != 0 {
+                print("refresh ranked")
+                viewModel.fetchRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
+            }
+        }.onAppear() {
+            print("\(viewModel.rankedGroupTickets.count) is count")
+        }
+    }
+    
+}
+
+
 
 
 struct BetCard: View {
@@ -439,6 +528,83 @@ struct GroupJoinSheet: View {
     }
 }
 
+struct chatView: View {
+    @ObservedObject var viewModel: chatViewModel
+    @Binding var selectedGroup: Int
+    @ObservedObject var groupsViewModel: groupsViewModel
+    @State private var chatMessage: String = "" // State variable to hold the chat message
+    //@State private var isChatsLoaded: Bool = false
+
+    var body: some View {
+        VStack {
+            if viewModel.isChatsLoaded {
+                HStack {
+                    TextField("Enter your message", text: $chatMessage)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .keyboardType(.default)
+                        .submitLabel(.send) // setting the return key to "send"
+                        .onSubmit { // submit action
+                            submitMessage()
+                        }
+
+                    Button(action: {
+                        submitMessage()
+                    }) {
+                        Image(systemName: "paperplane.fill")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundColor(.blue)
+                    }
+                }
+
+                ScrollView {
+                    ForEach(0..<viewModel.allChats.count, id: \.self) { index in
+                        HStack {
+                            VStack(alignment: .leading, spacing: 0) {
+                                Text("\(viewModel.allChats[index].username)").padding(EdgeInsets(top: 5, leading: 5, bottom: 0, trailing: 0))
+                                    .font(.custom(K.customFonts.poppinsMedium, size: 8))
+                                    .foregroundColor(K.finalColor.textWhite)
+                                Text("\(viewModel.allChats[index].messageContent)")
+                                    .padding(EdgeInsets(top: 0, leading: 5, bottom: 5, trailing: 5))
+                                    .font(.custom(K.customFonts.poppinsMedium, size: 15))
+                                    .foregroundColor(K.finalColor.textWhite)
+                                    .background(K.finalColor.backgroundBlue)
+                                    .cornerRadius(5)
+                                    
+                            }.padding(EdgeInsets(top: 5, leading: 5, bottom: 0, trailing: 5))
+                            
+                        Spacer()
+                        }
+                    }
+                    
+                }.frame(height: 400)
+                    .background(K.finalColor.cardBlue)
+                    .cornerRadius(10)
+                    //.scrollPosition(initialAnchor: .bottom)
+                    
+            }
+            
+            
+        }.padding()
+        .onAppear() {
+            viewModel.getChats(groupID: groupsViewModel.userTickets[selectedGroup-1].groupID) {_ in
+            }
+        }
+    }
+
+    
+    func submitMessage() {
+        if !chatMessage.isEmpty {
+            viewModel.uploadChat(message: chatMessage, groupID: groupsViewModel.userTickets[selectedGroup-1].groupID)
+            chatMessage = "" // clear the text field
+            hideKeyboard() // hide keyboard
+        }
+    }
+
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
 
 struct groupsView_Previews: PreviewProvider {
     static var previews: some View {

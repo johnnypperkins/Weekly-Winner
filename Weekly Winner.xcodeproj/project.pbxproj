@@ -12,6 +12,9 @@
 		3C1091EE2A789A5A0049C278 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3C1091EB2A7898790049C278 /* Poppins-Regular.ttf */; };
 		3C1091EF2A789A5C0049C278 /* LexendDeca-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3C1091EA2A7897DC0049C278 /* LexendDeca-Medium.ttf */; };
 		3C1091F12A789D290049C278 /* LexendDeca-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3C1091F02A789D290049C278 /* LexendDeca-SemiBold.ttf */; };
+		3C3DB73A2A7C60CE000F6898 /* chatService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3DB7392A7C60CE000F6898 /* chatService.swift */; };
+		3C3DB73C2A7C6129000F6898 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3DB73B2A7C6129000F6898 /* Chat.swift */; };
+		3C3DB73E2A7C7E3E000F6898 /* chatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3DB73D2A7C7E3E000F6898 /* chatViewModel.swift */; };
 		3C5F715E2A7983CB00B3AB4C /* LexendDeca-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3C5F715D2A7983CA00B3AB4C /* LexendDeca-Light.ttf */; };
 		3C91B6C62A58BA0E00398F53 /* UI Misc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C91B6C52A58BA0E00398F53 /* UI Misc.swift */; };
 		3C91B6C82A58BE6D00398F53 /* RoundingUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C91B6C72A58BE6D00398F53 /* RoundingUI.swift */; };
@@ -90,6 +93,9 @@
 		3C1091EB2A7898790049C278 /* Poppins-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Regular.ttf"; sourceTree = "<group>"; };
 		3C1091EC2A7898830049C278 /* Poppins-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Medium.ttf"; sourceTree = "<group>"; };
 		3C1091F02A789D290049C278 /* LexendDeca-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LexendDeca-SemiBold.ttf"; sourceTree = "<group>"; };
+		3C3DB7392A7C60CE000F6898 /* chatService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatService.swift; sourceTree = "<group>"; };
+		3C3DB73B2A7C6129000F6898 /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
+		3C3DB73D2A7C7E3E000F6898 /* chatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatViewModel.swift; sourceTree = "<group>"; };
 		3C5F715D2A7983CA00B3AB4C /* LexendDeca-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LexendDeca-Light.ttf"; sourceTree = "<group>"; };
 		3C91B6C52A58BA0E00398F53 /* UI Misc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UI Misc.swift"; sourceTree = "<group>"; };
 		3C91B6C72A58BE6D00398F53 /* RoundingUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundingUI.swift; sourceTree = "<group>"; };
@@ -217,6 +223,7 @@
 				8653242E2A63B74C005AB3EF /* createGroupsViewModel.swift */,
 				864A2D5E2A6D7DAF000FBA35 /* profileViewModel.swift */,
 				864A2D692A6D82CF000FBA35 /* editProfileViewModel.swift */,
+				3C3DB73D2A7C7E3E000F6898 /* chatViewModel.swift */,
 			);
 			path = "View Models";
 			sourceTree = "<group>";
@@ -233,6 +240,7 @@
 		865C4A7D2A32BFF500C3C626 /* services */ = {
 			isa = PBXGroup;
 			children = (
+				3C3DB7392A7C60CE000F6898 /* chatService.swift */,
 				8668B3122A2EF06A00A1B343 /* gameService.swift */,
 				865C4A792A32890F00C3C626 /* userService.swift */,
 				866251132A40D3B500708495 /* betService.swift */,
@@ -252,6 +260,7 @@
 				8662510F2A3E862400708495 /* Ticket.swift */,
 				3CB1AC8A2A61602700C931CA /* Group.swift */,
 				866251112A3E892E00708495 /* Bet.swift */,
+				3C3DB73B2A7C6129000F6898 /* Chat.swift */,
 			);
 			path = "custom variables";
 			sourceTree = "<group>";
@@ -498,7 +507,9 @@
 				867801882A213FA5006FE479 /* ticketView.swift in Sources */,
 				864A2D632A6D7F93000FBA35 /* AppUtilitiy.swift in Sources */,
 				8653242F2A63B74C005AB3EF /* createGroupsViewModel.swift in Sources */,
+				3C3DB73A2A7C60CE000F6898 /* chatService.swift in Sources */,
 				867801822A213F83006FE479 /* screen1.swift in Sources */,
+				3C3DB73C2A7C6129000F6898 /* Chat.swift in Sources */,
 				8668B30F2A2EE62700A1B343 /* Game.swift in Sources */,
 				867801862A213F9A006FE479 /* groupsView.swift in Sources */,
 				863FC0532A466FD500405F2A /* groupService.swift in Sources */,
@@ -519,6 +530,7 @@
 				866251122A3E892E00708495 /* Bet.swift in Sources */,
 				864A2D6E2A70ED21000FBA35 /* imageUploader.swift in Sources */,
 				867801842A213F90006FE479 /* screen2.swift in Sources */,
+				3C3DB73E2A7C7E3E000F6898 /* chatViewModel.swift in Sources */,
 				867801802A213CB9006FE479 /* tabBarView.swift in Sources */,
 				865C4A762A327CA600C3C626 /* authenticationView.swift in Sources */,
 				8668B3132A2EF06A00A1B343 /* gameService.swift in Sources */,
