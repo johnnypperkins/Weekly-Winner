@@ -27,9 +27,7 @@ struct editProfileView: View {
     var body: some View {
         NavigationStack {
             VStack{
-                Form {
-                    Section {
-                        VStack(alignment: .center, spacing: 10) {
+                        VStack(alignment: .center) {
                             if let profileImage = profileImage {
                                 profileImage
                                     .resizable()
@@ -51,68 +49,123 @@ struct editProfileView: View {
                                         showImagePicker.toggle()
                                     }
                             }
-                            Text("Tap to change profile picture")
-                                .foregroundColor(.blue)
-                                .onTapGesture {
-                                    showImagePicker.toggle()
-                                }
                         }
-                    }
                     .sheet(isPresented: $showImagePicker,
                             onDismiss: loadImage) {
                         imagePicker(image: $selectedImage)
                      }
                            .padding(.top)
                            .padding(.bottom)
+                VStack(alignment: .leading, spacing: 10) {
+                  Text("First Name")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                    .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                  HStack() {
+                      TextField("First Name", text: $viewModel.firstname)
+                      .foregroundColor(.white)
+                      .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                      .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+
+                  }
+                  .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+                  .cornerRadius(10)
+                  .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                  .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+                
+                VStack(alignment: .leading, spacing: 10) {
+                  Text("Last Name")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                    .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                  HStack() {
+                      TextField("Last Name", text: $viewModel.lastname)
+                      .foregroundColor(.white)
+                      .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                      .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+
+                  }
+                  .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+                  .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                  .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                  .cornerRadius(10)
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
                     
-                    Section(header: Text("First Name")) {
-                            TextField("First Name", text: $viewModel.firstname)
-                        }
+                VStack(alignment: .leading, spacing: 10) {
+                  Text("First Name")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                    .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                  HStack() {
+                      TextField("Username", text: $viewModel.username)
+                      .foregroundColor(.white)
+                      .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                      .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+
+                  }
+                  .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+                  .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                  .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                  .cornerRadius(10)
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+                        
+                VStack(alignment: .leading, spacing: 10) {
+                  Text("First Name")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                    .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                  HStack() {
+                      TextField("Email", text: $viewModel.email)
+                      .foregroundColor(.white)
+                      .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                      .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+
+                  }
+                  .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+                  .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                  .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                  .cornerRadius(10)
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+                        
+
+                    Spacer()
                     
-                    Section(header: Text("Last Name")) {
-                            TextField("Last Name", text: $viewModel.lastname)
-                        }
-                        
-                        Section(header: Text("Username")) {
-                            TextField("Username", text: $viewModel.username)
-                                .disabled(true)
-                        }
-                        
-                        Section(header: Text("Email")) {
-                            TextField("Email", text: $viewModel.email)
-                                .disabled(true)
-                        }
-                        
-                    
-                    Section {
-                        Button(action: {
-                            // Perform update profile logic here
-                            print("Profile updated")
-                            viewModel.updateUserInfo()
-                            if selectedImage != nil {
-                                viewModel.uploadProfileImage(selectedImage!) {url in
-                                    profileVM.profileImageURLHolder = url
-                                    
-                                }
-                                withAnimation {
-                                    dismiss()
-                                }
+                    Button(action: {
+                        // Perform update profile logic here
+                        print("Profile updated")
+                        viewModel.updateUserInfo()
+                        if selectedImage != nil {
+                            viewModel.uploadProfileImage(selectedImage!) {url in
+                                profileVM.profileImageURLHolder = url
                                 
                             }
+                            withAnimation {
+                                dismiss()
+                            }
                             
-                        }) {
-                            Text("Update Profile")
-                                .foregroundColor(.blue)
-                                .fontWeight(.bold)
-                                .padding(.vertical)
-                                .padding(.horizontal)
-                                .background(Color(.gray)
-                                    .clipShape(Capsule())
-                                            //shadow
-                                    .shadow(color: Color.white.opacity(0.1), radius: 5, x: 0, y: 5))
                         }
+                        
+                    }) {
+                        HStack{
+                            Spacer()
+                            
+                            Text("Update")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                .foregroundColor(.white)
+                                            //shadow
+                            
+                            Spacer()
+                        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+                            .background(Color(red: 0.31, green: 0.57, blue: 1))
+                            .cornerRadius(10)
+                            .padding(.horizontal,16)
+                            .padding(.bottom,30)
+                        
                     }
-                }
+            }.padding(.horizontal,16)
+                .scrollContentBackground(.hidden)
+                .background(Color(red: 0.02, green: 0.05, blue: 0.26))
                 .navigationTitle(Text("Edit Profile"))
                 .toolbar{
                     ToolbarItem(placement: .navigationBarLeading) {
@@ -131,10 +184,11 @@ struct editProfileView: View {
                             }
                             
                     }
-                }
+                }.background(Color(red: 0.02, green: 0.05, blue: 0.26))
                 
-            }
-        }.navigationBarBackButtonHidden(true)
+        }
+        .background(Color(red: 0.02, green: 0.05, blue: 0.26))
+        .navigationBarBackButtonHidden(true)
     }
     
     func loadImage() {

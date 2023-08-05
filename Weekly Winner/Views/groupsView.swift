@@ -263,50 +263,50 @@ struct leaderboardView: View {
     @ObservedObject var viewModel: groupsViewModel
     @Binding var selectedGroup: Int
     var body: some View {
-        HStack {
-            Text("Rank")
-                .font(.headline)
-                .foregroundColor(K.darkBlue)
-                .frame(width: 100, alignment: .leading)
-            Spacer()
-            Text("PW")
-                .foregroundColor(K.darkGreen)
-                .frame(width: 50, alignment: .leading)
-            Text("TW")
-                .foregroundColor(.green)
-                .frame(width: 50, alignment: .leading)
-        }
-        .padding(EdgeInsets(top: 7.5, leading: 0, bottom: 7.5, trailing: 0))
-        .padding(.horizontal)
-        .background(K.veryLightBlue) // changes color based on bet result
-        .frame(maxWidth: .infinity) // Move the frame to the bottom
-        .clipShape(RoundSomeCorners(topLeft: 10,topRight: 10,bottomLeft: 0,bottomRight: 0))
+//        HStack {
+//            Text("Rank")
+//                .font(.headline)
+//                .foregroundColor(K.darkBlue)
+//                .frame(width: 100, alignment: .leading)
+//            Spacer()
+//            Text("PW")
+//                .foregroundColor(K.darkGreen)
+//                .frame(width: 50, alignment: .leading)
+//            Text("TW")
+//                .foregroundColor(.green)
+//                .frame(width: 50, alignment: .leading)
+//        }
+//        .padding(EdgeInsets(top: 7.5, leading: 0, bottom: 7.5, trailing: 0))
+//        .padding(.horizontal)
+//        .background(K.veryLightBlue) // changes color based on bet result
+//        .frame(maxWidth: .infinity) // Move the frame to the bottom
+//        .clipShape(RoundSomeCorners(topLeft: 10,topRight: 10,bottomLeft: 0,bottomRight: 0))
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(0..<viewModel.rankedGroupTickets.count, id: \.self) { index in
                     if (viewModel.rankedGroupTickets[index].uid != Auth.auth().currentUser?.uid) {
                         NavigationLink(destination: ticketView(username: viewModel.rankedGroupTickets[index].username, uid: viewModel.rankedGroupTickets[index].uid, groupID: viewModel.rankedGroupTickets[index].groupID), label: {
-                            BetCard(viewModel: viewModel, ticket: viewModel.rankedGroupTickets[index], rank: (viewModel.rankedGroupTickets[index].rank), ownCard: false)
-                                .clipShape(RoundSomeCorners(
-                                    topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
-                                    topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
-                                    bottomLeft: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0,
-                                    bottomRight: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0
-                                ))
+                            BetCard(viewModel: viewModel, ticket: viewModel.rankedGroupTickets[index], rank: (viewModel.rankedGroupTickets[index].rank), ownCard: false).padding(.bottom,16)
+//                                .clipShape(RoundSomeCorners(
+//                                    topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
+//                                    topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
+//                                    bottomLeft: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0,
+//                                    bottomRight: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0
+//                                ))
                         }).id(UUID())
                     } else {
                         // doesnt click if its yourself
-                        BetCard(viewModel: viewModel, ticket: viewModel.rankedGroupTickets[index], rank: (viewModel.rankedGroupTickets[index].rank), ownCard: true)
-                            .clipShape(RoundSomeCorners(
-                                topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
-                                topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
-                                bottomLeft: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0,
-                                bottomRight: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0
-                            ))
+                        BetCard(viewModel: viewModel, ticket: viewModel.rankedGroupTickets[index], rank: (viewModel.rankedGroupTickets[index].rank), ownCard: true).padding(.bottom,16)
+//                            .clipShape(RoundSomeCorners(
+//                                topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
+//                                topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
+//                                bottomLeft: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0,
+//                                bottomRight: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0
+//                            ))
                     }
-                    if index != viewModel.rankedGroupTickets.count - 1 {
-                        Divider()
-                    }
+//                    if index != viewModel.rankedGroupTickets.count - 1 {
+//                        Divider()
+//                    }
                 }
             }.onAppear(){
                 viewModel.printTickets(ticket: viewModel.rankedGroupTickets)
@@ -350,54 +350,90 @@ struct BetCard: View {
         ZStack {
             HStack {
                 if(!ownCard && ticket.groupAdmin == Auth.auth().currentUser?.uid) {
-//                    Toggle(isOn: Binding(get: { self.ticket.isEnabled }, set: { newValue in
-//                        viewModel.updateIsEnabled(ticket: self.ticket, isEnabled: newValue) {_ in }
-//                    })) {
-//                        Text("Enabled")
-//                    }
+                    //                    Toggle(isOn: Binding(get: { self.ticket.isEnabled }, set: { newValue in
+                    //                        viewModel.updateIsEnabled(ticket: self.ticket, isEnabled: newValue) {_ in }
+                    //                    })) {
+                    //                        Text("Enabled")
+                    //                    }
                     Button(ticket.isEnabled ? "E" : "D", action: {
                         viewModel.updateIsEnabled(ticket: self.ticket, isEnabled: ticket.isEnabled ? false : true) {_ in
                             viewModel.fetchRankedTickets(groupID: ticket.groupID) {}
                         }
                     }).foregroundColor(!ticket.isEnabled ? Color.red : K.darkGreen)
                 }
-                KFImage(URL(string: profileImageURL))
-                    .resizable()
-                    .clipShape(Circle())
-                    .aspectRatio(contentMode: .fill)
-                    //.foregroundColor(.clear)
-                    .frame(width: 30, height: 30)
-                Text("\(rank). \(ticket.username) \(adminCard ? "(A)" : "")")
-                    .font(.subheadline)
-                    .foregroundColor(K.darkBlue)
-                    .frame(width: 135, alignment: .leading)
-                    .lineLimit(1)
+                
+                HStack(spacing: 11) {
+                    HStack(spacing: 0) {
+                        if rank == "1" || rank == "T1"{
+                            Image(systemName: "trophy.fill")
+                                .resizable()
+                                .frame(width: 15, height: 15)
+                                .foregroundColor(Color(hex: "D4AF37"))
+                        } else if rank == "2" || rank == "T2" {
+                            Image(systemName: "trophy.fill")
+                                .resizable()
+                                .frame(width: 15, height: 15)
+                                .foregroundColor(Color(hex: "C0C0C0"))
+                        }
+                        else if rank == "3" || rank == "T3" {
+                            Image(systemName: "trophy.fill")
+                                .resizable()
+                                .frame(width: 15, height: 15)
+                                .foregroundColor(Color(hex: "9F7A34"))
+                        }
+                        Text(rank)
+                            .font(Font.custom(K.customFonts.poppinsMedium, size: 12).weight(.medium))
+                            .foregroundColor(.white)
+                            .padding(.leading,3)
+                    }
+                    .frame(maxHeight: .infinity)
+                    HStack(spacing: 5) {
+                        KFImage(URL(string: profileImageURL))
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .clipShape(Circle())
+                            .frame(width: 24, height: 24)
+                        
+                        Text("\(ticket.username)")
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                            .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+                    }
+                    .frame(maxHeight: .infinity)
+                }
+                .frame(height: 24)
                 
                 Spacer()
-                Text("\(ticket.totalPotentialWon)")
-                    .foregroundColor(K.darkGreen)
-                    .frame(width: 50, alignment: .leading)
-                Text("\(ticket.totalWon)")
-                    .foregroundColor(.green)
-                    .frame(width: 50, alignment: .leading)
-            }
-            .padding()
-            .background(!ownCard ? K.veryLightGray : K.cadetBlue.opacity(0.25)) // changes color based on bet result
-            .frame(maxWidth: .infinity) // Move the frame to the bottom
-            .opacity(ticket.isEnabled || ticket.groupAdmin == Auth.auth().currentUser?.uid ? 1 : 0.66)
-            
-            // Arrow
-            if (!ownCard && ticket.isEnabled) {
-                HStack {
-                    Spacer()
-                    Image(systemName: "chevron.right") // Use any image you'd like
-                        .resizable()
-                        .frame(width: 10, height: 15) // Adjust size to your liking
-                        .foregroundColor(.gray) // Choose color
-                        .padding(.trailing,7.5) // Add padding to move away from the edge
+                HStack(alignment: .top, spacing: 10) {
+                    Text("\(ticket.totalPotentialWon) PW")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
+                        .foregroundColor(Color(red: 0.83, green: 0.47, blue: 0.07))
+                    Text("\(ticket.totalWon) TW")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
+                        .foregroundColor(Color(red: 0.24, green: 0.86, blue: 0.02))
+                }
+                .frame(maxHeight: .infinity)
+                
+                
+                
+                // Arrow
+                if (!ownCard && ticket.isEnabled) {
+                    HStack {
+                        Image(systemName: "chevron.right") // Use any image you'd like
+                            .resizable()
+                            .frame(width: 10, height: 15) // Adjust size to your liking
+                            .foregroundColor(.gray) // Choose color
+                            .padding(.trailing,7.5) // Add padding to move away from the edge
+                    }
                 }
             }
+                
         }
+        .opacity(ticket.isEnabled || ticket.groupAdmin == Auth.auth().currentUser?.uid ? 1 : 0.66)
+        .padding(10)
+        .frame(minWidth: 0,maxWidth: .infinity, minHeight: 44, maxHeight: 44)
+        .background(!ownCard ? Color(red: 0.13, green: 0.14, blue: 0.34) : K.cadetBlue.opacity(0.25) )
+        .cornerRadius(10)
+        
         .onAppear {
             isEnabled = ticket.isEnabled
             print(ticket.uid)
