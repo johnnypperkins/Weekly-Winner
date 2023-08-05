@@ -67,6 +67,7 @@ struct ticketView: View {
                                 }
                             }
                         }.padding(.leading)
+                            .padding(.bottom,60)
                     }
                     
                 } else {
@@ -123,7 +124,7 @@ struct ticketView: View {
                                 SectionTitle(title: "2 leg #2", betArray: viewModel.betArray6, maxBetsPlaced: 2, uid: uid, viewModel: viewModel)
                                 SectionTitle(title: "3 leg #1", betArray: viewModel.betArray7, maxBetsPlaced: 3, uid: uid, viewModel: viewModel)
                                 SectionTitle(title: "5 leg #1", betArray: viewModel.betArray8, maxBetsPlaced: 5, uid: uid, viewModel: viewModel)
-                            }
+                            }.padding(.bottom,60)
                             .padding()
                         }
 

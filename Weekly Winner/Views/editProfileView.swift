@@ -140,10 +140,11 @@ struct editProfileView: View {
                                 profileVM.profileImageURLHolder = url
                                 
                             }
-                            withAnimation {
-                                dismiss()
-                            }
                             
+                            
+                        }
+                        withAnimation {
+                            dismiss()
                         }
                         
                     }) {

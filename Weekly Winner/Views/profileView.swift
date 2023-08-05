@@ -34,153 +34,145 @@ struct profileView: View {
     }
     
     var body: some View {
-        VStack {
-            NavigationStack{
-                VStack{
-                    if user.isCurrentUser == false {
-                        HStack {
-                            Button {
-                                // 2
-                                dismiss()
-                                
-                            } label: {
-                                HStack {
-                                    Image(systemName: "arrowshape.backward.fill")
-                                        .resizable()
-                                        .foregroundColor(.black)
-                                        .padding(.leading)
-                                        .frame(width: 40,height: 17)
-                                }
-                            }
-                            Spacer()
-                            
-                            Button {
-                                AppUtility.shared.showCustomAlert(alertType: .none, message: "Are you sure you want to block \(user.firstName)?", actionButtonTitle: K.appButtonTitle.ok, cancelButtonTitle: K.appButtonTitle.cancel) { action in
-                                    if action == AlertButtonAction.okButton{
-                                        viewModel.block()
-                                    }
-                                }
-                            } label: {
-                                HStack{
-                                    Text("Block")
-                                        .foregroundColor(K.darkBlue)
-                                    Image(systemName: "flag")
-                                        .foregroundColor(K.darkBlue)
-                                }
-                                
-                                
-                            }
-                        }.padding()
-                    }
-                    else {
-                        ZStack {
-                            Text("My Profile")
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
-                                .foregroundColor(.white)
-                            
+        ScrollView {
+            VStack {
+                NavigationStack{
+                    VStack{
+                        if user.isCurrentUser == false {
                             HStack {
-                                Spacer()
-                                
-                                NavigationLink(destination: settingsView(), label: {
-                                    Image(systemName: "gearshape")
-                                        .resizable()
-                                        .frame(width: 20, height: 20)
-                                        .padding()
-                                        .foregroundColor(.white)
-                                }).id(UUID())
-                            }
-                        }.padding(.top, 50) // has to be at least 50 so doesnt interfere with safe area
-                    }
-                    ProfileStatsView(viewModel: viewModel, user: user)
-                        .padding(.vertical)
-                        .padding(.horizontal,20.5)
-                    ZStack {
-                        VStack {
-                            HStack {
-                                Text("Group Stats")
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                                    .foregroundColor(.white)
+                                Button {
+                                    // 2
+                                    dismiss()
                                     
-                                Spacer()
-
-                                Button(action: {
-                                    withAnimation {
-                                        showDropdown.toggle()
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "arrowshape.backward.fill")
+                                            .resizable()
+                                            .foregroundColor(.black)
+                                            .padding(.leading)
+                                            .frame(width: 40,height: 17)
                                     }
-                                }) {
-                                    ZStack() {
-                                        Rectangle()
-                                            .foregroundColor(.clear)
-                                            .frame(width: 113, height: 40)
-                                            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                            .cornerRadius(6)
-                                        
-                                        HStack() {
-                                            Text(selectedGroup)
-                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14)) // change this to your custom font
-                                                .foregroundColor(.white)
-                                            Spacer()
-                                            if showDropdown{
-                                                withAnimation(){
-                                                    Image(systemName: "chevron.down")
-                                                        .frame(width: 24, height: 24)
-                                                }
-                                            }
-                                            else {
-                                                withAnimation(){
-                                                    Image(systemName: "chevron.up")
-                                                        .frame(width: 24, height: 24)
-                                                }
-                                            }
-                                        }.padding(.horizontal)
-                                    }
-                                    .frame(width: 113, height: 40)
-                                    .cornerRadius(14)
                                 }
+                                Spacer()
+                                
+                                Button {
+                                    AppUtility.shared.showCustomAlert(alertType: .none, message: "Are you sure you want to block \(user.firstName)?", actionButtonTitle: K.appButtonTitle.ok, cancelButtonTitle: K.appButtonTitle.cancel) { action in
+                                        if action == AlertButtonAction.okButton{
+                                            viewModel.block()
+                                        }
+                                    }
+                                } label: {
+                                    HStack{
+                                        Text("Block")
+                                            .foregroundColor(.white)
+                                        Image(systemName: "flag")
+                                            .foregroundColor(.white)
+                                    }
+                                    
+                                    
+                                }
+                            }.padding()
+                        }
+                        else {
+                            ZStack {
+                                Text("My Profile")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
+                                    .foregroundColor(.white)
+                                
+                                HStack {
+                                    Spacer()
+                                    
+                                    NavigationLink(destination: settingsView(), label: {
+                                        Image(systemName: "gearshape")
+                                            .resizable()
+                                            .frame(width: 20, height: 20)
+                                            .padding()
+                                            .foregroundColor(.white)
+                                    }).id(UUID())
+                                }
+                            }.padding(.top, 50) // has to be at least 50 so doesnt interfere with safe area
+                        }
+                        ProfileStatsView(viewModel: viewModel, user: user)
+                            .padding(.vertical)
+                            .padding(.horizontal,20.5)
+                        ZStack {
+                            VStack {
+                                HStack {
+                                    Text("Group Stats")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                        .foregroundColor(.white)
+                                    
+                                    Spacer()
+                                    
+                                    Button(action: {
+                                        withAnimation {
+                                            showDropdown.toggle()
+                                        }
+                                    }) {
+                                        ZStack() {
+                                            Rectangle()
+                                                .foregroundColor(.clear)
+                                                .frame(width: 113, height: 40)
+                                                .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                                .cornerRadius(6)
+                                            
+                                            HStack() {
+                                                Text(selectedGroup)
+                                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14)) // change this to your custom font
+                                                    .foregroundColor(.white)
+                                                Spacer()
+                                                if showDropdown{
+                                                    withAnimation(){
+                                                        Image(systemName: "chevron.down")
+                                                            .frame(width: 24, height: 24)
+                                                    }
+                                                }
+                                                else {
+                                                    withAnimation(){
+                                                        Image(systemName: "chevron.up")
+                                                            .frame(width: 24, height: 24)
+                                                    }
+                                                }
+                                            }.padding(.horizontal)
+                                        }
+                                        .frame(width: 113, height: 40)
+                                        .cornerRadius(14)
+                                    }
+                                }
+                                .frame(minWidth: 0, maxWidth: .infinity)
+                                .padding(.horizontal)
+                                
+                                groupStats()
+                                    .padding(.all,16)
                             }
-                            .frame(minWidth: 0, maxWidth: .infinity)
-                            .padding(.horizontal)
                             
-                            groupStats()
-                                .padding(.all,16)
+                            // Dropdown outside of VStack
+                            if showDropdown {
+                                HStack{
+                                    Spacer()
+                                    
+                                    Dropdown(options: groupsVM.userTickets, onOptionSelected: { option in
+                                        withAnimation(){
+                                            showDropdown = false
+                                            selectedGroup = option.groupName
+                                        }
+                                        self.onOptionSelected?(option)
+                                    })
+                                    .frame(maxWidth: 113, alignment: .trailing)
+                                    .padding(.top,30 /*desired dropdown menu position from the top*/)
+                                    .padding(.trailing,16 /*desired dropdown menu position from the trailing edge*/)
+                                }.frame(minWidth: 0, maxWidth: .infinity)
+                            }
                         }
                         
-                        // Dropdown outside of VStack
-                        if showDropdown {
-                            HStack{
-                                Spacer()
-                                
-                                Dropdown(options: groupsVM.userTickets, onOptionSelected: { option in
-                                    withAnimation(){
-                                        showDropdown = false
-                                        selectedGroup = option.groupName
-                                    }
-                                    self.onOptionSelected?(option)
-                                })
-                                .frame(maxWidth: 113, alignment: .trailing)
-                                .padding(.top,30 /*desired dropdown menu position from the top*/)
-                                .padding(.trailing,16 /*desired dropdown menu position from the trailing edge*/)
-                            }.frame(minWidth: 0, maxWidth: .infinity)
-                        }
                     }
-
-                }
-                Spacer()
+                    Spacer()
+                }.padding(.top)
+                
             }
-            //            .navigationBarTitle("")
-            //                        .navigationBarHidden(true)
-        }.onAppear {
-            //           viewModel.startListening()
-            //           Task{
-            //               await viewModel.getCountOfStringsInArrayField(user1: user)
-            //           }
-            
-            
-        }.frame(minHeight: 0, maxHeight: .infinity)
+            .frame(minHeight: 0, maxHeight: .infinity)
             .background(Color(red: 0.02, green: 0.05, blue: 0.26))
-        //        .onDisappear {
-        //           viewModel.stopListening()
-        //       }
+        }
     }
     
 }
