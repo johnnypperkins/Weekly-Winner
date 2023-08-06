@@ -15,11 +15,46 @@ struct createGroupsView: View {
     @State private var password: String = ""
     @State private var takenTextShown: Bool = false
     @StateObject private var viewModel = createGroupsViewModel()
+    
+    @State private var showImagePicker = false
+    @State private var selectedImage: UIImage?
+    @State private var profileImage: Image?
+    
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
         NavigationStack {
-
+            VStack{
+                VStack(alignment: .center) {
+                    if let profileImage = profileImage {
+                        profileImage
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 100, height: 100)
+                            .clipShape(Circle())
+                            .onTapGesture {
+                                showImagePicker.toggle()
+                            }
+                    }
+//                    else {
+//                        KFImage(URL(string: viewModel.profileImgURL))
+//                            .resizable()
+//                            .aspectRatio(contentMode: .fill)
+//                            .frame(width: 100, height: 100)
+//                            .clipShape(Circle())
+//                            .foregroundColor(.blue)
+//                            .onTapGesture {
+//                                showImagePicker.toggle()
+//                            }
+//                    }
+                }
+            .sheet(isPresented: $showImagePicker,
+                    onDismiss: loadImage) {
+                imagePicker(image: $selectedImage)
+             }
+                   .padding(.top)
+                   .padding(.bottom)
+            }
             Form {
                 Section {
                     TextField("Group Name", text: $groupName)
@@ -54,6 +89,11 @@ struct createGroupsView: View {
         }
             
         
+    }
+    
+    func loadImage() {
+        guard let selectedImage = selectedImage else {return}
+        profileImage = Image(uiImage: selectedImage)
     }
 }
 

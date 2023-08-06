@@ -112,53 +112,66 @@ struct groupsView: View {
                     
                     }
                     if selectedGroup == 0 {
-                        HStack {
-                            Spacer()
-                            
-                            Button {
-                                print(viewModel.userTickets)
-                                isShowingSheet.toggle()
-                            } label: {
-                                Image(systemName: "plus")
-                                    .resizable()
-                                    .frame(width: 30, height: 30)
-                                    .padding()
-                                    .foregroundColor(.green)
-                                
-                            }
-                        }
-                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
+                       
                         
-                        Text("Find Group")
-                            .font(.title)
-                            .bold()
+                        Text("Search Group")
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
+                            .foregroundColor(.white)
+                            .padding(.top,20)
                         
                         SearchBar(text: keywordBinding, placeholder: "Search Groups")
                         if (viewModel.userTickets.count >= P.maxNumGroupsCanJoin) {
                             Text("Max Groups Joined")
                                 .foregroundColor(Color.red)
                         }
-                        if !viewModel.queriedGroups.isEmpty {
-                            withAnimation {
-                                ScrollView {
-                                    ForEach(viewModel.queriedGroups, id: \.id) { group in
-                                        if (viewModel.userTickets.count < P.maxNumGroupsCanJoin) {
-                                            Button(action: {
-                                                // Destination view code
-                                                isJoinSheetPresented.toggle()
-                                            }) {
+                        ZStack{
+                            if !viewModel.queriedGroups.isEmpty {
+                                withAnimation {
+                                    ScrollView {
+                                        ForEach(viewModel.queriedGroups, id: \.id) { group in
+                                            if (viewModel.userTickets.count < P.maxNumGroupsCanJoin) {
+                                                Button(action: {
+                                                    // Destination view code
+                                                    isJoinSheetPresented.toggle()
+                                                }) {
+                                                    groupBarView(group: group)
+                                                }.sheet(isPresented: $isJoinSheetPresented) {
+                                                    GroupJoinSheet(group: group, viewModel: viewModel, isPresented: $isJoinSheetPresented)
+                                                }
+                                            } else {
                                                 groupBarView(group: group)
-                                            }.sheet(isPresented: $isJoinSheetPresented) {
-                                                GroupJoinSheet(group: group, viewModel: viewModel, isPresented: $isJoinSheetPresented)
                                             }
-                                        } else {
-                                            groupBarView(group: group)
                                         }
+                                        
                                     }
+                                }.animation(.easeInOut, value: 20)
+                            }
+                            VStack {
+                                Spacer()
+                                Button {
+                                    print(viewModel.userTickets)
+                                    isShowingSheet.toggle()
+                                } label: {
+                                    HStack{
+                                        Spacer()
+                                        
+                                        Text("Create")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                            .foregroundColor(.white)
+                                                        //shadow
+                                        
+                                        Spacer()
+                                    }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+                                        .background(Color(red: 0.31, green: 0.57, blue: 1))
+                                        .cornerRadius(10)
+                                        .padding(.horizontal,16)
+                                        .padding(.bottom,100)
                                 }
-                            }.animation(.easeInOut, value: 20)
+                            }.frame(minHeight: 0, maxHeight: .infinity)
                         }
-                    }else{
+                        
+                    }
+                    else{
                         ZStack {
                             HStack{
                                 Image(systemName: "photo.circle.fill")
@@ -256,6 +269,90 @@ struct groupsView: View {
                 }
             }.padding(.top, 75)
             .background(Color(red: 0.02, green: 0.05, blue: 0.26))
+    }
+}
+
+struct groupBarView: View {
+    
+    var group: Group // Groups99
+    var body: some View {
+        HStack{
+            VStack(alignment: .leading){
+                HStack{
+                    if group.groupImageURL != ""{
+                        KFImage(URL(string: group.groupImageURL))
+                            .resizable()
+                            .cornerRadius(25)
+                            .frame(width: 40, height: 40, alignment: .leading)
+                    }
+                    else {
+                        Image(systemName: "person.3.fill")
+                            .resizable()
+                            .cornerRadius(25)
+                            .frame(width: 40, height: 40, alignment: .leading)
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        
+                        HStack {
+                            Text("\(group.groupName)")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                .foregroundColor(.white)
+                            
+                            Spacer()
+                            if group.password != "" {
+                                Text("Private Group")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
+                                    .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+                                    .frame(alignment: .top)
+                            }
+                            else{
+                                Text("Public Group")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
+                                    .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+                                    .frame(alignment: .top)
+                            }
+                        }.frame(minWidth: 0, maxWidth: .infinity)
+                        
+                        Text("\(group.groupSlogan)")
+                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                              .foregroundColor(.white)
+                    }
+                    Spacer()
+                    
+                }
+                HStack {
+                    Text("Group Admin")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
+                      .foregroundColor(.white)
+                    Spacer()
+                    Text(group.groupAdmin)
+                      .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                      .foregroundColor(.white)
+                }
+                .padding(.top,10)
+
+                HStack{
+                    Spacer()
+                    
+                    Text("Join")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                        .foregroundColor(.white)
+                                    //shadow
+                    
+                    Spacer()
+                }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 40 , maxHeight: 40)
+                    .background(Color(red: 0.31, green: 0.57, blue: 1))
+                    .cornerRadius(10)
+                    .padding(.top,10)
+                
+            }.frame(minWidth: 0, maxWidth: .infinity)
+                .padding(.horizontal,15)
+                .padding(.vertical,20)
+        }
+        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+        .cornerRadius(10)
+        .padding(.horizontal,16)
     }
 }
 
@@ -469,37 +566,7 @@ struct SearchBar: View {
 }
 
 
-struct groupBarView: View {
-    
-    var group: Group // Groups99
-    var body: some View {
-        ZStack{
-            
-            Rectangle()
-                .foregroundColor(Color.gray.opacity(0.2))
-            HStack{
-                //KFImage(URL(string: user.profileImageUrl))
-//                    .resizable()
-//                    .cornerRadius(25)
-//                    .frame(width: 50, height: 50, alignment: .leading)
-                
-                VStack {
-                    Text("\(group.groupName)")
-                        .bold()
-                    
-                    Text("\(group.groupSlogan)")
-                        .foregroundColor(Color(.blue))
-                }
-                Spacer()
-            }
-            .frame(alignment: .leading)
-            .padding(.horizontal)
-        }
-        .frame(maxWidth: .infinity, minHeight: 100)
-        .cornerRadius(13)
-        .padding(.horizontal)
-    }
-}
+
 
 struct GroupJoinSheet: View {
     let group: Group // Groups99

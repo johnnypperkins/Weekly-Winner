@@ -173,6 +173,7 @@ struct profileView: View {
             .frame(minHeight: 0, maxHeight: .infinity)
             .background(Color(red: 0.02, green: 0.05, blue: 0.26))
         }
+        .background(Color(red: 0.02, green: 0.05, blue: 0.26))
     }
     
 }
