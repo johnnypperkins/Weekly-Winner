@@ -108,7 +108,8 @@ class groupService {
                     groupName: data["groupName"] as! String,
                     rank: ranksArray[index], //data["rank"] as! String,
                     isEnabled: data["isEnabled"] as! Bool,
-                    groupAdmin: data["groupAdmin"] as! String
+                    groupAdmin: data["groupAdmin"] as! String,
+                    ticketFormat: [4,2,1,0,1]
                 )
                 tickets.append(ticket)
 //                print("\(tickets) are tickets")
@@ -125,7 +126,7 @@ class groupService {
 
 
     
-    func createGroup(groupName: String, groupSlogan: String, password: String?, completion: @escaping (Result<String, Error>) -> Void) {
+    func createGroup(groupName: String, groupSlogan: String, password: String?, ticketFormat: [Int], completion: @escaping (Result<String, Error>) -> Void) {
             
         guard let currentUser = Auth.auth().currentUser else {
                     completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No user is currently logged in"])))
@@ -139,7 +140,8 @@ class groupService {
                 "groupImageURL": "",
                 "groupSlogan": groupSlogan,
                 "groupAdmin": currentUser.uid,
-                "password": password ?? NSNull()
+                "password": password ?? NSNull(),
+                "ticketFormat": ticketFormat
             ]) { err in
                 if let err = err {
                                 completion(.failure(err))
@@ -149,7 +151,7 @@ class groupService {
                         return
                     }
                     self.db.collection("groups").document(groupID).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": currentUser.uid])
-                    let group = Group(id: groupID, groupName: groupName, dateCreated: time, groupImageURL: "", groupSlogan: groupSlogan, groupAdmin: currentUser.uid)
+                    let group = Group(id: groupID, groupName: groupName, dateCreated: time, groupImageURL: "", groupSlogan: groupSlogan, groupAdmin: currentUser.uid, ticketFormat: ticketFormat)
                     self.joinGroup(userID: currentUser.uid, group: group){error in
                         
                     }
@@ -206,7 +208,7 @@ class groupService {
                         } else {
                             let rank = (snapshot?.documents.count)! + 1 ?? -99
                             let userTicketsCollection = db.collection("users").document(userID).collection("tickets").document("week").collection("currentWeekTickets")
-                            let ticket = Ticket(username: UserData.shared.username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: group.groupName, rank: String(rank), isEnabled: enabled, groupAdmin: group.groupAdmin)
+                            let ticket = Ticket(username: UserData.shared.username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: group.groupName, rank: String(rank), isEnabled: enabled, groupAdmin: group.groupAdmin, ticketFormat: group.ticketFormat)
                             do {
                                 let _ = try userTicketsCollection.addDocument(from: ticket) { error in
                                     if let error = error {
@@ -305,8 +307,9 @@ class groupService {
                     let rank = document.data()["rank"] as? Int ?? -99
                     let isEnabled = document.data()["isEnabled"] as? Bool ?? false// default value if not found
                     let groupAdmin = document.data()["groupAdmin"] as? String ?? "null"// default value if not found
+                    let ticketFormat = document.data()["ticketFormat"] as? [Int] ?? [1,1,1,1,1]// default value if not found
                     
-                    let ticket = Ticket(id: id, username: username, uid: userID, groupID: groupID, groupNumber: groupNumber, dateCreated: "today", totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName, rank: String(rank), isEnabled: isEnabled, groupAdmin: groupAdmin)
+                    let ticket = Ticket(id: id, username: username, uid: userID, groupID: groupID, groupNumber: groupNumber, dateCreated: "today", totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName, rank: String(rank), isEnabled: isEnabled, groupAdmin: groupAdmin, ticketFormat: ticketFormat)
                     tickets.append(ticket) // Ticket99
                 }
                 

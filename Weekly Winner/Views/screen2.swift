@@ -305,7 +305,7 @@ struct BetDetailsView: View {
                                 .frame(maxWidth: 200, alignment: .center)
                                 .pickerStyle(WheelPickerStyle())
                                 .onChange(of: groupNumber) { newValue in
-                                    ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: newValue) {
+                                    ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: newValue, ticketFormat: ticketVM.currentTicketFormat) {
                                         if !ticketVM.availableBets(for: newValue).isEmpty {
                                             betNumber = ticketVM.availableBets(for: groupNumber)[0]
                                             
@@ -457,7 +457,7 @@ struct BetDetailsView: View {
                     }
                 }
                 .onAppear {
-                    ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber) {
+                    ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber, ticketFormat: ticketVM.currentTicketFormat) {
                         if !ticketVM.availableBets(for: groupNumber).isEmpty {
                             betNumber = ticketVM.availableBets(for: groupNumber)[0]
                         } else {
@@ -477,7 +477,7 @@ struct BetDetailsView: View {
                 Button(action: {
                     print("groupNumber: \(groupNumber), betNumber: \(betNumber)")
                     viewModel.uploadBet(groupNumber: groupNumber, groupID: groupsVM.userTickets[groupNumber].groupID, betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread)), betType: betType, gameID: game.idd ?? "null") {_ in
-                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber, completion: {
+                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber, ticketFormat: ticketVM.currentTicketFormat, completion: {
                             let groupServe = groupService()
                             groupServe.setPotentialToWin(potential: Int(ticketVM.totalPotentialWon), groupNumber: groupNumber, completion: {_ in })
                         })

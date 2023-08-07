@@ -21,6 +21,9 @@ class ticketViewModel: ObservableObject {
     @Published var betArray7 = [Bet]() // 3 Leg #1
     @Published var betArray8 = [Bet]() // 5 Leg
     
+    @Published var totalBetArrays = [[Bet]]()
+    @Published var currentTicketFormat: [Int] = [1,1,1,1,1]
+    
     @Published var totalWon: Double = 0.0
     @Published var totalPotentialWon: Double = 0.0
     @Published var totalWonArray: [Int] = []
@@ -35,10 +38,10 @@ class ticketViewModel: ObservableObject {
     @Published var userTickets: [Ticket] = [] // Ticket99
     
 
-    func fillTotalsArr(uid: String) {
-        fetchUserTickets(uid: uid) {
+    func fillTotalsArr(uid: String, groupNumber: Int) {
+        fetchUserTickets(uid: uid, groupNumber: groupNumber) {
             for index in 0..<self.userTickets.count {
-                self.fetchBets(uid: uid, groupNumber: index, completion: { [self] in
+                self.fetchBets(uid: uid, groupNumber: index, ticketFormat: self.currentTicketFormat, completion: { [self] in
                     self.calculateTotals(for: index)
                     totalWonArray.append(Int(self.totalWon))
                 })
@@ -70,13 +73,14 @@ class ticketViewModel: ObservableObject {
             }
     }
 
-    func fetchUserTickets(uid: String, completion: @escaping () -> Void) {
+    func fetchUserTickets(uid: String, groupNumber: Int, completion: @escaping () -> Void) {
         guard let userId = Auth.auth().currentUser?.uid else { return }
         groupServe.fetchUserTickets(userID: userId) { tickets, error in
             if let error = error {
                 print("Error fetching user groups: \(error.localizedDescription)")
             } else if let tickets = tickets {
                 self.userTickets = tickets
+                self.currentTicketFormat = tickets[groupNumber].ticketFormat
                 //self.isGroupsLoaded = true  // Set this to true when data is loaded
             }
             completion()
@@ -85,62 +89,106 @@ class ticketViewModel: ObservableObject {
         }
     }
     
-    func fetchBets(uid: String, groupNumber: Int, completion: @escaping () -> Void) {
-        listener = db.collection("users").document(uid).collection("bets").document("week").collection("currentWeekBets")
-        .whereField("groupNumber", isEqualTo: groupNumber)
-        .addSnapshotListener { (querySnapshot, error) in
-            guard let documents = querySnapshot?.documents else {
-                print("No documents")
-                return
-            }
+    func fetchBets(uid: String, groupNumber: Int, ticketFormat: [Int], completion: @escaping () -> Void) {
+//        fetchUserTickets(uid: uid) {
+//            let ticketFormat = [4,2,1,0,1]
+            //self.currentTicketFormat = ticketFormat
+//            let ticketFormat = self.userTickets[groupNumber].ticketFormat
+            let query = self.db.collection("users").document(uid).collection("bets").document("week").collection("currentWeekBets")
+                .whereField("groupNumber", isEqualTo: groupNumber)
+            
+            query.getDocuments { (querySnapshot, error) in
+                guard let documents = querySnapshot?.documents else {
+                    print("No documents")
+                    return
+                }
+                var parlayIndex = 0
+                for (index, parlayType) in ticketFormat.enumerated() {
+                    for i in 0..<parlayType {
+                        let betTempArr = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
+                            return try? queryDocumentSnapshot.data(as: Bet.self)
+                        }.filter { $0.betNumber == parlayIndex+1 }.prefix(index+1))
+                        self.totalBetArrays.append(betTempArr)
+                        parlayIndex += 1
+                    }
+                }
 
-            self.betArray1 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
-                return try? queryDocumentSnapshot.data(as: Bet.self)
-            }.filter { $0.betNumber == 1 }.prefix(1))
-            
-            self.betArray2 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
-                return try? queryDocumentSnapshot.data(as: Bet.self)
-            }.filter { $0.betNumber == 2 }.prefix(1))
-            
-            self.betArray3 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
-                return try? queryDocumentSnapshot.data(as: Bet.self)
-            }.filter { $0.betNumber == 3 }.prefix(1))
-            
-            self.betArray4 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
-                return try? queryDocumentSnapshot.data(as: Bet.self)
-            }.filter { $0.betNumber == 4 }.prefix(1))
-            
-            self.betArray5 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
-                return try? queryDocumentSnapshot.data(as: Bet.self)
-            }.filter { $0.betNumber == 5 }.prefix(2))
-            
-            self.betArray6 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
-                return try? queryDocumentSnapshot.data(as: Bet.self)
-            }.filter { $0.betNumber == 6 }.prefix(2))
-            
-            self.betArray7 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
-                return try? queryDocumentSnapshot.data(as: Bet.self)
-            }.filter { $0.betNumber == 7 }.prefix(3))
-
-            self.betArray8 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
-                return try? queryDocumentSnapshot.data(as: Bet.self)
-            }.filter { $0.betNumber == 8 }.prefix(5))
-            
-            // only necessary for parlays
-            self.updateBetsInResponseToLoss(betArray: &self.betArray5, maxBetsPlaced: 2, groupNumber: groupNumber, betNumber: 5)
-            self.updateBetsInResponseToLoss(betArray: &self.betArray6, maxBetsPlaced: 2, groupNumber: groupNumber, betNumber: 6)
-            self.updateBetsInResponseToLoss(betArray: &self.betArray7, maxBetsPlaced: 3, groupNumber: groupNumber, betNumber: 7)
-            self.updateBetsInResponseToLoss(betArray: &self.betArray8, maxBetsPlaced: 5, groupNumber: groupNumber, betNumber: 8)
-            
-            self.calculateTotals(for: groupNumber)
-            if let error = error {
-                print(error)
-            } else {
-                self.isBetsLoaded = true
+                // Additional logic here, if needed
+                if let error = error {
+                    print(error)
+                } else {
+                    self.isBetsLoaded = true
+                }
+                print(self.totalBetArrays)
+                completion()
             }
-            completion()
-        }
+        //}
     }
+
+
+    
+    //                self.updateBetsInResponseToLoss(betArray: &self.betArray5, maxBetsPlaced: 2, groupNumber: groupNumber, betNumber: 5)
+    //                self.updateBetsInResponseToLoss(betArray: &self.betArray6, maxBetsPlaced: 2, groupNumber: groupNumber, betNumber: 6)
+    //                self.updateBetsInResponseToLoss(betArray: &self.betArray7, maxBetsPlaced: 3, groupNumber: groupNumber, betNumber: 7)
+    //                self.updateBetsInResponseToLoss(betArray: &self.betArray8, maxBetsPlaced: 5, groupNumber: groupNumber, betNumber: 8)
+    //
+
+    
+//        listener = db.collection("users").document(uid).collection("bets").document("week").collection("currentWeekBets")
+//        .whereField("groupNumber", isEqualTo: groupNumber)
+//        .addSnapshotListener { (querySnapshot, error) in
+//            guard let documents = querySnapshot?.documents else {
+//                print("No documents")
+//                return
+//            }
+//
+//            self.betArray1 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
+//                return try? queryDocumentSnapshot.data(as: Bet.self)
+//            }.filter { $0.betNumber == 1 }.prefix(1))
+//
+//            self.betArray2 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
+//                return try? queryDocumentSnapshot.data(as: Bet.self)
+//            }.filter { $0.betNumber == 2 }.prefix(1))
+//
+//            self.betArray3 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
+//                return try? queryDocumentSnapshot.data(as: Bet.self)
+//            }.filter { $0.betNumber == 3 }.prefix(1))
+//
+//            self.betArray4 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
+//                return try? queryDocumentSnapshot.data(as: Bet.self)
+//            }.filter { $0.betNumber == 4 }.prefix(1))
+//
+//            self.betArray5 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
+//                return try? queryDocumentSnapshot.data(as: Bet.self)
+//            }.filter { $0.betNumber == 5 }.prefix(2))
+//
+//            self.betArray6 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
+//                return try? queryDocumentSnapshot.data(as: Bet.self)
+//            }.filter { $0.betNumber == 6 }.prefix(2))
+//
+//            self.betArray7 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
+//                return try? queryDocumentSnapshot.data(as: Bet.self)
+//            }.filter { $0.betNumber == 7 }.prefix(3))
+//
+//            self.betArray8 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
+//                return try? queryDocumentSnapshot.data(as: Bet.self)
+//            }.filter { $0.betNumber == 8 }.prefix(5))
+//
+//            // only necessary for parlays
+//            self.updateBetsInResponseToLoss(betArray: &self.betArray5, maxBetsPlaced: 2, groupNumber: groupNumber, betNumber: 5)
+//            self.updateBetsInResponseToLoss(betArray: &self.betArray6, maxBetsPlaced: 2, groupNumber: groupNumber, betNumber: 6)
+//            self.updateBetsInResponseToLoss(betArray: &self.betArray7, maxBetsPlaced: 3, groupNumber: groupNumber, betNumber: 7)
+//            self.updateBetsInResponseToLoss(betArray: &self.betArray8, maxBetsPlaced: 5, groupNumber: groupNumber, betNumber: 8)
+//
+//            self.calculateTotals(for: groupNumber)
+//            if let error = error {
+//                print(error)
+//            } else {
+//                self.isBetsLoaded = true
+//            }
+//            completion()
+//        }
+    
     
     func availableBets(for groupNumber: Int) -> [Int] {
         var bets = [Int]()
@@ -162,10 +210,11 @@ class ticketViewModel: ObservableObject {
             if let error = error {
                 print("Error removing document: \(error)")
             } else {
-                
-                self.fetchBets(uid: userId, groupNumber: bet.groupNumber) {print("Document successfully removed!")
-                    self.groupServe.setPotentialToWin(potential: Int(self.totalPotentialWon), groupNumber: bet.groupNumber, completion: {_ in })
-                } // fetch the updated list of bets
+                self.fetchUserTickets(uid: userId, groupNumber: bet.groupNumber) {
+                    self.fetchBets(uid: userId, groupNumber: bet.groupNumber, ticketFormat: self.currentTicketFormat) {print("Document successfully removed!")
+                        self.groupServe.setPotentialToWin(potential: Int(self.totalPotentialWon), groupNumber: bet.groupNumber, completion: {_ in })
+                    } // fetch the updated list of bets
+                }
             }
         }
     }
@@ -243,7 +292,7 @@ class ticketViewModel: ObservableObject {
         totalPotentialWon = totalPotentialWonLocal
     }
     func returnTotal(uid: String, groupNumber: Int, completion: @escaping (Int) -> Void) {
-        fetchBets(uid: uid, groupNumber: groupNumber){
+        fetchBets(uid: uid, groupNumber: groupNumber, ticketFormat: self.currentTicketFormat){
             let result = Int(self.totalWon)
             completion(result)
         }

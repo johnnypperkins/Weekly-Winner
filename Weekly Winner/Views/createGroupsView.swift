@@ -74,7 +74,7 @@ struct createGroupsView: View {
                         if isTaken {
                             takenTextShown = true
                         } else {
-                            viewModel.createGroup(groupName: groupName, groupSlogan: groupSlogan, password: password)
+                            viewModel.createGroup(groupName: groupName, groupSlogan: groupSlogan, password: password, ticketFormat: [4,2,1,0,1])
                             dismiss()
                         }
                     }

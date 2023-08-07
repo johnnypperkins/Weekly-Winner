@@ -20,6 +20,7 @@ struct Group: Identifiable, Codable {
     var keywordsForLookup: [String] {
         [self.groupName.generateStringSequence()].flatMap { $0 }
     }
+    var ticketFormat: [Int]
 }
 
 struct GroupStats {

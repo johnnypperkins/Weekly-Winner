@@ -19,31 +19,6 @@ class groupsViewModel: ObservableObject {
     private let grpService = groupService()
     
     private let db = Firestore.firestore()
-    
-    // In ViewModel
-
-//    var rankedGroupTickets: [(rank: String, ticket: Ticket)] {
-//        var lastScore: Double? = nil
-//        var currentRank: Int = 1
-//        var increaseRank: Bool = true
-//        var rankedTickets: [(rank: String, ticket: Ticket)] = []
-//
-//        for ticket in tickets.sorted(by: { $0.totalWon > $1.totalWon }) {
-//            if let lastScore = lastScore, lastScore == ticket.totalWon {
-//                increaseRank = false
-//            } else {
-//                if !increaseRank {
-//                    currentRank += 1
-//                }
-//                increaseRank = true
-//            }
-//
-//            let displayRank = increaseRank ? String(currentRank) : "T\(currentRank)"
-//            rankedTickets.append((rank: displayRank, ticket: ticket))
-//            lastScore = ticket.totalWon
-//        }
-//        return rankedTickets
-//    }
 
     
     init() {

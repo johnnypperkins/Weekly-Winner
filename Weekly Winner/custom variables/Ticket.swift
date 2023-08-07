@@ -23,4 +23,5 @@ struct Ticket: Identifiable, Codable {
     var rank: String
     var isEnabled: Bool
     var groupAdmin: String
+    var ticketFormat: [Int]
 }
