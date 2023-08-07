@@ -14,7 +14,7 @@ struct ChatService {
 
     mutating func getChats(groupID: String, completion: @escaping ([Message]?, Error?) -> Void) {
         listener = db.collection("groups").document(groupID).collection("chats")
-            .order(by: "timeSent", descending: false)
+            .order(by: "timeSent", descending: true)
             .addSnapshotListener { (querySnapshot, error) in
                 if let error = error {
                     print("There was an error getting the chats: \(error)")

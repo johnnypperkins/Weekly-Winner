@@ -513,15 +513,15 @@ struct BetCard: View {
                 
                 
                 // Arrow
-                if (!ownCard && ticket.isEnabled) {
+               
                     HStack {
                         Image(systemName: "chevron.right") // Use any image you'd like
                             .resizable()
-                            .frame(width: 10, height: 15) // Adjust size to your liking
-                            .foregroundColor(.gray) // Choose color
-                            .padding(.trailing,7.5) // Add padding to move away from the edge
+                            .frame(width: 7.5, height: 10) // Adjust size to your liking
+                            .foregroundColor(!ownCard && ticket.isEnabled ? .white : .clear) // Choose color
+                            //.padding(.trailing,2.5) // Add padding to move away from the edge
                     }
-                }
+                
             }
                 
         }
@@ -652,7 +652,10 @@ struct chatView: View {
     @State private var chatMessage: String = "" // State variable to hold the chat message
     //@State private var isChatsLoaded: Bool = false
 
+
     var body: some View {
+        
+
         VStack {
             if viewModel.isChatsLoaded {
                 HStack {
@@ -682,7 +685,7 @@ struct chatView: View {
                                     .font(.custom(K.customFonts.poppinsMedium, size: 8))
                                     .foregroundColor(K.finalColor.textWhite)
                                 Text("\(viewModel.allChats[index].messageContent)")
-                                    .padding(EdgeInsets(top: 0, leading: 5, bottom: 5, trailing: 5))
+                                    .padding(EdgeInsets(top: 3, leading: 5, bottom: 3, trailing: 5))
                                     .font(.custom(K.customFonts.poppinsMedium, size: 15))
                                     .foregroundColor(K.finalColor.textWhite)
                                     .background(K.finalColor.backgroundBlue)
@@ -691,6 +694,9 @@ struct chatView: View {
                             }.padding(EdgeInsets(top: 5, leading: 5, bottom: 0, trailing: 5))
                             
                         Spacer()
+                            Text("\(formatDate.format(date: viewModel.allChats[index].timeSent))").font(.custom(K.customFonts.poppinsMedium, size: 8))
+                                .foregroundColor(K.finalColor.textWhite)
+                                .padding(EdgeInsets(top: 10, leading: 0, bottom: 0, trailing: 5))
                         }
                     }
                     
@@ -706,6 +712,8 @@ struct chatView: View {
         .onAppear() {
             viewModel.getChats(groupID: groupsViewModel.userTickets[selectedGroup-1].groupID) {_ in
             }
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMM d, h:mma"
         }
     }
 
