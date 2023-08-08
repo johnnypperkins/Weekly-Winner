@@ -93,3 +93,32 @@ enum AuthError: Error {
 
  
 
+func getTitle(for index: Int, iteration: Int) -> String {
+    switch index {
+    case 0:
+        return "Straight #\(iteration + 1)"
+    case 1:
+        return "2 Leg #\(iteration + 1)"
+    case 2:
+        return "3 Leg #\(iteration + 1)"
+    case 3:
+        return "4 Leg #\(iteration + 1)"
+    case 4:
+        return "5 Leg #\(iteration + 1)"
+    default:
+        return "Other #\(iteration + 1)"
+    }
+}
+
+func getTitle2(ticketFormat: [Int], betNumber: Int) -> String {
+    var betTotals = 0
+    for (index, parlayType) in ticketFormat.enumerated() {
+        for specificParlay in 0..<parlayType {
+            betTotals += 1
+            if betNumber == betTotals {
+                return getTitle(for: index, iteration: specificParlay)
+            }
+        }
+    }
+    return "null"
+}

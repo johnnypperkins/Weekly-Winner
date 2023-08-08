@@ -305,19 +305,21 @@ struct BetDetailsView: View {
                                 .frame(maxWidth: 200, alignment: .center)
                                 .pickerStyle(WheelPickerStyle())
                                 .onChange(of: groupNumber) { newValue in
-                                    ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: newValue, ticketFormat: ticketVM.currentTicketFormat) {
-                                        if !ticketVM.availableBets(for: newValue).isEmpty {
-                                            betNumber = ticketVM.availableBets(for: groupNumber)[0]
-                                            
-                                        } else {
-                                            betNumber = -99
+                                    ticketVM.fetchUserTickets(uid: Auth.auth().currentUser!.uid, groupNumber: newValue) {
+                                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: newValue, ticketFormat: ticketVM.currentTicketFormat) {
+                                            if !ticketVM.availableBetsArray.isEmpty {
+                                                betNumber = ticketVM.availableBetsArray[0]
+                                                
+                                            } else {
+                                                betNumber = -99
+                                            }
+                                            checkTeamTaken()
                                         }
-                                        checkTeamTaken()
                                     }
                                 }
                                 .onAppear {
-                                    if !ticketVM.availableBets(for: groupNumber).isEmpty {
-                                        betNumber = ticketVM.availableBets(for: groupNumber)[0]
+                                    if !ticketVM.availableBetsArray.isEmpty {
+                                        betNumber = ticketVM.availableBetsArray[0]
                                     } else {
                                         betNumber = -99
                                     }
@@ -346,28 +348,32 @@ struct BetDetailsView: View {
                         ZStack(alignment: .topLeading) {
                             //.background(K.veryLightBlue)
                             if ticketVM.isBetsLoaded {
-                                Picker("Bet Type", selection: $betNumber) { // starts at 1 bc "1 leg"
+                                Picker("Bet Type", selection: $betNumber) {
                                     if betNumber >= 0 {
-                                        ForEach(ticketVM.availableBets(for: groupNumber), id: \.self) { index in //
-                                            switch index {
-                                            case 1: Text("Straight #1").tag(1)
-                                            case 2: Text("Straight #2").tag(2)
-                                            case 3: Text("Straight #3").tag(3)
-                                            case 4: Text("Straight #4").tag(4)
-                                            case 5: Text("2leg #1").tag(5)
-                                            case 6: Text("2leg #2").tag(6)
-                                            case 7: Text("3leg").tag(7)
-                                            case 8: Text("5leg").tag(8)
-                                            default: EmptyView()
+                                        ForEach(0..<1, id: \.self) { _ in
+                                            //var parlayIndex = 1
+                                            let availableBets = ticketVM.availableBetsArray
+                                            let ticketFormat = ticketVM.currentTicketFormat
+                                            ForEach(availableBets, id: \.self) { bet in
+                                                //let index = bet - 1
+                                                //let parlayType = ticketVM.currentTicketFormat[index]
+                                                Text(getTitle2(ticketFormat: ticketFormat, betNumber: bet)).tag(bet)
+                                                    .foregroundColor(K.finalColor.textWhite)
+                                                    .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+//                                                ForEach(0..<availableBets.count, id: \.self) { i in
+//                                                    
+//                                                    //parlayIndex += 1
+//                                                }
                                             }
-                                        }.foregroundColor(K.finalColor.textWhite)
-                                            .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                        }
+                                        
                                     } else {
                                         Text("FULL")
                                             .foregroundColor(K.finalColor.textWhite)
                                             .font(.custom(K.customFonts.lexendDecaLight, size: 16))
                                     }
                                 }
+
                                 .frame(maxWidth: 200, alignment: .center)
                                 .pickerStyle(WheelPickerStyle())
                                 .onChange(of: betNumber) { newValue in
@@ -457,14 +463,17 @@ struct BetDetailsView: View {
                     }
                 }
                 .onAppear {
-                    ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber, ticketFormat: ticketVM.currentTicketFormat) {
-                        if !ticketVM.availableBets(for: groupNumber).isEmpty {
-                            betNumber = ticketVM.availableBets(for: groupNumber)[0]
-                        } else {
-                            betNumber = -99
+                    ticketVM.fetchUserTickets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber) {
+                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat) {
+                            if !ticketVM.availableBetsArray.isEmpty {
+                                betNumber = ticketVM.availableBetsArray[0]
+                            } else {
+                                betNumber = -99
+                            }
+                            checkTeamTaken()
                         }
-                        checkTeamTaken()
                     }
+                    
                     print("Group Number: \(groupNumber), Bet Number: \(betNumber)")
                 } // whole thing
                 //.background(K.veryLightGray)
@@ -477,7 +486,7 @@ struct BetDetailsView: View {
                 Button(action: {
                     print("groupNumber: \(groupNumber), betNumber: \(betNumber)")
                     viewModel.uploadBet(groupNumber: groupNumber, groupID: groupsVM.userTickets[groupNumber].groupID, betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread)), betType: betType, gameID: game.idd ?? "null") {_ in
-                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber, ticketFormat: ticketVM.currentTicketFormat, completion: {
+                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat, completion: {
                             let groupServe = groupService()
                             groupServe.setPotentialToWin(potential: Int(ticketVM.totalPotentialWon), groupNumber: groupNumber, completion: {_ in })
                         })

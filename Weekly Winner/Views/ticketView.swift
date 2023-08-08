@@ -37,7 +37,7 @@ struct ticketView: View {
                                 Button(action: {
                                     self.selectedGroup = index
                                     viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
-                                        viewModel.fetchBets(uid: uid, groupNumber: selectedGroup, ticketFormat: viewModel.currentTicketFormat, completion: {})
+                                        viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.currentTicketFormat, completion: {})
                                     }
                                 }) {
                                     Text(viewModel.userTickets[index].groupName)
@@ -58,7 +58,7 @@ struct ticketView: View {
                                     Button(action: {
                                         self.selectedGroup = index
                                         viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
-                                            viewModel.fetchBets(uid: uid, groupNumber: selectedGroup, ticketFormat: viewModel.currentTicketFormat, completion: {})
+                                            viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.currentTicketFormat, completion: {})
                                         }
                                     }) {
                                         Text(viewModel.userTickets[index].groupName)
@@ -134,10 +134,8 @@ struct ticketView: View {
 //                                SectionTitle(title: "5 leg #1", betArray: viewModel.betArray8, maxBetsPlaced: 5, uid: uid, viewModel: viewModel)
 
                                     
-                                    betSections
-                                
-                                
-                                
+                                    BetSections
+
                             }.padding(.bottom,60)
                             .padding()
                         }
@@ -154,11 +152,11 @@ struct ticketView: View {
                 .onAppear {
                     selectedGroup = 0
                     if uid != Auth.auth().currentUser?.uid{
-                        viewModel.fetchBets(uid: uid, groupNumber: viewModel.userTickets[0].groupNumber, ticketFormat: viewModel.currentTicketFormat, completion: {})
+                        viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: viewModel.currentTicketFormat, completion: {})
                     }
                     else{
                         viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
-                            viewModel.fetchBets(uid: uid, groupNumber: selectedGroup, ticketFormat: viewModel.currentTicketFormat, completion: {}) // Fetch bets for selected group on view appear
+                            viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.currentTicketFormat, completion: {}) // Fetch bets for selected group on view appear
                             
                         }
                     }
@@ -171,36 +169,23 @@ struct ticketView: View {
         }
     }
     
-//    private var sectionTitles: [SectionTitle] {
-//       var views: [SectionTitle] = []
-//
-//        var parlayIndex = 0
-//        for (index, parlayType) in viewModel.userTickets[selectedGroup].ticketFormat.enumerated() {
-//           // Logic to create a SectionTitle based on the parlayType
-//           // Append it to the views array
-//            for i in 0..<parlayType {
-//                let sectionTitle = SectionTitle(title: "Title", betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: index+1, uid: uid, viewModel: viewModel) // Modify as needed
-//                views.append(sectionTitle)
-//                parlayIndex += 1
-//            }
-//
-//       }
-//
-//       return views
-//   }
     
-    private var betSections: some View {
-        ForEach(0..<viewModel.currentTicketFormat.count, id: \.self) { index in
-            let parlayType = viewModel.currentTicketFormat[index]
-            ForEach(0..<parlayType, id: \.self) { i in
-                let betArray = viewModel.totalBetArrays[i + index * parlayType]
-                let title = "Title" // Modify this as needed
-                SectionTitle(title: title, betArray: betArray, maxBetsPlaced: index + 1, uid: uid, viewModel: viewModel)
-                // You'll need to figure out how to manage parlayIndex without mutating it here
-
+    private var BetSections: some View {
+        VStack {
+            ForEach(0..<viewModel.currentTicketFormat.count, id: \.self) { index in
+                let parlayType = viewModel.currentTicketFormat[index]
+                ForEach(0..<parlayType, id: \.self) { i in
+                    let betArray = viewModel.totalBetArrays[i + index * parlayType]
+//                    let title = "Straight \(i+1)"
+                    
+                    SectionTitle(title: getTitle(for: index, iteration: i), betArray: betArray, maxBetsPlaced: index + 1, uid: uid, viewModel: viewModel)
+                }
             }
         }
     }
+
+
+
     
     struct SectionTitle: View {
         let title: String
