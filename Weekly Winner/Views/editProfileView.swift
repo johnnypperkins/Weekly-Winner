@@ -38,6 +38,15 @@ struct editProfileView: View {
                                         showImagePicker.toggle()
                                     }
                             }
+                            else if viewModel.profileImgURL == "" {
+                                Image(systemName: "person.circle")
+                                    .resizable()
+                                    .frame(width: 100, height: 100)
+                                    .clipShape(Circle())
+                                    .onTapGesture {
+                                        showImagePicker.toggle()
+                                    }
+                            }
                             else {
                                 KFImage(URL(string: viewModel.profileImgURL))
                                     .resizable()

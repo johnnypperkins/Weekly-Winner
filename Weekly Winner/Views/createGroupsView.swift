@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct createGroupsView: View {
     @State private var groupName: String = ""
@@ -36,17 +37,22 @@ struct createGroupsView: View {
                                 showImagePicker.toggle()
                             }
                     }
-//                    else {
-//                        KFImage(URL(string: viewModel.profileImgURL))
-//                            .resizable()
-//                            .aspectRatio(contentMode: .fill)
-//                            .frame(width: 100, height: 100)
-//                            .clipShape(Circle())
-//                            .foregroundColor(.blue)
-//                            .onTapGesture {
-//                                showImagePicker.toggle()
-//                            }
-//                    }
+                    else {
+                        ZStack{
+                            Circle()
+                                .frame(width: 100, height: 100)
+                                .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                            
+                            Image(systemName: "person.fill")
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 60, height: 60)
+                                .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+                                .onTapGesture {
+                                    showImagePicker.toggle()
+                                }
+                        }.clipShape(Circle())
+                    }
                 }
             .sheet(isPresented: $showImagePicker,
                     onDismiss: loadImage) {
@@ -54,38 +60,107 @@ struct createGroupsView: View {
              }
                    .padding(.top)
                    .padding(.bottom)
-            }
-            Form {
-                Section {
-                    TextField("Group Name", text: $groupName)
-                    TextField("Group Slogan", text: $groupSlogan)
-                }
                 
-                Toggle(isOn: $isPrivate) {
+                VStack(alignment: .leading, spacing: 10) {
+                  Text("Group Name")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                    .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                  HStack() {
+                      TextField("Group Name", text: $groupName)
+                      .foregroundColor(.white)
+                      .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                      .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+
+                  }
+                  .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+                  .cornerRadius(10)
+                  .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                  .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+                
+                VStack(alignment: .leading, spacing: 10) {
+                  Text("Group Slogan")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                    .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                  HStack() {
+                      TextField("Group Slogan", text: $groupSlogan)
+                      .foregroundColor(.white)
+                      .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                      .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+
+                  }
+                  .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+                  .cornerRadius(10)
+                  .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                  .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+                
+                HStack{
                     Text("Private Group")
-                }
-                
-                if isPrivate {
-                    SecureField("Password", text: $password)
-                }
-                
-                Button(action: {
-                    viewModel.checkIfGroupNameTaken(groupName) { isTaken in
-                        if isTaken {
-                            takenTextShown = true
-                        } else {
-                            viewModel.createGroup(groupName: groupName, groupSlogan: groupSlogan, password: password, ticketFormat: [4,2,1,0,1])
-                            dismiss()
-                        }
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                        .foregroundColor(.white)
+                    
+                    Spacer()
+                    
+                    Toggle(isOn: $isPrivate) {
+                        
                     }
-                   
-                }) {
-                    Text("Create Group")
+                }.padding(.vertical,16)
+                if isPrivate {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Password")
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                        HStack() {
+                            TextField("Password", text: $password)
+                                .foregroundColor(.white)
+                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                                .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                            
+                        }
+                        .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+                        .cornerRadius(10)
+                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                    }
+                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
                 }
-                Text(takenTextShown ? "Name Taken" : "") // this is retarded format ik well fix it
-            }
-            .navigationBarTitle("Create Group", displayMode: .inline)
-            
+                
+                VStack {
+                    Spacer()
+                    Button {
+                        viewModel.checkIfGroupNameTaken(groupName) { isTaken in
+                            if isTaken {
+                                takenTextShown = true
+                            } else {
+                                viewModel.createGroup(groupName: groupName, groupSlogan: groupSlogan, password: password, ticketFormat: [4,2,1,0,1])
+                                dismiss()
+                            }
+                        }
+                    } label: {
+                        HStack{
+                            Spacer()
+                            
+                            Text("Create")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                .foregroundColor(.white)
+                                            //shadow
+                            
+                            Spacer()
+                        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+                            .background(Color(red: 0.31, green: 0.57, blue: 1))
+                            .cornerRadius(10)
+                            .padding(.horizontal,16)
+                            .padding(.bottom,100)
+                    }
+                }.frame(minHeight: 0, maxHeight: .infinity)
+                
+            }.padding(.horizontal,16)
+           
+                .navigationBarTitle("Create Group", displayMode: .inline)
+                .background(Color(red: 0.02, green: 0.05, blue: 0.26))
         }
             
         
