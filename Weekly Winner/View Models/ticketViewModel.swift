@@ -90,181 +90,57 @@ class ticketViewModel: ObservableObject {
         }
     }
     
-//    func fetchBets(uid: String, groupNumber: Int, ticketFormat: [Int], completion: @escaping () -> Void) {
-//        let query = self.db.collection("users").document(uid).collection("bets").document("week").collection("currentWeekBets")
-//            .whereField("groupNumber", isEqualTo: groupNumber)
-//
-//        query.getDocuments { (querySnapshot, error) in
-//            guard let documents = querySnapshot?.documents else {
-//                print("No documents")
-//                return
-//            }
-//            self.totalBetArrays = Array(repeating: [], count: ticketFormat.reduce(0, +)) // Initialize totalBetArrays
-//            var parlayIndex = 0
-//            for (index, parlayType) in ticketFormat.enumerated() {
-//                for _ in 0..<parlayType {
-//                    let betTempArr = documents.compactMap { queryDocumentSnapshot -> Bet? in
-//                        return try? queryDocumentSnapshot.data(as: Bet.self)
-//                    }.filter { $0.betNumber == parlayIndex + 1 }
-//                    self.totalBetArrays[parlayIndex] = betTempArr
-//                    parlayIndex += 1
-//                }
-//            }
-//
-//            if let error = error {
-//                print(error)
-//            } else {
-//                self.isBetsLoaded = true
-//            }
-//            //print(self.totalBetArrays)
-//            completion()
-//        }
-//    }
-//
-//    func availableBets(for groupNumber: Int, ticketFormat: [Int], completion: @escaping ([Int]) -> Void) {
-//        var bets = [Int]()
-//        fetchBets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber, ticketFormat: ticketFormat) {
-//            var parlayIndex = 0
-//            for (index, parlayType) in ticketFormat.enumerated() {
-//                for _ in 0..<parlayType {
-//                    let betArray = self.totalBetArrays[parlayIndex]
-//                    if betArray.filter({ $0.groupNumber == groupNumber }).count < index + 1 {
-//                        print("Appending betNumber:", parlayIndex + 1) // Debug print
-//                        bets.append(parlayIndex + 1)
-//                    }
-//                    parlayIndex += 1
-//                }
-//            }
-//            print("Final available bets:", bets) // Debug print
-//            completion(bets) // Call the completion handler with the resulting bets
-//        }
-//    }
     func fetchBets(uid: String, for groupNumber: Int, ticketFormat: [Int], completion: @escaping () -> Void) {
         let query = self.db.collection("users").document(uid).collection("bets").document("week").collection("currentWeekBets")
             .whereField("groupNumber", isEqualTo: groupNumber)
 
         query.getDocuments { (querySnapshot, error) in
-            guard let documents = querySnapshot?.documents else {
-                print("No documents")
-                return
-            }
-            self.totalBetArrays.removeAll() // Clear previous data
-            var parlayIndex = 0
-            for (index, parlayType) in ticketFormat.enumerated() {
-                for _ in 0..<parlayType {
+            DispatchQueue.main.async {
+                guard let documents = querySnapshot?.documents else {
+                    print("No documents")
+                    return
+                }
+                self.totalBetArrays.removeAll() // Clear previous data
+                for (index, parlayMax) in ticketFormat.enumerated() {
                     let betTempArr = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
                         return try? queryDocumentSnapshot.data(as: Bet.self)
-                    }.filter { $0.betNumber == parlayIndex+1 }.prefix(index+1))
+                    }.filter { $0.betNumber == index+1 }.prefix(parlayMax))
                     self.totalBetArrays.append(betTempArr)
-                    parlayIndex += 1
                 }
-            }
-
-            // Determine available bets
-            self.availableBetsArray.removeAll()
-            parlayIndex = 0
-            for (index, parlayType) in ticketFormat.enumerated() {
-                for _ in 0..<parlayType {
-                    let betArray = self.totalBetArrays[parlayIndex]
-                    if betArray.filter({ $0.groupNumber == groupNumber }).count < index + 1 {
-                        print("Appending betNumber:", parlayIndex + 1) // Debug print
-                        self.availableBetsArray.append(parlayIndex + 1)
+ 
+                self.availableBetsArray.removeAll()
+                for (index, parlayMax) in ticketFormat.enumerated() {
+                    let betArray = self.totalBetArrays[index]
+                    if betArray.filter({ $0.groupNumber == groupNumber }).count >= parlayMax {
+                        //print("Appending betNumber:", parlayIndex + 1) // Debug print
+                        self.availableBetsArray.append(-1)
+                    } else {
+                        if betArray.contains(where: { $0.result == .loss }) {
+                            self.availableBetsArray.append(-1)
+                        } else {
+                            self.availableBetsArray.append(index+1)
+                        }
                     }
-                    parlayIndex += 1
                 }
-            }
+                for index in self.totalBetArrays.indices {
+                    let bet = self.totalBetArrays[index]
+                    if bet.count > 1 {
+                        self.updateBetsInResponseToLoss(betArray: &self.totalBetArrays[index], maxBetsPlaced: self.currentTicketFormat[index], groupNumber: groupNumber, betNumber: index + 1)
+                    }
+                }
 
-            if let error = error {
-                print(error)
-            } else {
-                self.isBetsLoaded = true
-            }
+                if let error = error {
+                    print(error)
+                } else {
+                    self.currentTicketFormat = ticketFormat
+                    self.isBetsLoaded = true
+                }
 
-            // Call completion handler
-            completion()
+                // Call completion handler
+                completion()
+            }
         }
     }
-
-
-
-
-    
-    //                self.updateBetsInResponseToLoss(betArray: &self.betArray5, maxBetsPlaced: 2, groupNumber: groupNumber, betNumber: 5)
-    //                self.updateBetsInResponseToLoss(betArray: &self.betArray6, maxBetsPlaced: 2, groupNumber: groupNumber, betNumber: 6)
-    //                self.updateBetsInResponseToLoss(betArray: &self.betArray7, maxBetsPlaced: 3, groupNumber: groupNumber, betNumber: 7)
-    //                self.updateBetsInResponseToLoss(betArray: &self.betArray8, maxBetsPlaced: 5, groupNumber: groupNumber, betNumber: 8)
-    //
-
-    
-//        listener = db.collection("users").document(uid).collection("bets").document("week").collection("currentWeekBets")
-//        .whereField("groupNumber", isEqualTo: groupNumber)
-//        .addSnapshotListener { (querySnapshot, error) in
-//            guard let documents = querySnapshot?.documents else {
-//                print("No documents")
-//                return
-//            }
-//
-//            self.betArray1 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
-//                return try? queryDocumentSnapshot.data(as: Bet.self)
-//            }.filter { $0.betNumber == 1 }.prefix(1))
-//
-//            self.betArray2 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
-//                return try? queryDocumentSnapshot.data(as: Bet.self)
-//            }.filter { $0.betNumber == 2 }.prefix(1))
-//
-//            self.betArray3 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
-//                return try? queryDocumentSnapshot.data(as: Bet.self)
-//            }.filter { $0.betNumber == 3 }.prefix(1))
-//
-//            self.betArray4 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
-//                return try? queryDocumentSnapshot.data(as: Bet.self)
-//            }.filter { $0.betNumber == 4 }.prefix(1))
-//
-//            self.betArray5 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
-//                return try? queryDocumentSnapshot.data(as: Bet.self)
-//            }.filter { $0.betNumber == 5 }.prefix(2))
-//
-//            self.betArray6 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
-//                return try? queryDocumentSnapshot.data(as: Bet.self)
-//            }.filter { $0.betNumber == 6 }.prefix(2))
-//
-//            self.betArray7 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
-//                return try? queryDocumentSnapshot.data(as: Bet.self)
-//            }.filter { $0.betNumber == 7 }.prefix(3))
-//
-//            self.betArray8 = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
-//                return try? queryDocumentSnapshot.data(as: Bet.self)
-//            }.filter { $0.betNumber == 8 }.prefix(5))
-//
-//            // only necessary for parlays
-//            self.updateBetsInResponseToLoss(betArray: &self.betArray5, maxBetsPlaced: 2, groupNumber: groupNumber, betNumber: 5)
-//            self.updateBetsInResponseToLoss(betArray: &self.betArray6, maxBetsPlaced: 2, groupNumber: groupNumber, betNumber: 6)
-//            self.updateBetsInResponseToLoss(betArray: &self.betArray7, maxBetsPlaced: 3, groupNumber: groupNumber, betNumber: 7)
-//            self.updateBetsInResponseToLoss(betArray: &self.betArray8, maxBetsPlaced: 5, groupNumber: groupNumber, betNumber: 8)
-//
-//            self.calculateTotals(for: groupNumber)
-//            if let error = error {
-//                print(error)
-//            } else {
-//                self.isBetsLoaded = true
-//            }
-//            completion()
-//        }
-    
-    // [4,2,1,0,1]
-
-
-
-
-//        if betArray1.filter({ $0.groupNumber == groupNumber }).count < 1 { bets.append(1) }
-//        if betArray2.filter({ $0.groupNumber == groupNumber }).count < 1 { bets.append(2) }
-//        if betArray3.filter({ $0.groupNumber == groupNumber }).count < 1 { bets.append(3) }
-//        if betArray4.filter({ $0.groupNumber == groupNumber }).count < 1 { bets.append(4) }
-//        if betArray5.filter({ $0.groupNumber == groupNumber }).count < 2 { bets.append(5) }
-//        if betArray6.filter({ $0.groupNumber == groupNumber }).count < 2 { bets.append(6) }
-//        if betArray7.filter({ $0.groupNumber == groupNumber }).count < 3 { bets.append(7) }
-//        if betArray8.filter({ $0.groupNumber == groupNumber }).count < 5 { bets.append(8) }
-       
     
     func deleteBet(bet: Bet) {
         guard let userId = Auth.auth().currentUser?.uid else { return }
@@ -354,6 +230,8 @@ class ticketViewModel: ObservableObject {
         totalWon = totalWonLocal
         totalPotentialWon = totalPotentialWonLocal
     }
+    
+    
     func returnTotal(uid: String, groupNumber: Int, completion: @escaping (Int) -> Void) {
         fetchBets(uid: uid, for: groupNumber, ticketFormat: self.currentTicketFormat){
             let result = Int(self.totalWon)
@@ -378,4 +256,27 @@ class ticketViewModel: ObservableObject {
     func stopListening() {
         listener?.remove()
     }
+}
+
+func parlayTitle(ticketFormat: [Int], index: Int) -> String {
+    guard index < ticketFormat.count else {
+        return "Index out of range" // Handle the case where index is out of bounds
+    }
+    
+    let valueAtIndex = ticketFormat[index]
+    let legTitle: String
+    
+    switch valueAtIndex {
+    case 1:
+        legTitle = "Straight"
+    case 2...5:
+        legTitle = "\(valueAtIndex) Leg"
+    default:
+        return "Invalid value" // Handle other cases if needed
+    }
+    
+    // Find the occurrence of the same value
+    let occurrence = ticketFormat[..<index].filter { $0 == valueAtIndex }.count + 1
+
+    return "\(legTitle) \(occurrence)"
 }

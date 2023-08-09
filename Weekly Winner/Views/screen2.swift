@@ -307,19 +307,19 @@ struct BetDetailsView: View {
                                 .onChange(of: groupNumber) { newValue in
                                     ticketVM.fetchUserTickets(uid: Auth.auth().currentUser!.uid, groupNumber: newValue) {
                                         ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: newValue, ticketFormat: ticketVM.currentTicketFormat) {
-                                            if !ticketVM.availableBetsArray.isEmpty {
-                                                betNumber = ticketVM.availableBetsArray[0]
-                                                
+                                            if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
+                                                betNumber = firstNumberGreaterThanZero
                                             } else {
                                                 betNumber = -99
                                             }
+
                                             checkTeamTaken()
                                         }
                                     }
                                 }
                                 .onAppear {
-                                    if !ticketVM.availableBetsArray.isEmpty {
-                                        betNumber = ticketVM.availableBetsArray[0]
+                                    if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
+                                        betNumber = firstNumberGreaterThanZero
                                     } else {
                                         betNumber = -99
                                     }
@@ -354,12 +354,15 @@ struct BetDetailsView: View {
                                             //var parlayIndex = 1
                                             let availableBets = ticketVM.availableBetsArray
                                             let ticketFormat = ticketVM.currentTicketFormat
-                                            ForEach(availableBets, id: \.self) { bet in
+                                            ForEach(0..<availableBets.count, id: \.self) { index in
                                                 //let index = bet - 1
                                                 //let parlayType = ticketVM.currentTicketFormat[index]
-                                                Text(getTitle2(ticketFormat: ticketFormat, betNumber: bet)).tag(bet)
-                                                    .foregroundColor(K.finalColor.textWhite)
-                                                    .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                                if availableBets[index] > 0 {
+                                                    Text(parlayTitle(ticketFormat: ticketFormat, index: index)).tag(index+1)
+                                                        .foregroundColor(K.finalColor.textWhite)
+                                                        .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                                }
+
 //                                                ForEach(0..<availableBets.count, id: \.self) { i in
 //                                                    
 //                                                    //parlayIndex += 1
@@ -465,11 +468,12 @@ struct BetDetailsView: View {
                 .onAppear {
                     ticketVM.fetchUserTickets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber) {
                         ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat) {
-                            if !ticketVM.availableBetsArray.isEmpty {
-                                betNumber = ticketVM.availableBetsArray[0]
+                            if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
+                                betNumber = firstNumberGreaterThanZero
                             } else {
                                 betNumber = -99
                             }
+
                             checkTeamTaken()
                         }
                     }
@@ -535,7 +539,7 @@ struct BetDetailsView: View {
                     originalSpread = game.totalUnder
                     whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
                 }
-                groupsVM.fetchUserTickets() {}
+                //groupsVM.fetchUserTickets() {}
             })
         }
     }

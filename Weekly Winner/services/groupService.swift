@@ -109,7 +109,7 @@ class groupService {
                     rank: ranksArray[index], //data["rank"] as! String,
                     isEnabled: data["isEnabled"] as! Bool,
                     groupAdmin: data["groupAdmin"] as! String,
-                    ticketFormat: [4,2,1,0,1]
+                    ticketFormat: [4,2,1,0,1] // ticketformat99
                 )
                 tickets.append(ticket)
 //                print("\(tickets) are tickets")
