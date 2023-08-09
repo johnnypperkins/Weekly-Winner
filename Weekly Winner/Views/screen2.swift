@@ -213,23 +213,10 @@ struct gameRowView: View {
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
                     .foregroundColor(K.finalColor.textWhite)
                     .frame(maxWidth: .infinity, alignment: .center)
-                //Spacer().frame(height: -5) // Adjust this value to move the Text view up
             }
             
-            //Spacer()
         }.padding(.horizontal)
             .padding(EdgeInsets(top: 7.5, leading: 0, bottom: 4, trailing: 0))
-            //.padding(.top)
-//        .background(
-//            RoundedRectangle(cornerRadius: 10)
-//                .fill(
-//                    LinearGradient(
-//                        gradient: Gradient(colors: [Color.green, Color.blue]),
-//                        startPoint: .topLeading,
-//                        endPoint: .bottomTrailing
-//                    )
-//                )
-//        )
             .background(K.finalColor.cardBlue)
             .cornerRadius(10)
         .padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
@@ -283,18 +270,10 @@ struct BetDetailsView: View {
         ZStack {
             K.finalColor.backgroundBlue.ignoresSafeArea(.all)
             VStack {
-                //K.finalColor.backgroundBlue
-                
                 VStack {
                     HStack (spacing: 0){
-                        ZStack {
-                            VStack {
-                                
-                            }
-                        }
                         ZStack(alignment: .topLeading) {
                             if ticketVM.isBetsLoaded {
-                                //Spacer()
                                 Picker("Group", selection: $groupNumber) {
                                     ForEach(0..<viewModel.userTickets.count, id: \.self) { index in
                                         Text(viewModel.userTickets[index].groupName).tag(index)
@@ -312,7 +291,6 @@ struct BetDetailsView: View {
                                             } else {
                                                 betNumber = -99
                                             }
-
                                             checkTeamTaken()
                                         }
                                     }
@@ -333,17 +311,9 @@ struct BetDetailsView: View {
                                         .frame(maxWidth: 200, alignment: .leading)
                                         .padding(EdgeInsets(top: 70, leading: 15, bottom: 2.5, trailing: 0))
                                         .background(K.finalColor.backgroundBlue)
-                                    //                                    .overlay(
-                                    //                                            Rectangle()
-                                    //                                                .frame(height: 1)
-                                    //                                                //.padding(.top, 100)
-                                    //                                                .padding(EdgeInsets(top: 5, leading: 5, bottom: 0, trailing: 5))
-                                    //                                                .foregroundColor(.white), alignment: .bottom)
                                 }
                                 
                             }
-                            
-                            
                         }.background(Color.white)
                         ZStack(alignment: .topLeading) {
                             //.background(K.veryLightBlue)
@@ -362,11 +332,6 @@ struct BetDetailsView: View {
                                                         .foregroundColor(K.finalColor.textWhite)
                                                         .font(.custom(K.customFonts.lexendDecaLight, size: 16))
                                                 }
-
-//                                                ForEach(0..<availableBets.count, id: \.self) { i in
-//                                                    
-//                                                    //parlayIndex += 1
-//                                                }
                                             }
                                         }
                                         
@@ -376,7 +341,6 @@ struct BetDetailsView: View {
                                             .font(.custom(K.customFonts.lexendDecaLight, size: 16))
                                     }
                                 }
-
                                 .frame(maxWidth: 200, alignment: .center)
                                 .pickerStyle(WheelPickerStyle())
                                 .onChange(of: betNumber) { newValue in
@@ -437,19 +401,9 @@ struct BetDetailsView: View {
                                                 .foregroundColor(.white)
                                         }.padding([.top, .trailing])
                                     }
-                                    
-                                    
                                 }
-                                //                                HStack {
-                                //                                    Spacer()
-                                //                                    Text("Bet Details")
-                                //                                        .foregroundColor(K.finalColor.textWhite)
-                                //                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
-                                //                                    Spacer()
-                                //                                }
                             }
                         }
-                        
                     }.cornerRadius(10)
                     
                     if betType == .betAwaySpread {
@@ -473,20 +427,13 @@ struct BetDetailsView: View {
                             } else {
                                 betNumber = -99
                             }
-
                             checkTeamTaken()
                         }
                     }
-                    
                     print("Group Number: \(groupNumber), Bet Number: \(betNumber)")
-                } // whole thing
-                //.background(K.veryLightGray)
-                //.cornerRadius(10)
-                //.padding()
-                .padding(.horizontal)
+                }.padding(.horizontal)
                 .background(K.finalColor.backgroundBlue)
-                
-                
+                    
                 Button(action: {
                     print("groupNumber: \(groupNumber), betNumber: \(betNumber)")
                     viewModel.uploadBet(groupNumber: groupNumber, groupID: groupsVM.userTickets[groupNumber].groupID, betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread)), betType: betType, gameID: game.idd ?? "null") {_ in
@@ -506,16 +453,12 @@ struct BetDetailsView: View {
                         .font(.custom(K.customFonts.lexendDecaMedium, size: 20.0))
                         .padding()
                         .frame(maxWidth: .infinity)
-                    //                       .background(
-                    //                           LinearGradient(gradient: Gradient(colors: [.blue, .purple]), startPoint: .leading, endPoint: .trailing)
-                    //                       )
                         .background(K.finalColor.titleBlue)
                         .cornerRadius(10)
                         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
                 })
                 .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType))
                 .padding(.horizontal)
-                //.padding(.horizontal)
                 .background(K.finalColor.backgroundBlue)
             }
             .onAppear(perform: {
@@ -539,7 +482,6 @@ struct BetDetailsView: View {
                     originalSpread = game.totalUnder
                     whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
                 }
-                //groupsVM.fetchUserTickets() {}
             })
         }
     }
@@ -616,20 +558,14 @@ struct BetSliderView: View {
             }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
                 .padding(.horizontal)
                 .background(K.finalColor.backgroundBlue)
-            
-            
             HStack {
                 Slider(value: $chosenSpread, in: betType == .over ? Double(originalSpread - 10)...Double(originalSpread + parlayNumToSpread(parlayNum: betNumber)) : Double(originalSpread - parlayNumToSpread(parlayNum: betNumber))...Double(originalSpread + 10), step: 1)
                     .accentColor(K.finalColor.titleBlue)
             }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
                 .padding(.horizontal)
-                //.background(K.finalColor.cardBlue)
         }.cornerRadius(10)
     }
 }
-
-
-
 
 struct BettingAppView_Previews: PreviewProvider {
     static var previews: some View {

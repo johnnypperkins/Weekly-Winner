@@ -52,7 +52,7 @@ struct LoginView: View {
               HStack() {
                   TextField("Email", text: $viewModel.email)
                   .foregroundColor(.white)
-                  .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                  .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
                   .background(Color(red: 0.13, green: 0.14, blue: 0.34))
 
               }
@@ -88,7 +88,7 @@ struct LoginView: View {
                 Button {
                     isShowingPasswordReset.toggle()
                 } label: {
-                    Text("Forget Password?")
+                    Text("Forgot Password?")
                         .foregroundColor(Color.white.opacity(0.6))
                 }
 
@@ -158,9 +158,10 @@ struct SignupView: View {
     
     var body: some View {
         VStack {
-            Text("Signup")
-                .font(.title)
-                .fontWeight(.bold)
+            Text("Create Account")
+                .font(.custom(K.customFonts.lexendDecaSB, size: 20))
+                .foregroundColor(.white)
+                //.fontWeight(.bold)
             
             TextField("First Name", text: self.$viewModel.firstName)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -189,7 +190,7 @@ struct SignupView: View {
                     await viewModel.signUp()
                 }
             }) {
-                Text("Sign up")
+                Text("Create Account")
                     .font(.headline)
                     .foregroundColor(.white)
                     .padding()

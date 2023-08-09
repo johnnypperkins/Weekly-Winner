@@ -202,7 +202,7 @@ struct groupsView: View {
                             }.padding(.bottom)
                                 .padding(.horizontal,16)
                             HStack {
-                                Text("Members")
+                                Text(showingChat ? "Chat" : "Members")
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -445,89 +445,92 @@ struct BetCard: View {
 
     var body: some View {
         ZStack {
-            HStack {
-                if(!ownCard && ticket.groupAdmin == Auth.auth().currentUser?.uid) {
-                    //                    Toggle(isOn: Binding(get: { self.ticket.isEnabled }, set: { newValue in
-                    //                        viewModel.updateIsEnabled(ticket: self.ticket, isEnabled: newValue) {_ in }
-                    //                    })) {
-                    //                        Text("Enabled")
-                    //                    }
-                    Button(ticket.isEnabled ? "E" : "D", action: {
-                        viewModel.updateIsEnabled(ticket: self.ticket, isEnabled: ticket.isEnabled ? false : true) {_ in
-                            viewModel.fetchRankedTickets(groupID: ticket.groupID) {}
+            VStack (spacing: 10) {
+                HStack {
+                    HStack(spacing: 11) {
+                        HStack(spacing: 0) {
+                            if rank == "1" || rank == "T1"{
+                                Image(systemName: "trophy.fill")
+                                    .resizable()
+                                    .frame(width: 15, height: 15)
+                                    .foregroundColor(Color(hex: "D4AF37"))
+                            } else if rank == "2" || rank == "T2" {
+                                Image(systemName: "trophy.fill")
+                                    .resizable()
+                                    .frame(width: 15, height: 15)
+                                    .foregroundColor(Color(hex: "C0C0C0"))
+                            }
+                            else if rank == "3" || rank == "T3" {
+                                Image(systemName: "trophy.fill")
+                                    .resizable()
+                                    .frame(width: 15, height: 15)
+                                    .foregroundColor(Color(hex: "9F7A34"))
+                            }
+                            Text(rank)
+                                .font(Font.custom(K.customFonts.poppinsMedium, size: 12).weight(.medium))
+                                .foregroundColor(.white)
+                                .padding(.leading,3)
                         }
-                    }).foregroundColor(!ticket.isEnabled ? Color.red : K.darkGreen)
-                }
-                
-                HStack(spacing: 11) {
-                    HStack(spacing: 0) {
-                        if rank == "1" || rank == "T1"{
-                            Image(systemName: "trophy.fill")
+                        .frame(maxHeight: .infinity)
+                        HStack(spacing: 5) {
+                            KFImage(URL(string: profileImageURL))
                                 .resizable()
-                                .frame(width: 15, height: 15)
-                                .foregroundColor(Color(hex: "D4AF37"))
-                        } else if rank == "2" || rank == "T2" {
-                            Image(systemName: "trophy.fill")
-                                .resizable()
-                                .frame(width: 15, height: 15)
-                                .foregroundColor(Color(hex: "C0C0C0"))
+                                .aspectRatio(contentMode: .fill)
+                                .clipShape(Circle())
+                                .frame(width: 24, height: 24)
+                            
+                            Text("\(ticket.username)")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                                .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
                         }
-                        else if rank == "3" || rank == "T3" {
-                            Image(systemName: "trophy.fill")
-                                .resizable()
-                                .frame(width: 15, height: 15)
-                                .foregroundColor(Color(hex: "9F7A34"))
-                        }
-                        Text(rank)
-                            .font(Font.custom(K.customFonts.poppinsMedium, size: 12).weight(.medium))
-                            .foregroundColor(.white)
-                            .padding(.leading,3)
+                        .frame(maxHeight: .infinity)
+                    }
+                    .frame(height: 24)
+                    
+                    Spacer()
+                    HStack(alignment: .top, spacing: 10) {
+                        Text("\(ticket.totalPotentialWon) PW")
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
+                            .foregroundColor(Color(red: 0.83, green: 0.47, blue: 0.07))
+                        Text("\(ticket.totalWon) TW")
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
+                            .foregroundColor(Color(red: 0.24, green: 0.86, blue: 0.02))
                     }
                     .frame(maxHeight: .infinity)
-                    HStack(spacing: 5) {
-                        KFImage(URL(string: profileImageURL))
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .clipShape(Circle())
-                            .frame(width: 24, height: 24)
-                        
-                        Text("\(ticket.username)")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
-                            .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
-                    }
-                    .frame(maxHeight: .infinity)
-                }
-                .frame(height: 24)
-                
-                Spacer()
-                HStack(alignment: .top, spacing: 10) {
-                    Text("\(ticket.totalPotentialWon) PW")
-                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
-                        .foregroundColor(Color(red: 0.83, green: 0.47, blue: 0.07))
-                    Text("\(ticket.totalWon) TW")
-                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
-                        .foregroundColor(Color(red: 0.24, green: 0.86, blue: 0.02))
-                }
-                .frame(maxHeight: .infinity)
-                
-                
-                
-                // Arrow
-               
+                    
+                    
+                    
+                    // Arrow
+                    
                     HStack {
                         Image(systemName: "chevron.right") // Use any image you'd like
                             .resizable()
                             .frame(width: 7.5, height: 10) // Adjust size to your liking
                             .foregroundColor(!ownCard && ticket.isEnabled ? .white : .clear) // Choose color
-                            //.padding(.trailing,2.5) // Add padding to move away from the edge
+                        //.padding(.trailing,2.5) // Add padding to move away from the edge
                     }
-                
+                    
+                }.padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))
+                HStack {
+                    Spacer()
+                    if(!ownCard && ticket.groupAdmin == Auth.auth().currentUser?.uid) {
+                        Button(ticket.isEnabled ? "Enabled" : "Disabled", action: {
+                            viewModel.updateIsEnabled(ticket: self.ticket, isEnabled: ticket.isEnabled ? false : true) {_ in
+                                viewModel.fetchRankedTickets(groupID: ticket.groupID) {}
+                            }
+                        }).foregroundColor(.white)
+                            .font(.custom(K.customFonts.lexendDecaLight, size: 12))
+//                        .foregroundColor(!ticket.isEnabled ? Color.red : K.darkGreen)
+                    }
+                    Spacer()
+                }.background(!ticket.isEnabled ? K.finalColor.deleteRed : K.finalColor.winningGreen)
+                    //.padding(.bottom,10)
+
             }
-                
         }
         .opacity(ticket.isEnabled || ticket.groupAdmin == Auth.auth().currentUser?.uid ? 1 : 0.66)
-        .padding(10)
-        .frame(minWidth: 0,maxWidth: .infinity, minHeight: 44, maxHeight: 44)
+        .padding(.vertical, 10)
+        .frame(minWidth: 0,maxWidth: .infinity, minHeight: 44, maxHeight: ticket.groupAdmin != Auth.auth().currentUser?.uid || ticket.username == UserData.shared.username ? 44 : 64)
         .background(!ownCard ? Color(red: 0.13, green: 0.14, blue: 0.34) : K.cadetBlue.opacity(0.25) )
         .cornerRadius(10)
         

@@ -39,16 +39,16 @@ class ticketViewModel: ObservableObject {
     @Published var userTickets: [Ticket] = [] // Ticket99
     
 
-    func fillTotalsArr(uid: String, groupNumber: Int) {
-        fetchUserTickets(uid: uid, groupNumber: groupNumber) {
-            for index in 0..<self.userTickets.count {
-                self.fetchBets(uid: uid, for: index, ticketFormat: self.currentTicketFormat, completion: { [self] in
-                    self.calculateTotals(for: index)
-                    totalWonArray.append(Int(self.totalWon))
-                })
-            }
-        }
-    }
+//    func fillTotalsArr(uid: String, groupNumber: Int) {
+//        fetchUserTickets(uid: uid, groupNumber: groupNumber) {
+//            for index in 0..<self.userTickets.count {
+//                self.fetchBets(uid: uid, for: index, ticketFormat: self.currentTicketFormat, completion: { [self] in
+//                    self.calculateTotals(for: index)
+//                    totalWonArray.append(Int(self.totalWon))
+//                })
+//            }
+//        }
+//    }
     
     func fetchFriendTicket(uid: String, with groupID: String, completion: @escaping (Result<Ticket, Error>) -> Void) { // Ticket99
         let db = Firestore.firestore()
@@ -128,6 +128,8 @@ class ticketViewModel: ObservableObject {
                         self.updateBetsInResponseToLoss(betArray: &self.totalBetArrays[index], maxBetsPlaced: self.currentTicketFormat[index], groupNumber: groupNumber, betNumber: index + 1)
                     }
                 }
+                
+                self.calculateTotals(for: groupNumber, ticketFormat: ticketFormat)
 
                 if let error = error {
                     print(error)
@@ -183,11 +185,11 @@ class ticketViewModel: ObservableObject {
         }
     }
 
-    func calculateTotals(for groupNumber: Int) {
-        let betArrays1 = [betArray1, betArray2, betArray3, betArray4]
-        let betArrays2 = [betArray5, betArray6]
-        let betArrays3 = [betArray7]
-        let betArrays4 = [betArray8]
+    func calculateTotals(for groupNumber: Int, ticketFormat: [Int]) {
+//        let betArrays1 = [betArray1, betArray2, betArray3, betArray4]
+//        let betArrays2 = [betArray5, betArray6]
+//        let betArrays3 = [betArray7]
+//        let betArrays4 = [betArray8]
 
         var totalWonLocal: Double = 0.0
         var totalPotentialWonLocal: Double = 0.0
@@ -210,22 +212,27 @@ class ticketViewModel: ObservableObject {
                 }
             }
         }
-
-        for betArray in betArrays1 {
-            calculateForBetArray(betArray, count: 1)
+        for index in 0..<totalBetArrays.count {
+            let betArray = totalBetArrays[index]
+            calculateForBetArray(betArray, count: ticketFormat[index])
         }
 
-        for betArray in betArrays2 {
-            calculateForBetArray(betArray, count: 2)
-        }
-
-        for betArray in betArrays3 {
-            calculateForBetArray(betArray, count: 3)
-        }
-
-        for betArray in betArrays4 {
-            calculateForBetArray(betArray, count: 5)
-        }
+//
+//        for betArray in betArrays1 {
+//            calculateForBetArray(betArray, count: 1)
+//        }
+//
+//        for betArray in betArrays2 {
+//            calculateForBetArray(betArray, count: 2)
+//        }
+//
+//        for betArray in betArrays3 {
+//            calculateForBetArray(betArray, count: 3)
+//        }
+//
+//        for betArray in betArrays4 {
+//            calculateForBetArray(betArray, count: 5)
+//        }
 
         totalWon = totalWonLocal
         totalPotentialWon = totalPotentialWonLocal
@@ -240,16 +247,13 @@ class ticketViewModel: ObservableObject {
     }
 
     func isTeamAvailable(_ team: String,_ groupNumber: Int, _ betType: BetType) -> Bool {
-        let allBetArrays = [betArray1, betArray2, betArray3, betArray4, betArray5, betArray6, betArray7, betArray8]
-
-        for betArray in allBetArrays {
+        for betArray in totalBetArrays {
             for bet in betArray {
                 if bet.teamBetOn == team && bet.groupNumber == groupNumber && bet.betType == betType  {
                     return false
                 }
             }
         }
-
         return true
     }
     

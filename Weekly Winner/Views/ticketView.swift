@@ -28,7 +28,7 @@ struct ticketView: View {
         ZStack {
             K.finalColor.backgroundBlue.ignoresSafeArea(.all)
             VStack {
-                if viewModel.isBetsLoaded && uid == Auth.auth().currentUser?.uid {
+                if uid == Auth.auth().currentUser?.uid {
                     Text("Tickets").font(.custom(K.customFonts.lexendDecaMedium, size: 20)).foregroundColor(K.finalColor.textWhite).padding(.bottom)
                     if (viewModel.userTickets.count <= 3) {
                         HStack(alignment: .center, spacing: 10) {
@@ -77,14 +77,14 @@ struct ticketView: View {
                     }
                     
                 } else {
-                    if uid != Auth.auth().currentUser?.uid {
+//                    if uid != Auth.auth().currentUser?.uid {
                         Text(viewModel.userTickets[0].groupName).font(.custom(K.customFonts.lexendDecaMedium, size: 20)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
                         Text(username).font(.custom(K.customFonts.lexendDecaMedium, size: 15)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
                             
-                    }
-                    else{
-                        Text("loading")
-                    }
+//                    }
+//                    else{
+//                        Text("loading")
+//                    }
                     
                 }
 
@@ -124,7 +124,7 @@ struct ticketView: View {
                             VStack {
                                 VStack {
                                     ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
-                                        SectionTitle(title: parlayTitle(ticketFormat: viewModel.currentTicketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.userTickets[selectedGroup].ticketFormat[parlayIndex], uid: Auth.auth().currentUser!.uid, viewModel: viewModel)
+                                        SectionTitle(title: parlayTitle(ticketFormat: viewModel.currentTicketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.userTickets[selectedGroup].ticketFormat[parlayIndex], uid: Auth.auth().currentUser?.uid ?? "", viewModel: viewModel)
                                     }
                                 }
 
