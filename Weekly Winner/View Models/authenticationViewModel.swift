@@ -31,6 +31,7 @@ class authenticationViewModel: ObservableObject {
     @Published var firstName: String = ""
     @Published var lastName: String = ""
     @Published var authResult: AuthDataResult? = nil
+    @Published var errorMessage: String? = ""
 
     
     init() {
@@ -84,6 +85,14 @@ class authenticationViewModel: ObservableObject {
                 }
             }
         }
+    
+    func forgotPassButton_Tapped(email: String, completion: @escaping () -> Void) {
+            Auth.auth().sendPasswordReset(withEmail: email) { error in
+                self.errorMessage = error?.localizedDescription
+                completion()
+            }
+        }
+    
     
     private func uploadUser(_ user: User) async {
             let db = Firestore.firestore()

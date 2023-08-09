@@ -21,9 +21,11 @@ struct ContentView: View {
                 authenticationView()
                 }
 
-            }.environmentObject(viewModel)
+            }            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                .background(Color(red: 0.02, green: 0.05, blue: 0.26))
+            .environmentObject(viewModel)
             .ignoresSafeArea(.all)
-        }
+        }            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             .navigationBarBackButtonHidden()
 
             
