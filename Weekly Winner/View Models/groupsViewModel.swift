@@ -12,6 +12,9 @@ class groupsViewModel: ObservableObject {
     @Published var queriedGroups: [Group] = [] // Group99
     @Published var userTickets: [Ticket] = [] // Ticket99
     @Published var rankedGroupTickets: [Ticket] = [] // Ticket99
+    @Published var joinedGroups: [Group] = []
+    @Published var totalArrayOfDates: [[String]] = []
+    @Published var canGetHistoricalData: Bool = false
     
     @Published var canJoinGroup: Bool = true
     @Published var groupsFetched = false
@@ -24,6 +27,8 @@ class groupsViewModel: ObservableObject {
     init() {
         fetchUserTickets() {
             self.groupsFetched = true
+            self.fetchUserGroups {
+            }
         }
     }
     
@@ -41,6 +46,7 @@ class groupsViewModel: ObservableObject {
             }
         }
     }
+    
     
     func printTicket(ticket: Ticket) {
         print(ticket)
@@ -155,13 +161,76 @@ class groupsViewModel: ObservableObject {
                 print(snapshot)
                 return try? snapshot.data(as: Ticket.self) // Ticket99
             }
-            print("tickets: \(userTickets)")
-
+            
+            
+            
             // Call the completion closure after fetching and processing
             completion()
         }
     }
     
+    func fetchUserGroups(completion: @escaping () -> Void) {
+        let groupsCollection = db.collection("groups")
+        let groupIDs = self.userTickets.map { $0.groupID }
+        totalArrayOfDates.removeAll()
+        
+        let dispatchGroup = DispatchGroup() // to manage multiple asynchronous tasks
+        
+        for groupID in groupIDs {
+            dispatchGroup.enter() // enter group for each groupID
+            
+            groupsCollection.document(groupID).getDocument { groupSnapshot, groupError in
+                if let groupError = groupError {
+                    print("Error fetching group: \(groupError.localizedDescription)")
+                    dispatchGroup.leave() // leave group on failure
+                    return
+                }
+                
+                guard let groupSnapshot = groupSnapshot, let data = groupSnapshot.data() else {
+                    print("Snapshot does not exist or is nil")
+                    dispatchGroup.leave() // leave group if data is nil
+                    return
+                }
+
+                if let groupName = data["groupName"] as? String,
+                   let dateCreated = data["dateCreated"] as? Timestamp,
+                   let groupImageURL = data["groupImageURL"] as? String,
+                   let groupSlogan = data["groupSlogan"] as? String,
+                   let groupAdmin = data["groupAdmin"] as? String,
+                   let ticketFormat = data["ticketFormat"] as? [Int] {
+                    
+                    self.totalArrayOfDates.append(self.populateArrayOfDates(from: dateCreated))
+                    
+                    let password = data["password"] as? String
+                    
+                    let group = Group(id: groupSnapshot.documentID,
+                                      groupName: groupName,
+                                      dateCreated: dateCreated,
+                                      groupImageURL: groupImageURL,
+                                      groupSlogan: groupSlogan,
+                                      groupAdmin: groupAdmin,
+                                      password: password,
+                                      ticketFormat: ticketFormat)
+                    
+                    self.joinedGroups.append(group)
+                } else {
+                    print("Failed to extract data for groupID: \(groupID)")
+                }
+                self.canGetHistoricalData = true
+                print("THIS IS FAJLAFJSLD", self.totalArrayOfDates)
+                dispatchGroup.leave() // leave group on success
+            }
+        }
+        
+        
+        dispatchGroup.notify(queue: .main) {
+            print("GROUPSSSS")
+            print(self.joinedGroups)
+            completion()
+        }
+    }
+
+
     func leaveGroup(ticket: Ticket, completion: @escaping () -> Void) {
         // Get a reference to Firestore and the current user
         guard let currentUser = Auth.auth().currentUser?.uid else {
@@ -201,5 +270,50 @@ class groupsViewModel: ObservableObject {
         }
     }
     
+    func populateArrayOfDates(from timestamp: Timestamp) -> [String] {
+        
+        var smallArr: [String] = []
+        let calendar = Calendar.current
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMMM, d" // Month, Date
+
+        // Convert Firestore Timestamp to Date
+        var currentMonday = timestamp.dateValue()
+
+        // Find the most recent Monday (including today if it's a Monday)
+        var mostRecentMonday = Date()
+        while calendar.component(.weekday, from: mostRecentMonday) != 2 { // 2 corresponds to Monday
+            mostRecentMonday = calendar.date(byAdding: .day, value: -1, to: mostRecentMonday)!
+        }
+
+        // If currentMonday is not a Monday, find the previous Monday
+        if calendar.component(.weekday, from: currentMonday) != 2 {
+            while calendar.component(.weekday, from: currentMonday) != 2 { // 2 corresponds to Monday
+                currentMonday = calendar.date(byAdding: .day, value: -1, to: currentMonday)!
+            }
+        }
+
+        // Iterate through the Mondays until the most recent Monday
+        while currentMonday <= mostRecentMonday {
+            if currentMonday == mostRecentMonday {
+                smallArr.append("current week")
+            } else {
+                smallArr.append(dateFormatter.string(from: currentMonday))
+            }
+
+            // Add 7 days to find the next Monday
+            currentMonday = calendar.date(byAdding: .day, value: 7, to: currentMonday)!
+        }
+        if smallArr.count > 0 {
+            smallArr.remove(at: smallArr.count-1)
+            smallArr.append("Current Week")
+        }
+        smallArr.reverse()
+        print("Dates: \(smallArr)")
+        
+        return smallArr
+    }
     
 }
+
+

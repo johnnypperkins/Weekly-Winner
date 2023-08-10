@@ -20,10 +20,13 @@ struct groupsView: View {
     @ObservedObject private var chatVM = chatViewModel()
     @State private var selectedGroup = 1
     @State private var showingChat: Bool = false
+    @State private var whichWeek: Int = 0
     //@State private var groupsFetched = false
 
     init() {
-        viewModel.fetchUserTickets() {}
+//        viewModel.fetchUserTickets() {
+//            viewModel.fetchUserGroups() {}
+//        }
         
         viewModel.fetchRankedTickets(groupID: "Global") {}
     }
@@ -58,7 +61,10 @@ struct groupsView: View {
                                         ForEach(1..<viewModel.userTickets.count+1, id: \.self) { index in
                                             Button(action: {
                                                 self.selectedGroup = index
-                                                viewModel.fetchRankedTickets(groupID: viewModel.userTickets[index-1].groupID) {}
+                                                viewModel.canGetHistoricalData = false
+                                                viewModel.fetchRankedTickets(groupID: viewModel.userTickets[index-1].groupID) {
+                                                    //viewModel.fetchUserGroups(completion: <#T##() -> Void#>)
+                                                }
                                                 showingChat = false
                                                 print("\(selectedGroup) is selected")
                                             }) {
@@ -199,7 +205,7 @@ struct groupsView: View {
                                                     .foregroundColor(.white)
                                             }
                                             .sheet(isPresented: $isGroupSettingsViewPresented) {
-                                                groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel)
+                                                groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel, groupAdmin: viewModel.userTickets[selectedGroup-1].groupAdmin)
                                                 
                                             }
                                 }
@@ -210,6 +216,14 @@ struct groupsView: View {
                                 Text(showingChat ? "Chat" : "Members")
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
                                     .foregroundColor(.white)
+                                if (viewModel.canGetHistoricalData) {
+//                                    Picker("Which Week", selection: $whichWeek) {
+//                                        ForEach(0..<viewModel.totalArrayOfDates[selectedGroup-1].count, id: \.self) { index in
+//                                            Text(viewModel.totalArrayOfDates[selectedGroup-1][index])
+//                                                .foregroundColor(.white)
+//                                        }
+//                                    }.pickerStyle(MenuPickerStyle())
+                                }
                                 Spacer()
                                 Button(action: {
                                     showingChat = false
@@ -271,6 +285,7 @@ struct groupsView: View {
         }.navigationTitle("Groups")
             .onAppear() {
                 viewModel.fetchUserTickets() {
+                    viewModel.fetchUserGroups {}
                 }
             }.padding(.top, 75)
             .background(Color(red: 0.02, green: 0.05, blue: 0.26))
