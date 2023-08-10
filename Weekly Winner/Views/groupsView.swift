@@ -12,6 +12,7 @@ import Kingfisher
 
 struct groupsView: View {
     @State private var isJoinSheetPresented = false
+    @State private var isGroupSettingsViewPresented: Bool = false
     @State private var searchText = ""
     @State private var isShowingSheet = false
     @State private var isShowingSheetTicket = false
@@ -189,14 +190,18 @@ struct groupsView: View {
                                 
                                 if(viewModel.userTickets[selectedGroup-1].groupID != "Global") {
                                     Button(action: {
-                                        selectedGroup -= 1
-                                        viewModel.leaveGroup(ticket: viewModel.userTickets[selectedGroup]) {
-                                        }
-                                    }) {
-                                        Text("Leave Group") // will add design later obv
-                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
-                                            .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
-                                    }
+                                                isGroupSettingsViewPresented = true
+                                            }) {
+                                                Image(systemName: "gearshape")
+                                                    .resizable()
+                                                    .frame(width: 20, height: 20)
+                                                    .padding()
+                                                    .foregroundColor(.white)
+                                            }
+                                            .sheet(isPresented: $isGroupSettingsViewPresented) {
+                                                groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel)
+                                                
+                                            }
                                 }
                                 
                             }.padding(.bottom)
@@ -360,50 +365,19 @@ struct leaderboardView: View {
     @ObservedObject var viewModel: groupsViewModel
     @Binding var selectedGroup: Int
     var body: some View {
-//        HStack {
-//            Text("Rank")
-//                .font(.headline)
-//                .foregroundColor(K.darkBlue)
-//                .frame(width: 100, alignment: .leading)
-//            Spacer()
-//            Text("PW")
-//                .foregroundColor(K.darkGreen)
-//                .frame(width: 50, alignment: .leading)
-//            Text("TW")
-//                .foregroundColor(.green)
-//                .frame(width: 50, alignment: .leading)
-//        }
-//        .padding(EdgeInsets(top: 7.5, leading: 0, bottom: 7.5, trailing: 0))
-//        .padding(.horizontal)
-//        .background(K.veryLightBlue) // changes color based on bet result
-//        .frame(maxWidth: .infinity) // Move the frame to the bottom
-//        .clipShape(RoundSomeCorners(topLeft: 10,topRight: 10,bottomLeft: 0,bottomRight: 0))
+
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(0..<viewModel.rankedGroupTickets.count, id: \.self) { index in
                     if (viewModel.rankedGroupTickets[index].uid != Auth.auth().currentUser?.uid) {
                         NavigationLink(destination: ticketView(username: viewModel.rankedGroupTickets[index].username, uid: viewModel.rankedGroupTickets[index].uid, groupID: viewModel.rankedGroupTickets[index].groupID), label: {
                             BetCard(viewModel: viewModel, ticket: viewModel.rankedGroupTickets[index], rank: (viewModel.rankedGroupTickets[index].rank), ownCard: false).padding(.bottom,16)
-//                                .clipShape(RoundSomeCorners(
-//                                    topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
-//                                    topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
-//                                    bottomLeft: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0,
-//                                    bottomRight: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0
-//                                ))
                         }).id(UUID())
                     } else {
                         // doesnt click if its yourself
                         BetCard(viewModel: viewModel, ticket: viewModel.rankedGroupTickets[index], rank: (viewModel.rankedGroupTickets[index].rank), ownCard: true).padding(.bottom,16)
-//                            .clipShape(RoundSomeCorners(
-//                                topLeft: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
-//                                topRight: index == viewModel.rankedGroupTickets.count - 1 ? 0 : 0,
-//                                bottomLeft: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0,
-//                                bottomRight: index == viewModel.rankedGroupTickets.count - 1 ? 10 : 0
-//                            ))
+
                     }
-//                    if index != viewModel.rankedGroupTickets.count - 1 {
-//                        Divider()
-//                    }
                 }
             }.onAppear(){
                 viewModel.printTickets(ticket: viewModel.rankedGroupTickets)

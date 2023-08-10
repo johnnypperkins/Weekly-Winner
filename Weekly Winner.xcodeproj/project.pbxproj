@@ -19,6 +19,7 @@
 		3C91B6C62A58BA0E00398F53 /* UI Misc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C91B6C52A58BA0E00398F53 /* UI Misc.swift */; };
 		3C91B6C82A58BE6D00398F53 /* RoundingUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C91B6C72A58BE6D00398F53 /* RoundingUI.swift */; };
 		3CB1AC8B2A61602700C931CA /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB1AC8A2A61602700C931CA /* Group.swift */; };
+		3CD023D02A84655E0033D761 /* groupSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD023CF2A84655E0033D761 /* groupSettingsView.swift */; };
 		863FC0512A41176400405F2A /* ticketViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863FC0502A41176400405F2A /* ticketViewModel.swift */; };
 		863FC0532A466FD500405F2A /* groupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863FC0522A466FD500405F2A /* groupService.swift */; };
 		863FF91D2A5B0FA200942CE7 /* sportsSelecterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863FF91C2A5B0FA200942CE7 /* sportsSelecterView.swift */; };
@@ -100,6 +101,7 @@
 		3C91B6C52A58BA0E00398F53 /* UI Misc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UI Misc.swift"; sourceTree = "<group>"; };
 		3C91B6C72A58BE6D00398F53 /* RoundingUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundingUI.swift; sourceTree = "<group>"; };
 		3CB1AC8A2A61602700C931CA /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
+		3CD023CF2A84655E0033D761 /* groupSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = groupSettingsView.swift; sourceTree = "<group>"; };
 		863FC0502A41176400405F2A /* ticketViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ticketViewModel.swift; sourceTree = "<group>"; };
 		863FC0522A466FD500405F2A /* groupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = groupService.swift; sourceTree = "<group>"; };
 		863FF91C2A5B0FA200942CE7 /* sportsSelecterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sportsSelecterView.swift; sourceTree = "<group>"; };
@@ -208,6 +210,7 @@
 				866C52552A737B27008BE839 /* settingsView.swift */,
 				867801562A213010006FE479 /* ContentView.swift */,
 				8678017F2A213CB9006FE479 /* tabBarView.swift */,
+				3CD023CF2A84655E0033D761 /* groupSettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -532,6 +535,7 @@
 				867801842A213F90006FE479 /* screen2.swift in Sources */,
 				3C3DB73E2A7C7E3E000F6898 /* chatViewModel.swift in Sources */,
 				867801802A213CB9006FE479 /* tabBarView.swift in Sources */,
+				3CD023D02A84655E0033D761 /* groupSettingsView.swift in Sources */,
 				865C4A762A327CA600C3C626 /* authenticationView.swift in Sources */,
 				8668B3132A2EF06A00A1B343 /* gameService.swift in Sources */,
 				866251142A40D3B500708495 /* betService.swift in Sources */,
