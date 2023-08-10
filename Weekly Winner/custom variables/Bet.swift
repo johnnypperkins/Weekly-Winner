@@ -22,6 +22,7 @@ struct Bet: Identifiable, Codable {
     var betOdds: Float
     var result: BetResult
     var gameID: String
+    var timestamp: Timestamp
 }
 
 

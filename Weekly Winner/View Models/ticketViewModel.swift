@@ -179,7 +179,7 @@ class ticketViewModel: ObservableObject {
 
             let remainingSpots = maxBetsPlaced - betArray.count
             for _ in 0..<remainingSpots {
-                let emptyBet = Bet(groupNumber: groupNumber, groupID: "", betNumber: betNumber, betType: .None, betLine: 0, betOdds: 1, result: .forcedLoss, gameID: "null" ) // create as per your requirements
+                let emptyBet = Bet(groupNumber: groupNumber, groupID: "", betNumber: betNumber, betType: .None, betLine: 0, betOdds: 1, result: .forcedLoss, gameID: "null", timestamp: Timestamp(date: Date()) ) // create as per your requirements
                 betArray.append(emptyBet)
             }
         }

@@ -260,7 +260,7 @@ struct groupsView: View {
                                 if whichWeek == 0 {
                                     currentLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup)
                                 } else {
-                                    pastLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup)
+                                    pastLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup, selectedWeek: $whichWeek)
                                 }
                             } else {
                                 chatView(viewModel: chatVM, selectedGroup: $selectedGroup, groupsViewModel: viewModel)
@@ -427,13 +427,14 @@ struct currentLeaderboardView: View {
 struct pastLeaderboardView: View {
     @ObservedObject var viewModel: groupsViewModel
     @Binding var selectedGroup: Int
+    @Binding var selectedWeek: Int
     var body: some View {
 
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(0..<viewModel.pastRankedGroupTickets.count, id: \.self) { index in
 //                    if (viewModel.pastRankedGroupTickets[index].uid != Auth.auth().currentUser?.uid) {
-//                        NavigationLink(destination: ticketView(username: viewModel.pastRankedGroupTickets[index].username, uid: viewModel.currentRankedGroupTickets[index].uid, groupID: viewModel.currentRankedGroupTickets[index].groupID), label: {
+//                        NavigationLink(destination: ticketView(username: viewModel.pastRankedGroupTickets[index].username, uid: viewModel.currentRankedGroupTickets[index].uid, groupID: viewModel.currentRankedGroupTickets[index].groupID, viewModel.totalArrayOfDates[selectedWeek]), label: {
 //                            BetCard(viewModel: viewModel, ticket: viewModel.currentRankedGroupTickets[index], rank: (viewModel.currentRankedGroupTickets[index].rank), ownCard: false).padding(.bottom,16)
 //                        }).id(UUID())
 //                    } else {
