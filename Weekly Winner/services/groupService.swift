@@ -18,17 +18,35 @@ class groupService {
         }
     }
     
-    func getRankedTickets(groupID: String, completion: @escaping ([Ticket]?, Error?) -> Void) {
-        let query = db.collectionGroup("currentWeekTickets")
+    func getPastRankedTickets(groupID: String, week: String, completion: @escaping ([Ticket]?, Error?) -> Void) {
+        // Define date format and convert week string to Date
+        print(week, " is week")
+        print(groupID, "is groupID")
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMMM, d, yyyy" // Month, Date
+        guard let startDate = dateFormatter.date(from: week) else {
+            completion(nil, NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey : "Invalid week format"]))
+            return
+        }
+
+        // Calculate the end date, which is one week later
+        let endDate = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: startDate)!
+
+        print(startDate, endDate)
+        // Construct the query
+        let query = db.collectionGroup("pastWeekTickets")
             .whereField("groupID", isEqualTo: groupID)
+            .whereField("dateCreated", isGreaterThanOrEqualTo: startDate)
+            .whereField("dateCreated", isLessThanOrEqualTo: endDate)
+            .order(by: "dateCreated", descending: false) // Must be the first order-by clause
             .order(by: "isEnabled", descending: true)
             .order(by: "totalWon", descending: true)
 
-        //print("here at ranked docs")
+        
         query.getDocuments { (querySnapshot, error) in
             if let error = error {
                 completion(nil, error)
-                print("ERRRROR is \(error)")
+                print("PAST RANKED ERROR is \(error)")
                 return
             }
 
@@ -102,14 +120,118 @@ class groupService {
                     uid: data["uid"] as! String,
                     groupID: data["groupID"] as! String,
                     groupNumber: data["groupNumber"] as! Int,
-                    dateCreated: data["dateCreated"] as! String,
+                    dateCreated: data["dateCreated"] as! Timestamp,
                     totalWon: data["totalWon"] as! Int,
                     totalPotentialWon: data["totalPotentialWon"] as! Int,
                     groupName: data["groupName"] as! String,
                     rank: ranksArray[index], //data["rank"] as! String,
                     isEnabled: data["isEnabled"] as! Bool,
                     groupAdmin: data["groupAdmin"] as! String,
-                    ticketFormat: [4,2,1,0,1] // ticketformat99
+                    ticketFormat: data["ticketFormat"] as! [Int] // ticketformat99
+                )
+                tickets.append(ticket)
+//                print("\(tickets) are tickets")
+            }
+            
+            completion(tickets, nil)
+        }
+
+        // Rest of your code to execute the query and handle the results
+    }
+
+    
+    func getCurrentRankedTickets(groupID: String, completion: @escaping ([Ticket]?, Error?) -> Void) {
+        let query = db.collectionGroup("currentWeekTickets")
+            .whereField("groupID", isEqualTo: groupID)
+            .order(by: "isEnabled", descending: true)
+            .order(by: "totalWon", descending: true)
+
+        //print("here at ranked docs")
+        query.getDocuments { (querySnapshot, error) in
+            if let error = error {
+                completion(nil, error)
+                print("RANKED ERROR is \(error)")
+                return
+            }
+
+            guard let documents = querySnapshot?.documents else {
+                completion([], nil) // Empty array if no documents found
+                print("ERROR 222")
+                return
+            }
+            
+            var tickets: [Ticket] = []
+            var totalsArray: [Int] = []
+            var enabledStatusArray: [Bool] = []
+            var ranksArray: [String] = []
+
+            // Step 1: Fill the totalsArray with all totals
+            for document in documents {
+                let data = document.data()
+                let totalWon = data["totalWon"] as! Int
+                let isEnabled = data["isEnabled"] as! Bool
+                totalsArray.append(totalWon)
+                enabledStatusArray.append(isEnabled)
+            }
+
+            // Step 2: Create ranksArray based on totalsArray
+            var lastTotal = Int.max
+            var rank = 0
+            var tieCount = 1
+            for (index, total) in totalsArray.enumerated() {
+                if enabledStatusArray[index] == true {
+                    if total == lastTotal {
+                        tieCount += 1
+                        ranksArray[ranksArray.count - 1] = "T\(rank)"
+                        ranksArray.append("T\(rank)")
+                    } else {
+                        rank += tieCount
+                        tieCount = 1
+                        ranksArray.append("\(rank)")
+                        lastTotal = total
+                    }
+                    print("The index is \(index) and the total is \(total)")
+                }
+                
+            }
+            tieCount = 1
+            lastTotal = Int.max
+            
+            for (index, total) in totalsArray.enumerated() {
+                if enabledStatusArray[index] == false {
+                    if total == lastTotal {
+                        tieCount += 1
+                        ranksArray[ranksArray.count - 1] = "T\(rank)"
+                        ranksArray.append("T\(rank)")
+                    } else {
+                        rank += tieCount
+                        tieCount = 1
+                        ranksArray.append("\(rank)")
+                        lastTotal = total
+                    }
+                    print("The index is \(index) and the total is \(total)")
+                }
+                
+            }
+
+            
+            // Step 3: Fill the tickets array and assign ranks from ranksArray
+            for (index, document) in documents.enumerated() {
+                let data = document.data()
+                var ticket = Ticket(
+                    id: document.documentID,
+                    username: data["username"] as! String,
+                    uid: data["uid"] as! String,
+                    groupID: data["groupID"] as! String,
+                    groupNumber: data["groupNumber"] as! Int,
+                    dateCreated: data["dateCreated"] as! Timestamp,
+                    totalWon: data["totalWon"] as! Int,
+                    totalPotentialWon: data["totalPotentialWon"] as! Int,
+                    groupName: data["groupName"] as! String,
+                    rank: ranksArray[index], //data["rank"] as! String,
+                    isEnabled: data["isEnabled"] as! Bool,
+                    groupAdmin: data["groupAdmin"] as! String,
+                    ticketFormat: ["ticketFormat"] as? [Int] ?? [1,1,1] // ticketformat99
                 )
                 tickets.append(ticket)
 //                print("\(tickets) are tickets")
@@ -208,7 +330,7 @@ class groupService {
                         } else {
                             let rank = (snapshot?.documents.count)! + 1 ?? -99
                             let userTicketsCollection = db.collection("users").document(userID).collection("tickets").document("week").collection("currentWeekTickets")
-                            let ticket = Ticket(username: UserData.shared.username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, totalWon: 0, totalPotentialWon: 0, groupName: group.groupName, rank: String(rank), isEnabled: enabled, groupAdmin: group.groupAdmin, ticketFormat: group.ticketFormat)
+                            let ticket = Ticket(username: UserData.shared.username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, dateCreated: Timestamp(date: Date()), totalWon: 0, totalPotentialWon: 0, groupName: group.groupName, rank: String(rank), isEnabled: enabled, groupAdmin: group.groupAdmin, ticketFormat: group.ticketFormat)
                             do {
                                 let _ = try userTicketsCollection.addDocument(from: ticket) { error in
                                     if let error = error {
@@ -308,8 +430,9 @@ class groupService {
                     let isEnabled = document.data()["isEnabled"] as? Bool ?? false// default value if not found
                     let groupAdmin = document.data()["groupAdmin"] as? String ?? "null"// default value if not found
                     let ticketFormat = document.data()["ticketFormat"] as? [Int] ?? [1,1,1,1,1]// default value if not found
+                    let dateCreated = document.data()["dateCreated"] as! Timestamp
                     
-                    let ticket = Ticket(id: id, username: username, uid: userID, groupID: groupID, groupNumber: groupNumber, dateCreated: "today", totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName, rank: String(rank), isEnabled: isEnabled, groupAdmin: groupAdmin, ticketFormat: ticketFormat)
+                    let ticket = Ticket(id: id, username: username, uid: userID, groupID: groupID, groupNumber: groupNumber, dateCreated: dateCreated, totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName, rank: String(rank), isEnabled: isEnabled, groupAdmin: groupAdmin, ticketFormat: ticketFormat)
                     tickets.append(ticket) // Ticket99
                 }
                 

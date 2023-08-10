@@ -16,7 +16,7 @@ struct Ticket: Identifiable, Codable {
     var uid: String
     var groupID: String
     var groupNumber: Int
-    var dateCreated: String = "today" // will fix later
+    var dateCreated: Timestamp // will fix later
     var totalWon: Int
     var totalPotentialWon: Int
     var groupName: String

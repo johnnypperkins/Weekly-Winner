@@ -21,6 +21,7 @@ struct groupsView: View {
     @State private var selectedGroup = 1
     @State private var showingChat: Bool = false
     @State private var whichWeek: Int = 0
+    @State private var currentWeekSelected: Bool = true
     //@State private var groupsFetched = false
 
     init() {
@@ -28,7 +29,7 @@ struct groupsView: View {
 //            viewModel.fetchUserGroups() {}
 //        }
         
-        viewModel.fetchRankedTickets(groupID: "Global") {}
+        viewModel.fetchCurrentRankedTickets(groupID: "Global") {}
     }
     
     var body: some View {
@@ -61,10 +62,10 @@ struct groupsView: View {
                                         ForEach(1..<viewModel.userTickets.count+1, id: \.self) { index in
                                             Button(action: {
                                                 self.selectedGroup = index
-                                                viewModel.canGetHistoricalData = false
-                                                viewModel.fetchRankedTickets(groupID: viewModel.userTickets[index-1].groupID) {
-                                                    //viewModel.fetchUserGroups(completion: <#T##() -> Void#>)
+                                                //viewModel.canGetHistoricalData = false
+                                                viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[index-1].groupID) {
                                                 }
+                                                whichWeek = 0
                                                 showingChat = false
                                                 print("\(selectedGroup) is selected")
                                             }) {
@@ -99,8 +100,9 @@ struct groupsView: View {
                                         
                                         Button(action: {
                                             self.selectedGroup = index
-                                            viewModel.fetchRankedTickets(groupID: viewModel.userTickets[index-1].groupID) {}
+                                            viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[index-1].groupID) {}
                                             showingChat = false
+                                            whichWeek = 0
                                             print("\(selectedGroup) is selected")
                                         }) {
                                             Text(viewModel.userTickets[index-1].groupName)
@@ -217,12 +219,19 @@ struct groupsView: View {
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
                                     .foregroundColor(.white)
                                 if (viewModel.canGetHistoricalData) {
-//                                    Picker("Which Week", selection: $whichWeek) {
-//                                        ForEach(0..<viewModel.totalArrayOfDates[selectedGroup-1].count, id: \.self) { index in
-//                                            Text(viewModel.totalArrayOfDates[selectedGroup-1][index])
-//                                                .foregroundColor(.white)
-//                                        }
-//                                    }.pickerStyle(MenuPickerStyle())
+                                    Picker("Which Week", selection: $whichWeek) {
+                                        ForEach(0..<viewModel.totalArrayOfDates[selectedGroup-1].count, id: \.self) { index in
+                                            Text(viewModel.totalArrayOfDates[selectedGroup-1][index])
+                                                .foregroundColor(.white)
+                                        }
+                                    }.pickerStyle(MenuPickerStyle())
+                                        .onChange(of: whichWeek) { newWeek in
+                                            if(newWeek == 0) {
+                                                viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
+                                            } else {
+                                                viewModel.fetchPastRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID, week: viewModel.totalArrayOfDates[selectedGroup-1][newWeek]) {}
+                                            }
+                                        }
                                 }
                                 Spacer()
                                 Button(action: {
@@ -248,7 +257,11 @@ struct groupsView: View {
                         Divider().padding(.horizontal)
                         VStack(alignment: .leading, spacing: 0) {
                             if !showingChat {
-                                leaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup)
+                                if whichWeek == 0 {
+                                    currentLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup)
+                                } else {
+                                    pastLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup)
+                                }
                             } else {
                                 chatView(viewModel: chatVM, selectedGroup: $selectedGroup, groupsViewModel: viewModel)
                             }
@@ -270,13 +283,13 @@ struct groupsView: View {
                         // The sheet was dismissed
                         selectedGroup = 1
                         print("onChange ranked")
-                        viewModel.fetchRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
+                        viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
                     }
                 }
                 .onAppear(){
                     if selectedGroup > 0 {
                         print("on appear ranked")
-                        viewModel.fetchRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {
+                        viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {
                             viewModel.getGroupAdmin(groupID: viewModel.userTickets[selectedGroup-1].groupID) // keeps saying index out of range
                         }
                     }
@@ -376,26 +389,26 @@ struct groupBarView: View {
     }
 }
 
-struct leaderboardView: View {
+struct currentLeaderboardView: View {
     @ObservedObject var viewModel: groupsViewModel
     @Binding var selectedGroup: Int
     var body: some View {
 
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                ForEach(0..<viewModel.rankedGroupTickets.count, id: \.self) { index in
-                    if (viewModel.rankedGroupTickets[index].uid != Auth.auth().currentUser?.uid) {
-                        NavigationLink(destination: ticketView(username: viewModel.rankedGroupTickets[index].username, uid: viewModel.rankedGroupTickets[index].uid, groupID: viewModel.rankedGroupTickets[index].groupID), label: {
-                            BetCard(viewModel: viewModel, ticket: viewModel.rankedGroupTickets[index], rank: (viewModel.rankedGroupTickets[index].rank), ownCard: false).padding(.bottom,16)
+                ForEach(0..<viewModel.currentRankedGroupTickets.count, id: \.self) { index in
+                    if (viewModel.currentRankedGroupTickets[index].uid != Auth.auth().currentUser?.uid) {
+                        NavigationLink(destination: ticketView(username: viewModel.currentRankedGroupTickets[index].username, uid: viewModel.currentRankedGroupTickets[index].uid, groupID: viewModel.currentRankedGroupTickets[index].groupID), label: {
+                            BetCard(viewModel: viewModel, ticket: viewModel.currentRankedGroupTickets[index], rank: (viewModel.currentRankedGroupTickets[index].rank), ownCard: false).padding(.bottom,16)
                         }).id(UUID())
                     } else {
                         // doesnt click if its yourself
-                        BetCard(viewModel: viewModel, ticket: viewModel.rankedGroupTickets[index], rank: (viewModel.rankedGroupTickets[index].rank), ownCard: true).padding(.bottom,16)
+                        BetCard(viewModel: viewModel, ticket: viewModel.currentRankedGroupTickets[index], rank: (viewModel.currentRankedGroupTickets[index].rank), ownCard: true).padding(.bottom,16)
 
                     }
                 }
             }.onAppear(){
-                viewModel.printTickets(ticket: viewModel.rankedGroupTickets)
+                viewModel.printTickets(ticket: viewModel.currentRankedGroupTickets)
                 
             }
         }
@@ -403,15 +416,49 @@ struct leaderboardView: View {
             await viewModel.fetchUserTickets() {}
             if selectedGroup != 0 {
                 print("refresh ranked")
-                viewModel.fetchRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
+                viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
             }
         }.onAppear() {
-            print("\(viewModel.rankedGroupTickets.count) is count")
+            print("\(viewModel.currentRankedGroupTickets.count) is count")
         }
     }
-    
 }
 
+struct pastLeaderboardView: View {
+    @ObservedObject var viewModel: groupsViewModel
+    @Binding var selectedGroup: Int
+    var body: some View {
+
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(0..<viewModel.pastRankedGroupTickets.count, id: \.self) { index in
+//                    if (viewModel.pastRankedGroupTickets[index].uid != Auth.auth().currentUser?.uid) {
+//                        NavigationLink(destination: ticketView(username: viewModel.pastRankedGroupTickets[index].username, uid: viewModel.currentRankedGroupTickets[index].uid, groupID: viewModel.currentRankedGroupTickets[index].groupID), label: {
+//                            BetCard(viewModel: viewModel, ticket: viewModel.currentRankedGroupTickets[index], rank: (viewModel.currentRankedGroupTickets[index].rank), ownCard: false).padding(.bottom,16)
+//                        }).id(UUID())
+//                    } else {
+                        // doesnt click if its yourself
+                        BetCard(viewModel: viewModel, ticket: viewModel.pastRankedGroupTickets[index], rank: (viewModel.pastRankedGroupTickets[index].rank), ownCard: true).padding(.bottom,16)
+
+//                    }
+                }
+            }.onAppear(){
+                viewModel.printTickets(ticket: viewModel.pastRankedGroupTickets)
+                
+            }
+        }
+//        .refreshable {
+//            await viewModel.fetchUserTickets() {}
+//            if selectedGroup != 0 {
+//                print("refresh ranked")
+//                viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
+//            }
+//        }
+        .onAppear() {
+            print("\(viewModel.pastRankedGroupTickets.count) is count")
+        }
+    }
+}
 
 
 
@@ -505,7 +552,7 @@ struct BetCard: View {
                     if(!ownCard && ticket.groupAdmin == Auth.auth().currentUser?.uid) {
                         Button(ticket.isEnabled ? "Enabled" : "Disabled", action: {
                             viewModel.updateIsEnabled(ticket: self.ticket, isEnabled: ticket.isEnabled ? false : true) {_ in
-                                viewModel.fetchRankedTickets(groupID: ticket.groupID) {}
+                                viewModel.fetchCurrentRankedTickets(groupID: ticket.groupID) {}
                             }
                         }).foregroundColor(.white)
                             .font(.custom(K.customFonts.lexendDecaLight, size: 12))
@@ -531,7 +578,7 @@ struct BetCard: View {
                     print("Error fetching profile image URL: \(error)")
                    
                 } else if let profileImageUrl = profileImageUrl {
-                    print("Profile image URL: \(profileImageUrl)")
+                   //print("Profile image URL: \(profileImageUrl)")
                     self.profileImageURL = profileImageUrl
                 }
             }

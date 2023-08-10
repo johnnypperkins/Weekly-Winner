@@ -154,7 +154,7 @@ class authenticationViewModel: ObservableObject {
                 } else {
                     let rank = (snapshot?.documents.count)! + 1 ?? -99
                     let userTicketsCollection = db.collection("users").document(Auth.auth().currentUser!.uid).collection("tickets").document("week").collection("currentWeekTickets")
-                    let ticket = Ticket(username: username, uid: Auth.auth().currentUser!.uid, groupID: "Global", groupNumber: 0, totalWon: 0, totalPotentialWon: 0, groupName: "Global", rank: String(rank), isEnabled: enabled, groupAdmin: "GOD", ticketFormat: [4,2,1,0,1])
+                    let ticket = Ticket(username: username, uid: Auth.auth().currentUser!.uid, groupID: "Global", groupNumber: 0, dateCreated: Timestamp(date: Date()), totalWon: 0, totalPotentialWon: 0, groupName: "Global", rank: String(rank), isEnabled: enabled, groupAdmin: "GOD", ticketFormat: [4,2,1,0,1]) // FIX99
                     do {
                         let _ = try userTicketsCollection.addDocument(from: ticket) { error in
                             if let error = error {
