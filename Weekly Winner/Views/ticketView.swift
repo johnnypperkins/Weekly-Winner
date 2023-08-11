@@ -9,17 +9,20 @@ struct ticketView: View {
     var username: String
     var uid: String
     var groupID: String
+    var selectedWeek: String
 
     
-    init(username: String, uid: String, groupID: String) {
+    init(username: String, uid: String, groupID: String, selectedWeek: String) {
         self.username = username
         self.uid = uid
         self.groupID = groupID
+        self.selectedWeek = selectedWeek
         
         if uid != Auth.auth().currentUser?.uid{
             viewModel.fetchFriendTicket(uid: uid, with: groupID) { group in
                 
             }
+            
         }
         
     }
@@ -38,7 +41,12 @@ struct ticketView: View {
                                     self.selectedGroup = index
                                     //viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
                                     viewModel.isBetsLoaded = false
+                                    if selectedWeek == "current" {
                                         viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, completion: {})
+                                    }
+                                    else {
+                                        viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, selectedWeek: selectedWeek, completion: {})
+                                    }
                                     //}
                                 }) {
                                     Text(viewModel.userTickets[index].groupName)
@@ -59,7 +67,12 @@ struct ticketView: View {
                                     Button(action: {
                                         self.selectedGroup = index
                                         //viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
-                                        viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, completion: {})
+                                        if selectedWeek == "current" {
+                                            viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, completion: {})
+                                        }
+                                        else {
+                                            viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, selectedWeek: selectedWeek, completion: {})
+                                        }
                                        // }
                                     }) {
                                         Text(viewModel.userTickets[index].groupName)
@@ -144,12 +157,24 @@ struct ticketView: View {
                 .onAppear {
                     selectedGroup = 0
                     if uid != Auth.auth().currentUser?.uid{
-                        viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: viewModel.userTickets[0].ticketFormat, completion: {})
+                        if selectedWeek == "current" {
+                            viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: viewModel.userTickets[0].ticketFormat, completion: {})
+                        }
+                        else {
+                            viewModel.fetchPastBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: viewModel.userTickets[0].ticketFormat, selectedWeek: selectedWeek, completion: {})
+                        }
                     }
+                        
                     else{
-                        viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
-                            viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, completion: {}) // Fetch bets for selected group on view appear.
+                        if selectedWeek == "current"{
+                            viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
+                                viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, completion: {}) // Fetch bets for selected group on view appear.
+                                
+                            }
                             
+                        }
+                        else {
+                            viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, selectedWeek: selectedWeek, completion: {})
                         }
                     }
                 }
@@ -318,7 +343,7 @@ struct ticketView: View {
 
 struct ticketView_Previews: PreviewProvider {
     static var previews: some View {
-        ticketView(username: "Reid", uid: Auth.auth().currentUser!.uid, groupID: "")
+        ticketView(username: "Reid", uid: Auth.auth().currentUser!.uid, groupID: "", selectedWeek: "current")
     }
 }
 

@@ -38,7 +38,7 @@ struct tabBarView: View {
                                                 .tag(1)
                             
                             
-                            ticketView(username: "", uid: Auth.auth().currentUser!.uid, groupID: "")
+                            ticketView(username: "", uid: Auth.auth().currentUser!.uid, groupID: "", selectedWeek: "current")
                                 .ignoresSafeArea(.all)
                                 //.padding(.top)
                                 .tabItem {

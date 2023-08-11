@@ -90,10 +90,74 @@ class ticketViewModel: ObservableObject {
         }
     }
     
-    func fetchBets(uid: String, for groupNumber: Int, ticketFormat: [Int], completion: @escaping () -> Void) {
-        let query = self.db.collection("users").document(uid).collection("bets").document("week").collection("currentWeekBets")
-            .whereField("groupNumber", isEqualTo: groupNumber)
+    func fetchPastBets(uid: String, for groupNumber: Int, ticketFormat: [Int], selectedWeek: String, completion: @escaping () -> Void) {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMMM, d, yyyy" // Month, Date
+        guard let startDate = dateFormatter.date(from: selectedWeek) else {
+            return
+        }
 
+        // Calculate the end date, which is one week later
+        let endDate = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: startDate)!
+        
+            let query = self.db.collection("users").document(uid).collection("bets").document("week").collection("pastWeekBets")
+                .whereField("groupNumber", isEqualTo: groupNumber)
+                .whereField("dateCreated", isGreaterThanOrEqualTo: startDate)
+                .whereField("dateCreated", isLessThanOrEqualTo: endDate)
+        
+        query.getDocuments { (querySnapshot, error) in
+            DispatchQueue.main.async {
+                guard let documents = querySnapshot?.documents else {
+                    print("No documents")
+                    return
+                }
+                self.totalBetArrays.removeAll() // Clear previous data
+                for (index, parlayMax) in ticketFormat.enumerated() {
+                    let betTempArr = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
+                        return try? queryDocumentSnapshot.data(as: Bet.self)
+                    }.filter { $0.betNumber == index+1 }.prefix(parlayMax))
+                    self.totalBetArrays.append(betTempArr)
+                }
+ 
+                self.availableBetsArray.removeAll()
+                for (index, parlayMax) in ticketFormat.enumerated() {
+                    let betArray = self.totalBetArrays[index]
+                    if betArray.filter({ $0.groupNumber == groupNumber }).count >= parlayMax {
+                        //print("Appending betNumber:", parlayIndex + 1) // Debug print
+                        self.availableBetsArray.append(-1)
+                    } else {
+                        if betArray.contains(where: { $0.result == .loss }) {
+                            self.availableBetsArray.append(-1)
+                        } else {
+                            self.availableBetsArray.append(index+1)
+                        }
+                    }
+                }
+                for index in self.totalBetArrays.indices {
+                    let bet = self.totalBetArrays[index]
+                    if bet.count > 1 {
+                        self.updateBetsInResponseToLoss(betArray: &self.totalBetArrays[index], maxBetsPlaced: self.currentTicketFormat[index], groupNumber: groupNumber, betNumber: index + 1)
+                    }
+                }
+                
+                self.calculateTotals(for: groupNumber, ticketFormat: ticketFormat)
+
+                if let error = error {
+                    print(error)
+                } else {
+                    self.currentTicketFormat = ticketFormat
+                    self.isBetsLoaded = true
+                }
+
+                // Call completion handler
+                completion()
+            }
+        }
+    }
+    
+    func fetchBets(uid: String, for groupNumber: Int, ticketFormat: [Int], completion: @escaping () -> Void) {
+            let query = self.db.collection("users").document(uid).collection("bets").document("week").collection("currentWeekBets")
+                .whereField("groupNumber", isEqualTo: groupNumber)
         query.getDocuments { (querySnapshot, error) in
             DispatchQueue.main.async {
                 guard let documents = querySnapshot?.documents else {
