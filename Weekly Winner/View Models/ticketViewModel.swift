@@ -78,7 +78,7 @@ class ticketViewModel: ObservableObject {
             //print(groups)
             //print(userId)
         }
-    }
+    }//test
     
     func fetchPastBets(uid: String, for groupNumber: Int, ticketFormat: [Int], selectedWeek: String, completion: @escaping () -> Void) {
         
