@@ -10,13 +10,26 @@ struct ticketView: View {
     var uid: String
     var groupID: String
     var selectedWeek: String
+    var ticketFormatForGroups: [Int]
+    var ticketIsEnabled: Bool {
+        if selectedWeek != "current" {
+            return true
+        } else {
+            if viewModel.userTickets[selectedGroup].isEnabled {
+                return true
+            } else {
+                return false
+            }
+        }
+    }
 
     
-    init(username: String, uid: String, groupID: String, selectedWeek: String) {
+    init(username: String, uid: String, groupID: String, selectedWeek: String, ticketFormatForGroups: [Int]) {
         self.username = username
         self.uid = uid
         self.groupID = groupID
         self.selectedWeek = selectedWeek
+        self.ticketFormatForGroups = ticketFormatForGroups
         
         if uid != Auth.auth().currentUser?.uid{
             viewModel.fetchFriendTicket(uid: uid, with: groupID) { group in
@@ -100,7 +113,7 @@ struct ticketView: View {
                 }
 
                 if (viewModel.isBetsLoaded) {
-                    if (viewModel.userTickets[selectedGroup].isEnabled) {
+                    if (ticketIsEnabled) {
                         HStack (alignment: .center, spacing: 23){
                             HStack (spacing: 0) {
                                 Text("Potential").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
@@ -134,9 +147,16 @@ struct ticketView: View {
                         ScrollView {
                             VStack {
                                 VStack {
-                                    ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
-                                        SectionTitle(title: parlayTitle(ticketFormat: viewModel.currentTicketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.userTickets[selectedGroup].ticketFormat[parlayIndex], uid: Auth.auth().currentUser?.uid ?? "", viewModel: viewModel)
+                                    if selectedWeek == "current" {
+                                        ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
+                                            SectionTitle(title: parlayTitle(ticketFormat: viewModel.currentTicketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.userTickets[selectedGroup].ticketFormat[parlayIndex], uid: Auth.auth().currentUser?.uid ?? "", viewModel: viewModel)
+                                        }
+                                    } else {
+                                        ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
+                                            SectionTitle(title: parlayTitle(ticketFormat: ticketFormatForGroups, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: ticketFormatForGroups[parlayIndex], uid: uid, viewModel: viewModel)
+                                        }
                                     }
+
                                 }
 
                             }.padding(.bottom,60)
@@ -172,7 +192,7 @@ struct ticketView: View {
                             
                         }
                         else {
-                            viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, selectedWeek: selectedWeek, completion: {})
+                            viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
                         }
                     }
                 }
@@ -332,7 +352,7 @@ struct ticketView: View {
 
 struct ticketView_Previews: PreviewProvider {
     static var previews: some View {
-        ticketView(username: "Reid", uid: Auth.auth().currentUser!.uid, groupID: "", selectedWeek: "current")
+        ticketView(username: "Reid", uid: Auth.auth().currentUser!.uid, groupID: "", selectedWeek: "current", ticketFormatForGroups: [])
     }
 }
 

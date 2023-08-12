@@ -39,17 +39,7 @@ class ticketViewModel: ObservableObject {
     @Published var userTickets: [Ticket] = [] // Ticket99
     
 
-//    func fillTotalsArr(uid: String, groupNumber: Int) {
-//        fetchUserTickets(uid: uid, groupNumber: groupNumber) {
-//            for index in 0..<self.userTickets.count {
-//                self.fetchBets(uid: uid, for: index, ticketFormat: self.currentTicketFormat, completion: { [self] in
-//                    self.calculateTotals(for: index)
-//                    totalWonArray.append(Int(self.totalWon))
-//                })
-//            }
-//        }
-//    }
-    
+
     func fetchFriendTicket(uid: String, with groupID: String, completion: @escaping (Result<Ticket, Error>) -> Void) { // Ticket99
         let db = Firestore.firestore()
         
@@ -91,24 +81,29 @@ class ticketViewModel: ObservableObject {
     }
     
     func fetchPastBets(uid: String, for groupNumber: Int, ticketFormat: [Int], selectedWeek: String, completion: @escaping () -> Void) {
+        
+        print("PAST BETS ARE FETCHED")
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMMM, d, yyyy" // Month, Date
         guard let startDate = dateFormatter.date(from: selectedWeek) else {
             return
         }
+        print("Start date:", startDate)
 
         // Calculate the end date, which is one week later
         let endDate = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: startDate)!
+        print("End date:", endDate)
         
             let query = self.db.collection("users").document(uid).collection("bets").document("week").collection("pastWeekBets")
                 .whereField("groupNumber", isEqualTo: groupNumber)
-                .whereField("dateCreated", isGreaterThanOrEqualTo: startDate)
-                .whereField("dateCreated", isLessThanOrEqualTo: endDate)
+                .whereField("timeStamp", isGreaterThanOrEqualTo: startDate)
+                .whereField("timeStamp", isLessThanOrEqualTo: endDate)
         
         query.getDocuments { (querySnapshot, error) in
             DispatchQueue.main.async {
                 guard let documents = querySnapshot?.documents else {
                     print("No documents")
+                    self.isBetsLoaded = true
                     return
                 }
                 self.totalBetArrays.removeAll() // Clear previous data
@@ -119,20 +114,20 @@ class ticketViewModel: ObservableObject {
                     self.totalBetArrays.append(betTempArr)
                 }
  
-                self.availableBetsArray.removeAll()
-                for (index, parlayMax) in ticketFormat.enumerated() {
-                    let betArray = self.totalBetArrays[index]
-                    if betArray.filter({ $0.groupNumber == groupNumber }).count >= parlayMax {
-                        //print("Appending betNumber:", parlayIndex + 1) // Debug print
-                        self.availableBetsArray.append(-1)
-                    } else {
-                        if betArray.contains(where: { $0.result == .loss }) {
-                            self.availableBetsArray.append(-1)
-                        } else {
-                            self.availableBetsArray.append(index+1)
-                        }
-                    }
-                }
+//                self.availableBetsArray.removeAll()
+//                for (index, parlayMax) in ticketFormat.enumerated() {
+//                    let betArray = self.totalBetArrays[index]
+//                    if betArray.filter({ $0.groupNumber == groupNumber }).count >= parlayMax {
+//                        //print("Appending betNumber:", parlayIndex + 1) // Debug print
+//                        self.availableBetsArray.append(-1)
+//                    } else {
+//                        if betArray.contains(where: { $0.result == .loss }) {
+//                            self.availableBetsArray.append(-1)
+//                        } else {
+//                            self.availableBetsArray.append(index+1)
+//                        }
+//                    }
+//                }
                 for index in self.totalBetArrays.indices {
                     let bet = self.totalBetArrays[index]
                     if bet.count > 1 {
@@ -147,6 +142,7 @@ class ticketViewModel: ObservableObject {
                 } else {
                     self.currentTicketFormat = ticketFormat
                     self.isBetsLoaded = true
+                    print("PAST BETS", self.totalBetArrays)
                 }
 
                 // Call completion handler
