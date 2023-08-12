@@ -146,6 +146,7 @@ struct groupsView: View {
                                                     groupBarView(group: group)
                                                 }.sheet(isPresented: $isJoinSheetPresented) {
                                                     GroupJoinSheet(group: group, viewModel: viewModel, isPresented: $isJoinSheetPresented)
+                                                        .presentationDetents([.fraction(0.50)])
                                                 }
                                             } else {
                                                 groupBarView(group: group)
@@ -614,57 +615,150 @@ struct GroupJoinSheet: View {
     @Binding var isPresented: Bool
     @State var canJoin = true
     @State var adminUsername = ""
+    @State var enteredPassword = ""
     @ObservedObject private var authVM = authenticationViewModel()
+    @Environment(\.dismiss) private var dismiss
     
 
     var body: some View {
         
         VStack {
-            if (canJoin) {
-                Text("Join Group")
-                    .font(.title)
-                    .fontWeight(.bold)
-            }
-
-            VStack {
-                if let imageURL = URL(string: group.groupImageURL), let imageData = try? Data(contentsOf: imageURL), let image = UIImage(data: imageData) {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 100, height: 100)
-                        .clipShape(Circle())
-                        .overlay(Circle().stroke(Color.white, lineWidth: 2))
-                        .shadow(radius: 3)
-                } else {
-                    Image(systemName: "photo")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 100, height: 100)
-                        .clipShape(Circle())
-                        .overlay(Circle().stroke(Color.white, lineWidth: 2))
-                        .shadow(radius: 3)
+            ZStack(){
+                VStack {
+                    if (canJoin) {
+                        Text("Join Group")
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
+                            .foregroundColor(.white)
+                    }
                 }
-            }
-            Text(group.groupName)
-                .font(.headline)
-            Text(group.groupSlogan)
-                .font(.subheadline)
-            Text("Admin: \(adminUsername)")
-                .font(.caption)
+                HStack(){
+                    Spacer()
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.white)
+                            
+                    }.padding(.trailing,16)
+                    
+                }.frame (minWidth: 0, maxWidth: .infinity)
+            }.frame (minWidth: 0, maxWidth: .infinity)
+            
+            VStack(alignment: .leading){
+                HStack{
+                    if group.groupImageURL != ""{
+                        KFImage(URL(string: group.groupImageURL))
+                            .resizable()
+                            .cornerRadius(25)
+                            .frame(width: 40, height: 40, alignment: .leading)
+                    }
+                    else {
+                        Image(systemName: "person.3.fill")
+                            .resizable()
+                            .cornerRadius(25)
+                            .frame(width: 40, height: 40, alignment: .leading)
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        
+                        HStack {
+                            Text("\(group.groupName)")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                .foregroundColor(.white)
+                            
+                            Spacer()
+                            if group.password != "" {
+                                Text("Private Group")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
+                                    .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+                                    .frame(alignment: .top)
+                            }
+                            else{
+                                Text("Public Group")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
+                                    .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+                                    .frame(alignment: .top)
+                            }
+                        }.frame(minWidth: 0, maxWidth: .infinity)
+                        
+                        Text("\(group.groupSlogan)")
+                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                              .foregroundColor(.white)
+                    }
+                    Spacer()
+                    
+                }
+                HStack {
+                    Text("Group Admin")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
+                      .foregroundColor(.white)
+                    Spacer()
+                    Text(group.groupAdmin)
+                      .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                      .foregroundColor(.white)
+                }
+                .padding(.top,10)
+                
+                if !group.password!.isEmpty {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Password")
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                        HStack() {
+                            TextField("Password", text: $enteredPassword)
+                                .foregroundColor(.white)
+                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                                .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                            
+                        }
+                        .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+                        .cornerRadius(10)
+                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                    }
+                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+                }
+            }.frame(minWidth: 0, maxWidth: .infinity)
+                .padding(.horizontal,15)
+                .padding(.vertical,20)
+            
             if (canJoin) {
                 Button(action: {
                     viewModel.joinGroup(group: group)
                     isPresented = false
                 }, label: {
-                    Text("Join Group")
+                    HStack{
+                        Spacer()
+                        
+                        Text("Join")
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                            .foregroundColor(.white)
+                                        //shadow
+                        
+                        Spacer()
+                    }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+                        .background(Color(red: 0.31, green: 0.57, blue: 1))
+                        .cornerRadius(10)
+                        .padding(.top,10)
                 })
                 .padding()
             } else {
-                Text("Already Joined")
-                    .padding()
+                HStack{
+                    Spacer()
+                    
+                    Text("Join")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                        .foregroundColor(.white)
+                                    //shadow
+                    
+                    Spacer()
+                }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 40 , maxHeight: 40)
+                    .background(Color(red: 0.31, green: 0.57, blue: 1))
+                    .cornerRadius(10)
+                    .padding(.top,10)
             }
             
-        }
+        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
         .padding()
         .onAppear() {
             viewModel.checkIfGroupAlreadyJoined(group: group) { (alreadyJoined) in
@@ -682,6 +776,7 @@ struct GroupJoinSheet: View {
                 }
             }
         }
+        .background(Color(red: 0.02, green: 0.05, blue: 0.26))
     }
 }
 
