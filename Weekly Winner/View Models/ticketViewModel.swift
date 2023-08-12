@@ -96,8 +96,8 @@ class ticketViewModel: ObservableObject {
         
             let query = self.db.collection("users").document(uid).collection("bets").document("week").collection("pastWeekBets")
                 .whereField("groupNumber", isEqualTo: groupNumber)
-                .whereField("timeStamp", isGreaterThanOrEqualTo: startDate)
-                .whereField("timeStamp", isLessThanOrEqualTo: endDate)
+                .whereField("timestamp", isGreaterThanOrEqualTo: startDate)
+                .whereField("timestamp", isLessThanOrEqualTo: endDate)
         
         query.getDocuments { (querySnapshot, error) in
             DispatchQueue.main.async {
@@ -113,21 +113,7 @@ class ticketViewModel: ObservableObject {
                     }.filter { $0.betNumber == index+1 }.prefix(parlayMax))
                     self.totalBetArrays.append(betTempArr)
                 }
- 
-//                self.availableBetsArray.removeAll()
-//                for (index, parlayMax) in ticketFormat.enumerated() {
-//                    let betArray = self.totalBetArrays[index]
-//                    if betArray.filter({ $0.groupNumber == groupNumber }).count >= parlayMax {
-//                        //print("Appending betNumber:", parlayIndex + 1) // Debug print
-//                        self.availableBetsArray.append(-1)
-//                    } else {
-//                        if betArray.contains(where: { $0.result == .loss }) {
-//                            self.availableBetsArray.append(-1)
-//                        } else {
-//                            self.availableBetsArray.append(index+1)
-//                        }
-//                    }
-//                }
+
                 for index in self.totalBetArrays.indices {
                     let bet = self.totalBetArrays[index]
                     if bet.count > 1 {
