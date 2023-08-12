@@ -43,11 +43,9 @@ struct ticketView: View {
                                     viewModel.isBetsLoaded = false
                                     if selectedWeek == "current" {
                                         viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, completion: {})
-                                    }
-                                    else {
+                                    } else {
                                         viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, selectedWeek: selectedWeek, completion: {})
                                     }
-                                    //}
                                 }) {
                                     Text(viewModel.userTickets[index].groupName)
                                         .padding()
@@ -186,12 +184,6 @@ struct ticketView: View {
         }
     }
     
-//
-//    private var BetSections: some View {
-//
-//    }
-
-    
     struct SectionTitle: View {
         let title: String
         let betArray: [Bet]
@@ -319,9 +311,6 @@ struct ticketView: View {
                         }
                     }
                     .frame(width: 291, height: 35)
-                    
-                    
-                //}
             }
         }
 

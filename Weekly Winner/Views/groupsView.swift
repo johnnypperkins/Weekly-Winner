@@ -219,20 +219,20 @@ struct groupsView: View {
                                 Text(showingChat ? "Chat" : "Members")
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
                                     .foregroundColor(.white)
-                                if (viewModel.canGetHistoricalData) {
+                                if (viewModel.canGetHistoricalData && !showingChat) {
                                     Picker("Which Week", selection: $whichWeek) {
                                         ForEach(0..<viewModel.totalArrayOfDates[selectedGroup-1].count, id: \.self) { index in
                                             Text(viewModel.totalArrayOfDates[selectedGroup-1][index])
                                                 .foregroundColor(.white)
                                         }
                                     }.pickerStyle(MenuPickerStyle())
-                                        .onChange(of: whichWeek) { newWeek in
-                                            if(newWeek == 0) {
-                                                viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
-                                            } else {
-                                                viewModel.fetchPastRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID, week: viewModel.totalArrayOfDates[selectedGroup-1][newWeek]) {}
-                                            }
+                                    .onChange(of: whichWeek) { newWeek in
+                                        if(newWeek == 0) {
+                                            viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
+                                        } else {
+                                            viewModel.fetchPastRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID, week: viewModel.totalArrayOfDates[selectedGroup-1][newWeek]) {}
                                         }
+                                    }
                                 }
                                 Spacer()
                                 Button(action: {
@@ -309,6 +309,7 @@ struct groupsView: View {
 struct groupBarView: View {
     
     var group: Group // Groups99
+    
     var body: some View {
         HStack{
             VStack(alignment: .leading){
@@ -393,6 +394,7 @@ struct groupBarView: View {
 struct currentLeaderboardView: View {
     @ObservedObject var viewModel: groupsViewModel
     @Binding var selectedGroup: Int
+
     var body: some View {
 
         ScrollView {
@@ -430,39 +432,22 @@ struct pastLeaderboardView: View {
     @Binding var selectedGroup: Int
     @Binding var selectedWeek: Int
     var body: some View {
-
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(0..<viewModel.pastRankedGroupTickets.count, id: \.self) { index in
-                    if (viewModel.pastRankedGroupTickets[index].uid != Auth.auth().currentUser?.uid) {
-                        NavigationLink(destination: ticketView(username: viewModel.pastRankedGroupTickets[index].username, uid: viewModel.currentRankedGroupTickets[index].uid, groupID: viewModel.currentRankedGroupTickets[index].groupID, selectedWeek: "\(viewModel.totalArrayOfDates[selectedGroup-1][selectedWeek])"), label: {
-                            BetCard(viewModel: viewModel, ticket: viewModel.currentRankedGroupTickets[index], rank: (viewModel.currentRankedGroupTickets[index].rank), ownCard: false).padding(.bottom,16)
-                        }).id(UUID())
-                    } else {
-                         //doesnt click if its yourself
-                        BetCard(viewModel: viewModel, ticket: viewModel.pastRankedGroupTickets[index], rank: (viewModel.pastRankedGroupTickets[index].rank), ownCard: true).padding(.bottom,16)
-
-                    }
+                    NavigationLink(destination: ticketView(username: viewModel.pastRankedGroupTickets[index].username, uid: viewModel.pastRankedGroupTickets[index].uid, groupID: viewModel.pastRankedGroupTickets[index].groupID, selectedWeek: "\(viewModel.totalArrayOfDates[selectedGroup-1][selectedWeek])"), label: {
+                        BetCard(viewModel: viewModel, ticket: viewModel.pastRankedGroupTickets[index], rank: (viewModel.pastRankedGroupTickets[index].rank), ownCard: false).padding(.bottom,16)
+                    }).id(UUID())
                 }
             }.onAppear(){
                 viewModel.printTickets(ticket: viewModel.pastRankedGroupTickets)
-                
             }
         }
-//        .refreshable {
-//            await viewModel.fetchUserTickets() {}
-//            if selectedGroup != 0 {
-//                print("refresh ranked")
-//                viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
-//            }
-//        }
         .onAppear() {
             print("\(viewModel.pastRankedGroupTickets.count) is count")
         }
     }
 }
-
-
 
 struct BetCard: View {
     @ObservedObject var viewModel: groupsViewModel

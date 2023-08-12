@@ -148,31 +148,52 @@ class authenticationViewModel: ObservableObject {
             let username = username // Access the username asynchronously
             var enabled = true
             let db = Firestore.firestore()
-            db.collection("groups").document("Global").collection("members").getDocuments { (snapshot, error) in
+            
+            // Fetch the ticketFormat from the database
+            db.collection("groups").document("Global").getDocument { (document, error) in
                 if let error = error {
-                    print("Error getting documents: \(error)")
-                } else {
-                    let rank = (snapshot?.documents.count)! + 1 ?? -99
-                    let userTicketsCollection = db.collection("users").document(Auth.auth().currentUser!.uid).collection("tickets").document("week").collection("currentWeekTickets")
-                    let ticket = Ticket(username: username, uid: Auth.auth().currentUser!.uid, groupID: "Global", groupNumber: 0, dateCreated: Timestamp(date: Date()), totalWon: 0, totalPotentialWon: 0, groupName: "Global", rank: String(rank), isEnabled: enabled, groupAdmin: "GOD", ticketFormat: [4,2,1,0,1]) // FIX99
-                    do {
-                        let _ = try userTicketsCollection.addDocument(from: ticket) { error in
-                            if let error = error {
-                                print("Error uploading group: \(error)")
-                            } else {
-                                print("Joined group successfully!")
-                                self.db.collection("groups").document("Global").collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": Auth.auth().currentUser!.uid])
+                    print("Error getting document: \(error)")
+                    completion(error)
+                } else if let document = document, document.exists {
+                    guard let ticketFormat = document.get("ticketFormat") as? [Int] else {
+                        print("Ticket format not found or is of incorrect type")
+                        completion(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey : "Ticket format not found"]))
+                        return
+                    }
+                    
+                    db.collection("groups").document("Global").collection("members").getDocuments { (snapshot, error) in
+                        if let error = error {
+                            print("Error getting documents: \(error)")
+                            completion(error)
+                        } else {
+                            let rank = (snapshot?.documents.count)! + 1 ?? -99
+                            let userTicketsCollection = db.collection("users").document(Auth.auth().currentUser!.uid).collection("tickets").document("week").collection("currentWeekTickets")
+                            let ticket = Ticket(username: username, uid: Auth.auth().currentUser!.uid, groupID: "Global", groupNumber: 0, dateCreated: Timestamp(date: Date()), totalWon: 0, totalPotentialWon: 0, groupName: "Global", rank: String(rank), isEnabled: enabled, groupAdmin: "GOD", ticketFormat: ticketFormat) // Using ticketFormat from database
+                            do {
+                                let _ = try userTicketsCollection.addDocument(from: ticket) { error in
+                                    if let error = error {
+                                        print("Error uploading group: \(error)")
+                                        completion(error)
+                                    } else {
+                                        print("Joined group successfully!")
+                                        self.db.collection("groups").document("Global").collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": Auth.auth().currentUser!.uid])
+                                        completion(nil)
+                                    }
+                                }
+                            } catch {
+                                print("Error encoding group: \(error)")
+                                completion(error)
                             }
                         }
-                    } catch {
-                        print("Error encoding group: \(error)")
                     }
-                    completion(error)
+                } else {
+                    print("Document does not exist")
+                    completion(NSError(domain: "", code: 404, userInfo: [NSLocalizedDescriptionKey : "Document not found"]))
                 }
             }
         }
-        completion(nil)
     }
+
 
 //
 //    func signOut() {
