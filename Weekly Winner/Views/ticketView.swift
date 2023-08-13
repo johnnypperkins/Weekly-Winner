@@ -57,7 +57,7 @@ struct ticketView: View {
                                     if selectedWeek == "current" {
                                         viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, completion: {})
                                     } else {
-                                        viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, selectedWeek: selectedWeek, completion: {})
+                                        viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
                                     }
                                 }) {
                                     Text(viewModel.userTickets[index].groupName)
@@ -82,7 +82,7 @@ struct ticketView: View {
                                             viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, completion: {})
                                         }
                                         else {
-                                            viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, selectedWeek: selectedWeek, completion: {})
+                                            viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
                                         }
                                        // }
                                     }) {
@@ -149,14 +149,17 @@ struct ticketView: View {
                                 VStack {
                                     if selectedWeek == "current" {
                                         ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
-                                            SectionTitle(title: parlayTitle(ticketFormat: viewModel.currentTicketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.userTickets[selectedGroup].ticketFormat[parlayIndex], uid: Auth.auth().currentUser?.uid ?? "", viewModel: viewModel)
+                                            SectionTitle(title: parlayTitle(ticketFormat: viewModel.currentTicketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.userTickets[selectedGroup].ticketFormat[parlayIndex], uid: Auth.auth().currentUser?.uid ?? "", selectedWeek: selectedWeek, viewModel: viewModel)
                                         }
                                     } else {
                                         ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
-                                            SectionTitle(title: parlayTitle(ticketFormat: ticketFormatForGroups, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: ticketFormatForGroups[parlayIndex], uid: uid, viewModel: viewModel)
+                                            SectionTitle(title: parlayTitle(ticketFormat: ticketFormatForGroups, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: 1, uid: uid, selectedWeek: selectedWeek, viewModel: viewModel)
                                         }
                                     }
 
+                                }.onAppear() {
+                                    print("TOTAL BET ARRAY COUNT", viewModel.totalBetArrays.count)
+                                    print("TICKET FORMAT FOR GROUPS", ticketFormatForGroups)
                                 }
 
                             }.padding(.bottom,60)
@@ -180,7 +183,7 @@ struct ticketView: View {
                             viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: viewModel.userTickets[0].ticketFormat, completion: {})
                         }
                         else {
-                            viewModel.fetchPastBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: viewModel.userTickets[0].ticketFormat, selectedWeek: selectedWeek, completion: {})
+                            viewModel.fetchPastBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
                         }
                     }
                         
@@ -210,6 +213,7 @@ struct ticketView: View {
         let betArray: [Bet]
         let maxBetsPlaced: Int
         let uid: String
+        let selectedWeek: String
        // let totalOdds: Double
         @ObservedObject var viewModel: ticketViewModel
         
@@ -256,7 +260,7 @@ struct ticketView: View {
                         ForEach(0..<totalBetsCount, id: \.self) { index in
                             VStack(alignment: .center, spacing: 0) {
                                 if index < betArray.count {
-                                    BetCard(bet: betArray[index], uid: uid, viewModel: viewModel)
+                                    BetCard(bet: betArray[index], uid: uid, selectedWeek: selectedWeek, viewModel: viewModel)
                                 } else {
                                     EmptyBetCard()
                                 }
@@ -284,6 +288,8 @@ struct ticketView: View {
         struct BetCard: View {
             let bet: Bet
             let uid: String
+            let selectedWeek: String
+
             @ObservedObject var viewModel: ticketViewModel
 
             var extra: String {
@@ -319,7 +325,7 @@ struct ticketView: View {
                         .background(Color.backgroundForBetResult(bet.result))
                         .cornerRadius(7.5)
                         
-                        if bet.result == .notStarted && uid == Auth.auth().currentUser?.uid { // ONLY SHOWS DELETE BUTTON IF .NOTSTARTED
+                        if bet.result == .notStarted && uid == Auth.auth().currentUser?.uid && selectedWeek == "current" { // ONLY SHOWS DELETE BUTTON IF .NOTSTARTED
                             Button(action: {
                                 self.viewModel.deleteBet(bet: bet)
                             }) {

@@ -73,7 +73,7 @@ struct ProfileHeaderView: View {
 
             Spacer()
             
-            Text("FreeWager")
+            Text("WagerPool")
                 .font(.custom(K.customFonts.lexendDecaSB, size: 24))
                 .foregroundColor(K.finalColor.titleBlue)
         }

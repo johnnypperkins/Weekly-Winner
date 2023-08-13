@@ -29,10 +29,11 @@ struct groupSettingsView: View {
                 K.finalColor.backgroundBlue.ignoresSafeArea(.all)
                 VStack {
                     
-                        Text("Edit Format") // will add design later obv
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
-                            .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+                    
                     VStack {
+                        Text("Edit Format") // will add design later obv
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                            .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
                         if groupAdmin == Auth.auth().currentUser?.uid {
                             CustomStepper(value: $oneLegNum, range: 0...8, title: "1 Legs")
                             CustomStepper(value: $twoLegNum, range: 0...5, title: "2 Legs")
@@ -40,31 +41,39 @@ struct groupSettingsView: View {
                             CustomStepper(value: $fourLegNum, range: 0...3, title: "4 Legs")
                             CustomStepper(value: $fiveLegNum, range: 0...2, title: "5 Legs")
                         }
-                    }.padding(.horizontal)
-                   
-                    Spacer()
-                    HStack {
                         Button(action: {
-                            selectedGroup -= 1
-                            viewModel.leaveGroup(ticket: viewModel.userTickets[selectedGroup]) {
+                            viewModel.resetTicketFormat(newTicketFormat: customizeTicketFormat(oneLegNum,twoLegNum,threeLegNum,fourLegNum,fiveLegNum), groupID: viewModel.userTickets[selectedGroup-1].groupID) {
+                                
                             }
                             dismiss()
                         }) {
-                            Text("Leave Group") // will add design later obv
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
-                                .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
-                        }.padding()
+                            Text("Update")
+                        }.padding(.horizontal)
                         
-                    }
-                    .background(K.finalColor.cardBlue)
-                    .cornerRadius(10)
-                    .padding()
+                        Spacer()
+                        HStack {
+                            Button(action: {
+                                //selectedGroup -= 1
+                                viewModel.leaveGroup(ticket: viewModel.userTickets[selectedGroup-1]) {
+                                }
+                                dismiss()
+                            }) {
+                                Text("Leave Group") // will add design later obv
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+                            }.padding()
+                            
+                        }
+                        .background(K.finalColor.cardBlue)
+                        .cornerRadius(10)
+                        .padding()
                         
+                        
+                        
+                    }.padding(.bottom, 30)
                     
-                    
-                }.padding(.bottom, 30)
-                
-            }
-        }.background(K.finalColor.backgroundBlue.ignoresSafeArea(.all))
+                }
+            }.background(K.finalColor.backgroundBlue.ignoresSafeArea(.all))
+        }
     }
 }

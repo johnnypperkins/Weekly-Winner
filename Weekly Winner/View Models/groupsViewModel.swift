@@ -336,10 +336,77 @@ class groupsViewModel: ObservableObject {
         return smallArr
     }
 
+    func resetTicketFormat(newTicketFormat: [Int], groupID: String, completion: @escaping () -> Void) {
+        let db = Firestore.firestore()
+        print("NEW TICKET FORMAT", newTicketFormat)
+        print("GROUPID", groupID)
+        // Step 1: Change the field "ticketFormat" of the document to the new ticketFormat field
+        db.collection("groups").document(groupID).updateData([
+            "ticketFormat": newTicketFormat
+        ]) { err in
+            if let err = err {
+                print("Error updating document: \(err)")
+                completion()
+                return
+            }
+            
+            // Step 2: Collect all of the user ids of the members of the groups
+            db.collection("groups").document(groupID).collection("members").getDocuments { (snapshot, err) in
+                if let err = err {
+                    print("Error getting documents: \(err)")
+                    completion()
+                    return
+                }
+                
+                let groupUserIds = snapshot?.documents.map { $0.documentID } ?? []
+                
+                // Use DispatchGroup to wait for all user updates to complete
+                let group = DispatchGroup()
+                
+                for userID in groupUserIds {
+                    group.enter()
+                    
+                    // Step 3: Update ticketFormat for the user's group ticket
+                    let ticketsRef = db.collection("users").document(userID).collection("tickets").document("week").collection("currentWeekTickets")
+                    ticketsRef.whereField("groupID", isEqualTo: groupID).getDocuments { (snapshot, err) in
+                        if let err = err {
+                            print("Error getting tickets: \(err)")
+                        } else {
+                            for document in snapshot!.documents {
+                                document.reference.updateData([
+                                    "ticketFormat": newTicketFormat
+                                ]) { err in
+                                    if let err = err {
+                                        print("Error updating ticket: \(err)")
+                                    }
+                                }
+                            }
+                        }
 
+                        // Step 4: Delete all bets for the group
+                        let betsRef = db.collection("users").document(userID).collection("bets").document("week").collection("currentWeekBets")
+                        betsRef.whereField("groupID", isEqualTo: groupID).getDocuments { (snapshot, err) in
+                            if let err = err {
+                                print("Error getting bets: \(err)")
+                            } else {
+                                for document in snapshot!.documents {
+                                    document.reference.delete()
+                                }
+                            }
+                            
+                            group.leave()
+                        }
+                    }
+                }
+                
+                group.notify(queue: .main) {
+                    print("All updates are done!")
+                    completion()
+                }
+            }
+        }
+    }
 
-
-    
 }
 
 
