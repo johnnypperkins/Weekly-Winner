@@ -173,6 +173,7 @@ struct ticketView: View {
             }.padding(.top, uid == Auth.auth().currentUser?.uid ? 75 : 0)
             //.background(K.finalColor.backgroundBlue)
                 .onAppear {
+                    print("ticket format for groups " + "\(ticketFormatForGroups)" + "\(viewModel.totalBetArrays.count)")
                     selectedGroup = 0
                     if uid != Auth.auth().currentUser?.uid{
                         if selectedWeek == "current" {

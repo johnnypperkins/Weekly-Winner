@@ -21,21 +21,17 @@ struct groupSettingsView: View {
     @State private var threeLegNum: Int = 0
     @State private var fourLegNum: Int = 0
     @State private var fiveLegNum: Int = 0
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
             ZStack {
                 K.finalColor.backgroundBlue.ignoresSafeArea(.all)
                 VStack {
-                    Button(action: {
-                        selectedGroup -= 1
-                        viewModel.leaveGroup(ticket: viewModel.userTickets[selectedGroup]) {
-                        }
-                    }) {
+                    
                         Text("Edit Format") // will add design later obv
                             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
                             .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
-                    }.padding()
                     VStack {
                         if groupAdmin == Auth.auth().currentUser?.uid {
                             CustomStepper(value: $oneLegNum, range: 0...8, title: "1 Legs")
@@ -52,6 +48,7 @@ struct groupSettingsView: View {
                             selectedGroup -= 1
                             viewModel.leaveGroup(ticket: viewModel.userTickets[selectedGroup]) {
                             }
+                            dismiss()
                         }) {
                             Text("Leave Group") // will add design later obv
                                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))

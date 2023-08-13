@@ -97,6 +97,7 @@ struct LoginView: View {
             //.padding(.top,30)
         .sheet(isPresented: $isShowingPasswordReset){
             PasswordResetView(viewModel: viewModel)
+                .presentationDetents([.fraction(0.65)])
         }
         
             
@@ -158,31 +159,116 @@ struct SignupView: View {
     
     var body: some View {
         VStack {
+            HStack{
+                Text("FreeWager")
+                    .font(Font.custom(K.customFonts.lexendDecaSB, size: 32).weight(.semibold))
+                    .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+                Spacer()
+            }.frame(minWidth: 0, maxWidth: .infinity)
+                .padding(.top,80)
+                .padding(.bottom,60)
+  
+            
             Text("Create Account")
                 .font(.custom(K.customFonts.lexendDecaSB, size: 20))
                 .foregroundColor(.white)
                 //.fontWeight(.bold)
             
-            TextField("First Name", text: self.$viewModel.firstName)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding()
             
-            TextField("Last Name", text: self.$viewModel.lastName)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding()
+            VStack(alignment: .leading, spacing: 10) {
+              Text("First Name")
+                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+              HStack() {
+                  TextField("First Name", text: $viewModel.firstName)
+                  .foregroundColor(.white)
+                  .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                  .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+
+              }
+              .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+              .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+              .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+              .cornerRadius(15)
+            }
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+         
             
-            TextField("Username", text: self.$viewModel.username)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding()
+            VStack(alignment: .leading, spacing: 10) {
+              Text("Last Name")
+                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+              HStack() {
+                  TextField("Last Name", text: $viewModel.lastName)
+                  .foregroundColor(.white)
+                  .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                  .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+
+              }
+              .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+              .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+              .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+              .cornerRadius(15)
+            }
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
             
-            TextField("Email", text: self.$viewModel.email)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding()
-                .keyboardType(.emailAddress)
             
-            SecureField("Password", text: self.$viewModel.password)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding()
+            VStack(alignment: .leading, spacing: 10) {
+              Text("Username")
+                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+              HStack() {
+                  TextField("Username", text: $viewModel.username)
+                  .foregroundColor(.white)
+                  .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                  .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+
+              }
+              .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+              .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+              .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+              .cornerRadius(15)
+            }
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+            
+            
+            VStack(alignment: .leading, spacing: 10) {
+              Text("Email")
+                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+              HStack() {
+                  TextField("Email", text: $viewModel.email)
+                  .foregroundColor(.white)
+                  .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                  .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                  .keyboardType(.emailAddress)
+
+              }
+              .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+              .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+              .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+              .cornerRadius(15)
+            }
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+            
+            
+            VStack(alignment: .leading, spacing: 10) {
+              Text("Password")
+                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+              HStack() {
+                  SecureField("Password", text: $viewModel.password)
+                  .foregroundColor(.white)
+                  .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                  .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+
+              }
+              .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+              .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+              .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+              .cornerRadius(15)
+            }
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
             
             Button(action: {
                 // Perform signup action
@@ -198,18 +284,24 @@ struct SignupView: View {
                     .background(Color.green)
                     .cornerRadius(10)
             }
+            Spacer()
+            
             HStack{
+                Text("Already have an account? ")
+                    .foregroundColor(.white)
+                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 12).weight(.light))
+                
                 Button(action: {
                     withAnimation {
                         isShowingSignup = false
                     }
-                    
                 }) {
-                    Text("Already have an account? Login")
+                    Text("Login")
                         .font(.subheadline)
                         .foregroundColor(.blue)
+                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 12).weight(.light))
                 }.animation(.spring(), value: 3)
-            }
+            }.padding(.bottom, 40)
         }
     }
 }
@@ -293,7 +385,8 @@ struct PasswordResetView: View {
                 })
                 .disabled(email.isEmpty)
                 
-        }.frame(maxWidth: .infinity, maxHeight: .infinity)
+        }.padding(.top)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
             .ignoresSafeArea(.all)
             .navigationBarBackButtonHidden(true)
             .background(Color(red: 0.02, green: 0.05, blue: 0.26))

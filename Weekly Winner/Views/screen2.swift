@@ -133,7 +133,11 @@ struct PlaceBetButton: View {
         }
         .frame(width: 50, height: 30)
         .animation(.spring(), value: 4)
-        .background(Color(currentBetType == betType ? .white : .white))
+        .background(currentBetType == betType ? K.finalColor.textWhite : K.finalColor.cardBlue)
+        .overlay(
+                RoundedRectangle(cornerRadius: currentBetType == betType ? 7.5 : 7.5)
+                    .stroke(currentBetType == betType ? Color.blue : Color.gray, lineWidth: 1.0)
+            )
         .cornerRadius(currentBetType == betType ? 7.5 : 7.5)
         .shadow(color: currentBetType == betType ? K.veryLightBlue : .clear, radius: 3)
         .scaleEffect(currentBetType == betType ? 1.05 : 1.0)

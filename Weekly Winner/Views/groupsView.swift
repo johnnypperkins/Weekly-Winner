@@ -209,7 +209,7 @@ struct groupsView: View {
                                             }
                                             .sheet(isPresented: $isGroupSettingsViewPresented) {
                                                 groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel, groupAdmin: viewModel.userTickets[selectedGroup-1].groupAdmin)
-                                                
+                                                    .presentationDetents([.fraction(0.65)])
                                             }
                                 }
                                 
@@ -438,7 +438,7 @@ struct pastLeaderboardView: View {
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(0..<viewModel.pastRankedGroupTickets.count, id: \.self) { index in
                     NavigationLink(destination:
-                                    ticketView(username: viewModel.pastRankedGroupTickets[index].username, uid: viewModel.pastRankedGroupTickets[index].uid, groupID: viewModel.pastRankedGroupTickets[index].groupID, selectedWeek: "\(viewModel.totalArrayOfDates[selectedGroup-1][selectedWeek])", ticketFormatForGroups: viewModel.pastRankedGroupTickets[index].ticketFormat),
+                                    ticketView(username: viewModel.pastRankedGroupTickets[index].username, uid: viewModel.pastRankedGroupTickets[index].uid, groupID: viewModel.pastRankedGroupTickets[index].groupID, selectedWeek: selectedGroup > 0 ? "\(viewModel.totalArrayOfDates[selectedGroup-1][selectedWeek])" : "", ticketFormatForGroups: viewModel.pastRankedGroupTickets[index].ticketFormat),
                        label: {
                         BetCard(viewModel: viewModel, ticket: viewModel.pastRankedGroupTickets[index], rank: (viewModel.pastRankedGroupTickets[index].rank), ownCard: false).padding(.bottom,16)
                     }).id(UUID())

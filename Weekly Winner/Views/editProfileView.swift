@@ -198,6 +198,7 @@ struct editProfileView: View {
                 
         }
         .background(Color(red: 0.02, green: 0.05, blue: 0.26))
+        .ignoresSafeArea(.all)
         .navigationBarBackButtonHidden(true)
     }
     
