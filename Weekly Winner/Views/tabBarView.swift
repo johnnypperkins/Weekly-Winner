@@ -25,38 +25,37 @@ struct tabBarView: View {
                             UserProfileView()
                                 .ignoresSafeArea(.all)
                                 .tabItem {
-                                    CustomTabBarItem(index: 0, selectedTab: $selectedTab, item: TabItem(title: "Home", selectedIconName: "HomeSelected", deselectedIconName: "HomeDeselected"))
-                                }
+                                    CustomTabBarItem(index: 0, selectedTab: $selectedTab, item: TabItem(title: "Home", icon: Image(systemName: "house.fill"), color: .red))                                }
                                 //.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
                                                 .tag(0)
                             //.background(K.veryLightBlue.opacity(0.5))
                             BettingAppView()
                                 .ignoresSafeArea(.all)
                                 .tabItem {
-                                    CustomTabBarItem(index: 1, selectedTab: $selectedTab, item: TabItem(title: "Bets",selectedIconName: "HomeSelected", deselectedIconName: "HomeDeselected"))
-                                }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
-                                                .tag(1)
+                                    CustomTabBarItem(index: 1, selectedTab: $selectedTab, item: TabItem(title: "Bets", icon: Image(systemName: "dollarsign.circle.fill"), color: .green))
+                                    
+                                }.tag(1)
                             
                             
                             ticketView(username: "", uid: Auth.auth().currentUser!.uid, groupID: "", selectedWeek: "current", ticketFormatForGroups: [])
                                 .ignoresSafeArea(.all)
                                 //.padding(.top)
                                 .tabItem {
-                                    CustomTabBarItem(index: 2, selectedTab: $selectedTab, item: TabItem(title: "Tickets",selectedIconName: "HomeSelected", deselectedIconName: "HomeDeselected"))
+                                    CustomTabBarItem(index: 2, selectedTab: $selectedTab, item: TabItem(title: "Tickets", icon: Image(systemName: "ticket.fill"), color: .blue))
                                 }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
                                                 .tag(2)
                             
                             groupsView()
                                 .ignoresSafeArea(.all)
                                 .tabItem {
-                                    CustomTabBarItem(index: 3, selectedTab: $selectedTab, item: TabItem(title: "Groups",selectedIconName: "HomeSelected", deselectedIconName: "HomeDeselected"))
+                                    CustomTabBarItem(index: 3, selectedTab: $selectedTab, item: TabItem(title: "Groups", icon: Image(systemName: "person.3.fill"), color: .purple))
                                 }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
                                                 .tag(3)
                             
                             profileView(user: authViewModel.currUser!)
                                 .ignoresSafeArea(.all)
                                 .tabItem {
-                                    CustomTabBarItem(index: 4, selectedTab: $selectedTab, item: TabItem(title: "Profile",selectedIconName: "HomeSelected", deselectedIconName: "HomeDeselected"))
+                                    CustomTabBarItem(index: 4, selectedTab: $selectedTab, item: TabItem(title: "Profile", icon: Image(systemName: "person.crop.circle.fill"), color: .orange))
                                 }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
                                                 .tag(4)
                         }
@@ -80,38 +79,25 @@ struct tabBarView: View {
 
 struct TabItem {
     let title: String
-    let selectedIconName: String
-    var selectedIcon: Image {
-        Image(selectedIconName)
-    }
-    let deselectedIconName: String
-    var deselectedIcon: Image {
-        Image(deselectedIconName)
-    }
-    //let color: Color
+    let icon: Image
+    let color: Color
 }
 
 struct CustomTabBarItem: View {
     let index: Int
     @Binding var selectedTab: Int
     let item: TabItem
-    
+
     var body: some View {
         VStack {
-            if index == selectedTab {
-                item.selectedIcon
-                    .frame(width: 30, height: 30)
-                    .cornerRadius(5)
-            } else {
-                item.deselectedIcon
-                    .frame(width: 30, height: 30)
-                    .cornerRadius(5)
-            }
-            
+            item.icon
+                .frame(width: 30, height: 30)
+                .cornerRadius(5)
             Text(item.title)
-                .font(Font.custom("Lexend Deca", size: 9.54).weight(.light))
+                //.font(Font.custom("Lexend Deca", size: 9.54).weight(.light))
+                .foregroundColor(selectedTab == index ? item.color : .white)
         }
-        //.padding(EdgeInsets(top: 7, leading: 20.66, bottom: 0, trailing: 20.90))
+        .padding(EdgeInsets(top: 3.08, leading: 20.66, bottom: 2.63, trailing: 20.90))
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onTapGesture {
             selectedTab = index

@@ -232,10 +232,6 @@ class ticketViewModel: ObservableObject {
     }
 
     func calculateTotals(for groupNumber: Int, ticketFormat: [Int]) {
-//        let betArrays1 = [betArray1, betArray2, betArray3, betArray4]
-//        let betArrays2 = [betArray5, betArray6]
-//        let betArrays3 = [betArray7]
-//        let betArrays4 = [betArray8]
 
         var totalWonLocal: Double = 0.0
         var totalPotentialWonLocal: Double = 0.0
@@ -262,23 +258,6 @@ class ticketViewModel: ObservableObject {
             let betArray = totalBetArrays[index]
             calculateForBetArray(betArray, count: ticketFormat[index])
         }
-
-//
-//        for betArray in betArrays1 {
-//            calculateForBetArray(betArray, count: 1)
-//        }
-//
-//        for betArray in betArrays2 {
-//            calculateForBetArray(betArray, count: 2)
-//        }
-//
-//        for betArray in betArrays3 {
-//            calculateForBetArray(betArray, count: 3)
-//        }
-//
-//        for betArray in betArrays4 {
-//            calculateForBetArray(betArray, count: 5)
-//        }
 
         totalWon = totalWonLocal
         totalPotentialWon = totalPotentialWonLocal

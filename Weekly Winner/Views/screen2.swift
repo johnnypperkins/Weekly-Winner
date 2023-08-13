@@ -546,10 +546,11 @@ struct BetSliderView: View {
                 .background(K.finalColor.backgroundBlue)
             HStack (spacing: 10){
                 Text("\(teamName)")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
-                    .foregroundColor(.white)
-                    .frame(width: 100, alignment: .leading)
-                    .minimumScaleFactor(0.5)
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                        .foregroundColor(.white)
+                        .lineLimit(1) // Limit to one line
+                        .minimumScaleFactor(0.5)
+                        .frame(minWidth: 100, maxWidth: .infinity, alignment: .leading) // Make the width flexible
                 Spacer()
                 Text("\(internalExtra)\(String(format: "%.0f", chosenSpread))")
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
