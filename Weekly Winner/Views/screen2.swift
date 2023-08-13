@@ -87,7 +87,7 @@ struct BettingAppView: View {
                                 gameRowView(game: game)
                             }.padding(.horizontal)
                         }
-                    }
+                    }.padding(.bottom,80)
                 }.padding(.top,10)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

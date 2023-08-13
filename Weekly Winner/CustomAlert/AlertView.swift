@@ -54,7 +54,10 @@ struct CustomAlertView: View {
             Color.black.opacity(0.4).ignoresSafeArea()
             VStack {
                 if alertType == .none {
-                    Image("Logo").resizable().frame(width: 70, height: 70).padding(.top, 15)
+                    Text("FreeWager")
+                        .font(Font.custom(K.customFonts.lexendDecaSB, size: 25).weight(.semibold))
+                        .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+                        .padding(.top, 15)
                 }
                 else {
                     Text(title)
@@ -70,7 +73,8 @@ struct CustomAlertView: View {
                 GeometryReader { reader in
                     ScrollView {
                         Text(message)
-                            .foregroundColor(.black)
+                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                            .foregroundColor(.white)
                             .lineLimit(nil)
                             .fixedSize(horizontal: false, vertical: true)
                             .frame(width: reader.size.width-50, height: 100)
@@ -94,7 +98,7 @@ struct CustomAlertView: View {
                     Spacer()
                 }
             }
-            .background(Color(.white))
+            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
             .frame(width: UIScreen.main.bounds.width-50, height: 280)
             .cornerRadius(10)
             .clipped()

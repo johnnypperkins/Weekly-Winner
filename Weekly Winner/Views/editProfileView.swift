@@ -174,6 +174,7 @@ struct editProfileView: View {
                         
                     }
             }.padding(.horizontal,16)
+                .padding(.top,90)
                 .scrollContentBackground(.hidden)
                 .background(Color(red: 0.02, green: 0.05, blue: 0.26))
                 .navigationTitle(Text("Edit Profile"))

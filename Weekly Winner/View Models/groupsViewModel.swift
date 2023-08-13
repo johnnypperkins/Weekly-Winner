@@ -14,8 +14,10 @@ class groupsViewModel: ObservableObject {
     @Published var currentRankedGroupTickets: [Ticket] = [] // Ticket99
     @Published var pastRankedGroupTickets: [Ticket] = [] // Ticket99
     @Published var joinedGroups: [Group] = []
-    @Published var totalArrayOfDates: [[String]] = []
+    @Published var userGroups: [Group] = []
     @Published var canGetHistoricalData: Bool = false
+    @Published var totalArrayOfDates: [[String]] = []
+    @Published var userGroupsLoaded: Bool = false
     
     @Published var canJoinGroup: Bool = true
     @Published var groupsFetched = false
@@ -29,6 +31,28 @@ class groupsViewModel: ObservableObject {
         fetchUserTickets() {
             self.groupsFetched = true
             self.fetchUserGroups {
+            }
+            self.fetchGroups(array1: self.userTickets) {
+                self.userGroupsLoaded = true
+                print("yeehaw" + "\(self.userGroups)")
+            }
+        }
+    }
+    
+    func uploadGroupImage(_ image: UIImage, group: Group, completion: @escaping (String) -> Void) {
+        print("entered1")
+        guard let user = Auth.auth().currentUser else { return }
+        print("entered01")
+        imageUploader.uploadImage(use: "group", image: image) { imageURL in
+            print("entered2")
+            Firestore.firestore().collection("groups").document(group.id!).updateData(["groupImageURL": imageURL]) { error in
+                print("entered3")
+                if error == nil {
+                    completion(imageURL)
+                } else {
+                    // Handle the error accordingly
+                    print("Error updating the profile image URL: \(error?.localizedDescription ?? "No error description")")
+                }
             }
         }
     }
@@ -47,6 +71,8 @@ class groupsViewModel: ObservableObject {
             }
         }
     }
+    
+    
     
     
     func printTicket(ticket: Ticket) {
@@ -188,7 +214,72 @@ class groupsViewModel: ObservableObject {
         }
     }
     
+    func fetchGroups(array1: [Ticket], completion: @escaping () -> Void) {
+        
+        let array = array1.sorted { $0.groupNumber < $1.groupNumber }
+//       print("array printed")
+//        print(array)
+        
+        // Firestore reference to the "groups" collection
+        let groupsRef = Firestore.firestore().collection("groups")
+
+        // Initialize an empty array to store the matching groups
+        var matchingGroups: [Group] = []
+
+        // Initialize a dispatch group to manage multiple asynchronous tasks
+        let dispatchGroup = DispatchGroup()
+
+        // Iterate through the array and fetch groups with matching IDs
+        for group in array {
+            dispatchGroup.enter()
+           let targetID = group.groupID
+            print("target id" + targetID)
+
+            // Enter the dispatch group
+
+            // Query for the group with the specific document ID
+            groupsRef.document(targetID).getDocument { (document, error) in
+                print("jncjdcn")
+                        if let error = error {
+                            print("Error getting groups: \(error)")
+                        } else if let document = document, document.exists {
+                            // Get data and assign to Group struct
+                            let data = document.data()
+                            let group = Group(
+                                id: document.documentID,
+                                groupName: data?["groupName"] as? String ?? "",
+                                dateCreated: data?["dateCreated"] as? Timestamp ?? Timestamp(), // Temporary
+                                groupImageURL: data?["groupImageURL"] as? String ?? "",
+                                groupSlogan: data?["groupSlogan"] as? String ?? "",
+                                groupAdmin: data?["groupAdmin"] as? String ?? "",
+                                password: data?["password"] as? String,
+                                ticketFormat: data?["ticketFormat"] as? [Int] ?? []
+                            )
+                            print(" if   " + "\(group)")
+                            matchingGroups.append(group)
+                        }
+                else{
+                    print("sdkjfnsdkjfndskjf")
+                }
+
+                        // Leave the dispatch group
+                        dispatchGroup.leave()
+                    }
+        }
+
+        // Notify when all tasks are completed
+        dispatchGroup.notify(queue: .main) {
+            // Update the viewModel's userGroups property with all the matching groups
+            self.userGroups = matchingGroups
+            print("array printed")
+            print(matchingGroups)
+            completion()
+        }
+    }
+
+    
     func fetchUserGroups(completion: @escaping () -> Void) {
+        joinedGroups.removeAll()
         let groupsCollection = db.collection("groups")
         let groupIDs = self.userTickets.map { $0.groupID }
         
@@ -242,6 +333,7 @@ class groupsViewModel: ObservableObject {
                 } else {
                     print("Failed to extract data for groupID: \(groupID)")
                 }
+                print("joined groups " + "\(self.joinedGroups)")
                 self.canGetHistoricalData = true
                 print("TotalArrayOfDates: ", self.totalArrayOfDates)
                 dispatchGroup.leave() // leave group on success

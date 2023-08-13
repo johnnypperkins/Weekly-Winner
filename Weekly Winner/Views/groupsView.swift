@@ -156,39 +156,61 @@ struct groupsView: View {
                                     }
                                 }.animation(.easeInOut, value: 20)
                             }
-                            VStack {
-                                Spacer()
-                                Button {
-                                    print(viewModel.userTickets)
-                                    isShowingSheet.toggle()
-                                } label: {
-                                    HStack{
-                                        Spacer()
-                                        
-                                        Text("Create")
-                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
-                                            .foregroundColor(.white)
-                                                        //shadow
-                                        
-                                        Spacer()
-                                    }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                                        .background(Color(red: 0.31, green: 0.57, blue: 1))
-                                        .cornerRadius(10)
-                                        .padding(.horizontal,16)
-                                        .padding(.bottom,100)
-                                }
-                            }.frame(minHeight: 0, maxHeight: .infinity)
+                            if searchText.isEmpty {
+                                VStack {
+                                    Spacer()
+                                    Button {
+                                        print(viewModel.userTickets)
+                                        isShowingSheet.toggle()
+                                    } label: {
+                                        HStack{
+                                            Spacer()
+                                            
+                                            Text("Create")
+                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                                .foregroundColor(.white)
+                                            //shadow
+                                            
+                                            Spacer()
+                                        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+                                            .background(Color(red: 0.31, green: 0.57, blue: 1))
+                                            .cornerRadius(10)
+                                            .padding(.horizontal,16)
+                                            .padding(.bottom,100)
+                                    }
+                                }.frame(minHeight: 0, maxHeight: .infinity)
+                            }
                         }
                         
                     }
                     else{
                         ZStack {
                             HStack{
-                                Image(systemName: "photo.circle.fill")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .clipShape(Circle())
-                                    .frame(width: 50, height: 50)
+                                if viewModel.userGroupsLoaded {
+                                    if viewModel.userGroups[selectedGroup-1].groupImageURL != "" {
+                                        KFImage(URL(string: viewModel.userGroups[selectedGroup-1].groupImageURL))
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .clipShape(Circle())
+                                            .frame(width: 50, height: 50)
+                                    }
+                                    else {
+                             
+                                        Image(systemName: "photo.circle.fill")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .clipShape(Circle())
+                                            .frame(width: 50, height: 50)
+                                    }
+                                }
+                                else {
+                         
+                                    Image(systemName: "photo.circle.fill")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .clipShape(Circle())
+                                        .frame(width: 50, height: 50)
+                                }
                                 
                                 Text(viewModel.userTickets[selectedGroup-1].groupName)
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18).weight(.medium))
@@ -208,7 +230,7 @@ struct groupsView: View {
                                                     .foregroundColor(.white)
                                             }
                                             .sheet(isPresented: $isGroupSettingsViewPresented) {
-                                                groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel, groupAdmin: viewModel.userTickets[selectedGroup-1].groupAdmin)
+                                                groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel, groupAdmin: viewModel.userTickets[selectedGroup-1].groupAdmin, groupNum: selectedGroup-1)
                                                     .presentationDetents([.fraction(0.65)])
                                             }
                                 }
@@ -585,13 +607,20 @@ struct SearchBar: View {
 
     var body: some View {
         HStack {
-            TextField(placeholder, text: $text)
-                .padding(7)
-                .background(Color(.systemGray6))
-                .cornerRadius(8)
-                .padding(.horizontal, 10)
+            HStack() {
+                TextField(placeholder, text: $text)
+                .foregroundColor(.white)
+                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+
+            }
+            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+            .cornerRadius(15)
         }
         .padding(.top, 10)
+        .padding(.horizontal,16)
     }
 }
 
@@ -783,13 +812,24 @@ struct chatView: View {
         VStack {
             if viewModel.isChatsLoaded {
                 HStack {
-                    TextField("Enter your message", text: $chatMessage)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    
+                    HStack() {
+                        TextField("Enter your message", text: $chatMessage)
+                        .foregroundColor(.white)
+                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
                         .keyboardType(.default)
                         .submitLabel(.send) // setting the return key to "send"
                         .onSubmit { // submit action
                             submitMessage()
                         }
+
+                    }
+                    .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                    .cornerRadius(15)
+                    
 
                     Button(action: {
                         submitMessage()
@@ -812,7 +852,7 @@ struct chatView: View {
                                     .padding(EdgeInsets(top: 3, leading: 5, bottom: 3, trailing: 5))
                                     .font(.custom(K.customFonts.poppinsMedium, size: 15))
                                     .foregroundColor(K.finalColor.textWhite)
-                                    .background(K.finalColor.backgroundBlue)
+//                                    .background(K.veryLightBlue)
                                     .cornerRadius(5)
                                     
                             }.padding(EdgeInsets(top: 5, leading: 5, bottom: 0, trailing: 5))

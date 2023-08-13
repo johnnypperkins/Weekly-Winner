@@ -17,9 +17,10 @@ struct ButtonComponent: View {
         if nil != callback {
             Button(action: callback!, label: {
                 Text(title)
+                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
             })
             .frame(width: 120.0, height: 45.0)
-            .background(.black)
+            .background(Color(hex: "3b59a7"))
             .foregroundColor(.white)
             .font(.title2)
             .clipShape(Capsule())
