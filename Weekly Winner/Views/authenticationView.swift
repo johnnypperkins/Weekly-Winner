@@ -37,7 +37,7 @@ struct LoginView: View {
         VStack {
             Spacer()
             HStack{
-                Text("FreeWager")
+                Text("WagerPool")
                     .font(Font.custom(K.customFonts.lexendDecaSB, size: 32).weight(.semibold))
                     .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
                 Spacer()
@@ -160,7 +160,7 @@ struct SignupView: View {
     var body: some View {
         VStack {
             HStack{
-                Text("FreeWager")
+                Text("WagerPool")
                     .font(Font.custom(K.customFonts.lexendDecaSB, size: 32).weight(.semibold))
                     .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
                 Spacer()

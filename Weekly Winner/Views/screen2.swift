@@ -27,12 +27,18 @@ struct BettingAppView: View {
                             withAnimation(.spring()) {
                                 isShowing.toggle()
                             }
-                        },label:  {
-                            Image(systemName: "line.horizontal.3")
-                                .imageScale(.large)
-                                .foregroundColor(.white)
-                                .padding(.leading) // Add padding to the left side of the button
+                        }, label: {
+                            HStack {
+                                Image(systemName: "line.horizontal.3")
+                                    .imageScale(.large)
+                                    .foregroundColor(.white)
+                                    .padding(.leading) // Add padding to the left side of the button
+                            }
+                            .padding() // Add padding around the button
+                            .background(K.finalColor.backgroundBlue) // Set the background color
+                            .cornerRadius(10) // Optional: Add a corner radius if you want rounded corners
                         })
+
                         Spacer()
                     }
                     Text(viewModel.selectedGameType)
@@ -227,6 +233,7 @@ struct gameRowView: View {
         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
         .sheet(isPresented: $showingSheet) {
             BetDetailsView(game: game, betType: $betType)
+                //.padding(.horizontal)
             .presentationDetents([.medium])
             .presentationDragIndicator(.hidden)
             .background(K.finalColor.backgroundBlue)
@@ -283,9 +290,12 @@ struct BetDetailsView: View {
                                         Text(viewModel.userTickets[index].groupName).tag(index)
                                             .foregroundColor(K.finalColor.textWhite)
                                             .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                            .scaleEffect(x: 2)
                                     }
-                                }
-                                .frame(maxWidth: 200, alignment: .center)
+                                }.scaleEffect(x: 0.5)
+
+                                .frame(width: 150, alignment: .center)
+                                .padding(.horizontal)
                                 .pickerStyle(WheelPickerStyle())
                                 .onChange(of: groupNumber) { newValue in
                                     ticketVM.fetchUserTickets(uid: Auth.auth().currentUser!.uid, groupNumber: newValue) {
@@ -312,13 +322,14 @@ struct BetDetailsView: View {
                                     Text("Group")
                                         .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                                         .foregroundColor(K.finalColor.textWhite)
-                                        .frame(maxWidth: 200, alignment: .leading)
+                                        .frame(width: 150, alignment: .leading)
                                         .padding(EdgeInsets(top: 70, leading: 15, bottom: 2.5, trailing: 0))
                                         .background(K.finalColor.backgroundBlue)
                                 }
                                 
                             }
-                        }.background(Color.white)
+                        }.background(Color.red)
+                        //Spacer()
                         ZStack(alignment: .topLeading) {
                             //.background(K.veryLightBlue)
                             if ticketVM.isBetsLoaded {
@@ -335,17 +346,20 @@ struct BetDetailsView: View {
                                                     Text(parlayTitle(ticketFormat: ticketFormat, index: index)).tag(index+1)
                                                         .foregroundColor(K.finalColor.textWhite)
                                                         .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                                        .scaleEffect(x: 2)
+
                                                 }
                                             }
                                         }
-                                        
+
                                     } else {
                                         Text("FULL")
                                             .foregroundColor(K.finalColor.textWhite)
                                             .font(.custom(K.customFonts.lexendDecaLight, size: 16))
                                     }
-                                }
-                                .frame(maxWidth: 200, alignment: .center)
+                                }.scaleEffect(x: 0.5)
+                                .frame(width: 150, alignment: .center)
+                                .padding(.horizontal)
                                 .pickerStyle(WheelPickerStyle())
                                 .onChange(of: betNumber) { newValue in
                                     print("Selection changed to: \(newValue)")
@@ -386,7 +400,7 @@ struct BetDetailsView: View {
                                     Text("Bet")
                                         .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                                         .foregroundColor(K.finalColor.textWhite)
-                                        .frame(maxWidth: 200, alignment: .leading)
+                                        .frame(width: 150, alignment: .leading)
                                         .padding(EdgeInsets(top: 70, leading: 15, bottom: 0, trailing: 0))
                                         .background(K.finalColor.backgroundBlue)
                                 }
@@ -412,15 +426,22 @@ struct BetDetailsView: View {
                     
                     if betType == .betAwaySpread {
                         BetSliderView(teamName: game.awayTeam, originalSpread: game.awaySpread, betNumber: $betNumber, betType: .betAwaySpread, chosenSpread: $chosenSpread)
+                            //.padding(.horizontal)
                     }
                     if betType == .betHomeSpread {
                         BetSliderView(teamName: game.homeTeam, originalSpread: game.homeSpread, betNumber: $betNumber, betType: .betHomeSpread, chosenSpread: $chosenSpread)
+                            //.padding(.horizontal)
+
                     }
                     if betType == .over {
                         BetSliderView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalOver, betNumber: $betNumber, betType: .over, chosenSpread: $chosenSpread)
+                            //.padding(.horizontal)
+
                     }
                     if betType == .under {
                         BetSliderView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalUnder, betNumber: $betNumber, betType: .under, chosenSpread: $chosenSpread)
+                            //.padding(.horizontal)
+
                     }
                 }
                 .onAppear {
@@ -460,11 +481,12 @@ struct BetDetailsView: View {
                         .background(K.finalColor.titleBlue)
                         .cornerRadius(10)
                         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
+                        //f.padding(.horizontal, 25)
                 })
                 .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType))
                 .padding(.horizontal)
                 .background(K.finalColor.backgroundBlue)
-            }
+            }.padding(.horizontal)
             .onAppear(perform: {
                 if betType == .betAwaySpread {
                     chosenSpread = game.awaySpread
@@ -546,11 +568,10 @@ struct BetSliderView: View {
                 .background(K.finalColor.backgroundBlue)
             HStack (spacing: 10){
                 Text("\(teamName)")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
-                        .foregroundColor(.white)
-                        .lineLimit(1) // Limit to one line
-                        .minimumScaleFactor(0.5)
-                        .frame(minWidth: 100, maxWidth: .infinity, alignment: .leading) // Make the width flexible
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: teamName.count < 15 ? 16 : CGFloat(16 * 14) / CGFloat(teamName.count)))
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                    .frame(width: 150, alignment: .leading)
                 Spacer()
                 Text("\(internalExtra)\(String(format: "%.0f", chosenSpread))")
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 18))

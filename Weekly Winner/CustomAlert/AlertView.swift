@@ -54,7 +54,7 @@ struct CustomAlertView: View {
             Color.black.opacity(0.4).ignoresSafeArea()
             VStack {
                 if alertType == .none {
-                    Text("FreeWager")
+                    Text("WagerPool")
                         .font(Font.custom(K.customFonts.lexendDecaSB, size: 25).weight(.semibold))
                         .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
                         .padding(.top, 15)

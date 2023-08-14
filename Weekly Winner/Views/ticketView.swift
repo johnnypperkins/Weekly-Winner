@@ -170,7 +170,7 @@ struct ticketView: View {
                         Text("Ticket Disabled")
                     }
                 } else {
-                    Text("FreeWager")
+                    Text("WagerPool")
                 }
                 Spacer()
             }.padding(.top, uid == Auth.auth().currentUser?.uid ? 75 : 0)

@@ -23,276 +23,279 @@ struct settingsView: View {
     var body: some View {
         if let user = authInfo.currUser{
             NavigationStack {
-                VStack(alignment: .leading) {
-                    HStack {
-                        Button {
-                            // 2
-                            dismiss()
+                ZStack {
+                    K.finalColor.backgroundBlue.ignoresSafeArea(.all)
+                    
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Button {
+                                // 2
+                                dismiss()
+                                
+                            } label: {
+                                HStack {
+                                    Image(systemName: "arrowshape.backward.fill")
+                                        .resizable()
+                                        .foregroundColor(.white)
+                                        .padding(.leading)
+                                        .frame(width: 40,height: 17, alignment: .leading)
+                                }
+                            }
+                            Spacer()
                             
-                        } label: {
-                            HStack {
-                                Image(systemName: "arrowshape.backward.fill")
-                                    .resizable()
+                            //Spacer(minLength: 1)
+                            
+                            Text("Settings")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
+                                .foregroundColor(.white)
+                                .padding(.leading,7)
+                            
+                            Spacer()
+                            
+                            KFImage(URL(string: user.profileImageUrl))
+                                .resizable()
+                                .frame(width: 40,height: 40, alignment: .trailing)
+                                .cornerRadius(20)
+                                .padding(.trailing)
+                        }
+                        .frame(
+                            minWidth: 0,
+                            maxWidth: .infinity,minHeight: 0, maxHeight: 80, alignment: .top
+                        )
+                        VStack(alignment:.leading) {
+                            VStack(alignment: .leading){
+                                
+                                Text("About")
+                                    .font(Font.custom(K.customFonts.lexendDecaSB, size: 16).weight(.semibold))
                                     .foregroundColor(.white)
-                                    .padding(.leading)
-                                    .frame(width: 40,height: 17, alignment: .leading)
-                            }
-                        }
-                        Spacer()
-                        
-                        //Spacer(minLength: 1)
-                        
-                        Text("Settings")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
-                            .foregroundColor(.white)
-                            .padding(.leading,7)
-                        
-                        Spacer()
-                        
-                        KFImage(URL(string: user.profileImageUrl))
-                            .resizable()
-                            .frame(width: 40,height: 40, alignment: .trailing)
-                            .cornerRadius(20)
-                            .padding(.trailing)
-                    }
-                    .frame(
-                        minWidth: 0,
-                        maxWidth: .infinity,minHeight: 0, maxHeight: 80, alignment: .top
-                    )
-                    VStack(alignment:.leading) {
-                        VStack(alignment: .leading){
-                            
-                            Text("About")
-                                .font(Font.custom(K.customFonts.lexendDecaSB, size: 16).weight(.semibold))
-                                .foregroundColor(.white)
-                            NavigationLink(destination: {aboutUsView()}) {
-                                HStack{
-                                    ZStack{
-                                        Circle()
-                                            .frame(width: 40, height: 40)
-                                            .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                            .cornerRadius(43)
-                                        Image(systemName: "person.fill")
-                                            .resizable()
-                                            .frame(width: 20, height: 20)
-                                            .foregroundColor(.white)
-                                    }
-                                    Text("About Us")
-                                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
-                                        .foregroundColor(.white)
-                                }.padding(.vertical, 10)
-                            }
-                            
-                            Divider()
-                            
-                            NavigationLink(destination: {ourMissionView()}) {
-                                HStack{
-                                    ZStack{
-                                        Circle()
-                                            .frame(width: 40, height: 40)
-                                            .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                            .cornerRadius(43)
-                                        Image(systemName: "person.fill")
-                                            .resizable()
-                                            .frame(width: 20, height: 20)
-                                            .foregroundColor(.white)
-                                    }
-                                    Text("Our Mission")
-                                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
-                                        .foregroundColor(.white)
-                                }.padding(.top, 10)
-                                    .padding(.bottom,20)
-                            }
-                            
-                        }
-                        
-                        VStack(alignment: .leading) {
-                            //                            Button(action: {
-                            //                                self.showWebpage = true
-                            //                            }) {
-                            //                                Text("Open Website")
-                            //                                    .foregroundColor(Color("Color 1"))
-                            //                            }
-                            //                            .sheet(isPresented: $showWebpage) {
-                            //                                SafariView(url: URL(string: "https://merge-together.com")!)
-                            //                            }
-                            Text("Support")
-                                .font(Font.custom(K.customFonts.lexendDecaSB, size: 16).weight(.semibold))
-                                .foregroundColor(.white)
-                            
-                            NavigationLink(destination: {}) {
-                                HStack{
-                                    ZStack{
-                                        Circle()
-                                            .frame(width: 40, height: 40)
-                                            .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                            .cornerRadius(43)
-                                        Image(systemName: "newspaper")
-                                            .resizable()
-                                            .frame(width: 20, height: 20)
-                                            .foregroundColor(.white)
-                                    }
-                                    Text("Rules")
-                                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
-                                        .foregroundColor(.white)
-                                }.padding(.vertical,10)
-                            }
-                            
-                            Divider()
-                            
-                            NavigationLink(destination: {TermsAndConditionsViewSettings()}) {
-                                HStack{
-                                    ZStack{
-                                        Circle()
-                                            .frame(width: 40, height: 40)
-                                            .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                            .cornerRadius(43)
-                                        Image(systemName: "rectangle.and.pencil.and.ellipsis")
-                                            .resizable()
-                                            .frame(width: 20, height: 20)
-                                            .foregroundColor(.white)
-                                    }
-                                    Text("Terms and Conditions")
-                                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
-                                        .foregroundColor(.white)
-                                }.padding(.vertical,10)
-                            }
-                            
-                            Divider()
-                            
-                            NavigationLink(destination: {TermsAndConditionsViewSettings()}) {
-                                HStack{
-                                    ZStack{
-                                        Circle()
-                                            .frame(width: 40, height: 40)
-                                            .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                            .cornerRadius(43)
-                                        Image(systemName: "lock.shield.fill")
-                                            .resizable()
-                                            .frame(width: 20, height: 20)
-                                            .foregroundColor(.white)
-                                    }
-                                    Text("Privacy Policy")
-                                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
-                                        .foregroundColor(.white)
-                                }.padding(.vertical,10)
-                            }
-                            
-                            Divider()
-                            
-                            NavigationLink(destination: {}) {
-                                HStack{
-                                    ZStack{
-                                        Circle()
-                                            .frame(width: 40, height: 40)
-                                            .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                            .cornerRadius(43)
-                                        Image(systemName: "phone.fill")
-                                            .resizable()
-                                            .frame(width: 20, height: 20)
-                                            .foregroundColor(.white)
-                                    }
-                                    Text("Contact")
-                                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
-                                        .foregroundColor(.white)
-                                }.padding(.vertical,10)
-                            }
-                            
-                            Divider()
-                            
-                        }
-                        
-                        VStack (alignment: .leading){
-                            Button(action: {
-                                self.showingAlert = true
-                                if showingAlert == true {
-                                    AppUtility.shared.showCustomAlert(alertType: .none, message: "Are you sure you want to sign out", actionButtonTitle: K.appButtonTitle.ok, cancelButtonTitle: K.appButtonTitle.cancel) { action in
-                                        if action == AlertButtonAction.okButton{
-                                            showContentView.toggle()
-                                            authInfo.signOut()
+                                NavigationLink(destination: {aboutUsView()}) {
+                                    HStack{
+                                        ZStack{
+                                            Circle()
+                                                .frame(width: 40, height: 40)
+                                                .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                                .cornerRadius(43)
+                                            Image(systemName: "person.fill")
+                                                .resizable()
+                                                .frame(width: 20, height: 20)
+                                                .foregroundColor(.white)
                                         }
-                                        
-                                    }
-                                }
-                            }) {
-                                
-                                HStack{
-                                    ZStack{
-                                        Circle()
-                                            .frame(width: 40, height: 40)
-                                            .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                            .cornerRadius(43)
-                                        
-                                        Image(systemName: "rectangle.portrait.and.arrow.right.fill")
-                                            .resizable()
-                                            .frame(width: 20, height: 20)
+                                        Text("About Us")
+                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
                                             .foregroundColor(.white)
-                                    }
-                                    Text("Sign Out")
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                          .foregroundColor(.white)
-                                }.padding(.vertical,10)
+                                    }.padding(.vertical, 10)
+                                }
+                                
+                                Divider()
+                                
+                                NavigationLink(destination: {ourMissionView()}) {
+                                    HStack{
+                                        ZStack{
+                                            Circle()
+                                                .frame(width: 40, height: 40)
+                                                .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                                .cornerRadius(43)
+                                            Image(systemName: "person.fill")
+                                                .resizable()
+                                                .frame(width: 20, height: 20)
+                                                .foregroundColor(.white)
+                                        }
+                                        Text("Our Mission")
+                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
+                                            .foregroundColor(.white)
+                                    }.padding(.top, 10)
+                                        .padding(.bottom,20)
+                                }
                                 
                             }
                             
-                            Divider()
+                            VStack(alignment: .leading) {
+                                //                            Button(action: {
+                                //                                self.showWebpage = true
+                                //                            }) {
+                                //                                Text("Open Website")
+                                //                                    .foregroundColor(Color("Color 1"))
+                                //                            }
+                                //                            .sheet(isPresented: $showWebpage) {
+                                //                                SafariView(url: URL(string: "https://merge-together.com")!)
+                                //                            }
+                                Text("Support")
+                                    .font(Font.custom(K.customFonts.lexendDecaSB, size: 16).weight(.semibold))
+                                    .foregroundColor(.white)
+                                
+                                NavigationLink(destination: {}) {
+                                    HStack{
+                                        ZStack{
+                                            Circle()
+                                                .frame(width: 40, height: 40)
+                                                .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                                .cornerRadius(43)
+                                            Image(systemName: "newspaper")
+                                                .resizable()
+                                                .frame(width: 20, height: 20)
+                                                .foregroundColor(.white)
+                                        }
+                                        Text("Rules")
+                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
+                                            .foregroundColor(.white)
+                                    }.padding(.vertical,10)
+                                }
+                                
+                                Divider()
+                                
+                                NavigationLink(destination: {TermsAndConditionsViewSettings()}) {
+                                    HStack{
+                                        ZStack{
+                                            Circle()
+                                                .frame(width: 40, height: 40)
+                                                .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                                .cornerRadius(43)
+                                            Image(systemName: "rectangle.and.pencil.and.ellipsis")
+                                                .resizable()
+                                                .frame(width: 20, height: 20)
+                                                .foregroundColor(.white)
+                                        }
+                                        Text("Terms and Conditions")
+                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
+                                            .foregroundColor(.white)
+                                    }.padding(.vertical,10)
+                                }
+                                
+                                Divider()
+                                
+                                NavigationLink(destination: {TermsAndConditionsViewSettings()}) {
+                                    HStack{
+                                        ZStack{
+                                            Circle()
+                                                .frame(width: 40, height: 40)
+                                                .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                                .cornerRadius(43)
+                                            Image(systemName: "lock.shield.fill")
+                                                .resizable()
+                                                .frame(width: 20, height: 20)
+                                                .foregroundColor(.white)
+                                        }
+                                        Text("Privacy Policy")
+                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
+                                            .foregroundColor(.white)
+                                    }.padding(.vertical,10)
+                                }
+                                
+                                Divider()
+                                
+                                NavigationLink(destination: {}) {
+                                    HStack{
+                                        ZStack{
+                                            Circle()
+                                                .frame(width: 40, height: 40)
+                                                .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                                .cornerRadius(43)
+                                            Image(systemName: "phone.fill")
+                                                .resizable()
+                                                .frame(width: 20, height: 20)
+                                                .foregroundColor(.white)
+                                        }
+                                        Text("Contact")
+                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
+                                            .foregroundColor(.white)
+                                    }.padding(.vertical,10)
+                                }
+                                
+                                Divider()
+                                
+                            }
                             
-                            
-                            Button(action: {
-                                self.showingAlert2 = true
-                                if showingAlert2 == true {
-                                    AppUtility.shared.showCustomAlert(alertType: .none, message: "Are you sure you want to delete your account? Once this is done, the account cannot be recovered.", actionButtonTitle: K.appButtonTitle.ok, cancelButtonTitle: K.appButtonTitle.cancel) { action in
-                                        if action == AlertButtonAction.okButton{
-                                            showContentView.toggle()
-                                            Task{
-                                                await authInfo.deleteAccount()
+                            VStack (alignment: .leading){
+                                Button(action: {
+                                    self.showingAlert = true
+                                    if showingAlert == true {
+                                        AppUtility.shared.showCustomAlert(alertType: .none, message: "Are you sure you want to sign out", actionButtonTitle: K.appButtonTitle.ok, cancelButtonTitle: K.appButtonTitle.cancel) { action in
+                                            if action == AlertButtonAction.okButton{
+                                                showContentView.toggle()
+                                                authInfo.signOut()
                                             }
+                                            
                                         }
-                                        
                                     }
+                                }) {
+                                    
+                                    HStack{
+                                        ZStack{
+                                            Circle()
+                                                .frame(width: 40, height: 40)
+                                                .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                                .cornerRadius(43)
+                                            
+                                            Image(systemName: "rectangle.portrait.and.arrow.right.fill")
+                                                .resizable()
+                                                .frame(width: 20, height: 20)
+                                                .foregroundColor(.white)
+                                        }
+                                        Text("Sign Out")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                            .foregroundColor(.white)
+                                    }.padding(.vertical,10)
+                                    
                                 }
-                            }) {
-
                                 
-                                HStack{
-                                    ZStack{
-                                        Circle()
-                                            .frame(width: 40, height: 40)
-                                            .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                            .cornerRadius(43)
-                                        
-                                        Image(systemName: "trash.fill")
-                                            .resizable()
-                                            .frame(width: 20, height: 20)
-                                            .foregroundColor(.red)
+                                Divider()
+                                
+                                
+                                Button(action: {
+                                    self.showingAlert2 = true
+                                    if showingAlert2 == true {
+                                        AppUtility.shared.showCustomAlert(alertType: .none, message: "Are you sure you want to delete your account? Once this is done, the account cannot be recovered.", actionButtonTitle: K.appButtonTitle.ok, cancelButtonTitle: K.appButtonTitle.cancel) { action in
+                                            if action == AlertButtonAction.okButton{
+                                                showContentView.toggle()
+                                                Task{
+                                                    await authInfo.deleteAccount()
+                                                }
+                                            }
+                                            
+                                        }
                                     }
-                                    Text("Delete Account")
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                          .foregroundColor(.red)
-                                }.padding(.vertical,10)
+                                }) {
+                                    
+                                    
+                                    HStack{
+                                        ZStack{
+                                            Circle()
+                                                .frame(width: 40, height: 40)
+                                                .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                                .cornerRadius(43)
+                                            
+                                            Image(systemName: "trash.fill")
+                                                .resizable()
+                                                .frame(width: 20, height: 20)
+                                                .foregroundColor(.red)
+                                        }
+                                        Text("Delete Account")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                            .foregroundColor(.red)
+                                    }.padding(.vertical,10)
+                                }
                             }
-                        }
-                    }.frame(minWidth: 0, maxWidth: .infinity)
-                        .navigationDestination(isPresented: $showContentView) {
-                            ContentView()
-                        }
+                        }.frame(minWidth: 0, maxWidth: .infinity)
+                            .navigationDestination(isPresented: $showContentView) {
+                                ContentView()
+                            }
+                        Spacer()
+                        //Color.white.edgesIgnoringSafeArea(.all)
+                    }
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                    .padding(.horizontal, 16)
+                    .background(Color(red: 0.02, green: 0.05, blue: 0.26))
+                    .frame(maxWidth: .infinity,maxHeight: .infinity, alignment: .top)
+                    .scrollContentBackground(.hidden)
+                    .background(Color.white.edgesIgnoringSafeArea(.all))
                     Spacer()
-                    //Color.white.edgesIgnoringSafeArea(.all)
+                    //Spacer()
                 }
-                .frame(minWidth: 0, maxWidth: .infinity)
-                .padding(.horizontal, 16)
-                .background(Color(red: 0.02, green: 0.05, blue: 0.26))
-                .frame(maxWidth: .infinity,maxHeight: .infinity, alignment: .top)
-                .scrollContentBackground(.hidden)
-                .background(Color.white.edgesIgnoringSafeArea(.all))
-                Spacer()
-                //Spacer()
+                
+                .toolbar(.hidden)
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
+                .navigationBarBackButtonHidden()
             }
-            
-            .toolbar(.hidden)
-            .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
-            .navigationBarBackButtonHidden()
-            
         }
         
     }
