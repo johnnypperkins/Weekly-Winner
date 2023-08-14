@@ -31,11 +31,11 @@ class groupsViewModel: ObservableObject {
         fetchUserTickets() {
             self.groupsFetched = true
             self.fetchUserGroups {
-            }
-            self.fetchGroups(array1: self.userTickets) {
                 self.userGroupsLoaded = true
-                print("yeehaw" + "\(self.userGroups)")
             }
+//            self.fetchGroups(array1: self.userTickets) {
+//                print("yeehaw" + "\(self.userGroups)")
+//            }
         }
     }
     
@@ -163,8 +163,12 @@ class groupsViewModel: ObservableObject {
         
         grpService.joinGroup(userID: Auth.auth().currentUser!.uid, group: group){ error in
             self.fetchUserTickets() {
+//                self.fetchGroups(array1: self.userTickets){
+//
+//                }
                 self.fetchUserGroups {
                 }
+                
                 print(self.userTickets)
             }
         }
@@ -213,12 +217,10 @@ class groupsViewModel: ObservableObject {
             completion()
         }
     }
-    
+  
     func fetchGroups(array1: [Ticket], completion: @escaping () -> Void) {
         
         let array = array1.sorted { $0.groupNumber < $1.groupNumber }
-//       print("array printed")
-//        print(array)
         
         // Firestore reference to the "groups" collection
         let groupsRef = Firestore.firestore().collection("groups")
@@ -226,127 +228,206 @@ class groupsViewModel: ObservableObject {
         // Initialize an empty array to store the matching groups
         var matchingGroups: [Group] = []
 
-        // Initialize a dispatch group to manage multiple asynchronous tasks
-        let dispatchGroup = DispatchGroup()
+        // Create a serial dispatch queue
+        let serialQueue = DispatchQueue(label: "com.yourapp.fetchGroups")
 
         // Iterate through the array and fetch groups with matching IDs
         for group in array {
-            dispatchGroup.enter()
-           let targetID = group.groupID
-            print("target id" + targetID)
+            serialQueue.async {
+                let semaphore = DispatchSemaphore(value: 0)
+                let targetID = group.groupID
+                print("target id" + targetID)
 
-            // Enter the dispatch group
-
-            // Query for the group with the specific document ID
-            groupsRef.document(targetID).getDocument { (document, error) in
-                print("jncjdcn")
-                        if let error = error {
-                            print("Error getting groups: \(error)")
-                        } else if let document = document, document.exists {
-                            // Get data and assign to Group struct
-                            let data = document.data()
-                            let group = Group(
-                                id: document.documentID,
-                                groupName: data?["groupName"] as? String ?? "",
-                                dateCreated: data?["dateCreated"] as? Timestamp ?? Timestamp(), // Temporary
-                                groupImageURL: data?["groupImageURL"] as? String ?? "",
-                                groupSlogan: data?["groupSlogan"] as? String ?? "",
-                                groupAdmin: data?["groupAdmin"] as? String ?? "",
-                                password: data?["password"] as? String,
-                                ticketFormat: data?["ticketFormat"] as? [Int] ?? []
-                            )
-                            print(" if   " + "\(group)")
-                            matchingGroups.append(group)
-                        }
-                else{
-                    print("sdkjfnsdkjfndskjf")
-                }
-
-                        // Leave the dispatch group
-                        dispatchGroup.leave()
+                // Query for the group with the specific document ID
+                groupsRef.document(targetID).getDocument { (document, error) in
+                    print("jncjdcn")
+                    if let error = error {
+                        print("Error getting groups: \(error)")
+                    } else if let document = document, document.exists {
+                        // Get data and assign to Group struct
+                        let data = document.data()
+                        let group = Group(
+                            id: document.documentID,
+                            groupName: data?["groupName"] as? String ?? "",
+                            dateCreated: data?["dateCreated"] as? Timestamp ?? Timestamp(), // Temporary
+                            groupImageURL: data?["groupImageURL"] as? String ?? "",
+                            groupSlogan: data?["groupSlogan"] as? String ?? "",
+                            groupAdmin: data?["groupAdmin"] as? String ?? "",
+                            password: data?["password"] as? String,
+                            ticketFormat: data?["ticketFormat"] as? [Int] ?? []
+                        )
+                        print(" if   " + "\(group)")
+                        matchingGroups.append(group)
+                    } else {
+                        print("sdkjfnsdkjfndskjf")
                     }
+
+                    // Signal the semaphore
+                    semaphore.signal()
+                }
+                // Wait for the semaphore
+                semaphore.wait()
+            }
         }
 
+        self.canGetHistoricalData = true
+
         // Notify when all tasks are completed
-        dispatchGroup.notify(queue: .main) {
-            // Update the viewModel's userGroups property with all the matching groups
-            self.userGroups = matchingGroups
-            print("array printed")
-            print(matchingGroups)
-            completion()
+        serialQueue.async {
+            DispatchQueue.main.async {
+                // Update the viewModel's userGroups property with all the matching groups
+                self.userGroups = matchingGroups
+                print("array printed")
+                print(matchingGroups)
+                completion()
+            }
         }
     }
 
+//    func fetchGroups(array1: [Ticket], completion: @escaping () -> Void) {
+//
+//        let array = array1.sorted { $0.groupNumber < $1.groupNumber }
+////       print("array printed")
+////        print(array)
+//
+//        // Firestore reference to the "groups" collection
+//        let groupsRef = Firestore.firestore().collection("groups")
+//
+//        // Initialize an empty array to store the matching groups
+//        var matchingGroups: [Group] = []
+//
+//        // Initialize a dispatch group to manage multiple asynchronous tasks
+//        let dispatchGroup = DispatchGroup()
+//
+//        // Iterate through the array and fetch groups with matching IDs
+//        for group in array {
+//            dispatchGroup.enter()
+//           let targetID = group.groupID
+//            print("target id" + targetID)
+//
+//            // Enter the dispatch group
+//
+//            // Query for the group with the specific document ID
+//            groupsRef.document(targetID).getDocument { (document, error) in
+//                print("jncjdcn")
+//                        if let error = error {
+//                            print("Error getting groups: \(error)")
+//                        } else if let document = document, document.exists {
+//                            // Get data and assign to Group struct
+//                            let data = document.data()
+//                            let group = Group(
+//                                id: document.documentID,
+//                                groupName: data?["groupName"] as? String ?? "",
+//                                dateCreated: data?["dateCreated"] as? Timestamp ?? Timestamp(), // Temporary
+//                                groupImageURL: data?["groupImageURL"] as? String ?? "",
+//                                groupSlogan: data?["groupSlogan"] as? String ?? "",
+//                                groupAdmin: data?["groupAdmin"] as? String ?? "",
+//                                password: data?["password"] as? String,
+//                                ticketFormat: data?["ticketFormat"] as? [Int] ?? []
+//                            )
+//                            print(" if   " + "\(group)")
+//                            matchingGroups.append(group)
+//                        }
+//                else{
+//                    print("sdkjfnsdkjfndskjf")
+//                }
+//
+//                        // Leave the dispatch group
+//                        dispatchGroup.leave()
+//                    }
+//        }
+//
+//        // Notify when all tasks are completed
+//        dispatchGroup.notify(queue: .main) {
+//            // Update the viewModel's userGroups property with all the matching groups
+//            self.userGroups = matchingGroups
+//            print("array printed")
+//            print(matchingGroups)
+//            completion()
+//        }
+//    }
+
     
     func fetchUserGroups(completion: @escaping () -> Void) {
-        joinedGroups.removeAll()
+        
+        let tempArray = self.userTickets.sorted { $0.groupNumber < $1.groupNumber }
+        var groupIDs: [String] = []
+        for ticket in tempArray {
+            groupIDs.append(ticket.groupID)
+        }
         let groupsCollection = db.collection("groups")
-        let groupIDs = self.userTickets.map { $0.groupID }
         
         if self.totalArrayOfDates.count < groupIDs.count {
             totalArrayOfDates.removeAll()
         }
         
-        let dispatchGroup = DispatchGroup() // to manage multiple asynchronous tasks
+        // Create a serial dispatch queue
+        let serialQueue = DispatchQueue(label: "com.yourapp.fetchUserGroups")
         
-        for (index,groupID) in groupIDs.enumerated() {
-            dispatchGroup.enter() // enter group for each groupID
-            
-            groupsCollection.document(groupID).getDocument { groupSnapshot, groupError in
-                if let groupError = groupError {
-                    print("Error fetching group: \(groupError.localizedDescription)")
-                    dispatchGroup.leave() // leave group on failure
-                    return
-                }
+        for (index, groupID) in groupIDs.enumerated() {
+            serialQueue.async {
                 
-                guard let groupSnapshot = groupSnapshot, let data = groupSnapshot.data() else {
-                    print("Snapshot does not exist or is nil")
-                    dispatchGroup.leave() // leave group if data is nil
-                    return
-                }
-
-                if let groupName = data["groupName"] as? String,
-                   let dateCreated = data["dateCreated"] as? Timestamp,
-                   let groupImageURL = data["groupImageURL"] as? String,
-                   let groupSlogan = data["groupSlogan"] as? String,
-                   let groupAdmin = data["groupAdmin"] as? String,
-                   let ticketFormat = data["ticketFormat"] as? [Int] {
-                    
-                    if self.totalArrayOfDates.count < groupIDs.count {
-                        self.totalArrayOfDates.append(self.populateArrayOfDates(from: dateCreated))
-                    } else {
-                        self.totalArrayOfDates[index] = self.populateArrayOfDates(from: dateCreated)
+                let semaphore = DispatchSemaphore(value: 0)
+                print(groupID, "IS GROUP ID")
+                
+                groupsCollection.document(groupID).getDocument { groupSnapshot, groupError in
+                    if let groupError = groupError {
+                        print("Error fetching group: \(groupError.localizedDescription)")
+                        semaphore.signal()
+                        return
                     }
                     
-                    let password = data["password"] as? String
-                    
-                    let group = Group(id: groupSnapshot.documentID,
-                                      groupName: groupName,
-                                      dateCreated: dateCreated,
-                                      groupImageURL: groupImageURL,
-                                      groupSlogan: groupSlogan,
-                                      groupAdmin: groupAdmin,
-                                      password: password,
-                                      ticketFormat: ticketFormat)
-                    
-                    self.joinedGroups.append(group)
-                } else {
-                    print("Failed to extract data for groupID: \(groupID)")
+                    guard let groupSnapshot = groupSnapshot, let data = groupSnapshot.data() else {
+                        print("Snapshot does not exist or is nil")
+                        semaphore.signal()
+                        return
+                    }
+
+                    if let groupName = data["groupName"] as? String,
+                       let dateCreated = data["dateCreated"] as? Timestamp,
+                       let groupImageURL = data["groupImageURL"] as? String,
+                       let groupSlogan = data["groupSlogan"] as? String,
+                       let groupAdmin = data["groupAdmin"] as? String,
+                       let ticketFormat = data["ticketFormat"] as? [Int] {
+                        
+                        if self.totalArrayOfDates.count < groupIDs.count {
+                            self.totalArrayOfDates.append(self.populateArrayOfDates(from: dateCreated))
+                        } else {
+                            self.totalArrayOfDates[index] = self.populateArrayOfDates(from: dateCreated)
+                        }
+                        
+                        let password = data["password"] as? String
+                        
+                        let group = Group(id: groupSnapshot.documentID,
+                                          groupName: groupName,
+                                          dateCreated: dateCreated,
+                                          groupImageURL: groupImageURL,
+                                          groupSlogan: groupSlogan,
+                                          groupAdmin: groupAdmin,
+                                          password: password,
+                                          ticketFormat: ticketFormat)
+                        
+                        self.userGroups.append(group)
+                    } else {
+                        print("Failed to extract data for groupID: \(groupID)")
+                    }
+                    print("joined groups " + "\(self.joinedGroups)")
+                    self.canGetHistoricalData = true
+                    print("TotalArrayOfDates: ", self.totalArrayOfDates)
+                    semaphore.signal()
                 }
-                print("joined groups " + "\(self.joinedGroups)")
-                self.canGetHistoricalData = true
-                print("TotalArrayOfDates: ", self.totalArrayOfDates)
-                dispatchGroup.leave() // leave group on success
+                
+                semaphore.wait()
             }
         }
         
-        
-        dispatchGroup.notify(queue: .main) {
-//            print("GROUPSSSS")
-//            print(self.joinedGroups)
-            completion()
+        serialQueue.async {
+            DispatchQueue.main.async {
+                completion()
+            }
         }
     }
+
 
 
     func leaveGroup(ticket: Ticket, completion: @escaping () -> Void) {
@@ -357,7 +438,10 @@ class groupsViewModel: ObservableObject {
         }
         grpService.leaveGroup(ticket: ticket, userID: currentUser) { error in
             self.fetchUserTickets() {
-                
+                //self.fetchGroups(array1: self.userTickets){}
+                self.fetchUserGroups {
+                    
+                }
             }
         }
 

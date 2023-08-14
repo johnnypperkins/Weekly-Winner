@@ -207,7 +207,7 @@ struct CustomStepper: View {
     var body: some View {
         HStack {
             Text("\(title): \(value)")
-                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                .font(Font.custom(K.customFonts.lexendDecaLight, size: 16).weight(.light))
                 .foregroundColor(.white)
             Spacer()
             Button(action: {

@@ -25,9 +25,9 @@ struct groupsView: View {
     //@State private var groupsFetched = false
 
     init() {
-//        viewModel.fetchUserTickets() {
-//            viewModel.fetchUserGroups() {}
-//        }
+        viewModel.fetchUserTickets() {
+            //viewModel.fetchUserGroups() {}
+        }
         
         viewModel.fetchCurrentRankedTickets(groupID: "Global") {}
     }
@@ -62,7 +62,7 @@ struct groupsView: View {
                                         ForEach(1..<viewModel.userTickets.count+1, id: \.self) { index in
                                             Button(action: {
                                                 self.selectedGroup = index
-                                                //viewModel.canGetHistoricalData = false
+                                                viewModel.canGetHistoricalData = false
                                                 viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[index-1].groupID) {
                                                 }
                                                 whichWeek = 0
@@ -201,6 +201,8 @@ struct groupsView: View {
                                             .aspectRatio(contentMode: .fill)
                                             .clipShape(Circle())
                                             .frame(width: 50, height: 50)
+                                            .background(K.finalColor.potentialOrange)
+
                                     }
                                 }
                                 else {
@@ -210,15 +212,13 @@ struct groupsView: View {
                                         .aspectRatio(contentMode: .fill)
                                         .clipShape(Circle())
                                         .frame(width: 50, height: 50)
+                                        .background(K.finalColor.textWhite)
                                 }
                                 
                                 Text(viewModel.userTickets[selectedGroup-1].groupName)
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18).weight(.medium))
                                     .foregroundColor(.white)
                                     .padding(.leading)
-                                
-                                Spacer()
-                                
                                 if(viewModel.userTickets[selectedGroup-1].groupID != "Global") {
                                     Button(action: {
                                                 isGroupSettingsViewPresented = true
@@ -226,14 +226,17 @@ struct groupsView: View {
                                                 Image(systemName: "gearshape")
                                                     .resizable()
                                                     .frame(width: 20, height: 20)
-                                                    .padding()
+                                                    //.padding()
                                                     .foregroundColor(.white)
                                             }
                                             .sheet(isPresented: $isGroupSettingsViewPresented) {
-                                                groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel, groupAdmin: viewModel.userTickets[selectedGroup-1].groupAdmin, groupNum: selectedGroup-1)
+                                                groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel, groupAdmin: viewModel.userTickets[selectedGroup-1].groupAdmin, groupNum: selectedGroup-1, ticketFormat: viewModel.userTickets[selectedGroup-1].ticketFormat)
                                                     .presentationDetents([.fraction(0.65)])
                                             }
                                 }
+                                Spacer()
+                                
+
                                 
                             }.padding(.bottom)
                                 .padding(.horizontal,16)
@@ -499,7 +502,7 @@ struct BetCard: View {
                     HStack(spacing: 11) {
                         HStack(spacing: 0) {
                             if rank == "1" || rank == "T1"{
-                                Image(systemName: "trophy.fill")
+                                Image(systemName: "trophy.fill")// lmao fuck with this johnny
                                     .resizable()
                                     .frame(width: 15, height: 15)
                                     .foregroundColor(Color(hex: "D4AF37"))
@@ -527,10 +530,14 @@ struct BetCard: View {
                                 .aspectRatio(contentMode: .fill)
                                 .clipShape(Circle())
                                 .frame(width: 24, height: 24)
-                            
-                            Text("\(ticket.username)")
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
-                                .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+                            HStack(spacing: 0){
+                                Text("\(ticket.username) ")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                                    .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+                                Text("\(ticket.groupAdmin == ticket.uid ? "(A)": "") ")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                                    .foregroundColor(.red)
+                            }
                         }
                         .frame(maxHeight: .infinity)
                     }

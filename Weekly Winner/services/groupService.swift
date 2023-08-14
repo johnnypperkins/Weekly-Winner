@@ -355,54 +355,53 @@ class groupService {
 
     func leaveGroup(ticket: Ticket, userID: String, completion: @escaping (Error?) -> Void) {
         let db = Firestore.firestore()
+        let serialQueue = DispatchQueue(label: "com.yourapp.leaveGroup")
+        var firstError: Error?
 
-        // Create a dispatch group to synchronize your async calls
-        let groupLeave = DispatchGroup()
-        
-        // Enter the group
-        groupLeave.enter()
-        db.collection("users").document(userID).collection("tickets").document("week").collection("currentWeekTickets").whereField("groupID", isEqualTo: ticket.groupID).getDocuments { (snapshot, error) in
-            if let error = error {
-                completion(error)
-            } else {
-                for doc in snapshot!.documents {
-                    doc.reference.delete()
+        serialQueue.async {
+            let groupLeave = DispatchGroup()
+
+            groupLeave.enter()
+            db.collection("users").document(userID).collection("tickets").document("week").collection("currentWeekTickets").whereField("groupID", isEqualTo: ticket.groupID).getDocuments { (snapshot, error) in
+                if let error = error {
+                    firstError = firstError ?? error
+                } else {
+                    for doc in snapshot!.documents {
+                        doc.reference.delete()
+                    }
                 }
-                // Leave the group after finishing
                 groupLeave.leave()
             }
-        }
+            groupLeave.wait()
 
-        // Enter the group
-        groupLeave.enter()
-        db.collection("users").document(userID).collection("bets").document("week").collection("currentWeekBets").whereField("groupID", isEqualTo: ticket.groupID).getDocuments() { (snapshot, error) in
-            if let error = error {
-                completion(error)
-            } else {
-                for document in snapshot!.documents {
-                    document.reference.delete()
+            groupLeave.enter()
+            db.collection("users").document(userID).collection("bets").document("week").collection("currentWeekBets").whereField("groupID", isEqualTo: ticket.groupID).getDocuments() { (snapshot, error) in
+                if let error = error {
+                    firstError = firstError ?? error
+                } else {
+                    for document in snapshot!.documents {
+                        document.reference.delete()
+                    }
                 }
-                // Leave the group after finishing
                 groupLeave.leave()
             }
-        }
+            groupLeave.wait()
 
-        // Enter the group
-        groupLeave.enter()
-        db.collection("groups").document(ticket.groupID).collection("members").document(userID).delete() { err in
-            if let err = err {
-                completion(err)
-            } else {
-                // Leave the group after finishing
+            groupLeave.enter()
+            db.collection("groups").document(ticket.groupID).collection("members").document(userID).delete() { err in
+                if let err = err {
+                    firstError = firstError ?? err
+                }
                 groupLeave.leave()
             }
-        }
+            groupLeave.wait()
 
-        // Call completion when all tasks are done
-        groupLeave.notify(queue: .main) {
-            completion(nil)
+            DispatchQueue.main.async {
+                completion(firstError)
+            }
         }
     }
+
 
     
     
