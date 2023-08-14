@@ -11,6 +11,7 @@ struct ticketView: View {
     var groupID: String
     var selectedWeek: String
     var ticketFormatForGroups: [Int]
+    var ownTicket: Bool
     var ticketIsEnabled: Bool {
         if selectedWeek != "current" {
             return true
@@ -24,12 +25,13 @@ struct ticketView: View {
     }
 
     
-    init(username: String, uid: String, groupID: String, selectedWeek: String, ticketFormatForGroups: [Int]) {
+    init(username: String, uid: String, groupID: String, selectedWeek: String, ticketFormatForGroups: [Int], ownTicket: Bool) {
         self.username = username
         self.uid = uid
         self.groupID = groupID
         self.selectedWeek = selectedWeek
         self.ticketFormatForGroups = ticketFormatForGroups
+        self.ownTicket = ownTicket
         
         if uid != Auth.auth().currentUser?.uid{
             viewModel.fetchFriendTicket(uid: uid, with: groupID) { group in
@@ -149,11 +151,11 @@ struct ticketView: View {
                                 VStack {
                                     if selectedWeek == "current" {
                                         ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
-                                            SectionTitle(title: parlayTitle(ticketFormat: viewModel.currentTicketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.userTickets[selectedGroup].ticketFormat[parlayIndex], uid: Auth.auth().currentUser?.uid ?? "", selectedWeek: selectedWeek, viewModel: viewModel)
+                                            SectionTitle(title: parlayTitle(ticketFormat: viewModel.currentTicketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.userTickets[selectedGroup].ticketFormat[parlayIndex], uid: Auth.auth().currentUser?.uid ?? "", selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, viewModel: viewModel)
                                         }
                                     } else {
                                         ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
-                                            SectionTitle(title: parlayTitle(ticketFormat: ticketFormatForGroups, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: 1, uid: uid, selectedWeek: selectedWeek, viewModel: viewModel)
+                                            SectionTitle(title: parlayTitle(ticketFormat: ticketFormatForGroups, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: 1, uid: uid, selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, viewModel: viewModel)
                                         }
                                     }
 
@@ -214,6 +216,7 @@ struct ticketView: View {
         let maxBetsPlaced: Int
         let uid: String
         let selectedWeek: String
+        let ownTicket: Bool
        // let totalOdds: Double
         @ObservedObject var viewModel: ticketViewModel
         
@@ -260,7 +263,7 @@ struct ticketView: View {
                         ForEach(0..<totalBetsCount, id: \.self) { index in
                             VStack(alignment: .center, spacing: 0) {
                                 if index < betArray.count {
-                                    BetCard(bet: betArray[index], uid: uid, selectedWeek: selectedWeek, viewModel: viewModel)
+                                    BetCard(bet: betArray[index], uid: uid, selectedWeek: selectedWeek, ownCard: ownTicket, viewModel: viewModel)
                                 } else {
                                     EmptyBetCard()
                                 }
@@ -289,6 +292,8 @@ struct ticketView: View {
             let bet: Bet
             let uid: String
             let selectedWeek: String
+            let ownCard: Bool
+            //let ownBets: Bool
 
             @ObservedObject var viewModel: ticketViewModel
 
@@ -325,7 +330,7 @@ struct ticketView: View {
                         .background(Color.backgroundForBetResult(bet.result))
                         .cornerRadius(7.5)
                         
-                        if bet.result == .notStarted && uid == Auth.auth().currentUser?.uid && selectedWeek == "current" { // ONLY SHOWS DELETE BUTTON IF .NOTSTARTED
+                        if bet.result == .notStarted && uid == Auth.auth().currentUser?.uid && selectedWeek == "current" && ownCard { // ONLY SHOWS DELETE BUTTON IF .NOTSTARTED
                             Button(action: {
                                 self.viewModel.deleteBet(bet: bet)
                             }) {
@@ -359,7 +364,7 @@ struct ticketView: View {
 
 struct ticketView_Previews: PreviewProvider {
     static var previews: some View {
-        ticketView(username: "Reid", uid: Auth.auth().currentUser!.uid, groupID: "", selectedWeek: "current", ticketFormatForGroups: [])
+        ticketView(username: "Reid", uid: Auth.auth().currentUser!.uid, groupID: "", selectedWeek: "current", ticketFormatForGroups: [], ownTicket: true)
     }
 }
 
