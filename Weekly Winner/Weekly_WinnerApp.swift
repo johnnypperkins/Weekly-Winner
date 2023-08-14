@@ -25,7 +25,7 @@ struct Weekly_WinnerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            splashScreenView()
             .onAppear() {
                 let standardAppearance = UITabBarAppearance()
                 standardAppearance.backgroundColor = UIColor(K.finalColor.backgroundBlue)

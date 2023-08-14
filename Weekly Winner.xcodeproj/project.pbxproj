@@ -70,6 +70,7 @@
 		867801992A21691E006FE479 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 867801982A21691E006FE479 /* FirebaseFunctions */; };
 		8678019B2A21691E006FE479 /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = 8678019A2A21691E006FE479 /* FirebasePerformance */; };
 		8678019D2A21691E006FE479 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 8678019C2A21691E006FE479 /* FirebaseStorage */; };
+		868FDA8B2A8AD4BC0092E3C5 /* splashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868FDA8A2A8AD4BC0092E3C5 /* splashScreenView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -149,6 +150,7 @@
 		867801872A213FA5006FE479 /* ticketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ticketView.swift; sourceTree = "<group>"; };
 		867801892A213FB1006FE479 /* profileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = profileView.swift; sourceTree = "<group>"; };
 		8678018B2A21662D006FE479 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		868FDA8A2A8AD4BC0092E3C5 /* splashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = splashScreenView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -199,6 +201,7 @@
 			isa = PBXGroup;
 			children = (
 				865C4A752A327CA600C3C626 /* authenticationView.swift */,
+				868FDA8A2A8AD4BC0092E3C5 /* splashScreenView.swift */,
 				867801812A213F83006FE479 /* screen1.swift */,
 				867801832A213F90006FE479 /* screen2.swift */,
 				867801872A213FA5006FE479 /* ticketView.swift */,
@@ -526,6 +529,7 @@
 				865324332A643720005AB3EF /* groupsViewModel.swift in Sources */,
 				867801552A213010006FE479 /* Weekly_WinnerApp.swift in Sources */,
 				8653242D2A63B536005AB3EF /* createGroupsView.swift in Sources */,
+				868FDA8B2A8AD4BC0092E3C5 /* splashScreenView.swift in Sources */,
 				8678018A2A213FB1006FE479 /* profileView.swift in Sources */,
 				864A2D5F2A6D7DAF000FBA35 /* profileViewModel.swift in Sources */,
 				863FC0512A41176400405F2A /* ticketViewModel.swift in Sources */,
@@ -701,6 +705,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Weekly-Winner-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = WagerPool;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -745,6 +750,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Weekly-Winner-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = WagerPool;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;

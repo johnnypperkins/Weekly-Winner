@@ -136,12 +136,24 @@ struct yourGroups: View {
                                         .foregroundColor(.white)
                                     
                                 }
-                                Image("sampleImage")
-                                    .resizable()
-                                    .cornerRadius(12)
-                                    .foregroundColor(.clear)
-                                    .scaledToFit()
-                                    .frame(height: 102)
+                                if groupsVM.userGroupsLoaded {
+                                    if groupsVM.userGroups[index].groupImageURL != "" {
+                                        KFImage(URL(string: groupsVM.userGroups[index].groupImageURL))
+                                            .resizable()
+                                            .cornerRadius(12)
+                                            .foregroundColor(.clear)
+                                            .scaledToFit()
+                                            .frame(height: 102)
+                                    }
+                                    else {
+                                        Image(systemName: "photo.circle.fill")
+                                            .resizable()
+                                            .cornerRadius(12)
+                                            .foregroundColor(.clear)
+                                            .scaledToFit()
+                                            .frame(height: 102)
+                                    }
+                                }
                                 
                             }
                             VStack(alignment: .leading, spacing: 4) {
