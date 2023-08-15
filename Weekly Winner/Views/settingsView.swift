@@ -334,7 +334,7 @@ struct TermsAndConditionsViewSettings: View {
                     HStack {
                         Image(systemName: "arrowshape.backward.fill")
                             .resizable()
-                            .foregroundColor(Color(.black))
+                            .foregroundColor(Color(.white))
                             .padding(.leading)
                             .frame(width: 40,height: 17)
                     }
@@ -344,88 +344,131 @@ struct TermsAndConditionsViewSettings: View {
             ScrollView{
                 VStack{
                     
-                    Text("End-User License Agreement (EULA) - Merge - SocialSips. Please read this End-User License Agreement carefully before using Merge - SocialSips (\"the App). By downloading, installing, or using the App, you agree to be bound by the terms and conditions of this Agreement.")
+                    Text("End-User License Agreement (EULA) WagerPool. Please read this End-User License Agreement carefully before using WagerPool (\"the App). By downloading, installing, or using the App, you agree to be bound by the terms and conditions of this Agreement.")
                         .padding()
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
                     
                     Text("Agreement to Terms and Conditions")
-                        .bold()
-                        .font(.title2)
-                        .foregroundColor(.black)
+                        .font(Font.custom(K.customFonts.lexendDecaSB, size: 14))
+                        .foregroundColor(.white)
                     
-                    Text("This Agreement constitutes a legal agreement between you and Merge - SocialSips. By using the App, you acknowledge that you have read, understood, and agree to be bound by this Agreement. If you do not agree to these terms, you should not use the App.")
-                        .padding()
+                    Text("This Agreement constitutes a legal agreement between you and WagerPool. By using the App, you acknowledge that you have read, understood, and agree to be bound by this Agreement. If you do not agree to these terms, you should not use the App.")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
                     
                     Text("Description of the App")
-                        .bold()
-                        .font(.title2)
-                        .foregroundColor(.black)
+                        .font(Font.custom(K.customFonts.lexendDecaSB, size: 14))
+                        .foregroundColor(.white)
                     
-                    Text("Merge - SocialSips is an app designed and targeted at students who are actively attending a university around the world. It facilitates connections, expansion, and the establishment of relationships among students from different schools. The App aims to create a unique and special network that goes beyond individual universities/locations, with the mission of broadening horizons and bringing together students who share a commonality.")
+                    Text("Welcome to WagerPool, the fantasy betting app designed to bring friendly competition and excitement to your fingertips. At WagerPool, we believe that having fun with friends shouldn't require real money wagers. Our app allows you to create weekly cards, place bets, and compete for bragging rights without any financial risk. Our goal is to create a safe and engaging environment where you can showcase your strategic skills, challenge your friends, and climb the global leaderboard. With the option to adjust risk and reward, you can tailor your betting strategy to your unique style. Remember, to conquer the group, you'll need to embrace just the right amount of risk.")
                         .padding()
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
                     
                     Text("Prohibited Content and User Conduct")
-                        .bold()
-                        .font(.title2)
-                        .foregroundColor(.black)
-                    Text("Users of Merge - SocialSips are strictly prohibited from posting or engaging in any objectionable, offensive, or abusive content. Objectionable content includes, but is not limited to, content that is discriminatory, harassing, defamatory, pornographic, violent, or in violation of any applicable laws or regulations. Users must conduct themselves in a respectful and appropriate manner when using the App, treating others with courtesy and refraining from engaging in abusive behavior towards other users.")
+                        .font(Font.custom(K.customFonts.lexendDecaSB, size: 14))
+                        .foregroundColor(.white)
+                    
+                    Text("Users of WagerPool are strictly prohibited from posting or engaging in any objectionable, offensive, or abusive content. Objectionable content includes, but is not limited to, content that is discriminatory, harassing, defamatory, pornographic, violent, or in violation of any applicable laws or regulations. Users must conduct themselves in a respectful and appropriate manner when using the App, treating others with courtesy and refraining from engaging in abusive behavior towards other users.")
                         .padding()
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
                     
                     Text("Consequences of Violations")
-                        .bold()
-                        .font(.title2)
-                        .foregroundColor(.black)
-                    Text("Merge - SocialSips has a zero-tolerance policy for objectionable content or abusive user behavior. Violations of the prohibited content and user conduct mentioned in Section 3 may result in immediate termination of the User's access to the App without prior notice. Merge - SocialSips reserves the right to take appropriate legal action against any User who violates these terms.")
+                        .font(Font.custom(K.customFonts.lexendDecaSB, size: 14))
+                        .foregroundColor(.white)
+                    
+                    Text("WagerPool has a zero-tolerance policy for objectionable content or abusive user behavior. Violations of the prohibited content and user conduct mentioned in Section 3 may result in immediate termination of the User's access to the App without prior notice. WagerPool reserves the right to take appropriate legal action against any User who violates these terms.")
                         .padding()
-                }.padding()
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                    
+                }
                 // Privacy Policy section
                 VStack {
                     Text("Intellectual Property Rights")
-                        .bold()
-                        .font(.title2)
-                        .foregroundColor(.black)
+                        .font(Font.custom(K.customFonts.lexendDecaSB, size: 14))
+                        .foregroundColor(.white)
                     // Your privacy policy content here
                     // Replace with your own text or views
                     
                     // For demonstration purposes, we'll use a simple Text view
-                    Text("Merge - SocialSips retains all intellectual property rights associated with the App, including but not limited to copyrights, trademarks, and patents. Users may not copy, modify, distribute, or create derivative works based on the App without the prior written consent of Merge - SocialSips.")
+                    Text("WagerPool retains all intellectual property rights associated with the App, including but not limited to copyrights, trademarks, and patents. Users may not copy, modify, distribute, or create derivative works based on the App without the prior written consent of WagerPool.")
                         .padding()
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
                     
                     Text("Disclaimer of Warranty and Limitation of Liability")
-                        .bold()
-                        .font(.title2)
-                        .foregroundColor(.black)
-                    Text("The App is provided on an \("as-is") basis without any warranties or guarantees of any kind, either express or implied. Merge - SocialSips shall not be liable for any direct, indirect, incidental, consequential, or special damages arising out of or in connection with the use of the App.")
-                        .padding()
+                        .font(Font.custom(K.customFonts.lexendDecaSB, size: 14))
+                        .foregroundColor(.white)
                     
-                    Text("Termination")
-                        .bold()
-                        .font(.title2)
-                        .foregroundColor(.black)
-                    Text("Merge - SocialSips reserves the right to terminate this Agreement and the User's access to the App at any time, for any reason, without prior notice.")
+                    Text("The App is provided on an \("as-is") basis without any warranties or guarantees of any kind, either express or implied. WagerPool shall not be liable for any direct, indirect, incidental, consequential, or special damages arising out of or in connection with the use of the App.")
                         .padding()
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                }
+                VStack{
+                    Text("Disclaimer of Betting Advice and Odds")
+                        .font(Font.custom(K.customFonts.lexendDecaSB, size: 14))
+                        .foregroundColor(.white)
+                    Text("The Company provides the WagerPool mobile application \("App") for entertainment purposes only. The information, tips, and advice presented within the App regarding betting strategies, odds, and outcomes are not intended as professional betting advice. Users are solely responsible for making their own decisions when participating in the fantasy betting activities provided by the App.")
+                        .padding(.bottom)
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
                     
-                    Text("Governing Law")
-                        .bold()
-                        .font(.title2)
-                        .foregroundColor(.black)
-                    Text("This Agreement shall be governed by and construed in accordance with the laws of the United States of America, without regard to its conflict of law principles.")
-                        .padding()
-                    Text("Severability")
-                        .bold()
-                        .font(.title2)
-                        .foregroundColor(.black)
-                    Text("If any provision of this Agreement is found to be invalid or unenforceable, the remaining provisions shall remain in full force and effect.")
-                        .padding()
+                    Text("The Company does not endorse or recommend any particular betting strategy, and the information provided within the App should not be construed as a guarantee of successful outcomes. Betting involves risk, and the results of bets may vary based on unpredictable factors.")
+                        .padding(.bottom)
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
                     
+                    Text("By using the App, you acknowledge and agree that: Any betting decisions made based on information provided within the App are done at your own risk. The Company does not assume responsibility for the accuracy, reliability, or suitability of any information presented within the App. The Company is not liable for any losses, damages, or consequences arising from bets placed or decisions made based on information presented within the App.")
+                        .padding(.bottom)
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                    
+                    Text("Additionally, all betting odds presented within the App are generated for user-friendly and entertainment purposes. These odds are not accurate reflections of real-world betting odds and should not be relied upon for actual betting activities. The Company reserves the right to adjust or modify odds and outcomes within the App without prior notice. Before placing any bets or making decisions related to betting activities, we strongly recommend that you conduct your own research, consult with professionals, and consider your own judgment and risk tolerance.")
+                        .padding(.bottom)
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
                 }.padding()
                 VStack{
-                    Text("By using Merge - SocialSips, you acknowledge that you have read and understood this Agreement, and agree to comply with all of its terms and conditions.")
-                        .bold()
-                        .font(.title2)
-                    .foregroundColor(.black)                }
+                    Text("Termination")
+                        .font(Font.custom(K.customFonts.lexendDecaSB, size: 14))
+                        .foregroundColor(.white)
+                    Text("WagerPool reserves the right to terminate this Agreement and the User's access to the App at any time, for any reason, without prior notice.")
+                        .padding()
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                    
+                    Text("Governing Law")
+                        .font(Font.custom(K.customFonts.lexendDecaSB, size: 14))
+                        .foregroundColor(.white)
+                    
+                    Text("This Agreement shall be governed by and construed in accordance with the laws of the United States of America, without regard to its conflict of law principles.")
+                        .padding()
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                    
+                    Text("Severability")
+                        .padding()
+                        .font(Font.custom(K.customFonts.lexendDecaSB, size: 14))
+                        .foregroundColor(.white)
+                    
+                    Text("If any provision of this Agreement is found to be invalid or unenforceable, the remaining provisions shall remain in full force and effect.")
+                        .padding()
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                    
+                }
+                VStack{
+                    Text("By using WagerPool, you acknowledge that you have read and understood this Agreement, and agree to comply with all of its terms and conditions.")
+                        .font(Font.custom(K.customFonts.lexendDecaSB, size: 14))
+                        .foregroundColor(.white)
+                    }
                 .padding()
-            }.navigationBarBackButtonHidden(true)
-        }
+            }.navigationBarBackButtonHidden(true).background(Color(red: 0.02, green: 0.05, blue: 0.26))
+        }.background(Color(red: 0.02, green: 0.05, blue: 0.26))
     }
 }
 
@@ -444,22 +487,32 @@ struct ourMissionView: View {
                         HStack {
                             Image(systemName: "arrowshape.backward.fill")
                                 .resizable()
-                                .foregroundColor(.black)                                .padding(.leading)
+                                .foregroundColor(.white)                                .padding(.leading)
                                 .frame(width: 40,height: 17)
                         }
                     }
                     Spacer()
                 }
-                Text("The Merge Mission")
-                    .font(.title)
-                    .padding()
-                    .foregroundColor(.black)
+                Text("The WagerPool Mission")
+                    .font(Font.custom(K.customFonts.lexendDecaSB, size: 24))
+                    .foregroundColor(.white)
                 ScrollView{
-                    Text("Merge is an app designed and targeted at students who are actively attending a university around the world. It is used to connect students and allow them to expand, and establish connections and relationships with others from differing schools. It will result in the establishment of a unique and special network amongst students beyond just their university/location. Ultimately, our mission is to broaden horizons and bring together students all sharing one commonality. ")
-                        .padding()
-                }
-            }
+                    Text("Welcome to WagerPool, the fantasy betting app designed to bring friendly competition and excitement to your fingertips. At WagerPool, we believe that having fun with friends shouldn't require real money wagers. Our app allows you to create weekly cards, place bets, and compete for bragging rights without any financial risk.")
+                        .padding(.bottom)
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                    Text("Our goal is to create a safe and engaging environment where you can showcase your strategic skills, challenge your friends, and climb the global leaderboard. With the option to adjust risk and reward, you can tailor your betting strategy to your unique style. Remember, to conquer the group, you'll need to embrace just the right amount of risk.")
+                        .padding(.bottom)
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                    Text("Thank you for choosing WagerPool. We're excited to have you on board, and we're dedicated to providing you with an enjoyable and fair fantasy betting experience.")
+                        .padding(.bottom)
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                }.padding(.horizontal,16)
+            }.background(Color(red: 0.02, green: 0.05, blue: 0.26))
         }.navigationBarBackButtonHidden()
+            .background(Color(red: 0.02, green: 0.05, blue: 0.26))
     }
 }
 
@@ -477,22 +530,68 @@ struct aboutUsView: View {
                         HStack {
                             Image(systemName: "arrowshape.backward.fill")
                                 .resizable()
-                                .foregroundColor(.black)                                .padding(.leading)
+                                .foregroundColor(.white)                                .padding(.leading)
                                 .frame(width: 40,height: 17)
                         }
                     }
                     Spacer()
                 }.padding()
-                Text("The Merge Mission")
-                    .font(.title)
-                    .padding()
-                    .foregroundColor(.black)
+                Text("About Us")
+                    .font(Font.custom(K.customFonts.lexendDecaSB, size: 24))
+                    .foregroundColor(.white)
+                    .padding(.bottom)
+                Text("A Third Person Perspective: Turning an Idea into Reality")
+                    .font(Font.custom(K.customFonts.lexendDecaSB, size: 14))
+                    .foregroundColor(.white)
                 ScrollView{
-                    Text("Merge is an app designed and targeted at students who are actively attending a university around the world. It is used to connect students and allow them to expand, and establish connections and relationships with others from differing schools. It will result in the establishment of a unique and special network amongst students beyond just their university/location. Ultimately, our mission is to broaden horizons and bring together students all sharing one commonality. ")
+                    Text("In the bustling atmosphere of Wake Forest University, two college students, Reid and Johnny, embarked on an extraordinary journey that would transform a simple idea into a tangible reality. Guided by their shared passion for technology, innovation, and a touch of friendly competition, they set out to create an experience that would forever change the way friends connect and compete. Thus began the inspiring tale of the WagerPool fantasy betting app.")
                         .padding()
+                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 12))
+                        .foregroundColor(.white)
+                    
+                    Text("As the sun set, late nights blended seamlessly into early mornings, as Reid and Johnny fervently immersed themselves in the world of app development. Armed with laptops, fueled by endless cups of coffee, and guided by an unwavering optimism, they embarked on a challenge that would put their skills, creativity, and commitment to the ultimate test. The university library transformed into their sanctuary, where lines of code meticulously crafted filled their computer screens like pieces of a complex puzzle waiting to be assembled.")
+                        .padding()
+                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 12))
+                        .foregroundColor(.white)
+                    
+                    Text("Reid's initial spark of an idea set this whole jounrey into motion. It was his innovative insight that ignited the project's flames. Reid envisioned blending the thrill of betting with the camaraderie of friendly competition, painting a picture of an experience that would transcend conventions. He shared his vision with Johnny, a partner whose boundless optimism would be the driving force behind the project's long-term success.")
+                        .padding()
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                    
+                    
+                    Text("While Johnny recognized the idea's immense potential, he was acutely aware of the hurdles that lay ahead. He understood that the journey would demand dedication and hard work. But it was Johnny's unyielding optimism that illuminated their path, a constant reminder that challenges were merely opportunities in disguise, and that dreams were achievable through determination and perseverance.")
+                        .padding()
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                    
+                    Text("Between lectures, exams, and countless commitments, Reid and Johnny dedicated themselves wholeheartedly to their venture. They delved into comprehensive research, sought guidance from mentors, and engaged with potential users to fine-tune their vision. As lines of code transformed into a functional app, the duo's expertise grew, a testament to their determination to master the craft.")
+                        .padding()
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                    
+                    Text("Months of unceasing effort, countless nights devoid of sleep, and unwavering commitment led to the emergence of WagerPool. The app was the embodiment of Reid's original inspiration and Johnny's enduring optimism. It was a platform that offered an experience that encapsulated their shared dream – a dream born from Reid's inventive thinking and nurtured by Johnny's perpetual belief in its potential.")
+                        .padding()
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                    
+                    Text("As college students turned creators, Reid and Johnny reflect on their journey with pride and satisfaction. Their narrative is a testament to the potency of innovation and the significance of steadfast commitment. With WagerPool now reaching users across the globe, their dream lives on, woven into every bet placed, every competition won, every brag delt, and every shared moment of exhilaration.")
+                        .padding()
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                    
+                    Text("Navigating the ever-evolving landscape of technology and entrepreneurship, Reid and Johnny remain true to their initial vision: to craft an app that not only unites friends through competition and the thrill of betting but also stands as a testament to the remarkable power of shared dreams transformed into tangible reality.")
+                        .padding()
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                    
+                    
                 }
             }
+            
+            .background(Color(red: 0.02, green: 0.05, blue: 0.26))
         }.navigationBarBackButtonHidden()
+            .background(Color(red: 0.02, green: 0.05, blue: 0.26))
     }
 }
 
