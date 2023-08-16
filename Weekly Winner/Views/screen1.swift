@@ -73,9 +73,13 @@ struct ProfileHeaderView: View {
 
             Spacer()
             
-            Text("WagerPool")
-                .font(.custom(K.customFonts.lexendDecaSB, size: 24))
-                .foregroundColor(K.finalColor.titleBlue)
+            NavigationLink(destination: settingsView(), label: {
+                Image(systemName: "gearshape")
+                    .resizable()
+                    .frame(width: 20, height: 20)
+                    .padding(.vertical)
+                    .foregroundColor(.white)
+            }).id(UUID())
         }
     }
 }
@@ -86,24 +90,25 @@ struct countDown: View {
     ZStack() {
         VStack(alignment: .center) {
           HStack{
-              Text("Weekly Countdown")
-                  .font(.custom(K.customFonts.poppinsRegular, size: 16))
-                  .foregroundColor(.white)
+              Text("WagerPool")
+                  .font(.custom(K.customFonts.lexendDecaSB, size: 24))
+                  .foregroundColor(K.finalColor.titleBlue)
               //Spacer()
           }.frame(minWidth: 0, maxWidth: .infinity)
               .padding(.horizontal)
             VStack(spacing: 0) {
                 Text(countdownTimer.timeRemaining)
-                    .font(.custom(K.customFonts.juraRegular, size: 28))
+                    .font(.custom(K.customFonts.juraRegular, size: 20))
                     .foregroundColor(.white)
+                    .padding(.bottom)
             }
           .frame(height: 25)
           
       }
       .frame(height: 60)
     }
-    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 104, maxHeight: 104)
-    .background(K.finalColor.titleBlue)
+    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+    .background(K.finalColor.cardBlue)
     .cornerRadius(10)
     .padding(.horizontal, 16)
   }

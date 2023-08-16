@@ -9,6 +9,36 @@ import SwiftUI
 import Kingfisher
 
 struct profileView: View {
+    @ObservedObject var viewModel: profileViewModel // For whatever reason this is causing infinite loop
+   // @ObservedObject var viewModel2 = authenticationViewModel()
+//    @StateObject var groupsVM = groupsViewModel()
+//    @State var scrollViewOffset: CGFloat = 0
+//    //@State private var isShowingEditProfile: Bool = false
+//    @State private var isProfileEditing = false
+//    @Environment(\.dismiss) private var dismiss
+    private var user: User
+//
+//    @State private var showDropdown = false
+//    @State private var selectedGroup = "global"
+//    var onOptionSelected: ((_ option: Ticket) -> Void)?
+//
+    
+    init(user: User) {
+        print("here")
+        viewModel = profileViewModel(user: user)
+        self.user = user
+        
+        if viewModel.user.isCurrentUser == false{
+            
+        }
+    }
+    var body: some View {
+        Text("hello")
+    }
+}
+
+/*
+struct profileView: View {
     
     @ObservedObject var viewModel: profileViewModel
     @ObservedObject var viewModel2 = authenticationViewModel()
@@ -34,146 +64,142 @@ struct profileView: View {
     }
     
     var body: some View {
-        ScrollView {
-            VStack {
-                NavigationStack{
-                    VStack{
-                        if user.isCurrentUser == false {
-                            HStack {
-                                Button {
-                                    // 2
-                                    dismiss()
-                                    
-                                } label: {
-                                    HStack {
-                                        Image(systemName: "arrowshape.backward.fill")
-                                            .resizable()
-                                            .foregroundColor(.black)
-                                            .padding(.leading)
-                                            .frame(width: 40,height: 17)
-                                    }
-                                }
-                                Spacer()
-                                
-                                Button {
-                                    AppUtility.shared.showCustomAlert(alertType: .none, message: "Are you sure you want to block \(user.firstName)?", actionButtonTitle: K.appButtonTitle.ok, cancelButtonTitle: K.appButtonTitle.cancel) { action in
-                                        if action == AlertButtonAction.okButton{
-                                            viewModel.block()
+        NavigationStack {
+            ScrollView {
+                VStack {
+                    NavigationStack{
+                        VStack{
+                            if user.isCurrentUser == false {
+                                HStack {
+                                    Button {
+                                        // 2
+                                        dismiss()
+                                        
+                                    } label: {
+                                        HStack {
+                                            Image(systemName: "arrowshape.backward.fill")
+                                                .resizable()
+                                                .foregroundColor(.black)
+                                                .padding(.leading)
+                                                .frame(width: 40,height: 17)
                                         }
                                     }
-                                } label: {
-                                    HStack{
-                                        Text("Block")
-                                            .foregroundColor(.white)
-                                        Image(systemName: "flag")
-                                            .foregroundColor(.white)
-                                    }
-                                    
-                                    
-                                }
-                            }.padding()
-                        }
-                        else {
-                            ZStack {
-                                Text("My Profile")
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
-                                    .foregroundColor(.white)
-                                
-                                HStack {
                                     Spacer()
                                     
-                                    NavigationLink(destination: settingsView(), label: {
-                                        Image(systemName: "gearshape")
-                                            .resizable()
-                                            .frame(width: 20, height: 20)
-                                            .padding()
-                                            .foregroundColor(.white)
-                                    }).id(UUID())
-                                }
-                            }.padding(.top, 50) // has to be at least 50 so doesnt interfere with safe area
-                        }
-                        ProfileStatsView(viewModel: viewModel, user: user)
-                            .padding(.vertical)
-                            .padding(.horizontal,20.5)
-                        ZStack {
-                            VStack {
-                                HStack {
-                                    Text("Group Stats")
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                    Button {
+                                        AppUtility.shared.showCustomAlert(alertType: .none, message: "Are you sure you want to block \(user.firstName)?", actionButtonTitle: K.appButtonTitle.ok, cancelButtonTitle: K.appButtonTitle.cancel) { action in
+                                            if action == AlertButtonAction.okButton{
+                                                viewModel.block()
+                                            }
+                                        }
+                                    } label: {
+                                        HStack{
+                                            Text("Block")
+                                                .foregroundColor(.white)
+                                            Image(systemName: "flag")
+                                                .foregroundColor(.white)
+                                        }
+                                        
+                                        
+                                    }
+                                }.padding()
+                            }
+                            else {
+                                ZStack {
+                                    Text("My Profile")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
                                         .foregroundColor(.white)
                                     
-                                    Spacer()
-                                    
-                                    Button(action: {
-                                        withAnimation {
-                                            showDropdown.toggle()
-                                        }
-                                    }) {
-                                        ZStack() {
-                                            Rectangle()
-                                                .foregroundColor(.clear)
-                                                .frame(width: 113, height: 40)
-                                                .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                                .cornerRadius(6)
-                                            
-                                            HStack() {
-                                                Text(selectedGroup)
-                                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14)) // change this to your custom font
-                                                    .foregroundColor(.white)
-                                                Spacer()
-                                                if showDropdown{
-                                                    withAnimation(){
-                                                        Image(systemName: "chevron.down")
-                                                            .frame(width: 24, height: 24)
-                                                    }
-                                                }
-                                                else {
-                                                    withAnimation(){
-                                                        Image(systemName: "chevron.up")
-                                                            .frame(width: 24, height: 24)
-                                                    }
-                                                }
-                                            }.padding(.horizontal)
-                                        }
-                                        .frame(width: 113, height: 40)
-                                        .cornerRadius(14)
+                                    HStack {
+                                        Spacer()
+                                        
+                                        
                                     }
+                                }.padding(.top, 50) // has to be at least 50 so doesnt interfere with safe area
+                            }
+                            ProfileStatsView(viewModel: viewModel, user: user)
+                                .padding(.vertical)
+                                .padding(.horizontal,20.5)
+                            ZStack {
+                                VStack {
+                                    HStack {
+                                        Text("Group Stats")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                            .foregroundColor(.white)
+                                        
+                                        Spacer()
+                                        
+                                        Button(action: {
+                                            withAnimation {
+                                                showDropdown.toggle()
+                                            }
+                                        }) {
+                                            ZStack() {
+                                                Rectangle()
+                                                    .foregroundColor(.clear)
+                                                    .frame(width: 113, height: 40)
+                                                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                                    .cornerRadius(6)
+                                                
+                                                HStack() {
+                                                    Text(selectedGroup)
+                                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14)) // change this to your custom font
+                                                        .foregroundColor(.white)
+                                                    Spacer()
+                                                    if showDropdown{
+                                                        withAnimation(){
+                                                            Image(systemName: "chevron.down")
+                                                                .frame(width: 24, height: 24)
+                                                        }
+                                                    }
+                                                    else {
+                                                        withAnimation(){
+                                                            Image(systemName: "chevron.up")
+                                                                .frame(width: 24, height: 24)
+                                                        }
+                                                    }
+                                                }.padding(.horizontal)
+                                            }
+                                            .frame(width: 113, height: 40)
+                                            .cornerRadius(14)
+                                        }
+                                    }
+                                    .frame(minWidth: 0, maxWidth: .infinity)
+                                    .padding(.horizontal)
+                                    
+                                    groupStats()
+                                        .padding(.all,16)
                                 }
-                                .frame(minWidth: 0, maxWidth: .infinity)
-                                .padding(.horizontal)
                                 
-                                groupStats()
-                                    .padding(.all,16)
+                                // Dropdown outside of VStack
+                                if showDropdown {
+                                    HStack{
+                                        Spacer()
+                                        
+                                        Dropdown(options: groupsVM.userTickets, onOptionSelected: { option in
+                                            withAnimation(){
+                                                showDropdown = false
+                                                selectedGroup = option.groupName
+                                            }
+                                            self.onOptionSelected?(option)
+                                        })
+                                        .frame(maxWidth: 113, alignment: .trailing)
+                                        .padding(.top,30 /*desired dropdown menu position from the top*/)
+                                        .padding(.trailing,16 /*desired dropdown menu position from the trailing edge*/)
+                                    }.frame(minWidth: 0, maxWidth: .infinity)
+                                }
                             }
                             
-                            // Dropdown outside of VStack
-                            if showDropdown {
-                                HStack{
-                                    Spacer()
-                                    
-                                    Dropdown(options: groupsVM.userTickets, onOptionSelected: { option in
-                                        withAnimation(){
-                                            showDropdown = false
-                                            selectedGroup = option.groupName
-                                        }
-                                        self.onOptionSelected?(option)
-                                    })
-                                    .frame(maxWidth: 113, alignment: .trailing)
-                                    .padding(.top,30 /*desired dropdown menu position from the top*/)
-                                    .padding(.trailing,16 /*desired dropdown menu position from the trailing edge*/)
-                                }.frame(minWidth: 0, maxWidth: .infinity)
-                            }
                         }
-                        
-                    }
-                    Spacer()
-                }.padding(.top)
-                
+                        Spacer()
+                    }.padding(.top)
+                    
+                }
+                .frame(minHeight: 0, maxHeight: .infinity)
+                .background(Color(red: 0.02, green: 0.05, blue: 0.26))
             }
-            .frame(minHeight: 0, maxHeight: .infinity)
             .background(Color(red: 0.02, green: 0.05, blue: 0.26))
         }
-        .background(Color(red: 0.02, green: 0.05, blue: 0.26))
     }
     
 }
@@ -520,3 +546,4 @@ struct ContactView: View {
 //        profileView(user: <#T##User#>)
 //    }
 //}
+*/
