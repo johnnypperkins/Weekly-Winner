@@ -58,6 +58,13 @@ struct createGroupsView: View {
                                     .onTapGesture {
                                         showImagePicker.toggle()
                                     }
+                                Text("Choose")
+                                    .font(.custom(K.customFonts.lexendDecaLight, size: 12))
+                                    .padding(10) // Add some padding around the text
+                                    .background(K.veryLightGray)
+                                    .cornerRadius(5)
+                                    .foregroundColor(.black) // Set the text color if needed
+                                    .opacity(0.66)
                             }.clipShape(Circle())
                         }
                     }

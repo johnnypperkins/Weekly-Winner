@@ -17,13 +17,7 @@ struct groupSettingsView: View {
     let groupAdmin: String
     let groupNum: Int
     let ticketFormat: [Int]
-    
-    
-    //let oneLegNumTemp: Int = ticketFormat.filter { $0 == 1 }.count
-//    @State private var twoLegNum: Int = ticketFormat.filter { $0 == 2 }.count
-//    @State private var threeLegNum: Int = ticketFormat.filter { $0 == 3 }.count
-//    @State private var fourLegNum: Int = ticketFormat.filter { $0 == 4 }.count
-//    @State private var fiveLegNum: Int = ticketFormat.filter { $0 == 5 }.count
+
     @State private var oneLegNum: Int
     @State private var twoLegNum: Int
     @State private var threeLegNum: Int
@@ -59,9 +53,9 @@ struct groupSettingsView: View {
                     VStack {
                         
                         if groupAdmin == Auth.auth().currentUser?.uid {
-                            Text("Edit Format") // will add design later obv
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
-                                .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+//                            Text("Edit Format") // will add design later obv
+//                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+//                                .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
                             VStack(alignment: .center) {
                                 if let profileImage = profileImage {
                                     profileImage
@@ -83,22 +77,43 @@ struct groupSettingsView: View {
                                         }
                                 }
                                 else {
-                                    KFImage(URL(string: viewModel.userGroups[selectedGroup-1].groupImageURL))
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 100, height: 100)
-                                        .clipShape(Circle())
-                                        .foregroundColor(.blue)
-                                        .onTapGesture {
-                                            showImagePicker.toggle()
-                                        }
+                                    ZStack {
+                                        KFImage(URL(string: viewModel.userGroups[selectedGroup-1].groupImageURL))
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 100, height: 100)
+                                            .clipShape(Circle())
+                                            .foregroundColor(.blue)
+                                            .onTapGesture {
+                                                showImagePicker.toggle()
+                                            }
+                                        Text("Edit")
+                                            .font(.custom(K.customFonts.lexendDecaLight, size: 12))
+                                            .padding(5) // Add some padding around the text
+                                            .background(K.veryLightGray)
+                                            .cornerRadius(5)
+                                            .foregroundColor(.black) // Set the text color if needed
+                                            .opacity(0.66)
+                                    }
                                 }
+                                Button(action: {
+                                    if selectedImage != nil {
+                                        viewModel.uploadGroupImage(selectedImage!, group: viewModel.userGroups[selectedGroup-1]) { a in
+                                            viewModel.userGroups[selectedGroup-1].groupImageURL = a
+                                        }
+                                    }
+                                    dismiss()
+                                }) {
+                                    Text("Update Photo")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
+                                        .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+                                }.padding(.horizontal)
                             }
                         .sheet(isPresented: $showImagePicker,
                                 onDismiss: loadImage) {
                             imagePicker(image: $selectedImage)
                          }
-                               .padding(.top)
+                               .padding(.top, 20)
                                .padding(.bottom)
                             VStack(spacing: 0) {
                                 CustomStepper(value: $oneLegNum, range: 0...8, title: "1 Legs")
@@ -120,9 +135,13 @@ struct groupSettingsView: View {
                                     dismiss()
                                 }) {
                                     Text("Update Ticket")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                        .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
                                 }.padding(.horizontal)
                             } else {
-                                Text("Update").opacity(0.6).foregroundColor(K.finalColor.titleBlue)
+                                Text("Update").opacity(0.6)
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
                             }
                         }
                         
@@ -138,17 +157,17 @@ struct groupSettingsView: View {
                             }) {
                                 Text("Leave Group") // will add design later obv
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
-                                    .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+                                    .foregroundColor(K.finalColor.deleteRed)
                             }.padding()
                             
                         }
                         .background(K.finalColor.cardBlue)
                         .cornerRadius(10)
-                        .padding()
+                        .padding(.horizontal)
                         
                         
                         
-                    }.padding(.bottom, 30)
+                    }.padding(.bottom, 20)
                     
                 }
             }.background(K.finalColor.backgroundBlue.ignoresSafeArea(.all))

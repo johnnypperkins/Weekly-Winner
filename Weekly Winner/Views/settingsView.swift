@@ -64,27 +64,27 @@ struct settingsView: View {
                         )
                         VStack(alignment:.leading) {
                             VStack(alignment: .leading){
-                                Text("Personal")
-                                    .font(Font.custom(K.customFonts.lexendDecaSB, size: 16).weight(.semibold))
-                                    .foregroundColor(.white)
-                                
-                                NavigationLink(destination: {profileView(user: authInfo.currUser!)}) {
-                                    HStack{
-                                        ZStack{
-                                            Circle()
-                                                .frame(width: 40, height: 40)
-                                                .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                                .cornerRadius(43)
-                                            Image(systemName: "person.fill")
-                                                .resizable()
-                                                .frame(width: 20, height: 20)
-                                                .foregroundColor(.white)
-                                        }
-                                        Text("Profile")
-                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
-                                            .foregroundColor(.white)
-                                    }.padding(.vertical, 10)
-                                }
+//                                Text("Personal")
+//                                    .font(Font.custom(K.customFonts.lexendDecaSB, size: 16).weight(.semibold))
+//                                    .foregroundColor(.white)
+//
+//                                NavigationLink(destination: {profileView(user: authInfo.currUser!)}) {
+//                                    HStack{
+//                                        ZStack{
+//                                            Circle()
+//                                                .frame(width: 40, height: 40)
+//                                                .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
+//                                                .cornerRadius(43)
+//                                            Image(systemName: "person.fill")
+//                                                .resizable()
+//                                                .frame(width: 20, height: 20)
+//                                                .foregroundColor(.white)
+//                                        }
+//                                        Text("Profile")
+//                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
+//                                            .foregroundColor(.white)
+//                                    }.padding(.vertical, 10)
+//                                }
                                 
                                 Text("About")
                                     .font(Font.custom(K.customFonts.lexendDecaSB, size: 16).weight(.semibold))

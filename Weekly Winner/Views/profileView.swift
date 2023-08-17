@@ -8,36 +8,36 @@
 import SwiftUI
 import Kingfisher
 
-struct profileView: View {
-    @ObservedObject var viewModel: profileViewModel // For whatever reason this is causing infinite loop
-   // @ObservedObject var viewModel2 = authenticationViewModel()
-//    @StateObject var groupsVM = groupsViewModel()
-//    @State var scrollViewOffset: CGFloat = 0
-//    //@State private var isShowingEditProfile: Bool = false
-//    @State private var isProfileEditing = false
-//    @Environment(\.dismiss) private var dismiss
-    private var user: User
+//struct profileView: View {
+//    @ObservedObject var viewModel: profileViewModel // For whatever reason this is causing infinite loop
+//   // @ObservedObject var viewModel2 = authenticationViewModel()
+////    @StateObject var groupsVM = groupsViewModel()
+////    @State var scrollViewOffset: CGFloat = 0
+////    //@State private var isShowingEditProfile: Bool = false
+////    @State private var isProfileEditing = false
+////    @Environment(\.dismiss) private var dismiss
+//    private var user: User
+////
+////    @State private var showDropdown = false
+////    @State private var selectedGroup = "global"
+////    var onOptionSelected: ((_ option: Ticket) -> Void)?
+////
 //
-//    @State private var showDropdown = false
-//    @State private var selectedGroup = "global"
-//    var onOptionSelected: ((_ option: Ticket) -> Void)?
+//    init(user: User) {
+//        print("here")
+//        viewModel = profileViewModel(user: user)
+//        self.user = user
 //
-    
-    init(user: User) {
-        print("here")
-        viewModel = profileViewModel(user: user)
-        self.user = user
-        
-        if viewModel.user.isCurrentUser == false{
-            
-        }
-    }
-    var body: some View {
-        Text("hello")
-    }
-}
+//        if viewModel.user.isCurrentUser == false{
+//
+//        }
+//    }
+//    var body: some View {
+//        Text("hello")
+//    }
+//}
 
-/*
+
 struct profileView: View {
     
     @ObservedObject var viewModel: profileViewModel
@@ -65,7 +65,7 @@ struct profileView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
+            //ScrollView {
                 VStack {
                     NavigationStack{
                         VStack{
@@ -109,12 +109,6 @@ struct profileView: View {
                                     Text("My Profile")
                                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
                                         .foregroundColor(.white)
-                                    
-                                    HStack {
-                                        Spacer()
-                                        
-                                        
-                                    }
                                 }.padding(.top, 50) // has to be at least 50 so doesnt interfere with safe area
                             }
                             ProfileStatsView(viewModel: viewModel, user: user)
@@ -122,54 +116,56 @@ struct profileView: View {
                                 .padding(.horizontal,20.5)
                             ZStack {
                                 VStack {
+                                    Spacer()
                                     HStack {
-                                        Text("Group Stats")
-                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                        Spacer()
+                                        Text("Statistics")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
                                             .foregroundColor(.white)
                                         
                                         Spacer()
                                         
-                                        Button(action: {
-                                            withAnimation {
-                                                showDropdown.toggle()
-                                            }
-                                        }) {
-                                            ZStack() {
-                                                Rectangle()
-                                                    .foregroundColor(.clear)
-                                                    .frame(width: 113, height: 40)
-                                                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                                    .cornerRadius(6)
-                                                
-                                                HStack() {
-                                                    Text(selectedGroup)
-                                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14)) // change this to your custom font
-                                                        .foregroundColor(.white)
-                                                    Spacer()
-                                                    if showDropdown{
-                                                        withAnimation(){
-                                                            Image(systemName: "chevron.down")
-                                                                .frame(width: 24, height: 24)
-                                                        }
-                                                    }
-                                                    else {
-                                                        withAnimation(){
-                                                            Image(systemName: "chevron.up")
-                                                                .frame(width: 24, height: 24)
-                                                        }
-                                                    }
-                                                }.padding(.horizontal)
-                                            }
-                                            .frame(width: 113, height: 40)
-                                            .cornerRadius(14)
-                                        }
+//                                        Button(action: {
+//                                            withAnimation {
+//                                                showDropdown.toggle()
+//                                            }
+//                                        }) {
+//                                            ZStack() {
+//                                                Rectangle()
+//                                                    .foregroundColor(.clear)
+//                                                    .frame(width: 113, height: 40)
+//                                                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+//                                                    .cornerRadius(6)
+//
+//                                                HStack() {
+//                                                    Text(selectedGroup)
+//                                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14)) // change this to your custom font
+//                                                        .foregroundColor(.white)
+//                                                    Spacer()
+//                                                    if showDropdown{
+//                                                        withAnimation(){
+//                                                            Image(systemName: "chevron.down")
+//                                                                .frame(width: 24, height: 24)
+//                                                        }
+//                                                    }
+//                                                    else {
+//                                                        withAnimation(){
+//                                                            Image(systemName: "chevron.up")
+//                                                                .frame(width: 24, height: 24)
+//                                                        }
+//                                                    }
+//                                                }.padding(.horizontal)
+//                                            }
+//                                            .frame(width: 113, height: 40)
+//                                            .cornerRadius(14)
+//                                        }
                                     }
                                     .frame(minWidth: 0, maxWidth: .infinity)
                                     .padding(.horizontal)
                                     
                                     groupStats()
                                         .padding(.all,16)
-                                }
+                                }.padding(.bottom, 120)
                                 
                                 // Dropdown outside of VStack
                                 if showDropdown {
@@ -199,7 +195,7 @@ struct profileView: View {
                 .background(Color(red: 0.02, green: 0.05, blue: 0.26))
             }
             .background(Color(red: 0.02, green: 0.05, blue: 0.26))
-        }
+        //}
     }
     
 }
@@ -208,7 +204,7 @@ struct groupStats: View {
   var body: some View {
       VStack() {
         HStack() {
-          Text("Most Won")
+          Text("Bets Placed")
             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
             .foregroundColor(.white)
             
@@ -228,7 +224,7 @@ struct groupStats: View {
             .stroke(.white, lineWidth: 0.4))
             .padding(.horizontal)
           HStack() {
-            Text("Least Won")
+            Text("Win Percentage")
               .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
               .foregroundColor(.white)
               
@@ -249,7 +245,7 @@ struct groupStats: View {
             .stroke(.white, lineWidth: 0.4))
             .padding(.horizontal)
         HStack() {
-          Text("Average Won")
+          Text("Average Ranking Percentile")
             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
             .foregroundColor(.white)
             
@@ -268,7 +264,7 @@ struct groupStats: View {
             .stroke(.white, lineWidth: 0.4))
             .padding(.horizontal)
         HStack() {
-          Text("Highest Ranking")
+          Text("Highest Global Ranking")
             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
             .foregroundColor(.white)
             
@@ -362,15 +358,19 @@ struct ProfileStatsView: View {
                 .clipShape(Circle())
                 .aspectRatio(contentMode: .fill)
                 .foregroundColor(.clear)
-                .frame(width: 78, height: 78)
+                .frame(width: 100, height: 100)
               
-          Text(user.username)
+          Text(user.username + " - " + user.firstName)
+              .font(Font.custom(K.customFonts.lexendDecaSB, size: 18))
+              .foregroundColor(.white)
+
+          Text("Member since: ")
               .font(Font.custom(K.customFonts.lexendDecaSB, size: 18))
               .foregroundColor(.white)
           
-          Text(user.firstName + " " + user.lastName)
-              .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
-              .foregroundColor(.white)
+//          Text( + " " + user.lastName)
+//              .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
+//              .foregroundColor(.white)
           
 //        Text("Member Since : Aug 09, 2023")
 //          .font(Font.custom("Lexend Deca", size: 14).weight(.light))
@@ -380,9 +380,10 @@ struct ProfileStatsView: View {
               NavigationLink {
                   editProfileView(user1: viewModel.user, profileVM: viewModel)
               } label: {
-                  Text("Edit profile")
+                  Text("Edit Profile")
                       .foregroundColor(.white)
-                      .fontWeight(.bold)
+                      //.fontWeight(.bold)
+                      .font(.custom(K.customFonts.lexendDecaLight, size: 16))
                       .padding()
                       .background(K.finalColor.titleBlue)
                       .cornerRadius(10)
@@ -435,73 +436,73 @@ struct ProfileStatsView: View {
           }
       }
       .frame(maxWidth: .infinity)
-      HStack(alignment: .top, spacing: 6) {
-        VStack(spacing: 5) {
-          Text("$ 799")
-            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-            .foregroundColor(.white)
-          Text("Most Wons")
-            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
-            .foregroundColor(.white)
-        }
-        Rectangle()
-          .foregroundColor(.clear)
-          .frame(width: 35, height: 0)
-          .overlay(
-            Rectangle()
-              .stroke(Color(red: 0.31, green: 0.30, blue: 0.43), lineWidth: 0.50)
-          )
-          .rotationEffect(.degrees(-90))
-        VStack(spacing: 5) {
-          Text("$ 192")
-            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-            .foregroundColor(.white)
-          Text("Least Wons")
-            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
-            .foregroundColor(.white)
-        }
-        Rectangle()
-          .foregroundColor(.clear)
-          .frame(width: 35, height: 0)
-          .overlay(
-            Rectangle()
-              .stroke(Color(red: 0.31, green: 0.30, blue: 0.43), lineWidth: 0.50)
-          )
-          .rotationEffect(.degrees(-90))
-        VStack(spacing: 5) {
-          Text("$ 80")
-                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-            .foregroundColor(.white)
-          Text("Average Wons")
-            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
-            .foregroundColor(.white)
-        }
-        Rectangle()
-          .foregroundColor(.clear)
-          .frame(width: 35, height: 0)
-          .overlay(
-            Rectangle()
-              .stroke(Color(red: 0.31, green: 0.30, blue: 0.43), lineWidth: 0.50)
-          )
-          .rotationEffect(.degrees(-90))
-        VStack(spacing: 5) {
-          Text("#36")
-            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-            .foregroundColor(.white)
-          Text("Highest Rank")
-            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
-            .foregroundColor(.white)
-        }
-      }
-      .padding(EdgeInsets(top: 7, leading: 10, bottom: 7, trailing: 10))
-      .frame(maxWidth: .infinity)
-      .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-      .cornerRadius(10)
-      .overlay(
-        RoundedRectangle(cornerRadius: 10)
-          .inset(by: 0.50)
-          .stroke(Color(red: 0.31, green: 0.30, blue: 0.43), lineWidth: 0.50)
-      )
+//      HStack(alignment: .top, spacing: 6) {
+//        VStack(spacing: 5) {
+//          Text("$ 799")
+//            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+//            .foregroundColor(.white)
+//          Text("Most Wons")
+//            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
+//            .foregroundColor(.white)
+//        }
+//        Rectangle()
+//          .foregroundColor(.clear)
+//          .frame(width: 35, height: 0)
+//          .overlay(
+//            Rectangle()
+//              .stroke(Color(red: 0.31, green: 0.30, blue: 0.43), lineWidth: 0.50)
+//          )
+//          .rotationEffect(.degrees(-90))
+//        VStack(spacing: 5) {
+//          Text("$ 192")
+//            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+//            .foregroundColor(.white)
+//          Text("Least Wons")
+//            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
+//            .foregroundColor(.white)
+//        }
+//        Rectangle()
+//          .foregroundColor(.clear)
+//          .frame(width: 35, height: 0)
+//          .overlay(
+//            Rectangle()
+//              .stroke(Color(red: 0.31, green: 0.30, blue: 0.43), lineWidth: 0.50)
+//          )
+//          .rotationEffect(.degrees(-90))
+//        VStack(spacing: 5) {
+//          Text("$ 80")
+//                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+//            .foregroundColor(.white)
+//          Text("Average Wons")
+//            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
+//            .foregroundColor(.white)
+//        }
+//        Rectangle()
+//          .foregroundColor(.clear)
+//          .frame(width: 35, height: 0)
+//          .overlay(
+//            Rectangle()
+//              .stroke(Color(red: 0.31, green: 0.30, blue: 0.43), lineWidth: 0.50)
+//          )
+//          .rotationEffect(.degrees(-90))
+//        VStack(spacing: 5) {
+//          Text("#36")
+//            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+//            .foregroundColor(.white)
+//          Text("Highest Rank")
+//            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
+//            .foregroundColor(.white)
+//        }
+//      }
+//      .padding(EdgeInsets(top: 7, leading: 10, bottom: 7, trailing: 10))
+//      .frame(maxWidth: .infinity)
+//      .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+//      .cornerRadius(10)
+//      .overlay(
+//        RoundedRectangle(cornerRadius: 10)
+//          .inset(by: 0.50)
+//          .stroke(Color(red: 0.31, green: 0.30, blue: 0.43), lineWidth: 0.50)
+//      )
     }
   }
 }
@@ -546,4 +547,4 @@ struct ContactView: View {
 //        profileView(user: <#T##User#>)
 //    }
 //}
-*/
+

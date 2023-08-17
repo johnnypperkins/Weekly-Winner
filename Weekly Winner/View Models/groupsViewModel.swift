@@ -473,44 +473,36 @@ class groupsViewModel: ObservableObject {
     }
     
     func populateArrayOfDates(from timestamp: Timestamp) -> [String] {
-        var smallArr: [String] = []
+        var weeks: [String] = []
         let calendar = Calendar.current
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMMM, d, yyyy" // Month, Date, Year
 
         // Convert Firestore Timestamp to Date
-        var date = timestamp.dateValue()
+        let inputDate = timestamp.dateValue()
 
-        // Find the most recent Monday (including today if it's a Monday)
-        var mostRecentMonday = Date()
-        while calendar.component(.weekday, from: mostRecentMonday) != 2 { // 2 corresponds to Monday
-            mostRecentMonday = calendar.date(byAdding: .day, value: -1, to: mostRecentMonday)!
+        // Find the most recent Monday (at 12:01 am) in relation to the timestamp
+        var currentMonday = inputDate
+        while calendar.component(.weekday, from: currentMonday) != 2 { // 2 corresponds to Monday
+            currentMonday = calendar.date(byAdding: .day, value: -1, to: currentMonday)!
+        }
+        currentMonday = calendar.date(bySettingHour: 0, minute: 1, second: 0, of: currentMonday)!
+
+        // Keep adding Mondays one week later until a Monday in the future is added
+        while currentMonday <= Date() {
+            weeks.append(dateFormatter.string(from: currentMonday))
+            currentMonday = calendar.date(byAdding: .day, value: 7, to: currentMonday)!
         }
 
-        // Find the closest Monday on or after the date from the timestamp
-        while calendar.component(.weekday, from: date) != 2 { // 2 corresponds to Monday
-            date = calendar.date(byAdding: .day, value: 1, to: date)!
-        }
+        // Remove the future Monday and replace the last valid Monday with "Current Week"
+        weeks.removeLast()
+        weeks.append("Current Week")
+        weeks.reverse()
 
-        // Subtract 7 days to include one Monday earlier
-        date = calendar.date(byAdding: .day, value: -7, to: date)!
-
-        // Iterate through the Mondays until the most recent Monday
-        while date <= mostRecentMonday {
-            if date == mostRecentMonday {
-                smallArr.append("Current Week")
-            } else {
-                smallArr.append(dateFormatter.string(from: date))
-            }
-
-            // Add 7 days to find the next Monday
-            date = calendar.date(byAdding: .day, value: 7, to: date)!
-        }
-        smallArr.append("Current Week")
-        smallArr.reverse()
-        print("Dates: \(smallArr)")
-        return smallArr
+        return weeks
     }
+
+
 
     func resetTicketFormat(newTicketFormat: [Int], groupID: String, completion: @escaping () -> Void) {
         let db = Firestore.firestore()

@@ -52,7 +52,7 @@ struct groupsView: View {
                                 }) {
                                     Image(systemName: "plus")
                                         .foregroundColor(.white)
-                                        .frame(width: 45, height: 30, alignment: .center)
+                                        .frame(width: 45, height: 35, alignment: .center)
                                         .background(selectedGroup == 0 ? K.finalColor.titleBlue : K.finalColor.cardBlue)
                                         .cornerRadius(5)
                                     Spacer()
@@ -72,7 +72,7 @@ struct groupsView: View {
                                                 Text(viewModel.userTickets[index-1].groupName)
                                                     .font(.custom(K.customFonts.lexendDecaLight, size: 16))
                                                     .foregroundColor(.white)
-                                                    .frame(width: 105, height: 30, alignment: .center)
+                                                    .frame(width: 105, height: 35, alignment: .center)
                                                     .background(selectedGroup == index ? K.finalColor.titleBlue : K.finalColor.cardBlue)
                                                     .cornerRadius(5)
                                             }
@@ -90,7 +90,7 @@ struct groupsView: View {
                             }) {
                                 Image(systemName: "plus")
                                     .foregroundColor(.white)
-                                    .frame(width: 45, height: 30, alignment: .center)
+                                    .frame(width: 45, height: 35, alignment: .center)
                                     .background(selectedGroup == 0 ? K.finalColor.titleBlue : K.finalColor.cardBlue)
                                     .cornerRadius(5)
                             }
@@ -108,7 +108,7 @@ struct groupsView: View {
                                             Text(viewModel.userTickets[index-1].groupName)
                                                 .font(.custom(K.customFonts.lexendDecaLight, size: 16))
                                                 .foregroundColor(.white)
-                                                .frame(width: 105, height: 30, alignment: .center)
+                                                .frame(width: 105, height: 35, alignment: .center)
                                                 .background(selectedGroup == index ? K.finalColor.titleBlue : K.finalColor.cardBlue)
                                                 .cornerRadius(5)
                                         }
@@ -231,7 +231,7 @@ struct groupsView: View {
                                             }
                                             .sheet(isPresented: $isGroupSettingsViewPresented) {
                                                 groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel, groupAdmin: viewModel.userTickets[selectedGroup-1].groupAdmin, groupNum: selectedGroup-1, ticketFormat: viewModel.userTickets[selectedGroup-1].ticketFormat)
-                                                    .presentationDetents([.fraction(0.65)])
+                                                    .presentationDetents([.fraction(0.75)])
                                             }
                                 }
                                 Spacer()
@@ -241,41 +241,50 @@ struct groupsView: View {
                             }.padding(.bottom)
                                 .padding(.horizontal,16)
                             HStack {
-                                Text(showingChat ? "Chat" : "Members")
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                                    .foregroundColor(.white)
-                                if (viewModel.canGetHistoricalData && !showingChat) {
-                                    Picker("Which Week", selection: $whichWeek) {
-                                        ForEach(0..<viewModel.totalArrayOfDates[selectedGroup-1].count, id: \.self) { index in
-                                            Text(viewModel.totalArrayOfDates[selectedGroup-1][index])
-                                                .foregroundColor(.white)
+                                ZStack {
+                                    HStack {
+                                        Text(showingChat ? "Chat" : "Members")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                            .foregroundColor(.white)
+                                        
+                                        Spacer()
+                                        Button(action: {
+                                            showingChat = false
+                                        }) {
+                                            Image(systemName: showingChat ? "ticket.fill" : "ticket") // Assuming "ticket" and "ticket.fill" are your symbols
+                                                .resizable()
+                                                .frame(width: 20, height: 20)
+                                                .foregroundColor(showingChat ? .gray : .blue)
                                         }
-                                    }.pickerStyle(MenuPickerStyle())
-                                    .onChange(of: whichWeek) { newWeek in
-                                        if(newWeek == 0) {
-                                            viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
-                                        } else {
-                                            viewModel.fetchPastRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID, week: viewModel.totalArrayOfDates[selectedGroup-1][newWeek]) {}
+                                        Button(action: {
+                                            showingChat = true
+                                        }) {
+                                            Image(systemName: showingChat ? "message.fill" : "message") // Assuming "message" and "message.fill" are your symbols
+                                                .resizable()
+                                                .frame(width: 20, height: 20)
+                                                .foregroundColor(showingChat ? .blue : .gray)
+                                        }
+                                    }
+                                    
+                                    HStack {
+                                        if (viewModel.canGetHistoricalData && !showingChat) {
+                                            Picker("Which Week", selection: $whichWeek) {
+                                                ForEach(0..<viewModel.totalArrayOfDates[selectedGroup-1].count, id: \.self) { index in
+                                                    Text(viewModel.totalArrayOfDates[selectedGroup-1][index])
+                                                        .foregroundColor(.white)
+                                                }
+                                            }.pickerStyle(MenuPickerStyle())
+                                            .onChange(of: whichWeek) { newWeek in
+                                                if(newWeek == 0) {
+                                                    viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
+                                                } else {
+                                                    viewModel.fetchPastRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID, week: viewModel.totalArrayOfDates[selectedGroup-1][newWeek]) {}
+                                                }
+                                            }
                                         }
                                     }
                                 }
-                                Spacer()
-                                Button(action: {
-                                    showingChat = false
-                                }) {
-                                    Image(systemName: showingChat ? "ticket.fill" : "ticket") // Assuming "ticket" and "ticket.fill" are your symbols
-                                        .resizable()
-                                        .frame(width: 20, height: 20)
-                                        .foregroundColor(showingChat ? .gray : .blue)
-                                }
-                                Button(action: {
-                                    showingChat = true
-                                }) {
-                                    Image(systemName: showingChat ? "message.fill" : "message") // Assuming "message" and "message.fill" are your symbols
-                                        .resizable()
-                                        .frame(width: 20, height: 20)
-                                        .foregroundColor(showingChat ? .blue : .gray)
-                                }
+                                
                             }.padding(EdgeInsets(top: 80, leading: 16, bottom: 0, trailing: 16))
                             
                         }
@@ -527,11 +536,21 @@ struct BetCard: View {
                         }
                         .frame(maxHeight: .infinity)
                         HStack(spacing: 5) {
-                            KFImage(URL(string: profileImageURL))
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .clipShape(Circle())
-                                .frame(width: 24, height: 24)
+                            if profileImageURL != "" {
+                                KFImage(URL(string: profileImageURL))
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .clipShape(Circle())
+                                    .frame(width: 24, height: 24)
+                            } else {
+                                Image(systemName: "photo.circle.fill")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 24, height: 24)
+                                    .background(K.finalColor.tabSelectedBlue)
+                                    .clipShape(Circle())
+
+                            }
                             HStack(spacing: 0){
                                 Text("\(ticket.username) ")
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
@@ -589,7 +608,7 @@ struct BetCard: View {
         .opacity(ticket.isEnabled || ticket.groupAdmin == Auth.auth().currentUser?.uid ? 1 : 0.66)
         .padding(.vertical, 10)
         .frame(minWidth: 0,maxWidth: .infinity, minHeight: 44, maxHeight: ticket.groupAdmin != Auth.auth().currentUser?.uid || ticket.username == UserData.shared.username ? 44 : 64)
-        .background(!ownCard ? Color(red: 0.13, green: 0.14, blue: 0.34) : K.cadetBlue.opacity(0.25) )
+        .background(ownCard ? K.veryLightBlue : K.finalColor.cardBlue )
         .cornerRadius(10)
         
         .onAppear {

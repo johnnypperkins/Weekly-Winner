@@ -52,12 +52,12 @@ struct tabBarView: View {
                                 }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
                                                 .tag(3)
                             
-//                            profileView(user: authViewModel.currUser!)
-//                                .ignoresSafeArea(.all)
-//                                .tabItem {
-//                                    CustomTabBarItem(index: 4, selectedTab: $selectedTab, item: TabItem(title: "Profile", icon: Image(systemName: "person.crop.circle.fill"), color: .orange))
-//                                }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
-//                                                .tag(4)
+                            profileView(user: authViewModel.currUser!)
+                                .ignoresSafeArea(.all)
+                                .tabItem {
+                                    CustomTabBarItem(index: 4, selectedTab: $selectedTab, item: TabItem(title: "Profile", icon: Image(systemName: "person.crop.circle.fill"), color: .orange))
+                                }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
+                                                .tag(4)
                         }
                         else {
                             EmptyView()

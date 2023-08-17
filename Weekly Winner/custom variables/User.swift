@@ -21,7 +21,7 @@ struct User: Identifiable, Decodable, Encodable {
     var isCurrentUser: Bool {
         return Auth.auth().currentUser?.uid == id
     }
-}
+} // add when account created
 
 extension String { // Lmao what is this johnny
     func generateStringSequence() -> [String] {

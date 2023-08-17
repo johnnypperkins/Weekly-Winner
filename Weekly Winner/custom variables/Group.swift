@@ -21,6 +21,7 @@ struct Group: Identifiable, Codable {
         [self.groupName.generateStringSequence()].flatMap { $0 }
     }
     var ticketFormat: [Int]
+   // var maxGroupMembers: Int
 }
 
 struct GroupStats {
