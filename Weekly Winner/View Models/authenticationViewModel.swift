@@ -58,6 +58,7 @@ class authenticationViewModel: ObservableObject {
                 }
             } catch let error {
                 // Handle signup error
+                errorMessage = error.localizedDescription
                 print("Signup error: \(error.localizedDescription)")
                 authenticationState = .unauthenticated
             }
@@ -216,6 +217,20 @@ class authenticationViewModel: ObservableObject {
         return true
     }
     
+    func uploadProfileImage(_ image: UIImage) {
+        print("entered1")
+        guard let uid = Auth.auth().currentUser else {return }
+        print("entered01")
+        imageUploader.uploadImage(use: "profile", image: image) { profileImageUrl in
+            print("entered2")
+            Firestore.firestore().collection("users").document(uid.uid).updateData(["profileImageUrl": profileImageUrl]) { _ in
+                print("entered3")
+                
+            }
+            
+        }
+        
+    }
     
     
 }

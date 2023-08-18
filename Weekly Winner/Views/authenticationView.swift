@@ -270,12 +270,10 @@ struct SignupView: View {
             }
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
             
-            Button(action: {
+            NavigationLink(destination: {
                 // Perform signup action
-                Task{
-                    await viewModel.signUp()
-                }
-            }) {
+                profilePhotoSelectorView(model: viewModel)
+            }, label: {
                 Text("Create Account")
                     .font(.headline)
                     .foregroundColor(.white)
@@ -283,6 +281,10 @@ struct SignupView: View {
                     .frame(maxWidth: .infinity)
                     .background(Color.green)
                     .cornerRadius(10)
+            }).onTapGesture {
+                Task{
+                    await viewModel.signUp()
+                }
             }
             Spacer()
             

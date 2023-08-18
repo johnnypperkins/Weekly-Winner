@@ -71,6 +71,8 @@
 		8678019B2A21691E006FE479 /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = 8678019A2A21691E006FE479 /* FirebasePerformance */; };
 		8678019D2A21691E006FE479 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 8678019C2A21691E006FE479 /* FirebaseStorage */; };
 		868FDA8B2A8AD4BC0092E3C5 /* splashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868FDA8A2A8AD4BC0092E3C5 /* splashScreenView.swift */; };
+		868FDA8D2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868FDA8C2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift */; };
+		868FDA8F2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868FDA8E2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -151,6 +153,8 @@
 		867801892A213FB1006FE479 /* profileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = profileView.swift; sourceTree = "<group>"; };
 		8678018B2A21662D006FE479 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		868FDA8A2A8AD4BC0092E3C5 /* splashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = splashScreenView.swift; sourceTree = "<group>"; };
+		868FDA8C2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = profilePhotoSelectorView.swift; sourceTree = "<group>"; };
+		868FDA8E2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditionsSignupView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -201,6 +205,8 @@
 			isa = PBXGroup;
 			children = (
 				865C4A752A327CA600C3C626 /* authenticationView.swift */,
+				868FDA8C2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift */,
+				868FDA8E2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift */,
 				868FDA8A2A8AD4BC0092E3C5 /* splashScreenView.swift */,
 				867801812A213F83006FE479 /* screen1.swift */,
 				867801832A213F90006FE479 /* screen2.swift */,
@@ -508,6 +514,7 @@
 				3C91B6C62A58BA0E00398F53 /* UI Misc.swift in Sources */,
 				8668B3112A2EE9CF00A1B343 /* bookViewModel.swift in Sources */,
 				3CB1AC8B2A61602700C931CA /* Group.swift in Sources */,
+				868FDA8F2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift in Sources */,
 				864A2D662A6D8090000FBA35 /* AlertView.swift in Sources */,
 				865C4A7A2A32890F00C3C626 /* userService.swift in Sources */,
 				867801882A213FA5006FE479 /* ticketView.swift in Sources */,
@@ -533,6 +540,7 @@
 				8678018A2A213FB1006FE479 /* profileView.swift in Sources */,
 				864A2D5F2A6D7DAF000FBA35 /* profileViewModel.swift in Sources */,
 				863FC0512A41176400405F2A /* ticketViewModel.swift in Sources */,
+				868FDA8D2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift in Sources */,
 				866251102A3E862400708495 /* Ticket.swift in Sources */,
 				866251122A3E892E00708495 /* Bet.swift in Sources */,
 				864A2D6E2A70ED21000FBA35 /* imageUploader.swift in Sources */,
