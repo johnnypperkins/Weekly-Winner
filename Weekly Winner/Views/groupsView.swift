@@ -243,7 +243,7 @@ struct groupsView: View {
                             HStack {
                                 ZStack {
                                     HStack {
-                                        Text(showingChat ? "Chat" : "Members")
+                                        Text(showingChat ? "Chat" : " \(viewModel.currentRankedGroupTickets.count) Members")
                                             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
                                             .foregroundColor(.white)
                                         
@@ -607,9 +607,13 @@ struct BetCard: View {
         }
         .opacity(ticket.isEnabled || ticket.groupAdmin == Auth.auth().currentUser?.uid ? 1 : 0.66)
         .padding(.vertical, 10)
-        .frame(minWidth: 0,maxWidth: .infinity, minHeight: 44, maxHeight: ticket.groupAdmin != Auth.auth().currentUser?.uid || ticket.username == UserData.shared.username ? 44 : 64)
-        .background(ownCard ? K.veryLightBlue : K.finalColor.cardBlue )
+        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 44, maxHeight: ticket.groupAdmin != Auth.auth().currentUser?.uid || ticket.username == UserData.shared.username ? 44 : 64)
+        .background(ownCard ? K.finalColor.otherPurple.opacity(0.35): K.finalColor.cardBlue)
         .cornerRadius(10)
+        //.overlay(ownCard ? RoundedRectangle(cornerRadius: 10).stroke(Color.white, lineWidth: 1) : RoundedRectangle(cornerRadius: 10).stroke(Color.clear, lineWidth: 0))
+        //.shadow(color: ownCard ? Color.white : Color.clear, radius: ownCard ? 2.5 : 0, x: 0, y: 0)
+
+
         
         .onAppear {
             isEnabled = ticket.isEnabled
@@ -886,7 +890,7 @@ struct chatView: View {
                             }.padding(EdgeInsets(top: 5, leading: 5, bottom: 0, trailing: 5))
                             
                         Spacer()
-                            Text("\(formatDate.format(date: viewModel.allChats[index].timeSent))").font(.custom(K.customFonts.poppinsMedium, size: 8))
+                            Text("\(formatDateMMMDHMM.format(date: viewModel.allChats[index].timeSent))").font(.custom(K.customFonts.poppinsMedium, size: 8))
                                 .foregroundColor(K.finalColor.textWhite)
                                 .padding(EdgeInsets(top: 10, leading: 0, bottom: 0, trailing: 5))
                         }

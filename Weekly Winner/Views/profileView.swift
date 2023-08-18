@@ -350,6 +350,7 @@ struct SideMenuButton: View {
 struct ProfileStatsView: View {
     @StateObject var viewModel: profileViewModel
     var user: User
+
   var body: some View {
     VStack(spacing: 30) {
       VStack(spacing: 16) {
@@ -364,7 +365,7 @@ struct ProfileStatsView: View {
               .font(Font.custom(K.customFonts.lexendDecaSB, size: 18))
               .foregroundColor(.white)
 
-          Text("Member since: ")
+          Text("Member since: " + formatDateMMDDYYYY(from: user.dateJoined))
               .font(Font.custom(K.customFonts.lexendDecaSB, size: 18))
               .foregroundColor(.white)
           

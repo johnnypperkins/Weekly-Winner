@@ -292,6 +292,9 @@ struct PopularBetView: View {
                 Text("\(bookVM.mostPopularBets[index-1].teamName)")
                     .font(.custom(K.customFonts.poppinsRegular, size: 12))
                     .foregroundColor(.white)
+                    .multilineTextAlignment(.center) // This will center the text when it wraps over multiple lines
+
+                    
             }
             .frame(width: 87.57)
         }

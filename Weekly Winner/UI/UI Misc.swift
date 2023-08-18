@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import FirebaseFirestore
 
 
 
@@ -143,7 +144,7 @@ extension Color {
 }
 
 
-struct formatDate {
+struct formatDateMMMDHMM {
     private static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM d, h:mm"
@@ -156,6 +157,11 @@ struct formatDate {
     }
 }
 
+func formatDateMMDDYYYY(from timestamp: Timestamp) -> String {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "MM/dd/yyyy"
+    return formatter.string(from: timestamp.dateValue())
+}
 
 import Foundation
 import Combine

@@ -219,7 +219,7 @@ struct gameRowView: View {
                             titleStringA = "+" + String(format: "%.0f", game.awaySpread)
                         }
                     }
-                Text("\(formatDate.format(date: game.commenceTime.dateValue()))")
+                Text("\(formatDateMMMDHMM.format(date: game.commenceTime.dateValue()))")
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
                     .foregroundColor(K.finalColor.textWhite)
                     .frame(maxWidth: .infinity, alignment: .center)
