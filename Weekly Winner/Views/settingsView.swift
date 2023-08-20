@@ -64,27 +64,6 @@ struct settingsView: View {
                             )
                             VStack(alignment:.leading) {
                                 VStack(alignment: .leading){
-                                    //                                Text("Personal")
-                                    //                                    .font(Font.custom(K.customFonts.lexendDecaSB, size: 16).weight(.semibold))
-                                    //                                    .foregroundColor(.white)
-                                    //
-                                    //                                NavigationLink(destination: {profileView(user: authInfo.currUser!)}) {
-                                    //                                    HStack{
-                                    //                                        ZStack{
-                                    //                                            Circle()
-                                    //                                                .frame(width: 40, height: 40)
-                                    //                                                .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                    //                                                .cornerRadius(43)
-                                    //                                            Image(systemName: "person.fill")
-                                    //                                                .resizable()
-                                    //                                                .frame(width: 20, height: 20)
-                                    //                                                .foregroundColor(.white)
-                                    //                                        }
-                                    //                                        Text("Profile")
-                                    //                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
-                                    //                                            .foregroundColor(.white)
-                                    //                                    }.padding(.vertical, 10)
-                                    //                                }
                                     
                                     Text("About")
                                         .font(Font.custom(K.customFonts.lexendDecaSB, size: 16).weight(.semibold))
@@ -164,6 +143,26 @@ struct settingsView: View {
                                     
                                     Divider()
                                     
+                                    NavigationLink(destination: {prizesView()}) {
+                                        HStack{
+                                            ZStack{
+                                                Circle()
+                                                    .frame(width: 40, height: 40)
+                                                    .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                                    .cornerRadius(43)
+                                                Image(systemName: "money")
+                                                    .resizable()
+                                                    .frame(width: 20, height: 20)
+                                                    .foregroundColor(.white)
+                                            }
+                                            Text("Prizes")
+                                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
+                                                .foregroundColor(.white)
+                                        }.padding(.vertical,10)
+                                    }
+                                    
+                                    Divider()
+                                    
                                     NavigationLink(destination: {TermsAndConditionsViewSettings()}) {
                                         HStack{
                                             ZStack{
@@ -222,7 +221,7 @@ struct settingsView: View {
                                         }.padding(.vertical,10)
                                     }
                                     
-                                    Divider()
+                                    //Divider()
                                     
                                 }
                                 
@@ -535,6 +534,15 @@ struct ourMissionView: View {
             }.background(Color(red: 0.02, green: 0.05, blue: 0.26))
         }.navigationBarBackButtonHidden()
             .background(Color(red: 0.02, green: 0.05, blue: 0.26))
+    }
+}
+
+struct prizesView: View {
+    @Environment(\.dismiss) var dismiss
+    var body: some View {
+        VStack {
+            Text("Prizes")
+        }
     }
 }
 

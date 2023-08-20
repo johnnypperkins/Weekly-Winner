@@ -264,6 +264,7 @@ struct BetDetailsView: View {
     @State private var whichTeam = ""
     @State private var extra = "" // to add the extra detail of +, o, u
     @State private var uploadText = ""
+    @State private var placeholder = 5
     
     func checkTeamTaken() {
         if betNumber < 0 {
@@ -364,18 +365,20 @@ struct BetDetailsView: View {
                                 .onChange(of: betNumber) { newValue in
                                     print("Selection changed to: \(newValue)")
                                     checkTeamTaken()
-                                    if newValue == 8 {
-                                        if betType == .betAwaySpread {
-                                            chosenSpread = game.awaySpread + 1
-                                        }
-                                        if betType == .betHomeSpread {
-                                            chosenSpread = game.homeSpread + 1
-                                        }
-                                        if betType == .over {
-                                            chosenSpread = game.totalOver - 1
-                                        }
-                                        if betType == .under {
-                                            chosenSpread = game.totalUnder + 1
+                                    if betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 {
+                                        if ticketVM.currentTicketFormat[newValue-1] == 5 {
+                                            if betType == .betAwaySpread {
+                                                chosenSpread = game.awaySpread + 1
+                                            }
+                                            if betType == .betHomeSpread {
+                                                chosenSpread = game.homeSpread + 1
+                                            }
+                                            if betType == .over {
+                                                chosenSpread = game.totalOver - 1
+                                            }
+                                            if betType == .under {
+                                                chosenSpread = game.totalUnder + 1
+                                            }
                                         }
                                     } else {
                                         if betType == .betAwaySpread {
@@ -425,21 +428,21 @@ struct BetDetailsView: View {
                     }.cornerRadius(10)
                     
                     if betType == .betAwaySpread {
-                        BetSliderView(teamName: game.awayTeam, originalSpread: game.awaySpread, betNumber: $betNumber, betType: .betAwaySpread, chosenSpread: $chosenSpread)
+                        BetSliderView(teamName: game.awayTeam, originalSpread: game.awaySpread, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: .betAwaySpread, chosenSpread: $chosenSpread)
                             //.padding(.horizontal)
                     }
                     if betType == .betHomeSpread {
-                        BetSliderView(teamName: game.homeTeam, originalSpread: game.homeSpread, betNumber: $betNumber, betType: .betHomeSpread, chosenSpread: $chosenSpread)
+                        BetSliderView(teamName: game.homeTeam, originalSpread: game.homeSpread, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: .betHomeSpread, chosenSpread: $chosenSpread)
                             //.padding(.horizontal)
 
                     }
                     if betType == .over {
-                        BetSliderView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalOver, betNumber: $betNumber, betType: .over, chosenSpread: $chosenSpread)
+                        BetSliderView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalOver, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: .over, chosenSpread: $chosenSpread)
                             //.padding(.horizontal)
 
                     }
                     if betType == .under {
-                        BetSliderView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalUnder, betNumber: $betNumber, betType: .under, chosenSpread: $chosenSpread)
+                        BetSliderView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalUnder, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: .under, chosenSpread: $chosenSpread)
                             //.padding(.horizontal)
 
                     }
@@ -517,25 +520,40 @@ struct BetDetailsView: View {
 struct BetSliderView: View {
     var teamName: String
     var originalSpread: Double
-    @Binding var betNumber: Int
+    var parlaySize: Int
     //var extra: String
     var internalExtra: String {
         if chosenSpread < 0 {
+                return ""
+            } else {
+                switch betType {
+                case .betHomeSpread:
+                    return "+"
+                case .betAwaySpread:
+                    return "+"
+                case .over:
+                    return "o"
+                case .under:
+                    return "u"
+                default:
                     return ""
-                } else {
-                    switch betType {
-                    case .betHomeSpread:
-                        return "+"
-                    case .betAwaySpread:
-                        return "+"
-                    case .over:
-                        return "o"
-                    case .under:
-                        return "u"
-                    default:
-                        return ""
-                    }
                 }
+            }
+    }
+    
+    var spreadExtension: Double {
+        print("Parlay size: ", parlaySize)
+        if parlaySize == 1 {
+            return 10
+        } else if parlaySize == 2 {
+            return 4
+        } else if parlaySize == 3 {
+            return 1
+        } else if parlaySize == 4 || parlaySize == 5 {
+            return -1
+        }
+        
+        return 10
     }
     var step: Int {
         if betType == .over {
@@ -585,7 +603,7 @@ struct BetSliderView: View {
                 .padding(.horizontal)
                 .background(K.finalColor.backgroundBlue)
             HStack {
-                Slider(value: $chosenSpread, in: betType == .over ? Double(originalSpread - 10)...Double(originalSpread + parlayNumToSpread(parlayNum: betNumber)) : Double(originalSpread - parlayNumToSpread(parlayNum: betNumber))...Double(originalSpread + 10), step: 1)
+                Slider(value: $chosenSpread, in: betType == .over ? Double(originalSpread - 10)...Double(originalSpread + spreadExtension) : Double(originalSpread - spreadExtension)...Double(originalSpread + 10), step: 1)
                     .accentColor(K.finalColor.titleBlue)
             }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
                 .padding(.horizontal)

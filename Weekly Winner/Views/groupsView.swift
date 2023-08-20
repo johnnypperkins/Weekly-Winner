@@ -187,58 +187,52 @@ struct groupsView: View {
                         ZStack {
                             HStack{
                                 if(viewModel.userTickets[selectedGroup-1].groupID != "Global") {
-                                    if viewModel.userGroupsLoaded {
-                                        if viewModel.userGroups[selectedGroup-1].groupImageURL != "" {
-                                            KFImage(URL(string: viewModel.userGroups[selectedGroup-1].groupImageURL))
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .clipShape(Circle())
-                                                .frame(width: 50, height: 50)
-                                        }
-                                        else {
+                                    ZStack {
+                                        VStack(alignment: .center) {
+                                            if viewModel.userGroupsLoaded {
+                                                KFImage(URL(string: viewModel.userGroups[selectedGroup-1].groupImageURL))
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fill)
+                                                    .clipShape(Circle())
+                                                    .frame(width: 75, height: 75)
+                                            }
                                             
-                                            Image(systemName: "photo.circle.fill")
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .clipShape(Circle())
-                                                .frame(width: 50, height: 50)
-                                                .background(K.finalColor.potentialOrange)
+                                            else {
+                                                
+                                                Image(systemName: "photo.circle.fill")
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fill)
+                                                    .clipShape(Circle())
+                                                    .frame(width: 75, height: 75)
+                                                    .background(K.finalColor.textWhite)
+                                            }
                                             
+                                            Text(viewModel.userTickets[selectedGroup-1].groupName)
+                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                                .foregroundColor(.white)
+                                        }
+                                        HStack {
+                                            Spacer()
+                                            Button(action: {
+                                                isGroupSettingsViewPresented = true
+                                            }) {
+                                                Image(systemName: "gearshape")
+                                                    .resizable()
+                                                    .frame(width: 20, height: 20)
+                                                //.padding()
+                                                    .foregroundColor(.white)
+                                            }
+                                            .sheet(isPresented: $isGroupSettingsViewPresented) {
+                                                groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel, groupAdmin: viewModel.userTickets[selectedGroup-1].groupAdmin, groupNum: selectedGroup-1, ticketFormat: viewModel.userTickets[selectedGroup-1].ticketFormat)
+                                                    .presentationDetents([.fraction(0.75)])
+                                            }
                                         }
                                     }
-                                    else {
-                                        
-                                        Image(systemName: "photo.circle.fill")
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .clipShape(Circle())
-                                            .frame(width: 50, height: 50)
-                                            .background(K.finalColor.textWhite)
-                                    }
-                                    
-                                    Text(viewModel.userTickets[selectedGroup-1].groupName)
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18).weight(.medium))
-                                        .foregroundColor(.white)
-                                        .padding(.leading)
-                                    
-                                    Button(action: {
-                                        isGroupSettingsViewPresented = true
-                                    }) {
-                                        Image(systemName: "gearshape")
-                                            .resizable()
-                                            .frame(width: 20, height: 20)
-                                        //.padding()
-                                            .foregroundColor(.white)
-                                    }
-                                    .sheet(isPresented: $isGroupSettingsViewPresented) {
-                                        groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel, groupAdmin: viewModel.userTickets[selectedGroup-1].groupAdmin, groupNum: selectedGroup-1, ticketFormat: viewModel.userTickets[selectedGroup-1].ticketFormat)
-                                            .presentationDetents([.fraction(0.75)])
-                                    }
-                                    
-                                    Spacer()
+                                    //Spacer()
                                 }
                                 else{
-                                    Spacer()
+                                    //Spacer()
+                                    VStack(alignment: .center) {
                                         if viewModel.userGroupsLoaded {
                                             KFImage(URL(string: viewModel.userGroups[selectedGroup-1].groupImageURL))
                                                 .resizable()
@@ -258,10 +252,11 @@ struct groupsView: View {
                                         }
                                         
                                         Text("Global")
-                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 24).weight(.medium))
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 24))
                                             .foregroundColor(.white)
-                                            .padding(.leading)
-                                    Spacer()
+                                            //.padding(.leading)
+                                    }
+                                        //Spacer()
                                 }
                                 
 
@@ -313,7 +308,7 @@ struct groupsView: View {
                                     }
                                 }
                                 
-                            }.padding(EdgeInsets(top: 80, leading: 16, bottom: 0, trailing: 16))
+                            }.padding(EdgeInsets(top: 140, leading: 16, bottom: 0, trailing: 16))
                             
                         }
                         
@@ -939,7 +934,7 @@ struct chatView: View {
             }
             
             
-        }.padding()
+        }.padding([.horizontal, .top])
         .onAppear() {
             viewModel.getChats(groupID: groupsViewModel.userTickets[selectedGroup-1].groupID) {_ in
             }

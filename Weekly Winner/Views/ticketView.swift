@@ -151,7 +151,9 @@ struct ticketView: View {
                                 VStack {
                                     if selectedWeek == "current" {
                                         ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
-                                            SectionTitle(title: parlayTitle(ticketFormat: viewModel.currentTicketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.userTickets[selectedGroup].ticketFormat[parlayIndex], uid: Auth.auth().currentUser?.uid ?? "", selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, viewModel: viewModel)
+                                            if viewModel.currentTicketFormat.count > 0 {
+                                                SectionTitle(title: parlayTitle(ticketFormat: viewModel.currentTicketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.currentTicketFormat[parlayIndex], uid: Auth.auth().currentUser?.uid ?? "", selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, viewModel: viewModel)
+                                            }
                                         }
                                     } else {
                                         ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in

@@ -55,93 +55,149 @@ struct MostPopularBet: Identifiable, Codable {
 func returnOdds(betType: BetType, ogSpr: Int, chsSpr: Int) -> Double { // this is so retarded
     let chosenSpread = chsSpr
     let originalSpread = ogSpr
-    if betType != .over {
+    if betType == .betHomeSpread || betType == .betAwaySpread {
         if chosenSpread == originalSpread {
-            return 0.5
-        } else if chosenSpread == originalSpread - 1 {
-            return 0.45
-        } else if chosenSpread == originalSpread - 2 {
-            return 0.4
-        } else if chosenSpread == originalSpread - 3 {
-            return 0.35
-        } else if chosenSpread == originalSpread - 4 {
-            return 0.3
-        } else if chosenSpread == originalSpread - 5 {
-            return 0.25
-        } else if chosenSpread == originalSpread - 6 {
-            return 0.225
-        } else if chosenSpread == originalSpread - 7 {
-            return 0.2
-        } else if chosenSpread == originalSpread - 8 {
-            return 0.175
-        } else if chosenSpread == originalSpread - 9 {
-            return 0.15
-        } else if chosenSpread == originalSpread - 10 {
-            return 0.125
-        }  else if chosenSpread == originalSpread + 1 {
-            return 0.55
-        } else if chosenSpread == originalSpread + 2 {
-            return 0.6
-        } else if chosenSpread == originalSpread + 3 {
-            return 0.65
-        } else if chosenSpread == originalSpread + 4 {
-            return 0.7
-        } else if chosenSpread == originalSpread + 5 {
-            return 0.75
-        } else if chosenSpread == originalSpread + 6 {
-            return 0.775
-        } else if chosenSpread == originalSpread + 7 {
-            return 0.8
-        } else if chosenSpread == originalSpread + 8 {
-            return 0.825
-        } else if chosenSpread == originalSpread + 9 {
-            return 0.85
-        } else if chosenSpread == originalSpread + 10 {
-            return 0.875
-        }
-    } else if betType == .over {
+           return 0.5
+       } else if chosenSpread == originalSpread - 1 {
+           return 0.47
+       } else if chosenSpread == originalSpread - 2 {
+           return 0.44
+       } else if chosenSpread == originalSpread - 3 {
+           return 0.38
+       } else if chosenSpread == originalSpread - 4 {
+           return 0.34
+       } else if chosenSpread == originalSpread - 5 {
+           return 0.32
+       } else if chosenSpread == originalSpread - 6 {
+           return 0.305
+       } else if chosenSpread == originalSpread - 7 {
+           return 0.29
+       } else if chosenSpread == originalSpread - 8 {
+           return 0.28
+       } else if chosenSpread == originalSpread - 9 {
+           return 0.25
+       } else if chosenSpread == originalSpread - 10 {
+           return 0.225
+       } else if chosenSpread == originalSpread - 11 {
+           return 0.205
+       } else if chosenSpread == originalSpread - 12 {
+           return 0.19
+       }  else if chosenSpread == originalSpread + 1 {
+           return 0.56
+       } else if chosenSpread == originalSpread + 2 {
+           return 0.59
+       } else if chosenSpread == originalSpread + 3 {
+           return 0.62
+       } else if chosenSpread == originalSpread + 4 {
+           return 0.68
+       } else if chosenSpread == originalSpread + 5 {
+           return 0.72 // -259
+       } else if chosenSpread == originalSpread + 6 {
+           return 0.74
+       } else if chosenSpread == originalSpread + 7 {
+           return 0.76
+       } else if chosenSpread == originalSpread + 8 {
+           return 0.78
+       } else if chosenSpread == originalSpread + 9 {
+           return 0.80
+       } else if chosenSpread == originalSpread + 10 {
+           return 0.82
+       }
+    } else if betType == .over { // ACTUALLY SPREAD
         if chosenSpread == originalSpread {
             return 0.5
         } else if chosenSpread == originalSpread + 1 {
-            return 0.45
+            return 0.485
         } else if chosenSpread == originalSpread + 2 {
-            return 0.4
+            return 0.452
         } else if chosenSpread == originalSpread + 3 {
-            return 0.35
+            return 0.424
         } else if chosenSpread == originalSpread + 4 {
-            return 0.3
+            return 0.397
         } else if chosenSpread == originalSpread + 5 {
-            return 0.25
+            return 0.361
         } else if chosenSpread == originalSpread + 6 {
-            return 0.225
+            return 0.332
         } else if chosenSpread == originalSpread + 7 {
-            return 0.2
+            return 0.305
         } else if chosenSpread == originalSpread + 8 {
-            return 0.175
+            return 0.282
         } else if chosenSpread == originalSpread + 9 {
-            return 0.15
+            return 0.254
         } else if chosenSpread == originalSpread + 10 {
-            return 0.125
+            return 0.236
+        } else if chosenSpread == originalSpread + 11 {
+            return 0.218
+        } else if chosenSpread == originalSpread + 12 {
+            return 0.197
         }  else if chosenSpread == originalSpread - 1 {
-            return 0.55
+            return 0.515
         } else if chosenSpread == originalSpread - 2 {
-            return 0.6
+            return 0.55
         } else if chosenSpread == originalSpread - 3 {
-            return 0.65
+            return 0.58
         } else if chosenSpread == originalSpread - 4 {
-            return 0.7
+            return 0.60
         } else if chosenSpread == originalSpread - 5 {
-            return 0.75
+            return 0.64
         } else if chosenSpread == originalSpread - 6 {
-            return 0.775
+            return 0.67
         } else if chosenSpread == originalSpread - 7 {
-            return 0.8
+            return 0.70
         } else if chosenSpread == originalSpread - 8 {
-            return 0.825
+            return 0.72
         } else if chosenSpread == originalSpread - 9 {
-            return 0.85
+            return 0.75
         } else if chosenSpread == originalSpread - 10 {
-            return 0.875
+            return 0.77
+        }
+    } else if betType == .under {
+        if chosenSpread == originalSpread {
+            return 0.5
+        } else if chosenSpread == originalSpread - 1 {
+            return 0.485
+        } else if chosenSpread == originalSpread - 2 {
+            return 0.452
+        } else if chosenSpread == originalSpread - 3 {
+            return 0.424
+        } else if chosenSpread == originalSpread - 4 {
+            return 0.397
+        } else if chosenSpread == originalSpread - 5 {
+            return 0.361
+        } else if chosenSpread == originalSpread - 6 {
+            return 0.332
+        } else if chosenSpread == originalSpread - 7 {
+            return 0.305
+        } else if chosenSpread == originalSpread - 8 {
+            return 0.282
+        } else if chosenSpread == originalSpread - 9 {
+            return 0.254
+        } else if chosenSpread == originalSpread - 10 {
+            return 0.236
+        } else if chosenSpread == originalSpread - 11 {
+            return 0.218
+        } else if chosenSpread == originalSpread - 12 {
+            return 0.197
+        }  else if chosenSpread == originalSpread + 1 {
+            return 0.515
+        } else if chosenSpread == originalSpread + 2 {
+            return 0.55
+        } else if chosenSpread == originalSpread + 3 {
+            return 0.58
+        } else if chosenSpread == originalSpread + 4 {
+            return 0.60
+        } else if chosenSpread == originalSpread + 5 {
+            return 0.64
+        } else if chosenSpread == originalSpread + 6 {
+            return 0.67
+        } else if chosenSpread == originalSpread + 7 {
+            return 0.70
+        } else if chosenSpread == originalSpread + 8 {
+            return 0.72
+        } else if chosenSpread == originalSpread + 9 {
+            return 0.75
+        } else if chosenSpread == originalSpread + 10 {
+            return 0.77
         }
     }
     return 0.5
@@ -172,13 +228,13 @@ func percentageToTotalWin(percentage: Double) -> String {
 }
 
 func parlayNumToSpread(parlayNum: Int) -> Double {
-    if parlayNum == 1 || parlayNum == 2 || parlayNum == 3 || parlayNum == 4 {
+    if parlayNum == 1 {
         return 10
-    } else if parlayNum == 5 || parlayNum == 6 {
+    } else if parlayNum == 2 {
         return 4
-    } else if parlayNum == 7 {
+    } else if parlayNum == 3 {
         return 1
-    } else if parlayNum == 8 {
+    } else if parlayNum == 4 || parlayNum == 5 {
         return -1
     }
     return 5
