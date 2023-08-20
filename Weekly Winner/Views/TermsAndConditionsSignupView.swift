@@ -10,6 +10,7 @@ import SwiftUI
 struct TermsAndConditionsView: View {
     @State private var isChecked = false
     @State private var showNextPage = false
+    @ObservedObject var viewModel: authenticationViewModel
     
     var body: some View {
         NavigationStack{
@@ -155,9 +156,9 @@ struct TermsAndConditionsView: View {
                     .padding()
                     
                     NavigationLink(destination: {
-                        if isChecked {
                             tabBarView()
-                        }
+                            .environmentObject(viewModel)
+       
                     }, label: {
                         HStack{
                             Spacer()
@@ -173,7 +174,9 @@ struct TermsAndConditionsView: View {
                             .cornerRadius(10)
                             .padding(.horizontal,16)
                             .padding(.bottom,30)
-                    })
+                    }).onSubmit {
+                        viewModel.showMainScreen()
+                    }
                     .padding()
                     .disabled(!isChecked)
                 }
@@ -185,6 +188,6 @@ struct TermsAndConditionsView: View {
 
 struct TermsAndConditionsView_Previews: PreviewProvider {
     static var previews: some View {
-        TermsAndConditionsView()
+        TermsAndConditionsView(viewModel: authenticationViewModel())
     }
 }

@@ -105,68 +105,83 @@ struct profileView: View {
                                 }.padding()
                             }
                             else {
+                                
+                                
                                 ZStack {
                                     Text("My Profile")
                                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
                                         .foregroundColor(.white)
-                                }.padding(.top, 50) // has to be at least 50 so doesnt interfere with safe area
+                                    HStack{
+                                        Spacer()
+                                        
+                                        NavigationLink(destination: settingsView(), label: {
+                                            Image(systemName: "gearshape")
+                                                .resizable()
+                                                .frame(width: 20, height: 20)
+                                                
+                                                .foregroundColor(.white)
+                                        }).id(UUID())
+                                        
+                                    }
+                                }.padding(.top, 50).padding(.horizontal) // has to be at least 50 so doesnt interfere with safe area
                             }
                             ProfileStatsView(viewModel: viewModel, user: user)
                                 .padding(.vertical)
                                 .padding(.horizontal,20.5)
                             ZStack {
-                                VStack {
-                                    Spacer()
-                                    HStack {
+                                ScrollView{
+                                    VStack {
                                         Spacer()
-                                        Text("Statistics")
-                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
-                                            .foregroundColor(.white)
+                                        HStack {
+                                            Spacer()
+                                            Text("Statistics")
+                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
+                                                .foregroundColor(.white)
+                                            
+                                            Spacer()
+                                            
+                                            //                                        Button(action: {
+                                            //                                            withAnimation {
+                                            //                                                showDropdown.toggle()
+                                            //                                            }
+                                            //                                        }) {
+                                            //                                            ZStack() {
+                                            //                                                Rectangle()
+                                            //                                                    .foregroundColor(.clear)
+                                            //                                                    .frame(width: 113, height: 40)
+                                            //                                                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                            //                                                    .cornerRadius(6)
+                                            //
+                                            //                                                HStack() {
+                                            //                                                    Text(selectedGroup)
+                                            //                                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14)) // change this to your custom font
+                                            //                                                        .foregroundColor(.white)
+                                            //                                                    Spacer()
+                                            //                                                    if showDropdown{
+                                            //                                                        withAnimation(){
+                                            //                                                            Image(systemName: "chevron.down")
+                                            //                                                                .frame(width: 24, height: 24)
+                                            //                                                        }
+                                            //                                                    }
+                                            //                                                    else {
+                                            //                                                        withAnimation(){
+                                            //                                                            Image(systemName: "chevron.up")
+                                            //                                                                .frame(width: 24, height: 24)
+                                            //                                                        }
+                                            //                                                    }
+                                            //                                                }.padding(.horizontal)
+                                            //                                            }
+                                            //                                            .frame(width: 113, height: 40)
+                                            //                                            .cornerRadius(14)
+                                            //                                        }
+                                        }
+                                        .frame(minWidth: 0, maxWidth: .infinity)
+                                        .padding(.horizontal)
                                         
-                                        Spacer()
-                                        
-//                                        Button(action: {
-//                                            withAnimation {
-//                                                showDropdown.toggle()
-//                                            }
-//                                        }) {
-//                                            ZStack() {
-//                                                Rectangle()
-//                                                    .foregroundColor(.clear)
-//                                                    .frame(width: 113, height: 40)
-//                                                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-//                                                    .cornerRadius(6)
-//
-//                                                HStack() {
-//                                                    Text(selectedGroup)
-//                                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14)) // change this to your custom font
-//                                                        .foregroundColor(.white)
-//                                                    Spacer()
-//                                                    if showDropdown{
-//                                                        withAnimation(){
-//                                                            Image(systemName: "chevron.down")
-//                                                                .frame(width: 24, height: 24)
-//                                                        }
-//                                                    }
-//                                                    else {
-//                                                        withAnimation(){
-//                                                            Image(systemName: "chevron.up")
-//                                                                .frame(width: 24, height: 24)
-//                                                        }
-//                                                    }
-//                                                }.padding(.horizontal)
-//                                            }
-//                                            .frame(width: 113, height: 40)
-//                                            .cornerRadius(14)
-//                                        }
-                                    }
-                                    .frame(minWidth: 0, maxWidth: .infinity)
-                                    .padding(.horizontal)
-                                    
-                                    groupStats()
-                                        .padding(.all,16)
-                                }.padding(.bottom, 120)
-                                
+                                        groupStats()
+                                            .padding(.all,16)
+                                    }.padding(.bottom, 120)
+                                }
                                 // Dropdown outside of VStack
                                 if showDropdown {
                                     HStack{

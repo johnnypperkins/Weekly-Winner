@@ -63,7 +63,7 @@ struct profilePhotoSelectorView: View {
                 
                 if let selectedImage = selectedImage  {
                     NavigationLink(destination: {
-                        TermsAndConditionsView() },label: {
+                        TermsAndConditionsView(viewModel: viewModel) },label: {
                             HStack{
                                 Spacer()
                                 

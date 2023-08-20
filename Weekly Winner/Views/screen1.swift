@@ -26,12 +26,14 @@ struct UserProfileView: View {
             countDown()
                 .padding(.top)
             //Spacer()
-            yourGroups(groupsVM: groupsVM)
-                .padding(.horizontal)
-            
-            MostPopularBetsView(bookVM: bookVM)
-                .padding(.horizontal)
-            Spacer()
+            ScrollView {
+                yourGroups(groupsVM: groupsVM)
+                    .padding(.horizontal)
+                
+                MostPopularBetsView(bookVM: bookVM)
+                    .padding(.horizontal)
+                Spacer()
+            }.padding(.bottom,45)
 
         }
         .background(K.finalColor.backgroundBlue)
@@ -73,13 +75,7 @@ struct ProfileHeaderView: View {
 
             Spacer()
             
-            NavigationLink(destination: settingsView(), label: {
-                Image(systemName: "gearshape")
-                    .resizable()
-                    .frame(width: 20, height: 20)
-                    .padding(.vertical)
-                    .foregroundColor(.white)
-            }).id(UUID())
+            
         }
     }
 }

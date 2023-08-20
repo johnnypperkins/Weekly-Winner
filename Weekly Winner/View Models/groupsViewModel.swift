@@ -253,6 +253,7 @@ class groupsViewModel: ObservableObject {
                             groupImageURL: data?["groupImageURL"] as? String ?? "",
                             groupSlogan: data?["groupSlogan"] as? String ?? "",
                             groupAdmin: data?["groupAdmin"] as? String ?? "",
+                            groupAdminUsername: data?["groupAdminUsername"] as? String ?? "",
                             password: data?["password"] as? String,
                             ticketFormat: data?["ticketFormat"] as? [Int] ?? []
                         )
@@ -388,6 +389,7 @@ class groupsViewModel: ObservableObject {
                        let groupImageURL = data["groupImageURL"] as? String,
                        let groupSlogan = data["groupSlogan"] as? String,
                        let groupAdmin = data["groupAdmin"] as? String,
+                       let groupAdminUsername = data["groupAdminUsername"] as? String,
                        let ticketFormat = data["ticketFormat"] as? [Int] {
                         
                         if self.totalArrayOfDates.count < groupIDs.count {
@@ -404,6 +406,7 @@ class groupsViewModel: ObservableObject {
                                           groupImageURL: groupImageURL,
                                           groupSlogan: groupSlogan,
                                           groupAdmin: groupAdmin,
+                                          groupAdminUsername: groupAdminUsername,
                                           password: password,
                                           ticketFormat: ticketFormat)
                         

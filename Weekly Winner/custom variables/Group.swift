@@ -16,6 +16,7 @@ struct Group: Identifiable, Codable {
     var groupImageURL: String
     var groupSlogan: String
     var groupAdmin: String // userID
+    var groupAdminUsername: String
     var password: String?
     var keywordsForLookup: [String] {
         [self.groupName.generateStringSequence()].flatMap { $0 }

@@ -23,6 +23,7 @@ struct groupSettingsView: View {
     @State private var threeLegNum: Int
     @State private var fourLegNum: Int
     @State private var fiveLegNum: Int
+    @State private var showingAlert2 = false
     
     init(selectedGroup: Binding<Int>, viewModel: groupsViewModel, groupAdmin: String, groupNum: Int, ticketFormat: [Int]) {
             self._selectedGroup = selectedGroup
@@ -149,11 +150,21 @@ struct groupSettingsView: View {
                         Spacer()
                         HStack {
                             Button(action: {
-                                selectedGroup -= 1
-                                viewModel.leaveGroup(ticket: viewModel.userTickets[selectedGroup]) {
-                                    //selectedGroup = 1
+                                
+                                
+                                self.showingAlert2 = true
+                                if showingAlert2 == true {
+                                    AppUtility.shared.showCustomAlert(alertType: .none, message: "Are you sure you want to leave \(viewModel.userGroups[selectedGroup-1].groupName)?", actionButtonTitle: K.appButtonTitle.ok, cancelButtonTitle: K.appButtonTitle.cancel) { action in
+                                        if action == AlertButtonAction.okButton{
+                                            selectedGroup -= 1
+                                            viewModel.leaveGroup(ticket: viewModel.userTickets[selectedGroup]) {
+                                                //selectedGroup = 1
+                                            }
+                                            dismiss()
+                                        }
+                                        
+                                    }
                                 }
-                                dismiss()
                             }) {
                                 Text("Leave Group") // will add design later obv
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))

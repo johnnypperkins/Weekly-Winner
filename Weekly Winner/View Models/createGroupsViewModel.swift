@@ -13,8 +13,8 @@ import Firebase
 class createGroupsViewModel: ObservableObject {
     @Published var service = groupService()
         
-    func createGroup(groupName: String, groupSlogan: String, password: String, ticketFormat: [Int]) {
-        service.createGroup(groupName: groupName, groupSlogan: groupSlogan, password: password, ticketFormat: ticketFormat) { result in
+    func createGroup(groupAdminUsername: String, groupName: String, groupSlogan: String, password: String, ticketFormat: [Int]) {
+        service.createGroup(groupAdminUsername: groupAdminUsername, groupName: groupName, groupSlogan: groupSlogan, password: password, ticketFormat: ticketFormat) { result in
                 switch result {
                 case .success(let documentID):
                     print("Document added with ID: \(documentID)")

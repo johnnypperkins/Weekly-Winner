@@ -186,55 +186,83 @@ struct groupsView: View {
                     else{
                         ZStack {
                             HStack{
-                                if viewModel.userGroupsLoaded {
-                                    if viewModel.userGroups[selectedGroup-1].groupImageURL != "" {
-                                        KFImage(URL(string: viewModel.userGroups[selectedGroup-1].groupImageURL))
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .clipShape(Circle())
-                                            .frame(width: 50, height: 50)
+                                if(viewModel.userTickets[selectedGroup-1].groupID != "Global") {
+                                    if viewModel.userGroupsLoaded {
+                                        if viewModel.userGroups[selectedGroup-1].groupImageURL != "" {
+                                            KFImage(URL(string: viewModel.userGroups[selectedGroup-1].groupImageURL))
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .clipShape(Circle())
+                                                .frame(width: 50, height: 50)
+                                        }
+                                        else {
+                                            
+                                            Image(systemName: "photo.circle.fill")
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .clipShape(Circle())
+                                                .frame(width: 50, height: 50)
+                                                .background(K.finalColor.potentialOrange)
+                                            
+                                        }
                                     }
                                     else {
-                             
+                                        
                                         Image(systemName: "photo.circle.fill")
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
                                             .clipShape(Circle())
                                             .frame(width: 50, height: 50)
-                                            .background(K.finalColor.potentialOrange)
-
+                                            .background(K.finalColor.textWhite)
                                     }
-                                }
-                                else {
-                         
-                                    Image(systemName: "photo.circle.fill")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .clipShape(Circle())
-                                        .frame(width: 50, height: 50)
-                                        .background(K.finalColor.textWhite)
-                                }
-                                
-                                Text(viewModel.userTickets[selectedGroup-1].groupName)
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18).weight(.medium))
-                                    .foregroundColor(.white)
-                                    .padding(.leading)
-                                if(viewModel.userTickets[selectedGroup-1].groupID != "Global") {
+                                    
+                                    Text(viewModel.userTickets[selectedGroup-1].groupName)
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18).weight(.medium))
+                                        .foregroundColor(.white)
+                                        .padding(.leading)
+                                    
                                     Button(action: {
-                                                isGroupSettingsViewPresented = true
-                                            }) {
-                                                Image(systemName: "gearshape")
-                                                    .resizable()
-                                                    .frame(width: 20, height: 20)
-                                                    //.padding()
-                                                    .foregroundColor(.white)
-                                            }
-                                            .sheet(isPresented: $isGroupSettingsViewPresented) {
-                                                groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel, groupAdmin: viewModel.userTickets[selectedGroup-1].groupAdmin, groupNum: selectedGroup-1, ticketFormat: viewModel.userTickets[selectedGroup-1].ticketFormat)
-                                                    .presentationDetents([.fraction(0.75)])
-                                            }
+                                        isGroupSettingsViewPresented = true
+                                    }) {
+                                        Image(systemName: "gearshape")
+                                            .resizable()
+                                            .frame(width: 20, height: 20)
+                                        //.padding()
+                                            .foregroundColor(.white)
+                                    }
+                                    .sheet(isPresented: $isGroupSettingsViewPresented) {
+                                        groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel, groupAdmin: viewModel.userTickets[selectedGroup-1].groupAdmin, groupNum: selectedGroup-1, ticketFormat: viewModel.userTickets[selectedGroup-1].ticketFormat)
+                                            .presentationDetents([.fraction(0.75)])
+                                    }
+                                    
+                                    Spacer()
                                 }
-                                Spacer()
+                                else{
+                                    Spacer()
+                                        if viewModel.userGroupsLoaded {
+                                            KFImage(URL(string: viewModel.userGroups[selectedGroup-1].groupImageURL))
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .clipShape(Circle())
+                                                .frame(width: 75, height: 75)
+                                        }
+                                        
+                                        else {
+                                            
+                                            Image(systemName: "photo.circle.fill")
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .clipShape(Circle())
+                                                .frame(width: 75, height: 75)
+                                                .background(K.finalColor.textWhite)
+                                        }
+                                        
+                                        Text("Global")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 24).weight(.medium))
+                                            .foregroundColor(.white)
+                                            .padding(.leading)
+                                    Spacer()
+                                }
                                 
 
                                 
@@ -395,7 +423,7 @@ struct groupBarView: View {
                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
                       .foregroundColor(.white)
                     Spacer()
-                    Text(group.groupAdmin)
+                    Text(group.groupAdminUsername)
                       .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
                       .foregroundColor(.white)
                 }
@@ -448,7 +476,8 @@ struct currentLeaderboardView: View {
 
                     }
                 }
-            }.onAppear(){
+            }.padding(.bottom,60)
+            .onAppear(){
                 viewModel.printTickets(ticket: viewModel.currentRankedGroupTickets)
                 
             }
@@ -640,10 +669,16 @@ struct SearchBar: View {
     var body: some View {
         HStack {
             HStack() {
-                TextField(placeholder, text: $text)
-                .foregroundColor(.white)
-                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                TextField("", text: $text)
+                    .placeholder(when: text.isEmpty, placeholder: {
+                        Text("Find a group...").foregroundColor(.gray)
+                    })
+                    .foregroundColor(.white)
+                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                    .accentColor(.white)
+                    .textInputAutocapitalization(.never)
+                    .disableAutocorrection(true)
+
 
             }
             .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))

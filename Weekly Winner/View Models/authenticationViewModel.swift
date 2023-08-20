@@ -40,12 +40,17 @@ class authenticationViewModel: ObservableObject {
         self.fetchUser() {}
     }
     
+    func showMainScreen() {
+        userSession = authResult!.user
+        print("helllllllll\(userSession)")
+        
+    }
     func signUp() async {
             authenticationState = .authenticating
             
             do {
                 authResult = try await Auth.auth().createUser(withEmail: email, password: password)
-                userSession = authResult!.user // added - Reid
+                //userSession = authResult!.user // added - Reid
                 let user = authResult!.user
                 
                 let newUser = User(username: username, firstName: firstName, lastName: lastName, profileImageUrl: "", email: email, dateJoined: Timestamp(date: Date()), instagram: instagram)

@@ -16,6 +16,7 @@ struct createGroupsView: View {
     @State private var password: String = ""
     @State private var takenTextShown: Bool = false
     @StateObject private var viewModel = createGroupsViewModel()
+    @ObservedObject private var authViewModel = authenticationViewModel()
     
     @State private var showImagePicker = false
     @State private var selectedImage: UIImage?
@@ -154,7 +155,7 @@ struct createGroupsView: View {
                                 if isTaken {
                                     takenTextShown = true
                                 } else {
-                                    viewModel.createGroup(groupName: groupName, groupSlogan: groupSlogan, password: password, ticketFormat: customizeTicketFormat(oneLegNum,twoLegNum,threeLegNum,fourLegNum,fiveLegNum))
+                                    viewModel.createGroup(groupAdminUsername: authViewModel.username, groupName: groupName, groupSlogan: groupSlogan, password: password, ticketFormat: customizeTicketFormat(oneLegNum,twoLegNum,threeLegNum,fourLegNum,fiveLegNum))
                                     dismiss()
                                 }
                             }

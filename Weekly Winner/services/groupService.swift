@@ -248,7 +248,7 @@ class groupService {
 
 
     
-    func createGroup(groupName: String, groupSlogan: String, password: String?, ticketFormat: [Int], completion: @escaping (Result<String, Error>) -> Void) {
+    func createGroup(groupAdminUsername: String, groupName: String, groupSlogan: String, password: String?, ticketFormat: [Int], completion: @escaping (Result<String, Error>) -> Void) {
             
         guard let currentUser = Auth.auth().currentUser else {
                     completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No user is currently logged in"])))
@@ -262,6 +262,7 @@ class groupService {
                 "groupImageURL": "",
                 "groupSlogan": groupSlogan,
                 "groupAdmin": currentUser.uid,
+                "groupAdminUsername": groupAdminUsername,
                 "password": password ?? NSNull(),
                 "ticketFormat": ticketFormat
             ]) { err in
@@ -273,7 +274,7 @@ class groupService {
                         return
                     }
                     self.db.collection("groups").document(groupID).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": currentUser.uid])
-                    let group = Group(id: groupID, groupName: groupName, dateCreated: time, groupImageURL: "", groupSlogan: groupSlogan, groupAdmin: currentUser.uid, ticketFormat: ticketFormat)
+                    let group = Group(id: groupID, groupName: groupName, dateCreated: time, groupImageURL: "", groupSlogan: groupSlogan, groupAdmin: currentUser.uid, groupAdminUsername: groupAdminUsername, ticketFormat: ticketFormat)
                     self.joinGroup(userID: currentUser.uid, group: group){error in
                         
                     }
