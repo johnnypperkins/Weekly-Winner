@@ -16,6 +16,8 @@
 		3C3DB73C2A7C6129000F6898 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3DB73B2A7C6129000F6898 /* Chat.swift */; };
 		3C3DB73E2A7C7E3E000F6898 /* chatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3DB73D2A7C7E3E000F6898 /* chatViewModel.swift */; };
 		3C5F715E2A7983CB00B3AB4C /* LexendDeca-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3C5F715D2A7983CA00B3AB4C /* LexendDeca-Light.ttf */; };
+		3C7C708A2A92F38600C7C9DB /* globalPrizesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7C70892A92F38600C7C9DB /* globalPrizesView.swift */; };
+		3C7C708C2A92F5F800C7C9DB /* prizesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7C708B2A92F5F800C7C9DB /* prizesViewModel.swift */; };
 		3C91B6C62A58BA0E00398F53 /* UI Misc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C91B6C52A58BA0E00398F53 /* UI Misc.swift */; };
 		3C91B6C82A58BE6D00398F53 /* RoundingUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C91B6C72A58BE6D00398F53 /* RoundingUI.swift */; };
 		3CB1AC8B2A61602700C931CA /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB1AC8A2A61602700C931CA /* Group.swift */; };
@@ -101,6 +103,8 @@
 		3C3DB73B2A7C6129000F6898 /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		3C3DB73D2A7C7E3E000F6898 /* chatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chatViewModel.swift; sourceTree = "<group>"; };
 		3C5F715D2A7983CA00B3AB4C /* LexendDeca-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LexendDeca-Light.ttf"; sourceTree = "<group>"; };
+		3C7C70892A92F38600C7C9DB /* globalPrizesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = globalPrizesView.swift; sourceTree = "<group>"; };
+		3C7C708B2A92F5F800C7C9DB /* prizesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = prizesViewModel.swift; sourceTree = "<group>"; };
 		3C91B6C52A58BA0E00398F53 /* UI Misc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UI Misc.swift"; sourceTree = "<group>"; };
 		3C91B6C72A58BE6D00398F53 /* RoundingUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundingUI.swift; sourceTree = "<group>"; };
 		3CB1AC8A2A61602700C931CA /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
@@ -220,6 +224,7 @@
 				867801562A213010006FE479 /* ContentView.swift */,
 				8678017F2A213CB9006FE479 /* tabBarView.swift */,
 				3CD023CF2A84655E0033D761 /* groupSettingsView.swift */,
+				3C7C70892A92F38600C7C9DB /* globalPrizesView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -236,6 +241,7 @@
 				864A2D5E2A6D7DAF000FBA35 /* profileViewModel.swift */,
 				864A2D692A6D82CF000FBA35 /* editProfileViewModel.swift */,
 				3C3DB73D2A7C7E3E000F6898 /* chatViewModel.swift */,
+				3C7C708B2A92F5F800C7C9DB /* prizesViewModel.swift */,
 			);
 			path = "View Models";
 			sourceTree = "<group>";
@@ -519,6 +525,7 @@
 				865C4A7A2A32890F00C3C626 /* userService.swift in Sources */,
 				867801882A213FA5006FE479 /* ticketView.swift in Sources */,
 				864A2D632A6D7F93000FBA35 /* AppUtilitiy.swift in Sources */,
+				3C7C708C2A92F5F800C7C9DB /* prizesViewModel.swift in Sources */,
 				8653242F2A63B74C005AB3EF /* createGroupsViewModel.swift in Sources */,
 				3C3DB73A2A7C60CE000F6898 /* chatService.swift in Sources */,
 				867801822A213F83006FE479 /* screen1.swift in Sources */,
@@ -526,6 +533,7 @@
 				8668B30F2A2EE62700A1B343 /* Game.swift in Sources */,
 				867801862A213F9A006FE479 /* groupsView.swift in Sources */,
 				863FC0532A466FD500405F2A /* groupService.swift in Sources */,
+				3C7C708A2A92F38600C7C9DB /* globalPrizesView.swift in Sources */,
 				865C4A782A327CC200C3C626 /* authenticationViewModel.swift in Sources */,
 				864A2D6A2A6D82CF000FBA35 /* editProfileViewModel.swift in Sources */,
 				866C52562A737B27008BE839 /* settingsView.swift in Sources */,
@@ -707,7 +715,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Weekly Winner/Preview Content\"";
-				DEVELOPMENT_TEAM = 7B34RR6HT7;
+				DEVELOPMENT_TEAM = XSX8J9H7YC;
 				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				ENABLE_PREVIEWS = YES;
@@ -752,7 +760,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Weekly Winner/Preview Content\"";
-				DEVELOPMENT_TEAM = 7B34RR6HT7;
+				DEVELOPMENT_TEAM = XSX8J9H7YC;
 				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				ENABLE_PREVIEWS = YES;

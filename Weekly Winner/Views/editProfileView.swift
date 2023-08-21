@@ -17,7 +17,7 @@ struct editProfileView: View {
     @State private var profileImage: Image?
     @StateObject var viewModelAuth = authenticationViewModel()
     @State private var sourceType: UIImagePickerController.SourceType = .photoLibrary
-    @State private var instagramText: String = "@liluzivert"
+    //@State private var instagramText: String = "@liluzivert"
     @ObservedObject var profileVM: profileViewModel
     
     init(user1: User, profileVM: profileViewModel) {
@@ -121,7 +121,7 @@ struct editProfileView: View {
                             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
                             .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
                         HStack() {
-                            TextField("Instagram", text: $instagramText)
+                            TextField("Instagram", text: $viewModel.instagram)
                                 .foregroundColor(.white)
                                 .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
                                 .background(Color(red: 0.13, green: 0.14, blue: 0.34))
@@ -188,6 +188,7 @@ struct editProfileView: View {
                             
                             
                         }
+                        profileVM.fetchUser()
                         withAnimation {
                             dismiss()
                         }
@@ -233,18 +234,6 @@ struct editProfileView: View {
                         }
                     }
                     .background(Color(red: 0.02, green: 0.05, blue: 0.26))
-//                    .onAppear {
-//                        let appearance = UINavigationBarAppearance()
-//                        appearance.configureWithTransparentBackground()
-//                        appearance.titleTextAttributes = [
-//                            .font: UIFont(name: K.customFonts.lexendDecaMedium, size: 14)!,
-//                            .foregroundColor: UIColor.white
-//                        ]
-//                        UINavigationBar.appearance().standardAppearance = appearance
-//                        UINavigationBar.appearance().compactAppearance = appearance
-//                        UINavigationBar.appearance().scrollEdgeAppearance = appearance
-//                    }
-                    
                 
             }
             .background(Color(red: 0.02, green: 0.05, blue: 0.26))

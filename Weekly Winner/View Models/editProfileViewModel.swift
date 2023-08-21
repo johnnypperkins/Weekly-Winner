@@ -15,6 +15,7 @@ class editProfileViewModel: ObservableObject {
     @Published  var username: String
     @Published  var email: String
     @Published  var profileImgURL: String
+    @Published var instagram: String
     private var user1: User
     
     private let db = Firestore.firestore()
@@ -25,6 +26,7 @@ class editProfileViewModel: ObservableObject {
         lastname = user.lastName
         username = user.username
         email = user.email
+        instagram = user.instagram
         profileImgURL = user.profileImageUrl
     }
     
@@ -47,6 +49,11 @@ class editProfileViewModel: ObservableObject {
         }
     }
 
+//    func updateUserInfo(completion: @escaping () -> Void) {
+//        guard let user = Auth.auth().currentUser else { return }
+//
+//        
+//    }
     
         func updateUserInfo() {
             guard let user = Auth.auth().currentUser else {
@@ -59,9 +66,10 @@ class editProfileViewModel: ObservableObject {
             db.collection("users").document(user.uid).updateData([
                 "firstName": firstname,
                 "lastName": lastname,
-                "username": username,
+//                "username": username,
                 "profileImageUrl": profileImgURL,
-                "keywordsForLookup": user1.keywordsForLookup
+                "keywordsForLookup": user1.keywordsForLookup,
+                "instagram": instagram
             ]) { error in
                 if let error = error {
                     print("Error updating user info: \(error.localizedDescription)")

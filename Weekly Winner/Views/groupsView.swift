@@ -13,6 +13,7 @@ import Kingfisher
 struct groupsView: View {
     @State private var isJoinSheetPresented = false
     @State private var isGroupSettingsViewPresented: Bool = false
+    @State private var isGlobalPrizesShowing: Bool = false
     @State private var searchText = ""
     @State private var isShowingSheet = false
     @State private var isShowingSheetTicket = false
@@ -224,37 +225,56 @@ struct groupsView: View {
                                             }
                                             .sheet(isPresented: $isGroupSettingsViewPresented) {
                                                 groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel, groupAdmin: viewModel.userTickets[selectedGroup-1].groupAdmin, groupNum: selectedGroup-1, ticketFormat: viewModel.userTickets[selectedGroup-1].ticketFormat)
-                                                    .presentationDetents([.fraction(0.75)])
+                                                    .presentationDetents([viewModel.userTickets[selectedGroup-1].groupAdmin == Auth.auth().currentUser?.uid ? .fraction(0.75) : .fraction(0.15)])
                                             }
                                         }
                                     }
                                     //Spacer()
                                 }
                                 else{
-                                    //Spacer()
-                                    VStack(alignment: .center) {
-                                        if viewModel.userGroupsLoaded {
-                                            KFImage(URL(string: viewModel.userGroups[selectedGroup-1].groupImageURL))
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .clipShape(Circle())
-                                                .frame(width: 75, height: 75)
-                                        }
-                                        
-                                        else {
+                                    //Spacer()]
+                                    ZStack {
+                                        VStack(alignment: .center) {
+                                            if viewModel.userGroupsLoaded {
+                                                KFImage(URL(string: viewModel.userGroups[selectedGroup-1].groupImageURL))
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fill)
+                                                    .clipShape(Circle())
+                                                    .frame(width: 75, height: 75)
+                                            }
                                             
-                                            Image(systemName: "photo.circle.fill")
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .clipShape(Circle())
-                                                .frame(width: 75, height: 75)
-                                                .background(K.finalColor.textWhite)
-                                        }
-                                        
-                                        Text("Global")
-                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 24))
-                                            .foregroundColor(.white)
+                                            else {
+                                                
+                                                Image(systemName: "photo.circle.fill")
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fill)
+                                                    .clipShape(Circle())
+                                                    .frame(width: 75, height: 75)
+                                                    .background(K.finalColor.textWhite)
+                                            }
+                                            
+                                            Text("Global")
+                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                                .foregroundColor(.white)
                                             //.padding(.leading)
+                        
+                                        }
+                                        HStack {
+                                            Spacer()
+                                            Button(action: {
+                                                isGlobalPrizesShowing = true
+                                            }) {
+                                                Image(systemName: "gift")
+                                                    .resizable()
+                                                    .frame(width: 20, height: 20)
+                                                //.padding()
+                                                    .foregroundColor(.white)
+                                            }
+                                                .sheet(isPresented: $isGlobalPrizesShowing) {
+                                                    globalPrizesView()
+                                                        .presentationDetents([.fraction(0.5)])
+                                                }
+                                        }
                                     }
                                         //Spacer()
                                 }

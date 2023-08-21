@@ -80,17 +80,23 @@ struct BettingAppView: View {
                     VStack(spacing: 5) {
                         if viewModel.selectedGameType == "NFL" {
                             ForEach(viewModel.NFLgames, id: \.idd) { game in // HARDCODE NCAAF
-                                gameRowView(game: game)
+                                if game.commenceTime.dateValue() > Date() {
+                                    gameRowView(game: game)
+                                }
                             }.padding(.horizontal)
                         }
                         if viewModel.selectedGameType == "NCAAF" {
                             ForEach(viewModel.NCAAFGames, id: \.idd) { game in // HARDCODE NCAAF
-                                gameRowView(game: game)
+                                if game.commenceTime.dateValue() > Date() {
+                                    gameRowView(game: game)
+                                }
                             }.padding(.horizontal)
                         }
                         if viewModel.selectedGameType == "Upcoming" {
                             ForEach(viewModel.upcomingGames, id: \.idd) { game in 
-                                gameRowView(game: game)
+                                if game.commenceTime.dateValue() >  Date() {
+                                    gameRowView(game: game)
+                                }
                             }.padding(.horizontal)
                         }
                     }.padding(.bottom,80)
