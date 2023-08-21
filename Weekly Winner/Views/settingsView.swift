@@ -141,25 +141,25 @@ struct settingsView: View {
                                         }.padding(.vertical,10)
                                     }
                                     
-                                    Divider()
-                                    
-                                    NavigationLink(destination: {prizesView()}) {
-                                        HStack{
-                                            ZStack{
-                                                Circle()
-                                                    .frame(width: 40, height: 40)
-                                                    .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                                    .cornerRadius(43)
-                                                Image(systemName: "money")
-                                                    .resizable()
-                                                    .frame(width: 20, height: 20)
-                                                    .foregroundColor(.white)
-                                            }
-                                            Text("Prizes")
-                                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
-                                                .foregroundColor(.white)
-                                        }.padding(.vertical,10)
-                                    }
+//                                    Divider()
+//
+//                                    NavigationLink(destination: {prizesView()}) {
+//                                        HStack{
+//                                            ZStack{
+//                                                Circle()
+//                                                    .frame(width: 40, height: 40)
+//                                                    .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
+//                                                    .cornerRadius(43)
+//                                                Image(systemName: "money")
+//                                                    .resizable()
+//                                                    .frame(width: 20, height: 20)
+//                                                    .foregroundColor(.white)
+//                                            }
+//                                            Text("Prizes")
+//                                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
+//                                                .foregroundColor(.white)
+//                                        }.padding(.vertical,10)
+//                                    }
                                     
                                     Divider()
                                     

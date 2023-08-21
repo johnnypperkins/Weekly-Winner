@@ -90,7 +90,7 @@ struct CustomAlertView: View {
                             buttonActionCompletion?(.okButton)
                         }
                     }
-                    if actionButtonTitle != nil {
+                    if cancelButtonTitle != nil {
                         ButtonComponent(title: cancelButtonTitle ?? K.appButtonTitle.cancel) {
                             buttonActionCompletion?(.cancelButton)
                         }

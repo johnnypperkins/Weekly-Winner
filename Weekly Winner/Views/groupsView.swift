@@ -138,22 +138,23 @@ struct groupsView: View {
                             if !viewModel.queriedGroups.isEmpty {
                                 withAnimation {
                                     ScrollView {
-                                        ForEach(viewModel.queriedGroups, id: \.id) { group in
-                                            if (viewModel.userTickets.count < P.maxNumGroupsCanJoin) {
-                                                Button(action: {
-                                                    // Destination view code
-                                                    isJoinSheetPresented.toggle()
-                                                }) {
+                                        VStack{
+                                            ForEach(viewModel.queriedGroups, id: \.id) { group in
+                                                if (viewModel.userTickets.count < P.maxNumGroupsCanJoin) {
+                                                    Button(action: {
+                                                        // Destination view code
+                                                        isJoinSheetPresented.toggle()
+                                                    }) {
+                                                        groupBarView(group: group)
+                                                    }.sheet(isPresented: $isJoinSheetPresented) {
+                                                        GroupJoinSheet(group: group, viewModel: viewModel, isPresented: $isJoinSheetPresented)
+                                                            .presentationDetents([.fraction(0.50)])
+                                                    }
+                                                } else {
                                                     groupBarView(group: group)
-                                                }.sheet(isPresented: $isJoinSheetPresented) {
-                                                    GroupJoinSheet(group: group, viewModel: viewModel, isPresented: $isJoinSheetPresented)
-                                                        .presentationDetents([.fraction(0.50)])
                                                 }
-                                            } else {
-                                                groupBarView(group: group)
-                                            }
+                                            }.padding(.bottom,60)
                                         }
-                                        
                                     }
                                 }.animation(.easeInOut, value: 20)
                             }
@@ -523,7 +524,8 @@ struct pastLeaderboardView: View {
                         BetCard(viewModel: viewModel, ticket: viewModel.pastRankedGroupTickets[index], rank: (viewModel.pastRankedGroupTickets[index].rank), ownCard: false).padding(.bottom,16)
                     }).id(UUID())
                 }
-            }.onAppear(){
+            }.padding(.bottom,60)
+            .onAppear(){
                 viewModel.printTickets(ticket: viewModel.pastRankedGroupTickets)
             }
         }

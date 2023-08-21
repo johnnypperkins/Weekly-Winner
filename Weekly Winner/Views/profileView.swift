@@ -196,7 +196,7 @@ struct groupStats: View {
             
             Spacer()
             
-          Text("$200")
+          Text("Coming Soon")
             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
             .foregroundColor(.white)
         }
@@ -216,7 +216,7 @@ struct groupStats: View {
               
               Spacer()
               
-            Text("$30")
+            Text("Coming Soon")
               .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
               .foregroundColor(.white)
           }
@@ -237,7 +237,7 @@ struct groupStats: View {
             
             Spacer()
             
-          Text("$100")
+          Text("Coming Soon")
             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
             .foregroundColor(.white)
         }.padding(.horizontal)
@@ -256,7 +256,7 @@ struct groupStats: View {
             
             Spacer()
             
-          Text("#32")
+          Text("Coming Soon")
                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
             .foregroundColor(.white)
         }.padding(.horizontal)

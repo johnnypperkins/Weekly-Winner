@@ -46,8 +46,6 @@ struct UserProfileView: View {
         .onAppear() {
             authenticationVM.forceUpdate () {
                 if authenticationVM.updateURL != ""{
-                    print("update url" + authenticationVM.updateURL)
-                    print("update url" + authenticationVM.updateURL)
                     AppUtility.shared.showCustomAlert(alertType: .none, message: "There is a new update. Click here to update", actionButtonTitle: K.appButtonTitle.ok, cancelButtonTitle: nil) { action in
                         if action == AlertButtonAction.okButton{
                             showWebpage.toggle()
