@@ -691,7 +691,7 @@ struct SearchBar: View {
                     .foregroundColor(.white)
                     .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
                     .accentColor(.white)
-                    .textInputAutocapitalization(.never)
+                    .textInputAutocapitalization(.words)
                     .disableAutocorrection(true)
 
 

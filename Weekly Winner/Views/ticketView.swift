@@ -118,13 +118,15 @@ struct ticketView: View {
                     if (ticketIsEnabled) {
                         HStack (alignment: .center, spacing: 23){
                             HStack (spacing: 0) {
-                                Text("Potential").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
-                                Spacer()
-                                Text("\(String(format: "%.0f", viewModel.totalPotentialWon))")
-                                    .font(.custom("Futura", size: 20))
-                                    .foregroundColor(K.finalColor.potentialOrange)
+                                VStack{
+                                    Text("Potential").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
+                                    Spacer()
+                                    Text("\(String(format: "%.0f", viewModel.totalPotentialWon))")
+                                        .font(.custom("Futura", size: 20))
+                                        .foregroundColor(K.finalColor.potentialOrange)
+                                }.padding(.vertical,5)
                             }.padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-                            .frame(width: 160, height: 55, alignment: .center)
+                            .frame(width: 105, height: 55, alignment: .center)
                             .background(
                                 RoundedRectangle(cornerRadius: 7.5)
                                     .fill(K.finalColor.cardBlue) // Change the opacity as needed
@@ -132,12 +134,33 @@ struct ticketView: View {
                             .cornerRadius(7.5)
                             
                             HStack (spacing: 0){
-                                Text("Total").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
-                                Spacer()
-                                Text("\(String(format: "%.0f", viewModel.totalWon))").font(.custom(K.customFonts.lexendDecaLight, size: 20)).foregroundColor(K.finalColor.winningGreen)
+                                VStack{
+                                    Text("Total").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
+                                    Spacer()
+                                    Text("\(String(format: "%.0f", viewModel.totalWon))").font(.custom("Futura", size: 20)).foregroundColor(K.finalColor.winningGreen)
+                                }.padding(.vertical,5)
                             }
                             .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-                            .frame(width: 160, height: 55, alignment: .center)
+                            .frame(width: 105, height: 55, alignment: .center)
+                            .background(
+                                RoundedRectangle(cornerRadius: 7.5)
+                                    .fill(K.finalColor.cardBlue) // Change the opacity as needed
+                            )
+                            .cornerRadius(7.5)
+                            HStack (spacing: 0){
+                                VStack{
+                                    Text("Rank").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
+                                    Spacer()
+                                    if uid == Auth.auth().currentUser?.uid {
+                                        Text(viewModel.userTickets[selectedGroup].rank).font(.custom("Futura", size: 20)).foregroundColor(K.finalColor.titleBlue)
+                                    }
+                                    else{
+                                        Text(viewModel.userTickets[0].rank).font(.custom("Futura", size: 20)).foregroundColor(K.finalColor.titleBlue)
+                                    }
+                                }.padding(.vertical,5)
+                            }
+                            .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
+                            .frame(width: 105, height: 55, alignment: .center)
                             .background(
                                 RoundedRectangle(cornerRadius: 7.5)
                                     .fill(K.finalColor.cardBlue) // Change the opacity as needed
@@ -366,7 +389,7 @@ struct ticketView: View {
 
 struct ticketView_Previews: PreviewProvider {
     static var previews: some View {
-        ticketView(username: "Reid", uid: Auth.auth().currentUser!.uid, groupID: "", selectedWeek: "current", ticketFormatForGroups: [], ownTicket: true)
+        ticketView(username: "Reid", uid: "", groupID: "", selectedWeek: "current", ticketFormatForGroups: [1,1,1], ownTicket: true)
     }
 }
 
