@@ -793,7 +793,7 @@ struct GroupJoinSheet: View {
                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
                       .foregroundColor(.white)
                     Spacer()
-                    Text(group.groupAdmin)
+                    Text(group.groupAdminUsername)
                       .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
                       .foregroundColor(.white)
                 }

@@ -104,9 +104,10 @@ struct ticketView: View {
                     
                 } else {
 //                    if uid != Auth.auth().currentUser?.uid {
+                    if viewModel.isBetsLoaded {
                         Text(viewModel.userTickets[0].groupName).font(.custom(K.customFonts.lexendDecaMedium, size: 20)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
                         Text(username).font(.custom(K.customFonts.lexendDecaMedium, size: 15)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
-                            
+                    }
 //                    }
 //                    else{
 //                        Text("loading")
@@ -207,7 +208,9 @@ struct ticketView: View {
                     selectedGroup = 0
                     if uid != Auth.auth().currentUser?.uid{
                         if selectedWeek == "current" {
-                            viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: viewModel.userTickets[0].ticketFormat, completion: {})
+                            viewModel.fetchUserTickets(uid: uid, groupNumber: 0) {
+                                viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: viewModel.userTickets[0].ticketFormat, completion: {})
+                            }
                         }
                         else {
                             viewModel.fetchPastBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})

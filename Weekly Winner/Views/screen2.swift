@@ -79,18 +79,33 @@ struct BettingAppView: View {
                 ScrollView {
                     VStack(spacing: 5) {
                         if viewModel.selectedGameType == "NFL" {
-                            ForEach(viewModel.NFLgames, id: \.idd) { game in // HARDCODE NCAAF
-                                if game.commenceTime.dateValue() > Date() {
-                                    gameRowView(game: game)
-                                }
-                            }.padding(.horizontal)
+                            if !viewModel.NFLgames.isEmpty {
+                                ForEach(viewModel.NFLgames, id: \.idd) { game in // HARDCODE NCAAF
+                                    if game.commenceTime.dateValue() > Date() {
+                                        gameRowView(game: game)
+                                    }
+                                }.padding(.horizontal)
+                            } else {
+                                Text("No NFL games")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                    .foregroundColor(K.finalColor.textWhite)
+                                    .padding()
+                                    //.frame(width: 50, alignment: .center)
+                            }
                         }
                         if viewModel.selectedGameType == "NCAAF" {
-                            ForEach(viewModel.NCAAFGames, id: \.idd) { game in // HARDCODE NCAAF
-                                if game.commenceTime.dateValue() > Date() {
-                                    gameRowView(game: game)
-                                }
-                            }.padding(.horizontal)
+                            if !viewModel.NCAAFGames.isEmpty {
+                                ForEach(viewModel.NCAAFGames, id: \.idd) { game in // HARDCODE NCAAF
+                                    if game.commenceTime.dateValue() > Date() {
+                                        gameRowView(game: game)
+                                    }
+                                }.padding(.horizontal)
+                            } else {
+                                Text("No NCAAF games")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                    .foregroundColor(K.finalColor.textWhite)
+                                    .padding()
+                            }
                         }
                         if viewModel.selectedGameType == "Upcoming" {
                             ForEach(viewModel.upcomingGames, id: \.idd) { game in 
