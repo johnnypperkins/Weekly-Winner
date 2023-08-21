@@ -29,7 +29,7 @@ extension AppUtility {
 
 //MARK:- Custom Alert View
 extension AppUtility {
-    func showCustomAlert(alertType: AlertType, title: String = "", message: String, isShowCancel: Bool = false, actionButtonTitle: String?, cancelButtonTitle: String, buttonActionCompletion: AlertButtonActionCompletion?) {
+    func showCustomAlert(alertType: AlertType, title: String = "", message: String, isShowCancel: Bool = false, actionButtonTitle: String?, cancelButtonTitle: String?, buttonActionCompletion: AlertButtonActionCompletion?) {
         DispatchQueue.main.async {
             guard let window = UIApplication.shared.connectedScenes
                     .filter({$0.activationState == .foregroundActive})

@@ -45,7 +45,7 @@ struct CustomAlertView: View {
     var message:String
     var isShowCancel: Bool = false
     var actionButtonTitle:String?
-    var cancelButtonTitle:String = K.appButtonTitle.ok
+    var cancelButtonTitle:String?
     var buttonActionCompletion:AlertButtonActionCompletion?
     @State var height : CGFloat = 0.0
     
@@ -90,9 +90,10 @@ struct CustomAlertView: View {
                             buttonActionCompletion?(.okButton)
                         }
                     }
-                    ButtonComponent(title: cancelButtonTitle) {
+                    if actionButtonTitle != nil {
+                        ButtonComponent(title: cancelButtonTitle ?? K.appButtonTitle.cancel) {
                             buttonActionCompletion?(.cancelButton)
-                        
+                        }
                         
                     }
                     Spacer()

@@ -8,6 +8,8 @@
 import SwiftUI
 import Firebase
 import Kingfisher
+import SafariServices
+
 
 struct UserProfileView: View {
     @StateObject var authenticationVM = authenticationViewModel()
@@ -15,6 +17,7 @@ struct UserProfileView: View {
     @StateObject var ticketVM = ticketViewModel()
     @StateObject var groupsVM = groupsViewModel()
     @StateObject var countdownTimer = CountdownTimer()
+    @State private var showWebpage = false
     
     var body: some View {
         VStack(spacing: 15) {
@@ -36,8 +39,24 @@ struct UserProfileView: View {
             }.padding(.bottom,45)
 
         }
+        .sheet(isPresented: $showWebpage) {
+            SafariView(url: URL(string: authenticationVM.updateURL)!)
+                                    }
         .background(K.finalColor.backgroundBlue)
         .onAppear() {
+            authenticationVM.forceUpdate () {
+                if authenticationVM.updateURL != ""{
+                    print("update url" + authenticationVM.updateURL)
+                    print("update url" + authenticationVM.updateURL)
+                    AppUtility.shared.showCustomAlert(alertType: .none, message: "There is a new update. Click here to update", actionButtonTitle: K.appButtonTitle.ok, cancelButtonTitle: nil) { action in
+                        if action == AlertButtonAction.okButton{
+                            showWebpage.toggle()
+                        }
+                        
+                    }
+                }
+            }
+            
             print("appeared")
             authenticationVM.fetchUser() {
                 
@@ -50,6 +69,17 @@ struct UserProfileView: View {
     }
 }
 
+struct SafariView: UIViewControllerRepresentable {
+    let url: URL
+
+    func makeUIViewController(context: UIViewControllerRepresentableContext<SafariView>) -> SFSafariViewController {
+        return SFSafariViewController(url: url)
+    }
+
+    func updateUIViewController(_ uiViewController: SFSafariViewController, context: UIViewControllerRepresentableContext<SafariView>) {
+        // Update the view controller if needed
+    }
+}
 
 struct ProfileHeaderView: View {
     @StateObject var authVM: authenticationViewModel
