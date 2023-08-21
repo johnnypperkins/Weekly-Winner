@@ -328,7 +328,7 @@ struct ticketView: View {
                                 if index < betArray.count {
                                     BetCard(bet: betArray[index], uid: uid, selectedWeek: selectedWeek, ownCard: ownTicket, viewModel: viewModel)
                                 } else {
-                                    EmptyBetCard()
+                                    EmptyBetCard(betArray: betArray)
                                 }
                                 if index != totalBetsCount - 1 {
                                     Divider()
@@ -410,15 +410,28 @@ struct ticketView: View {
         }
 
         struct EmptyBetCard: View {
+            var betArray: [Bet]
             var body: some View {
-                Rectangle()
-                    .fill(Color(red: 0.13, green: 0.14, blue: 0.34))
-                    .frame(width: 291, height: 30)
-                    .overlay(
-                        Text("Empty Bet")
-                            .font(.custom(K.customFonts.lexendDecaLight, size: 14))
-                            .foregroundColor(.white)
-                    )
+                if betArray.contains(where: { $0.result.rawValue == "loss" }) {
+                    Rectangle()
+                        .fill(K.finalColor.deleteRed)
+                        .frame(width: 291, height: 35)
+                        .overlay(
+                            Text("Forced Loss")
+                                .font(.custom(K.customFonts.lexendDecaLight, size: 14))
+                                .foregroundColor(.white)
+                        ).cornerRadius(7.5)
+
+                } else {
+                    Rectangle()
+                        .fill(Color(red: 0.13, green: 0.14, blue: 0.34))
+                        .frame(width: 291, height: 30)
+                        .overlay(
+                            Text("Empty Bet")
+                                .font(.custom(K.customFonts.lexendDecaLight, size: 14))
+                                .foregroundColor(.white)
+                        )
+                }
             }
         }
 

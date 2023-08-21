@@ -262,6 +262,21 @@ struct groupsView: View {
                                         }
                                         HStack {
                                             Spacer()
+                                            if Auth.auth().currentUser?.uid == "J4ufka1oqVbQ2jDqaFIB0KPYCsD2" { // Reid UID
+                                                Button(action: {
+                                                    isGroupSettingsViewPresented = true
+                                                }) {
+                                                    Image(systemName: "gearshape")
+                                                        .resizable()
+                                                        .frame(width: 20, height: 20)
+                                                    //.padding()
+                                                        .foregroundColor(.white)
+                                                }
+                                                .sheet(isPresented: $isGroupSettingsViewPresented) {
+                                                    groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel, groupAdmin: viewModel.userTickets[selectedGroup-1].groupAdmin, groupNum: selectedGroup-1, ticketFormat: viewModel.userTickets[selectedGroup-1].ticketFormat)
+                                                        .presentationDetents([viewModel.userTickets[selectedGroup-1].groupAdmin == Auth.auth().currentUser?.uid ? .fraction(0.75) : .fraction(0.15)])
+                                                }
+                                            }
                                             Button(action: {
                                                 isGlobalPrizesShowing = true
                                             }) {

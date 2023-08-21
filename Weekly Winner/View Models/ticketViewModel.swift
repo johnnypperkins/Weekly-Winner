@@ -172,6 +172,7 @@ class ticketViewModel: ObservableObject {
                     let bet = self.totalBetArrays[index]
                     if bet.count > 1 {
                         self.updateBetsInResponseToLoss(betArray: &self.totalBetArrays[index], maxBetsPlaced: self.currentTicketFormat[index], groupNumber: groupNumber, betNumber: index + 1)
+                        print("BET UPDATED BLAH BLAH")
                     }
                 }
                 
