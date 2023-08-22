@@ -903,7 +903,8 @@ struct chatView: View {
     @ObservedObject var groupsViewModel: groupsViewModel
     @State private var chatMessage: String = "" // State variable to hold the chat message
     //@State private var isChatsLoaded: Bool = false
-
+    
+    
 
     var body: some View {
         
@@ -942,25 +943,8 @@ struct chatView: View {
 
                 ScrollView {
                     ForEach(0..<viewModel.allChats.count, id: \.self) { index in
-                        HStack {
-                            VStack(alignment: .leading, spacing: 0) {
-                                Text("\(viewModel.allChats[index].username)").padding(EdgeInsets(top: 5, leading: 5, bottom: 0, trailing: 0))
-                                    .font(.custom(K.customFonts.poppinsMedium, size: 8))
-                                    .foregroundColor(K.finalColor.textWhite)
-                                Text("\(viewModel.allChats[index].messageContent)")
-                                    .padding(EdgeInsets(top: 3, leading: 5, bottom: 3, trailing: 5))
-                                    .font(.custom(K.customFonts.poppinsMedium, size: 15))
-                                    .foregroundColor(K.finalColor.textWhite)
-//                                    .background(K.veryLightBlue)
-                                    .cornerRadius(5)
-                                    
-                            }.padding(EdgeInsets(top: 5, leading: 5, bottom: 0, trailing: 5))
-                            
-                        Spacer()
-                            Text("\(formatDateMMMDHMM.format(date: viewModel.allChats[index].timeSent))").font(.custom(K.customFonts.poppinsMedium, size: 8))
-                                .foregroundColor(K.finalColor.textWhite)
-                                .padding(EdgeInsets(top: 10, leading: 0, bottom: 0, trailing: 5))
-                        }
+                        chatCellView(viewModel: viewModel, message: viewModel.allChats[index])
+                        
                     }
                     
                 }.frame(height: 400)
@@ -993,6 +977,164 @@ struct chatView: View {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
+
+struct chatCellView: View {
+    @ObservedObject var viewModel: chatViewModel
+    @State private var flagged = false
+    @State var isPresented = false
+    var message: Message
+ 
+    @State private var isFocused: Bool = false
+    
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 0) {
+                
+                Text("\(message.username)").padding(EdgeInsets(top: 5, leading: 5, bottom: 0, trailing: 0))
+                    .font(.custom(K.customFonts.poppinsMedium, size: 8))
+                    .foregroundColor(K.finalColor.textWhite)
+                
+                
+                Text("\(message.messageContent)")
+                    .padding(EdgeInsets(top: 3, leading: 5, bottom: 3, trailing: 5))
+                    .font(.custom(K.customFonts.poppinsMedium, size: 15))
+                    .foregroundColor(K.finalColor.textWhite)
+                //                                    .background(K.veryLightBlue)
+                    .cornerRadius(5)
+                
+            }.padding(EdgeInsets(top: 5, leading: 5, bottom: 0, trailing: 5))
+            
+        Spacer()
+            VStack(alignment: .trailing) {
+                if !flagged {
+                    Button(action: {
+                        isPresented.toggle()
+                        flagged.toggle()
+                    }) {
+                        Image(systemName: "flag")
+                            .resizable()
+                            .frame(width: 10, height: 10)
+                            .foregroundColor(.white)
+                            .padding(.trailing,5)
+                    }
+                } else {
+                    Image(systemName: "flag.fill")
+                        .resizable()
+                        .frame(width: 10, height: 10)
+                        .foregroundColor(.white)
+                        .padding(.trailing,5)
+                }
+                Text("\(formatDateMMMDHMM.format(date: message.timeSent))").font(.custom(K.customFonts.poppinsMedium, size: 8))
+                    .foregroundColor(K.finalColor.textWhite)
+                    .padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing: 5))
+            }
+        }
+        .sheet(isPresented: $isPresented, content: {
+            reportComment(viewModel: viewModel, comment: message, isFocused: $isFocused)
+                .presentationDetents([isFocused ? .fraction(0.75) : .fraction(0.40)])
+                
+        })
+        
+        
+    }
+}
+
+
+
+struct reportComment: View {
+    @Environment(\.dismiss) var dismiss
+    @ObservedObject var viewModel: chatViewModel
+    @State private var reportReason = ""
+    var comment: Message
+    @Binding var isFocused: Bool
+
+    var body: some View {
+        VStack {
+//            HStack {
+//                Button {
+//                    // 2
+//                    dismiss()
+//
+//                } label: {
+//                    HStack {
+//                        Image(systemName: "arrowshape.backward.fill")
+//                            .resizable()
+//                            .foregroundColor(Color("Color 1"))
+//                            .padding(.leading)
+//                            .frame(width: 40,height: 17)
+//                    }
+//                }
+//                Spacer()
+//            }
+//            .padding(.top)
+            
+
+            Text("Report Comment")
+                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 24).weight(.medium))
+                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                .padding(.top)
+            HStack() {
+                TextField("", text: $reportReason, axis: .vertical)
+                    .placeholder(when: reportReason.isEmpty, placeholder: {
+                        Text("What is your reason...").foregroundColor(.gray)
+                    })
+                    .lineLimit(3, reservesSpace: true)
+                    .foregroundColor(.white)
+                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                    .accentColor(.white)
+                    .textInputAutocapitalization(.sentences)
+                    .disableAutocorrection(false)
+                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                    .submitLabel(.done)
+                    .onTapGesture {
+                        withAnimation{
+                            isFocused = true
+                        }
+                    }
+                    .onSubmit {
+                        withAnimation {
+                            isFocused = false
+                        }
+                    }
+
+            }
+            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 100, maxHeight: 100)
+            .cornerRadius(15)
+            .padding(.horizontal,16)
+
+            Button(action: {
+                viewModel.reportComment(comment: comment, reason: reportReason)
+                withAnimation {
+                    dismiss()
+                }
+
+            }) {
+                HStack{
+                    Spacer()
+
+                    Text("Update")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                        .foregroundColor(.white)
+                    //shadow
+
+                    Spacer()
+                }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+                    .background(Color(red: 0.31, green: 0.57, blue: 1))
+                    .cornerRadius(10)
+                    .padding(.horizontal,16)
+                    .padding(.bottom,30)
+
+            }
+            .padding()
+
+            Spacer()
+        }.background(Color(red: 0.02, green: 0.05, blue: 0.26))
+    }
+}
+
 
 struct groupsView_Previews: PreviewProvider {
     static var previews: some View {

@@ -18,6 +18,32 @@ class chatViewModel:ObservableObject {
         chatService.removeListener()
     }
     
+
+    func reportComment(comment: Message, reason: String) {
+
+        // Upload the flagged comment and reason to Firestore
+        let db = Firestore.firestore()
+
+        let data = ["userID": comment.userID,
+                    "messageContent": comment.messageContent,
+                    "username": comment.username,
+                    "groupID": comment.groupID,
+                    "timestamp": Timestamp(date: Date()),
+                    "reason": reason] as [String: Any]
+
+        Firestore.firestore()
+            .collection("flaggedComments")
+            .document()
+            .setData(data) { error in
+                if let error = error {
+                    print("DEBUG: Failed to upload tweet with error .. \(error.localizedDescription)")
+                    return
+                }
+                print("DEBUG: Did upload tweet..")
+
+            }
+    }
+
     func uploadChat(message: String, groupID: String) {
         guard let userID = Auth.auth().currentUser?.uid else { return }
         

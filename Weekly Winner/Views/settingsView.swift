@@ -125,6 +125,7 @@ struct settingsView: View {
                                         .foregroundColor(.white)
                                     
                                     
+                                    
                                     HStack {
                                         ZStack {
                                             Circle()
@@ -190,7 +191,7 @@ struct settingsView: View {
                                     
                                     Divider()
                                     
-                                    NavigationLink(destination: {}) {
+                                    
                                         HStack{
                                             ZStack{
                                                 Circle()
@@ -206,6 +207,10 @@ struct settingsView: View {
                                                 .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
                                                 .foregroundColor(.white)
                                         }.padding(.vertical,10)
+                                    .onTapGesture {
+                                        if let url = URL(string: "https://forms.gle/kwyQbAGB4SRs7EVFA") {
+                                            UIApplication.shared.open(url)
+                                        }
                                     }
                                     
                                     //Divider()
@@ -288,22 +293,26 @@ struct settingsView: View {
                                 }
                             Spacer()
                             //Color.white.edgesIgnoringSafeArea(.all)
-                        }
+                        }.edgesIgnoringSafeArea(.bottom)
                         .frame(minWidth: 0, maxWidth: .infinity)
                         .padding(.horizontal, 16)
                         .background(Color(red: 0.02, green: 0.05, blue: 0.26))
                         .frame(maxWidth: .infinity,maxHeight: .infinity, alignment: .top)
                         .scrollContentBackground(.hidden)
                         .background(Color.white.edgesIgnoringSafeArea(.all))
-                    }.padding(.bottom,40)
+                    }.edgesIgnoringSafeArea(.bottom)
+                        .padding(.bottom,40)
                     Spacer()
                     //Spacer()
-                }
+                }.edgesIgnoringSafeArea(.bottom)
                 
                 .toolbar(.hidden)
                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
                 .navigationBarBackButtonHidden()
+                .edgesIgnoringSafeArea(.bottom)
             }
+            .background(Color(red: 0.02, green: 0.05, blue: 0.26))
+            .edgesIgnoringSafeArea(.bottom)
         }
         
     }
@@ -479,6 +488,16 @@ struct TermsAndConditionsViewSettings: View {
                         .padding(.bottom)
                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
                         .foregroundColor(.white)
+                    
+                    Text("Disclaimer of Betting Advice and Odds")
+                        .font(Font.custom(K.customFonts.lexendDecaSB, size: 14))
+                        .foregroundColor(.white)
+                        .padding()
+                    Text("By participating in any contests or activities that award prizes through our app, you grant WagerPool the right to use your name, likeness, image, photograph, voice, biographical information, and any statements made by you on WagerPool for promotional purposes, including pictures, social media posts, advertisements, and other promotional materials. Your Likeness may be featured on the Company's platforms. Additionally, you consent to the Company's affiliate, WagerPool, using any data, picks, bets, predictions, and related information generated through your participation for promotional purposes. By participating, you waive rights to inspect or approve finished materials and release the Company and WagerPool from claims. This agreement is binding, and you acknowledge your consent for the use of your Likeness and data as described.")
+                        .padding(.bottom)
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                    
                 }.padding()
                 VStack{
                     Text("Termination")
@@ -557,6 +576,15 @@ struct ourMissionView: View {
                         .padding(.bottom)
                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
                         .foregroundColor(.white)
+                    Text("Follow us on Instagram to keep up with weekly winners and exciting bets!")
+                        .padding(.bottom)
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                        .foregroundColor(.white)
+                    Image("InstagramIcon")
+                        .resizable()
+                        .foregroundColor(.white)
+                    
+                    
                 }.padding(.horizontal,16)
             }.background(Color(red: 0.02, green: 0.05, blue: 0.26))
         }.navigationBarBackButtonHidden()
