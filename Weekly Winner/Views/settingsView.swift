@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Kingfisher
+import SafariServices
 //import SafariServices
 //import CustomAlert
 
@@ -123,43 +124,29 @@ struct settingsView: View {
                                         .font(Font.custom(K.customFonts.lexendDecaSB, size: 16).weight(.semibold))
                                         .foregroundColor(.white)
                                     
-                                    NavigationLink(destination: {}) {
-                                        HStack{
-                                            ZStack{
-                                                Circle()
-                                                    .frame(width: 40, height: 40)
-                                                    .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                                    .cornerRadius(43)
-                                                Image(systemName: "newspaper")
-                                                    .resizable()
-                                                    .frame(width: 20, height: 20)
-                                                    .foregroundColor(.white)
-                                            }
-                                            Text("Rules")
-                                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
-                                                .foregroundColor(.white)
-                                        }.padding(.vertical,10)
-                                    }
                                     
-//                                    Divider()
-//
-//                                    NavigationLink(destination: {prizesView()}) {
-//                                        HStack{
-//                                            ZStack{
-//                                                Circle()
-//                                                    .frame(width: 40, height: 40)
-//                                                    .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
-//                                                    .cornerRadius(43)
-//                                                Image(systemName: "money")
-//                                                    .resizable()
-//                                                    .frame(width: 20, height: 20)
-//                                                    .foregroundColor(.white)
-//                                            }
-//                                            Text("Prizes")
-//                                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
-//                                                .foregroundColor(.white)
-//                                        }.padding(.vertical,10)
-//                                    }
+                                    HStack {
+                                        ZStack {
+                                            Circle()
+                                                .frame(width: 40, height: 40)
+                                                .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                                .cornerRadius(43)
+                                            Image(systemName: "newspaper")
+                                                .resizable()
+                                                .frame(width: 20, height: 20)
+                                                .foregroundColor(.white)
+                                        }
+                                        Text("How to play")
+                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
+                                            .foregroundColor(.white)
+                                    }
+                                    .padding(.vertical, 10)
+                                                .onTapGesture {
+                                                    if let url = URL(string: "https://www.youtube.com/watch?v=8lYjqQby3AI&t=16s") {
+                                                        UIApplication.shared.open(url)
+                                                    }
+                                                }
+                                    
                                     
                                     Divider()
                                     
@@ -321,7 +308,47 @@ struct settingsView: View {
         
     }
 }
+struct YouTubeButtonContent: View {
+    var body: some View {
+        HStack {
+            ZStack {
+                Circle()
+                    .frame(width: 40, height: 40)
+                    .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
+                    .cornerRadius(43)
+                Image(systemName: "newspaper")
+                    .resizable()
+                    .frame(width: 20, height: 20)
+                    .foregroundColor(.white)
+            }
+            Text("How to play")
+                .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
+                .foregroundColor(.white)
+        }
+        .padding(.vertical, 10)
+        //.padding()
+//        .background(Color.blue)
+//        .cornerRadius(8)
+    }
+}
 
+//NavigationLink(destination: {TermsAndConditionsViewSettings()}) {
+//    HStack{
+//        ZStack{
+//            Circle()
+//                .frame(width: 40, height: 40)
+//                .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
+//                .cornerRadius(43)
+//            Image(systemName: "rectangle.and.pencil.and.ellipsis")
+//                .resizable()
+//                .frame(width: 20, height: 20)
+//                .foregroundColor(.white)
+//        }
+//        Text("Terms and Conditions")
+//            .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
+//            .foregroundColor(.white)
+//    }.padding(.vertical,10)
+//}
 
 //struct SafariView: UIViewControllerRepresentable {
 //    let url: URL
@@ -625,3 +652,10 @@ struct aboutUsView: View {
     }
 }
 
+//
+//func openYouTubeLink() {
+//    if let url = URL(string: "https://www.youtube.com/watch?v=8lYjqQby3AI&t=16s") {
+//        let safariVC = SFSafariViewController(url: url)
+//        present(safariVC, animated: true, completion: nil)
+//    }
+//}

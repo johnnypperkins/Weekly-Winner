@@ -493,13 +493,13 @@ class groupsViewModel: ObservableObject {
 
         // Keep adding Mondays one week later until a Monday in the future is added
         while currentMonday <= Date() {
-            weeks.append(dateFormatter.string(from: currentMonday))
+            weeks.append(formatDateMMDDYY(from: Timestamp(date: currentMonday)))
             currentMonday = calendar.date(byAdding: .day, value: 7, to: currentMonday)!
         }
 
         // Remove the future Monday and replace the last valid Monday with "Current Week"
         weeks.removeLast()
-        weeks.append("Current Week")
+        weeks.append("Current")
         weeks.reverse()
 
         return weeks
@@ -545,7 +545,9 @@ class groupsViewModel: ObservableObject {
                         } else {
                             for document in snapshot!.documents {
                                 document.reference.updateData([
-                                    "ticketFormat": newTicketFormat
+                                    "ticketFormat": newTicketFormat,
+                                    "totalPotentialWon": 0,
+                                    "totalWon": 0
                                 ]) { err in
                                     if let err = err {
                                         print("Error updating ticket: \(err)")

@@ -351,7 +351,7 @@ struct ProfileStatsView: View {
               .font(Font.custom(K.customFonts.lexendDecaSB, size: 18))
               .foregroundColor(.white)
 
-          Text("Member since: " + formatDateMMDDYYYY(from: user.dateJoined))
+          Text("Member since: " + formatDateMMDDYY(from: user.dateJoined))
               .font(Font.custom(K.customFonts.lexendDecaSB, size: 18))
               .foregroundColor(.white)
           
