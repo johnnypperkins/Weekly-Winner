@@ -284,7 +284,7 @@ struct groupsView: View {
                                                     .resizable()
                                                     .frame(width: 20, height: 20)
                                                 //.padding()
-                                                    .foregroundColor(.white)
+                                                    .foregroundColor(K.finalColor.winningGreen)
                                             }
                                                 .sheet(isPresented: $isGlobalPrizesShowing) {
                                                     globalPrizesView()

@@ -64,6 +64,30 @@ class ticketViewModel: ObservableObject {
                 }
             }
     }
+    
+    func fetchPastFriendTicket(uid: String, with groupID: String, completion: @escaping (Result<Ticket, Error>) -> Void) { // Ticket99
+        let db = Firestore.firestore()
+        
+        db.collection("users").document(uid).collection("tickets").document("week").collection("pastWeekTickets")
+            .whereField("groupID", isEqualTo: groupID)
+            .getDocuments { (querySnapshot, err) in
+                if let err = err {
+                    print("Error getting documents: \(err)")
+                    completion(.failure(err))
+                } else {
+                    for document in querySnapshot!.documents {
+                        do {
+                            let ticket = try document.data(as: Ticket.self) // Ticket99
+                            self.userTickets.append(ticket)
+                            completion(.success(ticket))
+                        } catch {
+                            print("Error decoding group: \(error)")
+                            completion(.failure(error))
+                        }
+                    }
+                }
+            }
+    }
 
     func fetchUserTickets(uid: String, groupNumber: Int, completion: @escaping () -> Void) {
         guard let userId = Auth.auth().currentUser?.uid else { return }

@@ -16,41 +16,51 @@ struct globalPrizesView: View {
         NavigationStack {
             ZStack {
                 K.finalColor.backgroundBlue.ignoresSafeArea(.all)
-                HStack (alignment: .center){
-                    VStack (alignment: .leading, spacing: 10){
+                VStack {
+                    HStack {
+                        Spacer()
+                        Text("WEEKLY GLOBAL PRIZES")
+                            .foregroundColor(.white)
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                            .padding(.bottom)
+                        Spacer()
+                    }
+                    HStack (alignment: .center){
+                        VStack (alignment: .leading, spacing: 10){
                             Text("1st Place: ")
                                 .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
                             Text("2nd Place: ")
                                 .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
                             Text("3rd Place: ")
                                 .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
                             Text("4th Place: ")
                                 .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
                             Text("5th Place: ")
                                 .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
                         }
-                    if viewModel.canViewPrizes {
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("$\(viewModel.prizes[0])")
-                                .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
-                            Text("$\(viewModel.prizes[1])")
-                                .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
-                            Text("$\(viewModel.prizes[2])")
-                                .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
-                            Text("$\(viewModel.prizes[3])")
-                                .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
-                            Text("$\(viewModel.prizes[4])")
-                                .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                        if viewModel.canViewPrizes {
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text("$\(viewModel.prizes[0])")
+                                    .foregroundColor(.white)
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                Text("$\(viewModel.prizes[1])")
+                                    .foregroundColor(.white)
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                Text("$\(viewModel.prizes[2])")
+                                    .foregroundColor(.white)
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                Text("$\(viewModel.prizes[3])")
+                                    .foregroundColor(.white)
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                Text("$\(viewModel.prizes[4])")
+                                    .foregroundColor(.white)
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                            }
                         }
                     }
                 }

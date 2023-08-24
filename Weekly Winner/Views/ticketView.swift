@@ -156,7 +156,7 @@ struct ticketView: View {
                                 VStack {
                                     if selectedWeek == "current" {
                                         ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
-                                            if viewModel.currentTicketFormat.count > 0 && viewModel.isTFLoaded == true  {
+                                            if viewModel.currentTicketFormat.count > 0 && viewModel.isTFLoaded == true && viewModel.totalBetArrays.count == viewModel.currentTicketFormat.count {
                                                 if viewModel.isBetsLoaded {
                                                     SectionTitle(title: parlayTitle(ticketFormat: viewModel.currentTicketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.currentTicketFormat[parlayIndex], uid: Auth.auth().currentUser?.uid ?? "", selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, viewModel: viewModel)
                                             }
@@ -197,12 +197,16 @@ struct ticketView: View {
                     selectedGroup = 0
                     if uid != Auth.auth().currentUser?.uid{
                         if selectedWeek == "current" {
-                            viewModel.fetchUserTickets(uid: uid, groupNumber: 0) {
-                                viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: viewModel.userTickets[0].ticketFormat, completion: {})
+                            viewModel.fetchFriendTicket(uid: uid, with: groupID) {_ in
+                                
+                                viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: viewModel.userTickets[0].ticketFormat, completion: {}) // usertickets is set to only one ticket here
                             }
                         }
                         else {
-                            viewModel.fetchPastBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
+                            viewModel.fetchPastFriendTicket(uid: uid, with: groupID) {_ in
+                                
+                                viewModel.fetchPastBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
+                            }
                         }
                     }
                         
