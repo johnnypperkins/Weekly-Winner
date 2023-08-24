@@ -56,6 +56,7 @@ struct ticketView: View {
                                     self.selectedGroup = index
                                     //viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
                                     viewModel.isBetsLoaded = false
+                                    viewModel.isTFLoaded = false
                                     if selectedWeek == "current" {
                                         viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, completion: {})
                                     } else {
@@ -149,69 +150,16 @@ struct ticketView: View {
                                 
                                 
                             }.padding([.horizontal,.top])
-//                        }
-//                        else {
-//                            HStack (alignment: .center, spacing: 23){
-//                                HStack (spacing: 0) {
-//                                    VStack{
-//                                        Text("Potential").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite).padding(.bottom,14)
-//
-//                                        Text("\(String(format: "%.0f", viewModel.totalPotentialWon))")
-//                                            .font(.custom("Futura", size: 20))
-//                                            .foregroundColor(K.finalColor.potentialOrange)
-//                                    }.padding(.vertical,5)
-//                                }.padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-//                                    .frame(width: 105, height: 55, alignment: .center)
-//                                    .background(
-//                                        RoundedRectangle(cornerRadius: 7.5)
-//                                            .fill(K.finalColor.cardBlue) // Change the opacity as needed
-//                                    )
-//                                    .cornerRadius(7.5)
-//
-//                                HStack (spacing: 0){
-//                                    VStack{
-//                                        Text("Total").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
-//                                            .padding(.bottom,14)
-//                                        Text("\(String(format: "%.0f", viewModel.totalWon))").font(.custom("Futura", size: 20)).foregroundColor(K.finalColor.winningGreen)
-//                                    }.padding(.vertical,5)
-//                                }
-//                                .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-//                                .frame(width: 105, height: 55, alignment: .center)
-//                                .background(
-//                                    RoundedRectangle(cornerRadius: 7.5)
-//                                        .fill(K.finalColor.cardBlue) // Change the opacity as needed
-//                                )
-//                                .cornerRadius(7.5)
-//                                HStack (spacing: 0){
-//                                    VStack{
-//                                        Text("Rank").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
-//
-//                                        if uid == Auth.auth().currentUser?.uid {
-//                                            Text(viewModel.userTickets[selectedGroup].rank).font(.custom("Futura", size: 20)).foregroundColor(K.finalColor.titleBlue)
-//                                        }
-//                                        else{
-//                                            Text(viewModel.userTickets[0].rank).font(.custom("Futura", size: 20)).foregroundColor(K.finalColor.titleBlue)
-//                                        }
-//                                    }.padding(.vertical,5)
-//                                }
-//                                .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-//                                .frame(width: 105, height: 55, alignment: .center)
-//                                .background(
-//                                    RoundedRectangle(cornerRadius: 7.5)
-//                                        .fill(K.finalColor.cardBlue) // Change the opacity as needed
-//                                )
-//                                .cornerRadius(7.5)
-//
-//                            }.padding([.horizontal,.top])
-//                        }
                         
                         ScrollView {
                             VStack {
                                 VStack {
                                     if selectedWeek == "current" {
                                         ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
-                                            if viewModel.currentTicketFormat.count > 0 {
-                                                SectionTitle(title: parlayTitle(ticketFormat: viewModel.currentTicketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.currentTicketFormat[parlayIndex], uid: Auth.auth().currentUser?.uid ?? "", selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, viewModel: viewModel)
+                                            if viewModel.currentTicketFormat.count > 0 && viewModel.isTFLoaded == true  {
+                                                if viewModel.isBetsLoaded {
+                                                    SectionTitle(title: parlayTitle(ticketFormat: viewModel.currentTicketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.currentTicketFormat[parlayIndex], uid: Auth.auth().currentUser?.uid ?? "", selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, viewModel: viewModel)
+                                            }
                                             }
                                         }
                                     } else {
@@ -230,10 +178,16 @@ struct ticketView: View {
                         }
 
                     } else {
-                        Text("Ticket Disabled")
+                        Text("Disabled, talk to admin.")
+                            .font(.custom(K.customFonts.lexendDecaLight, size: 20))
+                            .foregroundColor(.white)
+                            .padding(.top, 75)
                     }
                 } else {
-                    Text("WagerPool")
+                    Text("")
+                        .font(.custom(K.customFonts.lexendDecaLight, size: 15))
+                        .foregroundColor(.white)
+                        .padding(.top)
                 }
                 Spacer()
             }.padding(.top, uid == Auth.auth().currentUser?.uid ? 75 : 0)
@@ -343,7 +297,7 @@ struct ticketView: View {
                     //.cornerRadius(10)
                     .padding(.bottom, 5)
                 }
-                .frame(width: 311)
+                .frame(width: 320)
             }
             .frame(width: 343)
             .background(Color(red: 0.13, green: 0.14, blue: 0.34))
@@ -376,22 +330,42 @@ struct ticketView: View {
             var body: some View {
                 //HStack {
                     HStack {
-                        HStack {
+                        HStack (spacing: 0) {
                             if bet.result == .forcedLoss {
                                 Text("-")
                             } else {
-                                Text("\(bet.teamBetOn ?? "Null team") \(extra)\(bet.betLine, specifier: "%.0f")")
-                                    .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                //Spacer()
+                                Text("\(bet.teamBetOn ?? "Null Team")")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size:
+                                        bet.teamBetOn?.count ?? 10 < 20 ? 16 : 13))
+                                                 //   (bet.teamBetOn?.count ?? 10 > 35 ? 9: 11)))
+
                                     .foregroundColor(.white)
+                                    //.lineLimit(2)
+                                    .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 5))
+                                    .cornerRadius(7.5)
+                                    .frame(maxWidth: 180)
+                                //.background(Color.backgroundForBetResult(bet.result))
+
+                                
+                               
+                                Text("\(extra)\(bet.betLine, specifier: "%.0f")")
+                                    .font(.custom(K.customFonts.lexendDecaLight, size: 15))
+                                    .foregroundColor(.white)
+                                    .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+                                    //.background(Color.backgroundForBetResult(bet.result))
+                                    .cornerRadius(7.5)
                                 Spacer()
                                 Text(percentageToML(percentage: Double(bet.betOdds)))
                                     .font(.custom(K.customFonts.lexendDecaLight, size: 16))
                                     .foregroundColor(.white)
+                                    .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                    .background(Color.backgroundForBetResult(bet.result))
+                                    .cornerRadius(7.5)
+
                             }
                         }.frame(maxWidth: .infinity, maxHeight: .infinity) // This line
                         .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
-                        .background(Color.backgroundForBetResult(bet.result))
-                        .cornerRadius(7.5)
                         
                         if bet.result == .notStarted && uid == Auth.auth().currentUser?.uid && selectedWeek == "current" && ownCard { // ONLY SHOWS DELETE BUTTON IF .NOTSTARTED
                             Button(action: {
@@ -404,8 +378,9 @@ struct ticketView: View {
 
                             }
                         }
-                    }
-                    .frame(width: 291, height: 35)
+                    }.background(bet.result == .notStarted ? Color.clear : Color.backgroundForBetResult(bet.result))
+                    .cornerRadius(7.5)
+                    .frame(width: 320)
             }
         }
 

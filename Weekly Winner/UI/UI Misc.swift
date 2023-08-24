@@ -70,7 +70,7 @@ struct K {
     }
 
     struct appButtonTitle {
-        static let ok               = "Okay"
+        static let ok               = "Update"
         static let cancel           = "Cancel"
     }
     

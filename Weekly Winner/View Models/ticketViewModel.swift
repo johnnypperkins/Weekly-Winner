@@ -30,6 +30,7 @@ class ticketViewModel: ObservableObject {
     @Published var availableBetsArray: [Int] = []
     
     @Published var isBetsLoaded = false  // Add this line
+    @Published var isTFLoaded = false
     @Published var isTicketEnabled = false
 
     private var db = Firestore.firestore()
@@ -72,6 +73,7 @@ class ticketViewModel: ObservableObject {
             } else if let tickets = tickets {
                 self.userTickets = tickets
                 self.currentTicketFormat = tickets[groupNumber].ticketFormat
+                self.isTFLoaded = true
                 //self.isGroupsLoaded = true  // Set this to true when data is loaded
             }
             completion()
@@ -128,6 +130,7 @@ class ticketViewModel: ObservableObject {
                 } else {
                     self.currentTicketFormat = ticketFormat
                     self.isBetsLoaded = true
+                    self.isTFLoaded = true
                     print("PAST BETS", self.totalBetArrays)
                 }
 
@@ -183,6 +186,7 @@ class ticketViewModel: ObservableObject {
                 } else {
                     self.currentTicketFormat = ticketFormat
                     self.isBetsLoaded = true
+                    self.isTFLoaded = true
                 }
 
                 // Call completion handler

@@ -580,9 +580,7 @@ struct ourMissionView: View {
                         .padding(.bottom)
                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
                         .foregroundColor(.white)
-                    Image("InstagramIcon")
-                        .resizable()
-                        .foregroundColor(.white)
+                    
                     
                     
                 }.padding(.horizontal,16)

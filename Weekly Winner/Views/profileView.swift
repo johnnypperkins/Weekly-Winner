@@ -115,11 +115,14 @@ struct profileView: View {
                                         Spacer()
                                         
                                         NavigationLink(destination: settingsView(), label: {
-                                            Image(systemName: "gearshape")
-                                                .resizable()
-                                                .frame(width: 20, height: 20)
-                                                .foregroundColor(.white)
-                                                .background(Color.clear.padding(30)) // Add this line
+                                            HStack {
+                                                Image(systemName: "gearshape")
+                                                    .resizable()
+                                                    .frame(width: 20, height: 20)
+                                                    .foregroundColor(.white)
+                                                    .background(Color.red.padding(40)) // Add this line
+                                            }.frame(width: 50, height: 50)
+                                                .background(.clear)
                                         })
                                         .id(UUID())
 

@@ -262,7 +262,7 @@ struct groupsView: View {
                                         }
                                         HStack {
                                             Spacer()
-                                            if Auth.auth().currentUser?.uid == "J4ufka1oqVbQ2jDqaFIB0KPYCsD2" { // Reid UID
+                                            if Auth.auth().currentUser?.uid == "fg57TZhmLmWH9TT3WCA3WuXT7dy2" { // reidbrown1 UID
                                                 Button(action: {
                                                     isGroupSettingsViewPresented = true
                                                 }) {

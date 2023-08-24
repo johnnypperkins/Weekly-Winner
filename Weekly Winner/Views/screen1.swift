@@ -46,7 +46,7 @@ struct UserProfileView: View {
         .onAppear() {
             authenticationVM.forceUpdate () {
                 if authenticationVM.updateURL != ""{
-                    AppUtility.shared.showCustomAlert(alertType: .none, message: "There is a new update. Click here to update", actionButtonTitle: K.appButtonTitle.ok, cancelButtonTitle: nil) { action in
+                    AppUtility.shared.showCustomAlert(alertType: .none, message: "There is a new, necessary update. Sorry we know this is annoying...", actionButtonTitle: K.appButtonTitle.ok, cancelButtonTitle: nil) { action in
                         if action == AlertButtonAction.okButton{
                             showWebpage.toggle()
                         }
@@ -102,6 +102,10 @@ struct ProfileHeaderView: View {
                 .frame(height: 30)
 
             Spacer()
+            
+            Link("@WagerPool", destination: URL(string: "https://www.instagram.com/wagerpool/")!)
+                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                .foregroundColor(.white)
             
             
         }
@@ -314,7 +318,7 @@ struct PopularBetView: View {
                     .font(.custom(K.customFonts.poppinsMedium, size: 16))
                     .foregroundColor(.white)
                 Text("\(bookVM.mostPopularBets[index-1].teamName)")
-                    .font(.custom(K.customFonts.poppinsRegular, size: 12))
+                    .font(.custom(K.customFonts.poppinsRegular, size: 11))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center) // This will center the text when it wraps over multiple lines
 

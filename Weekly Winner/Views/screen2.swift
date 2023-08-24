@@ -86,7 +86,7 @@ struct BettingAppView: View {
                                     }
                                 }.padding(.horizontal)
                             } else {
-                                Text("No NFL games")
+                                Text("No Games Available")
                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
                                     .foregroundColor(K.finalColor.textWhite)
                                     .padding()
@@ -378,6 +378,7 @@ struct BetDetailsView: View {
                                         Text("FULL")
                                             .foregroundColor(K.finalColor.textWhite)
                                             .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                            .scaleEffect(x: 2)
                                     }
                                 }.scaleEffect(x: 0.5)
                                 .frame(width: 150, alignment: .center)
@@ -607,10 +608,12 @@ struct BetSliderView: View {
                 .background(K.finalColor.backgroundBlue)
             HStack (spacing: 10){
                 Text("\(teamName)")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: teamName.count < 15 ? 16 : CGFloat(16 * 14) / CGFloat(teamName.count)))
+                    //.font(.custom(K.customFonts.lexendDecaMedium, size: 15))
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: teamName.count < 25 ? 16 : 10))
                     .foregroundColor(.white)
-                    .lineLimit(1)
-                    .frame(width: 150, alignment: .leading)
+                    .lineLimit(3)
+                    .frame(width: 150, height: 40, alignment: .leading)
+                    //.background(.white)
                 Spacer()
                 Text("\(internalExtra)\(String(format: "%.0f", chosenSpread))")
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
