@@ -133,6 +133,8 @@ class groupService {
 //                print("\(tickets) are tickets")
             }
             
+            tickets.sort { $0.totalWon > $1.totalWon }
+
             completion(tickets, nil)
         }
 

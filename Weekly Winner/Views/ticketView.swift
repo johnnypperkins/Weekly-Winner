@@ -314,6 +314,7 @@ struct ticketView: View {
             let uid: String
             let selectedWeek: String
             let ownCard: Bool
+            @State private var canDelete: Bool = false
             //let ownBets: Bool
 
             @ObservedObject var viewModel: ticketViewModel
@@ -373,18 +374,24 @@ struct ticketView: View {
                         
                         if bet.result == .notStarted && uid == Auth.auth().currentUser?.uid && selectedWeek == "current" && ownCard { // ONLY SHOWS DELETE BUTTON IF .NOTSTARTED
                             Button(action: {
-                                self.viewModel.deleteBet(bet: bet)
+                                if canDelete {
+                                    self.viewModel.deleteBet(bet: bet)
+                                }
+                                canDelete = true
                             }) {
                                 Image(systemName: "xmark.circle")
                                     .resizable()
                                     .frame(width: 20, height: 20)
-                                    .foregroundColor(.red)
+                                    .foregroundColor(canDelete ? .red : .red.opacity(0.5))
 
                             }
                         }
                     }.background(bet.result == .notStarted ? Color.clear : Color.backgroundForBetResult(bet.result))
                     .cornerRadius(7.5)
                     .frame(width: 320)
+                    .onAppear() {
+                        canDelete = false
+                    }
             }
         }
 

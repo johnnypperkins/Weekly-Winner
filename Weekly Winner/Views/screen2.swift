@@ -101,18 +101,25 @@ struct BettingAppView: View {
                                     }
                                 }.padding(.horizontal)
                             } else {
-                                Text("No NCAAF games")
+                                Text("No Games Available")
                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
                                     .foregroundColor(K.finalColor.textWhite)
                                     .padding()
                             }
                         }
                         if viewModel.selectedGameType == "Upcoming" {
-                            ForEach(viewModel.upcomingGames, id: \.idd) { game in 
-                                if game.commenceTime.dateValue() >  Date() {
-                                    gameRowView(game: game)
-                                }
-                            }.padding(.horizontal)
+                            if !viewModel.upcomingGames.isEmpty {
+                                ForEach(viewModel.upcomingGames, id: \.idd) { game in
+                                    if game.commenceTime.dateValue() >  Date() {
+                                        gameRowView(game: game)
+                                    }
+                                }.padding(.horizontal)
+                            } else {
+                                Text("No Games Available")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                    .foregroundColor(K.finalColor.textWhite)
+                                    .padding()
+                            }
                         }
                     }.padding(.bottom,80)
                 }.padding(.top,10)
