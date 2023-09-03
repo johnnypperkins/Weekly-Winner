@@ -155,7 +155,7 @@ struct createGroupsView: View {
                                 if isTaken {
                                     takenTextShown = true
                                 } else {
-                                    viewModel.createGroup(groupAdminUsername: authViewModel.username, groupName: groupName, groupSlogan: groupSlogan, password: password, ticketFormat: customizeTicketFormat(oneLegNum,twoLegNum,threeLegNum,fourLegNum,fiveLegNum))
+                                    viewModel.createGroup(groupAdminUsername: UserData.shared.username, groupName: groupName, groupSlogan: groupSlogan, password: password, ticketFormat: customizeTicketFormat(oneLegNum,twoLegNum,threeLegNum,fourLegNum,fiveLegNum))
                                     dismiss()
                                 }
                             }

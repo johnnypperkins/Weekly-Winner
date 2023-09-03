@@ -401,7 +401,7 @@ struct ticketView: View {
                 if betArray.contains(where: { $0.result.rawValue == "loss" }) {
                     Rectangle()
                         .fill(K.finalColor.deleteRed)
-                        .frame(width: 291, height: 35)
+                        .frame(width: 320, height: 35)
                         .overlay(
                             Text("Forced Loss")
                                 .font(.custom(K.customFonts.lexendDecaLight, size: 14))

@@ -140,12 +140,12 @@ class ticketViewModel: ObservableObject {
                     self.totalBetArrays.append(betTempArr)
                 }
 
-                for index in self.totalBetArrays.indices {
-                    let bet = self.totalBetArrays[index]
-                    if bet.count > 1 {
-                        self.updateBetsInResponseToLoss(betArray: &self.totalBetArrays[index], maxBetsPlaced: self.currentTicketFormat[index], groupNumber: groupNumber, betNumber: index + 1)
-                    }
-                }
+//                for index in self.totalBetArrays.indices {
+//                    let bet = self.totalBetArrays[index]
+//                    if bet.count > 1 {
+//                        self.updateBetsInResponseToLoss(betArray: &self.totalBetArrays[index], maxBetsPlaced: self.currentTicketFormat[index], groupNumber: groupNumber, betNumber: index + 1)
+//                    }
+//                }
                 
                 self.calculateTotals(for: groupNumber, ticketFormat: ticketFormat)
 
@@ -195,13 +195,13 @@ class ticketViewModel: ObservableObject {
                         }
                     }
                 }
-                for index in self.totalBetArrays.indices {
-                    let bet = self.totalBetArrays[index]
-                    if bet.count > 1 {
-                        self.updateBetsInResponseToLoss(betArray: &self.totalBetArrays[index], maxBetsPlaced: self.currentTicketFormat[index], groupNumber: groupNumber, betNumber: index + 1)
-                        print("BET UPDATED BLAH BLAH")
-                    }
-                }
+//                for index in self.totalBetArrays.indices {
+//                    let bet = self.totalBetArrays[index]
+//                    if bet.count > 1 {
+//                        self.updateBetsInResponseToLoss(betArray: &self.totalBetArrays[index], maxBetsPlaced: self.currentTicketFormat[index], groupNumber: groupNumber, betNumber: index + 1)
+//                        print("BET UPDATED BLAH BLAH")
+//                    }
+//                }
                 
                 self.calculateTotals(for: groupNumber, ticketFormat: ticketFormat)
 
@@ -253,6 +253,9 @@ class ticketViewModel: ObservableObject {
             }
 
             let remainingSpots = maxBetsPlaced - betArray.count
+            print("MAX BETS PLACED", maxBetsPlaced)
+            print("BET ARRAY COUNT", betArray.count)
+            
             for _ in 0..<remainingSpots {
                 let emptyBet = Bet(groupNumber: groupNumber, groupID: "", betNumber: betNumber, betType: .None, betLine: 0, betOdds: 1, result: .forcedLoss, gameID: "null", timestamp: Timestamp(date: Date()) ) // create as per your requirements
                 betArray.append(emptyBet)

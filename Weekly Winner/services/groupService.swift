@@ -7,6 +7,7 @@
 
 import Foundation
 import Firebase
+import FirebaseFirestore
 
 class groupService {
     private let db = Firestore.firestore()
@@ -38,9 +39,10 @@ class groupService {
             .whereField("groupID", isEqualTo: groupID)
             .whereField("dateCreated", isGreaterThanOrEqualTo: startDate)
             .whereField("dateCreated", isLessThanOrEqualTo: endDate)
-            .order(by: "dateCreated", descending: false) // Must be the first order-by clause
+            .order(by: "dateCreated", descending: false) // This must be the first order-by clause due to the inequality filter
             .order(by: "isEnabled", descending: true)
             .order(by: "totalWon", descending: true)
+
 
         
         query.getDocuments { (querySnapshot, error) in
@@ -50,11 +52,28 @@ class groupService {
                 return
             }
 
-            guard let documents = querySnapshot?.documents else {
+            guard var documents = querySnapshot?.documents else {
                 completion([], nil) // Empty array if no documents found
                 print("ERROR 222")
                 return
             }
+            
+            documents.sort { doc1, doc2 in
+                let isEnabled1 = doc1.data()["isEnabled"] as? Bool ?? false
+                let isEnabled2 = doc2.data()["isEnabled"] as? Bool ?? false
+
+                let totalWon1 = doc1.data()["totalWon"] as? Int ?? 0
+                let totalWon2 = doc2.data()["totalWon"] as? Int ?? 0
+
+                if isEnabled1 != isEnabled2 {
+                    return isEnabled1
+                }
+
+                return totalWon1 > totalWon2
+            }
+
+
+
             
             var tickets: [Ticket] = []
             var totalsArray: [Int] = []
@@ -86,7 +105,7 @@ class groupService {
                         ranksArray.append("\(rank)")
                         lastTotal = total
                     }
-                    print("The index is \(index) and the total is \(total)")
+                    //print("The index is \(index) and the total is \(total)")
                 }
                 
             }
@@ -105,7 +124,7 @@ class groupService {
                         ranksArray.append("\(rank)")
                         lastTotal = total
                     }
-                    print("The index is \(index) and the total is \(total)")
+                    //print("The index is \(index) and the total is \(total)")
                 }
                 
             }
@@ -133,7 +152,7 @@ class groupService {
 //                print("\(tickets) are tickets")
             }
             
-            tickets.sort { $0.totalWon > $1.totalWon }
+            //tickets.sort { $0.totalWon > $1.totalWon }
 
             completion(tickets, nil)
         }
@@ -147,6 +166,7 @@ class groupService {
             .whereField("groupID", isEqualTo: groupID)
             .order(by: "isEnabled", descending: true)
             .order(by: "totalWon", descending: true)
+            .order(by: "totalPotentialWon", descending: true)
 
         //print("here at ranked docs")
         query.getDocuments { (querySnapshot, error) in
@@ -192,7 +212,7 @@ class groupService {
                         ranksArray.append("\(rank)")
                         lastTotal = total
                     }
-                    print("The index is \(index) and the total is \(total)")
+                    //print("The index is \(index) and the total is \(total)")
                 }
                 
             }
@@ -211,7 +231,7 @@ class groupService {
                         ranksArray.append("\(rank)")
                         lastTotal = total
                     }
-                    print("The index is \(index) and the total is \(total)")
+                    //print("The index is \(index) and the total is \(total)")
                 }
                 
             }

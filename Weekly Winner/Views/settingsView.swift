@@ -221,7 +221,7 @@ struct settingsView: View {
                                     Button(action: {
                                         self.showingAlert = true
                                         if showingAlert == true {
-                                            AppUtility.shared.showCustomAlert(alertType: .none, message: "Are you sure you want to sign out", actionButtonTitle: K.appButtonTitle.ok, cancelButtonTitle: K.appButtonTitle.cancel) { action in
+                                            AppUtility.shared.showCustomAlert(alertType: .none, message: "Are you sure you want to sign out", actionButtonTitle: K.appButtonTitle.signOut, cancelButtonTitle: K.appButtonTitle.cancel) { action in
                                                 if action == AlertButtonAction.okButton{
                                                     showContentView.toggle()
                                                     authInfo.signOut()

@@ -132,9 +132,9 @@ struct LoginView: View {
                             
                         }
                         .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                        .cornerRadius(10)
                         .background(Color(red: 0.13, green: 0.14, blue: 0.34))
                         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                        .cornerRadius(15)
                     }
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
                     .padding(.top,10)

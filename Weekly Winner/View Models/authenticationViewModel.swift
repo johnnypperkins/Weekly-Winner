@@ -61,6 +61,8 @@ class authenticationViewModel: ObservableObject {
                     completion()
                     return
                 }
+            print("DATABASE VERSION", version)
+            print("IOS VERSION", self.currentVersion)
                 
             if self.currentVersion != version {
                     self.updateURL = updateURL2

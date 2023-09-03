@@ -135,7 +135,7 @@ class groupsViewModel: ObservableObject {
                 } else if let tickets = tickets {
 //                    DispatchQueue.main.async {
                         self?.currentRankedGroupTickets = tickets
-                        print(tickets)
+                        //print(tickets)
                         print("test print")
                     }
 //                }
@@ -151,7 +151,7 @@ class groupsViewModel: ObservableObject {
                 } else if let tickets = tickets {
 //                    DispatchQueue.main.async {
                         self?.pastRankedGroupTickets = tickets
-                        print(tickets)
+                        //print(tickets)
                         print("test print")
                     }
 //                }
@@ -477,12 +477,15 @@ class groupsViewModel: ObservableObject {
     
     func populateArrayOfDates(from timestamp: Timestamp) -> [String] {
         var weeks: [String] = []
-        let calendar = Calendar.current
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone(identifier: "America/New_York")! // Set to Eastern Time
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMMM, d, yyyy" // Month, Date, Year
+        dateFormatter.timeZone = TimeZone(identifier: "America/New_York")! // Set to Eastern Time
 
-        // Convert Firestore Timestamp to Date
-        let inputDate = timestamp.dateValue()
+        // Convert Firestore Timestamp to Date and adjust to Eastern Time
+        let utcDate = timestamp.dateValue()
+        let inputDate = calendar.date(byAdding: .second, value: TimeZone(identifier: "America/New_York")!.secondsFromGMT(), to: utcDate)!
 
         // Find the most recent Monday (at 12:01 am) in relation to the timestamp
         var currentMonday = inputDate
@@ -491,8 +494,11 @@ class groupsViewModel: ObservableObject {
         }
         currentMonday = calendar.date(bySettingHour: 0, minute: 1, second: 0, of: currentMonday)!
 
+        // Get the current date in Eastern Time
+        let currentDateInEasternTime = calendar.date(byAdding: .second, value: TimeZone(identifier: "America/New_York")!.secondsFromGMT(), to: Date())!
+
         // Keep adding Mondays one week later until a Monday in the future is added
-        while currentMonday <= Date() {
+        while currentMonday <= currentDateInEasternTime {
             weeks.append(formatDateMMDDYY(from: Timestamp(date: currentMonday)))
             currentMonday = calendar.date(byAdding: .day, value: 7, to: currentMonday)!
         }
@@ -504,6 +510,7 @@ class groupsViewModel: ObservableObject {
 
         return weeks
     }
+
 
 
 

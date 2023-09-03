@@ -72,6 +72,8 @@ struct K {
     struct appButtonTitle {
         static let ok               = "Update"
         static let cancel           = "Cancel"
+        static let signOut = "Sign Out"
+        static let leaveGroup = "Leave"
     }
     
     struct customFonts {
@@ -183,11 +185,12 @@ class CountdownTimer: ObservableObject {
     }
 
     private func updateTimeRemaining() {
-        let calendar = Calendar.current
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone(identifier: "America/New_York")!
         let now = Date()
         let nextSunday = calendar.nextDate(after: now, matching: DateComponents(hour: 0, weekday: 2), matchingPolicy: .nextTime)!
         let components = calendar.dateComponents([.day, .hour, .minute, .second], from: now, to: nextSunday)
         timeRemaining = String(format: "%d : %02d : %02d : %02d", components.day ?? 0, components.hour ?? 0, components.minute ?? 0, components.second ?? 0)
     }
-
 }
+

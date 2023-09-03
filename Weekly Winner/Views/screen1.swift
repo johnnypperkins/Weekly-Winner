@@ -106,6 +106,9 @@ struct ProfileHeaderView: View {
             Link("@WagerPool", destination: URL(string: "https://www.instagram.com/wagerpool/")!)
                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
                 .foregroundColor(.white)
+                .padding([.leading,.bottom]) // Adds padding around the link
+                //.background(Color.blue) // Use any color you prefer for the background
+
             
             
         }

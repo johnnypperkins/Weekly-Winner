@@ -63,7 +63,7 @@ struct groupsView: View {
                                         ForEach(1..<viewModel.userTickets.count+1, id: \.self) { index in
                                             Button(action: {
                                                 self.selectedGroup = index
-                                                viewModel.canGetHistoricalData = false
+                                                //viewModel.canGetHistoricalData = false
                                                 viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[index-1].groupID) {
                                                 }
                                                 whichWeek = 0
@@ -391,9 +391,9 @@ struct groupsView: View {
             }
         }.navigationTitle("Groups")
             .onAppear() {
-                viewModel.fetchUserTickets() {
-                    viewModel.fetchUserGroups {}
-                }
+//                viewModel.fetchUserTickets() {
+//                    viewModel.fetchUserGroups {}
+//                }
             }.padding(.top, 75)
             .background(Color(red: 0.02, green: 0.05, blue: 0.26))
     }
@@ -574,24 +574,7 @@ struct BetCard: View {
                 HStack {
                     HStack(spacing: 11) {
                         HStack(spacing: 0) {
-                            if rank == "1" || rank == "T1"{
-                                Image(systemName: "trophy.fill")// lmao fuck with this johnny
-                                    .resizable()
-                                    .frame(width: 15, height: 15)
-                                    .foregroundColor(Color(hex: "D4AF37"))
-                            } else if rank == "2" || rank == "T2" {
-                                Image(systemName: "trophy.fill")
-                                    .resizable()
-                                    .frame(width: 15, height: 15)
-                                    .foregroundColor(Color(hex: "C0C0C0"))
-                            }
-                            else if rank == "3" || rank == "T3" {
-                                Image(systemName: "trophy.fill")
-                                    .resizable()
-                                    .frame(width: 15, height: 15)
-                                    .foregroundColor(Color(hex: "9F7A34"))
-                            }
-                            Text(rank)
+                            Text("\(rank).")
                                 .font(Font.custom(K.customFonts.poppinsMedium, size: 12).weight(.medium))
                                 .foregroundColor(.white)
                                 .padding(.leading,3)
@@ -621,6 +604,26 @@ struct BetCard: View {
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
                                     .foregroundColor(.red)
                             }
+                            HStack(spacing: 0) {
+                                if rank == "1" || rank == "T1"{
+                                    Image(systemName: "trophy.fill")// lmao fuck with this johnny
+                                        .resizable()
+                                        .frame(width: 15, height: 15)
+                                        .foregroundColor(Color(hex: "D4AF37"))
+                                } else if rank == "2" || rank == "T2" {
+                                    Image(systemName: "trophy.fill")
+                                        .resizable()
+                                        .frame(width: 15, height: 15)
+                                        .foregroundColor(Color(hex: "C0C0C0"))
+                                }
+                                else if rank == "3" || rank == "T3" {
+                                    Image(systemName: "trophy.fill")
+                                        .resizable()
+                                        .frame(width: 15, height: 15)
+                                        .foregroundColor(Color(hex: "9F7A34"))
+                                }
+                            }
+                            .frame(maxHeight: .infinity)
                         }
                         .frame(maxHeight: .infinity)
                     }
@@ -628,12 +631,31 @@ struct BetCard: View {
                     
                     Spacer()
                     HStack(alignment: .top, spacing: 10) {
-                        Text("\(ticket.totalPotentialWon) PW")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
-                            .foregroundColor(Color(red: 0.83, green: 0.47, blue: 0.07))
-                        Text("\(ticket.totalWon) TW")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
-                            .foregroundColor(Color(red: 0.24, green: 0.86, blue: 0.02))
+                        if currentWeek {
+                            HStack (alignment: .center) {
+                                Text("\(ticket.totalPotentialWon) ")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                    .foregroundColor(K.finalColor.potentialOrange)
+                                    .frame(width: 45, height: 20, alignment: .center)
+                            }
+                            .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                            .background(K.finalColor.potentialOrange.opacity(0.1))
+                            .cornerRadius(5)
+                        }
+                        HStack (alignment: .center) {
+                            Text("\(ticket.totalWon) ")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                .foregroundColor(K.finalColor.winningGreen)
+                                .frame(width: 45, height: 20, alignment: .center)
+                        }
+                        .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                        .background(K.finalColor.winningGreen.opacity(0.1))
+                        .cornerRadius(5)
+                        .padding(.trailing, currentWeek ? 0 : 20)
+                        
+//                        Text("\(ticket.totalWon)")
+//                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))
+//                            .foregroundColor(Color(red: 0.24, green: 0.86, blue: 0.02))
                     }
                     .frame(maxHeight: .infinity)
                     
