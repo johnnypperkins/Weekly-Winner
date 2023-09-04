@@ -80,6 +80,7 @@ struct SafariView: UIViewControllerRepresentable {
 }
 
 struct ProfileHeaderView: View {
+    @State private var showWebpage = false
     @StateObject var authVM: authenticationViewModel
     var body: some View {
         HStack() {
@@ -103,17 +104,29 @@ struct ProfileHeaderView: View {
 
             Spacer()
             
-            Link("@WagerPool", destination: URL(string: "https://www.instagram.com/wagerpool/")!)
-                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-                .foregroundColor(.white)
-                .padding([.leading,.bottom]) // Adds padding around the link
-                //.background(Color.blue) // Use any color you prefer for the background
+//            Link("@WagerPool", destination: URL(string: "https://www.instagram.com/wagerpool/")!)
+//                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+//                .foregroundColor(.white)
+//                .padding([.leading,.bottom]) // Adds padding around the link
+//                //.background(Color.blue) // Use any color you prefer for the background
 
+            Button(action: {
+                                            self.showWebpage = true
+                                        }) {
+                                            Text("@WagerPool")
+                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                                .foregroundColor(.white)
+                                                .padding([.leading,.bottom])
+                                        }
+                                        .sheet(isPresented: $showWebpage) {
+                                            SafariView(url: URL(string: "https://www.instagram.com/wagerpool/")!)
+                                        }
             
             
-        }
+        }.padding(.top,5)
     }
 }
+
 
 struct countDown: View {
     @StateObject var countdownTimer = CountdownTimer()
