@@ -686,18 +686,18 @@ struct BetCard: View {
                                     .foregroundColor(.red)
                             }
                             HStack(spacing: 0) {
-                                if rank == "1" || rank == "T1"{
+                                if rank == "1" || rank == "T1" && ticket.totalWon > 0{
                                     Image(systemName: "trophy.fill")// lmao fuck with this johnny
                                         .resizable()
                                         .frame(width: 15, height: 15)
                                         .foregroundColor(Color(hex: "D4AF37"))
-                                } else if rank == "2" || rank == "T2" {
+                                } else if rank == "2" || rank == "T2" && ticket.totalWon > 0{
                                     Image(systemName: "trophy.fill")
                                         .resizable()
                                         .frame(width: 15, height: 15)
                                         .foregroundColor(Color(hex: "C0C0C0"))
                                 }
-                                else if rank == "3" || rank == "T3" {
+                                else if rank == "3" || rank == "T3" && ticket.totalWon > 0{
                                     Image(systemName: "trophy.fill")
                                         .resizable()
                                         .frame(width: 15, height: 15)
@@ -727,12 +727,12 @@ struct BetCard: View {
                             Text("\(ticket.totalWon) ")
                                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
                                 .foregroundColor(K.finalColor.winningGreen)
-                                .frame(width: 45, height: 20, alignment: .center)
+                                .frame(width: currentWeek ? 45 : 110, height: 20, alignment: .center)
                         }
                         .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
                         .background(K.finalColor.winningGreen.opacity(0.1))
                         .cornerRadius(5)
-                        .padding(.trailing, currentWeek ? 0 : 20)
+                        .padding(.trailing, currentWeek ? 0 : 0)
                         
 //                        Text("\(ticket.totalWon)")
 //                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.light))

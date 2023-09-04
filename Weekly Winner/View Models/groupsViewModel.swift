@@ -496,7 +496,8 @@ class groupsViewModel: ObservableObject {
 
         // Get the current date in Eastern Time
         let currentDateInEasternTime = calendar.date(byAdding: .second, value: TimeZone(identifier: "America/New_York")!.secondsFromGMT(), to: Date())!
-
+        print("CURRENT DATE EASTERN", currentDateInEasternTime)
+        
         // Keep adding Mondays one week later until a Monday in the future is added
         while currentMonday <= currentDateInEasternTime {
             weeks.append(formatDateMMDDYY(from: Timestamp(date: currentMonday)))

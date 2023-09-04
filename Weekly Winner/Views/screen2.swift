@@ -82,7 +82,9 @@ struct BettingAppView: View {
                             if !viewModel.NFLgames.isEmpty {
                                 ForEach(viewModel.NFLgames, id: \.idd) { game in // HARDCODE NCAAF
                                     if game.commenceTime.dateValue() > Date() {
-                                        gameRowView(game: game)
+                                        gameRowView(game: game, isDisabled: false)
+                                    } else {
+                                        gameRowView(game: game, isDisabled: true).opacity(0.5)
                                     }
                                 }.padding(.horizontal)
                             } else {
@@ -97,7 +99,9 @@ struct BettingAppView: View {
                             if !viewModel.NCAAFGames.isEmpty {
                                 ForEach(viewModel.NCAAFGames, id: \.idd) { game in // HARDCODE NCAAF
                                     if game.commenceTime.dateValue() > Date() {
-                                        gameRowView(game: game)
+                                        gameRowView(game: game, isDisabled: false)
+                                    } else {
+                                        gameRowView(game: game, isDisabled: true).opacity(0.5)
                                     }
                                 }.padding(.horizontal)
                             } else {
@@ -110,8 +114,8 @@ struct BettingAppView: View {
                         if viewModel.selectedGameType == "Upcoming" {
                             if !viewModel.upcomingGames.isEmpty {
                                 ForEach(viewModel.upcomingGames, id: \.idd) { game in
-                                    if game.commenceTime.dateValue() >  Date() {
-                                        gameRowView(game: game)
+                                    if game.commenceTime.dateValue() > Date() {
+                                        gameRowView(game: game, isDisabled: true)
                                     }
                                 }.padding(.horizontal)
                             } else {
@@ -152,6 +156,7 @@ struct BettingAppView: View {
 }
 
 struct PlaceBetButton: View {
+    let isDisabled: Bool
     let betType: BetType
     @Binding var currentBetType: BetType
     let title: String
@@ -175,11 +180,15 @@ struct PlaceBetButton: View {
         .cornerRadius(currentBetType == betType ? 7.5 : 7.5)
         .shadow(color: currentBetType == betType ? K.veryLightBlue : .clear, radius: 3)
         .scaleEffect(currentBetType == betType ? 1.05 : 1.0)
+        .disabled(isDisabled)
+        
+        
     }
 }
 
 struct gameRowView: View {
     let game: Game
+    let isDisabled: Bool
     @State private var showingAway = false
     @State private var showingTotal = false
     @State private var showingHome = false
@@ -202,12 +211,12 @@ struct gameRowView: View {
                     
                     Spacer()
                     HStack(spacing: 15) {
-                        PlaceBetButton(betType: .betHomeSpread, currentBetType: $betType, title: titleStringH) { // home spread
+                        PlaceBetButton(isDisabled: isDisabled, betType: .betHomeSpread, currentBetType: $betType, title: titleStringH) { // home spread
                             betType = .betHomeSpread
                             showingSheet.toggle()
                         }
                         
-                        PlaceBetButton(betType: .over, currentBetType: $betType, title: "o" + String(format: "%.0f", game.totalOver)) { // over
+                        PlaceBetButton(isDisabled: isDisabled, betType: .over, currentBetType: $betType, title: "o" + String(format: "%.0f", game.totalOver)) { // over
                             betType = .over
                             showingSheet.toggle()
                         }
@@ -223,12 +232,12 @@ struct gameRowView: View {
                         .foregroundColor(.white)
                     Spacer()
                     HStack(spacing: 15) {
-                        PlaceBetButton(betType: .betAwaySpread, currentBetType: $betType, title: titleStringA) {
+                        PlaceBetButton(isDisabled: isDisabled, betType: .betAwaySpread, currentBetType: $betType, title: titleStringA) {
                             betType = .betAwaySpread
                             showingSheet.toggle()
                         }
                         
-                        PlaceBetButton(betType: .under, currentBetType: $betType, title: "u" + String(format: "%.0f", game.totalUnder)) {
+                        PlaceBetButton(isDisabled: isDisabled, betType: .under, currentBetType: $betType, title: "u" + String(format: "%.0f", game.totalUnder)) {
                             betType = .under
                             showingSheet.toggle()
                         }
