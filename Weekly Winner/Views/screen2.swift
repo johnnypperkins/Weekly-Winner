@@ -307,14 +307,14 @@ struct BetDetailsView: View {
     func checkTeamTaken() {
         if betNumber < 0 {
             uploadText = "Ticket Complete"
-            placeBetOpacity = 0.7
+            placeBetOpacity = 0.6
         } else {
             if ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) {
                 uploadText = "Place Bet"
                 placeBetOpacity = 1
             } else {
                 uploadText = "Team Taken"
-                placeBetOpacity = 0.7
+                placeBetOpacity = 0.6
             }
         }
     }
@@ -352,32 +352,34 @@ struct BetDetailsView: View {
                                         .background(K.finalColor.backgroundBlue)
                                 }
                                 VStack {
-                                    ForEach(0..<viewModel.userTickets.count, id: \.self) { index in
-                                        Button(action: {
-                                            groupNumber = index
-                                            ticketVM.fetchUserTickets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber) {
-                                                ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat) {
-                                                    if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
-                                                        betNumber = firstNumberGreaterThanZero
-                                                    } else {
-                                                        betNumber = -99
+                                    ScrollView {
+                                        ForEach(0..<viewModel.userTickets.count, id: \.self) { index in
+                                            Button(action: {
+                                                groupNumber = index
+                                                ticketVM.fetchUserTickets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber) {
+                                                    ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat) {
+                                                        if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
+                                                            betNumber = firstNumberGreaterThanZero
+                                                        } else {
+                                                            betNumber = -99
+                                                        }
+                                                        checkTeamTaken()
                                                     }
-                                                    checkTeamTaken()
                                                 }
-                                            }
-                                        }, label: {
-                                            HStack {
-                                                Text(viewModel.userTickets[index].groupName).tag(index)
-                                                    .foregroundColor(K.finalColor.textWhite)
-                                                    .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-                                            }.frame(width: 100, alignment: .center)
-                                                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
-                                                .background(groupNumber == index ? K.finalColor.titleBlue : K.finalColor.tabSelectedBlue)
-                                                .cornerRadius(5)
-                                            //.scaleEffect(x: 2)
-                                        })
-                                        
-                                    }
+                                            }, label: {
+                                                HStack {
+                                                    Text(viewModel.userTickets[index].groupName).tag(index)
+                                                        .foregroundColor(K.finalColor.textWhite)
+                                                        .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                                }.frame(width: 100, alignment: .center)
+                                                    .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                                    .background(groupNumber == index ? K.finalColor.titleBlue : K.veryLightGray.opacity(0.4))
+                                                    .cornerRadius(5)
+                                                //.scaleEffect(x: 2)
+                                            })
+                                            
+                                        }
+                                    }.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
                                 }.frame(width: 120, height: 120)
                                 .padding(.horizontal)
                                 .onAppear {
@@ -458,7 +460,7 @@ struct BetDetailsView: View {
                                                                             .font(.custom(K.customFonts.lexendDecaLight, size: 16))
                                                                     }.frame(width: 100, alignment: .center)
                                                                         .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
-                                                                        .background(betNumber == index+1 ? K.finalColor.titleBlue : K.finalColor.tabSelectedBlue)
+                                                                        .background(betNumber == index+1 ? K.finalColor.titleBlue : K.veryLightGray.opacity(0.4))
                                                                         .cornerRadius(5)
                                                                         //.padding(.top, availableBets[index] - 1 == index ? 8 : 0)
                                                                 })
@@ -468,28 +470,29 @@ struct BetDetailsView: View {
                                                     
                                                 //}
                                                 
-                                            } else {
-                                                
-                                                    Spacer()
-                                                VStack (alignment: .center){
-                                                    
-                                                    Text("Ticket")
-                                                        .foregroundColor(K.finalColor.textWhite)
-                                                        .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-                                                    Text("Complete")
-                                                        .foregroundColor(K.finalColor.textWhite)
-                                                        .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-                                                    
+                                                } else {
+                                                    VStack {
+                                                        Spacer()
+                                                        VStack (alignment: .center){
+                                                            
+                                                            Text("Ticket")
+                                                                .foregroundColor(K.finalColor.textWhite)
+                                                                .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                                            Text("Complete")
+                                                                .foregroundColor(K.finalColor.textWhite)
+                                                                .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                                            
+                                                        }
+                                                        .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
+                                                        .background(K.finalColor.titleBlue.opacity(0.6))
+                                                        .cornerRadius(5)
+                                                        
+                                                        //.scaleEffect(x: 2)
+                                                        Spacer()
+                                                        
+                                                    }.padding(.top,12.5)
                                                 }
-                                                .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
-                                                .background(K.finalColor.winningGreen.opacity(0.75))
-                                                .cornerRadius(5)
-
-                                                    //.scaleEffect(x: 2)
-                                                    Spacer()
-                                                
-                                            }
-                                        }.padding(EdgeInsets(top: 7.5, leading: 0, bottom: 7.5, trailing: 0))
+                                        }.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
                                     }
                                 }.frame(width: 120, height: 120)
                                     .padding(.horizontal)

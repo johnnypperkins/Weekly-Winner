@@ -27,9 +27,9 @@ struct UserProfileView: View {
                 .padding(.horizontal)
             
             countDown()
-                .padding(.top)
+                .padding(.top, 5)
             //Spacer()
-            ScrollView {
+            VStack {
                 yourGroups(groupsVM: groupsVM)
                     .padding(.horizontal)
                 
@@ -104,23 +104,23 @@ struct ProfileHeaderView: View {
 
             Spacer()
             
-//            Link("@WagerPool", destination: URL(string: "https://www.instagram.com/wagerpool/")!)
-//                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-//                .foregroundColor(.white)
-//                .padding([.leading,.bottom]) // Adds padding around the link
-//                //.background(Color.blue) // Use any color you prefer for the background
+            Link("@WagerPool", destination: URL(string: "https://www.instagram.com/wagerpool/")!)
+                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                .foregroundColor(.white)
+                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 10)) // Adds padding around the link
+                //.background(Color.blue) // Use any color you prefer for the background
 
-            Button(action: {
-                                            self.showWebpage = true
-                                        }) {
-                                            Text("@WagerPool")
-                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                                .foregroundColor(.white)
-                                                .padding([.leading,.bottom])
-                                        }
-                                        .sheet(isPresented: $showWebpage) {
-                                            SafariView(url: URL(string: "https://www.instagram.com/wagerpool/")!)
-                                        }
+//            Button(action: {
+//                                            self.showWebpage = true
+//                                        }) {
+//                                            Text("@WagerPool")
+//                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+//                                                .foregroundColor(.white)
+//                                                .padding([.leading,.bottom])
+//                                        }
+//                                        .sheet(isPresented: $showWebpage) {
+//                                            SafariView(url: URL(string: "https://www.instagram.com/wagerpool/")!)
+//                                        }
             
             
         }.padding(.top,5)
@@ -172,40 +172,55 @@ struct yourGroups: View {
                         // Use your custom view or data here.
                         // Replace `Text("Item \(index)")` with your custom view
                         VStack(alignment: .leading, spacing: 8) {
-                            VStack(alignment: .leading, spacing: 7) {
+                            VStack(alignment: .leading, spacing: 3) {
+                                
+                                if groupsVM.userGroupsLoaded {
+                                    if groupsVM.userGroups[index].groupImageURL != "" {
+                                        HStack {
+                                            Spacer()
+                                            KFImage(URL(string: groupsVM.userGroups[index].groupImageURL))
+                                                .resizable()
+                                                .cornerRadius(7.5)
+                                                .foregroundColor(.clear)
+                                                .scaledToFit()
+                                                .frame(height: 95)
+                                            Spacer()
+                                        }
+                                    }
+                                    else {
+                                        Image(systemName: "photo.circle.fill")
+                                            .resizable()
+                                            .cornerRadius(7.5)
+                                            .foregroundColor(.clear)
+                                            .scaledToFit()
+                                            .frame(height: 95)
+                                    }
+                                }
                                 HStack(alignment: .top) {
+                                    Spacer()
                                     Text(groupsVM.userTickets[index].groupName)
-                                        .font(.custom(K.customFonts.poppinsMedium, size: 14))
+                                        .font(.custom(K.customFonts.poppinsMedium, size: 16))
+                                        .foregroundColor(.white)
+                                    
+                                    Spacer()
+                                    
+                           
+                                }
+                               
+                                
+                            }
+                            VStack(alignment: .leading, spacing: 0) {
+                                HStack() {
+                                    Text("Rank")
+                                        .font(.custom(K.customFonts.poppinsRegular, size: 12))
                                         .foregroundColor(.white)
                                     
                                     Spacer()
                                     
                                     Text("#\(groupsVM.userTickets[index].rank)")
-                                        .font(.custom(K.customFonts.poppinsMedium, size: 14))
+                                        .font(.custom(K.customFonts.poppinsRegular, size: 14))
                                         .foregroundColor(.white)
-                                    
                                 }
-                                if groupsVM.userGroupsLoaded {
-                                    if groupsVM.userGroups[index].groupImageURL != "" {
-                                        KFImage(URL(string: groupsVM.userGroups[index].groupImageURL))
-                                            .resizable()
-                                            .cornerRadius(12)
-                                            .foregroundColor(.clear)
-                                            .scaledToFit()
-                                            .frame(height: 102)
-                                    }
-                                    else {
-                                        Image(systemName: "photo.circle.fill")
-                                            .resizable()
-                                            .cornerRadius(12)
-                                            .foregroundColor(.clear)
-                                            .scaledToFit()
-                                            .frame(height: 102)
-                                    }
-                                }
-                                
-                            }
-                            VStack(alignment: .leading, spacing: 4) {
                                 HStack() {
                                     Text("Potential")
                                         .font(.custom(K.customFonts.poppinsRegular, size: 12))
@@ -231,7 +246,7 @@ struct yourGroups: View {
                             }
                         }
                         .padding(10)
-                        .frame(width: 135, height: 192)
+                        .frame(width: 135, height: 205)
                         .background(self.backgroundColor(for: index))
                         .cornerRadius(12)
                         .overlay(self.overlayShape(for: index))
@@ -273,49 +288,56 @@ struct MostPopularBetsView: View {
             Text("Most Popular Bets")
                 .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
                     .foregroundColor(.white)
-            HStack{
-                ForEach(0...bookVM.mostPopularBets.count/2, id: \.self) { index in
-                    
-                    if index != 0 {
-                        Spacer()
+            VStack {
+                ForEach(0..<bookVM.mostPopularBets.count, id: \.self) { index in
+                    if index < 5 {
                         PopularBetView(index: index, bookVM: bookVM)
                     }
-                    if index == bookVM.mostPopularBets.count/2 {
-                        Spacer()
-                    }
-                    
                 }
-                
             }
-            //.padding(.top)
-            HStack{
-
-                ForEach(bookVM.mostPopularBets.count/2...bookVM.mostPopularBets.count, id: \.self) { index in
-                    if index != bookVM.mostPopularBets.count/2 {
-                        Spacer()
-                        PopularBetView(index: index, bookVM: bookVM)
-                    }
-                    if index == bookVM.mostPopularBets.count {
-                        Spacer()
-                    }
-                }
-
-            }
+//            HStack{
+//                ForEach(0...bookVM.mostPopularBets.count/2, id: \.self) { index in
+//
+//                    if index != 0 {
+//                        Spacer()
+//                        PopularBetView(index: index, bookVM: bookVM)
+//                    }
+//                    if index == bookVM.mostPopularBets.count/2 {
+//                        Spacer()
+//                    }
+//
+//                }
+//
+//            }
+//            //.padding(.top)
+//            HStack{
+//
+//                ForEach(bookVM.mostPopularBets.count/2...bookVM.mostPopularBets.count, id: \.self) { index in
+//                    if index != bookVM.mostPopularBets.count/2 {
+//                        Spacer()
+//                        PopularBetView(index: index, bookVM: bookVM)
+//                    }
+//                    if index == bookVM.mostPopularBets.count {
+//                        Spacer()
+//                    }
+//                }
+//
+//            }
         }
     }
 }
 
 
 struct PopularBetView: View {
-    var index: Int
+    let index: Int
     @StateObject var bookVM: bookViewModel
     private var extra: String {
-        if bookVM.mostPopularBets[index-1].betType == .over {
+        if bookVM.mostPopularBets[index].betType == .over {
             return "O"
-        } else if bookVM.mostPopularBets[index-1].betType == .under {
+        } else if bookVM.mostPopularBets[index].betType == .under {
             return "U"
         } else {
-            if bookVM.mostPopularBets[index-1].betLine >= 0 {
+            if bookVM.mostPopularBets[index].betLine >= 0 {
                 return "+"
             }
         }
@@ -324,30 +346,55 @@ struct PopularBetView: View {
 
     var body: some View {
         
-        VStack(spacing: 1) {
-//            HStack{
-//                Text("#\(index)")
-//                Spacer()
-//            }.frame(alignment: .top)
-            VStack(spacing: 3.74) {
-                Text("\(extra)\(bookVM.mostPopularBets[index-1].betLine)")
-                    .font(.custom(K.customFonts.poppinsMedium, size: 16))
-                    .foregroundColor(.white)
-                Text("\(bookVM.mostPopularBets[index-1].teamName)")
-                    .font(.custom(K.customFonts.poppinsRegular, size: 11))
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center) // This will center the text when it wraps over multiple lines
+        HStack (spacing: 0) {
+            //Spacer()
+            Text("\(index + 1).")
+                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                .foregroundColor(.white)
+                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 10))
 
-                    
-            }
-            .frame(width: 87.57)
-        }
-        .padding(
-            EdgeInsets(top: 0, leading: 9.12, bottom: 0, trailing: 9.12)
-        )
-        .frame(height: 83)
+            Text("\(bookVM.mostPopularBets[index].teamName) \(extra)\(bookVM.mostPopularBets[index].betLine)")
+                .font(.custom(K.customFonts.lexendDecaMedium, size:
+                                bookVM.mostPopularBets[index].teamName.count < 20 ? 16 : 13))
+                             //   (bet.teamBetOn?.count ?? 10 > 35 ? 9: 11)))
+
+                .foregroundColor(.white)
+                .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 5))
+                .cornerRadius(7.5)
+                .frame(maxWidth: 300, alignment: .leading)
+        }.frame(maxWidth: .infinity, maxHeight: .infinity) // This line
+        .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
         .background(K.finalColor.cardBlue)
-        .cornerRadius(9.12)
+        .cornerRadius(7.5)
+        
+        
+        
+        
+//
+//        VStack(spacing: 1) {
+////            HStack{
+////                Text("#\(index)")
+////                Spacer()
+////            }.frame(alignment: .top)
+//            VStack(spacing: 3.74) {
+//                Text("\(extra)\(bookVM.mostPopularBets[index-1].betLine)")
+//                    .font(.custom(K.customFonts.poppinsMedium, size: 16))
+//                    .foregroundColor(.white)
+//                Text("\(bookVM.mostPopularBets[index-1].teamName)")
+//                    .font(.custom(K.customFonts.poppinsRegular, size: 11))
+//                    .foregroundColor(.white)
+//                    .multilineTextAlignment(.center) // This will center the text when it wraps over multiple lines
+//
+//
+//            }
+//            .frame(width: 87.57)
+//        }
+//        .padding(
+//            EdgeInsets(top: 0, leading: 9.12, bottom: 0, trailing: 9.12)
+//        )
+//        .frame(height: 83)
+//        .background(K.finalColor.cardBlue)
+//        .cornerRadius(9.12)
     }
     
 }

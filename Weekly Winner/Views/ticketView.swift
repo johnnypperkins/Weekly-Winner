@@ -345,37 +345,40 @@ struct ticketView: View {
                                 Text("-")
                             } else {
                                 //Spacer()
-                                Text("\(bet.teamBetOn ?? "Null Team")")
+                                Text(percentageToML(percentage: Double(bet.betOdds)))
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                    .foregroundColor(.white)
+                                    .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 10))
+                                    //.background(Color.backgroundForBetResult(bet.result))
+                                    //.background(K.gra)
+                                //.cornerRadius(7.5)
+                                Rectangle()
+                                      .fill(Color.white) // Color of the separator
+                                      .frame(width: 1, height: 20) // Adjust height as needed
+                                //Spacer()
+                                Text("\(bet.teamBetOn ?? "Null Team") \(extra)\(bet.betLine, specifier: "%.0f")")
                                     .font(.custom(K.customFonts.lexendDecaMedium, size:
                                         bet.teamBetOn?.count ?? 10 < 20 ? 16 : 13))
                                                  //   (bet.teamBetOn?.count ?? 10 > 35 ? 9: 11)))
 
                                     .foregroundColor(.white)
-                                    //.lineLimit(2)
-                                    .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 5))
+                                    .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 5))
                                     .cornerRadius(7.5)
-                                    .frame(maxWidth: 180)
+                                    .frame(maxWidth: 250, alignment: .leading)
                                 //.background(Color.backgroundForBetResult(bet.result))
-
                                 
-                               
-                                Text("\(extra)\(bet.betLine, specifier: "%.0f")")
-                                    .font(.custom(K.customFonts.lexendDecaLight, size: 15))
-                                    .foregroundColor(.white)
-                                    .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
-                                    //.background(Color.backgroundForBetResult(bet.result))
-                                    .cornerRadius(7.5)
-                                Spacer()
-                                Text(percentageToML(percentage: Double(bet.betOdds)))
-                                    .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-                                    .foregroundColor(.white)
-                                    .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
-                                    .background(Color.backgroundForBetResult(bet.result))
-                                    .cornerRadius(7.5)
+//                                Text("\(extra)\(bet.betLine, specifier: "%.0f")")
+//                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
+//                                    .foregroundColor(.white)
+//                                    .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+//                                    //.background(Color.backgroundForBetResult(bet.result))
+//                                    .cornerRadius(7.5)
 
                             }
                         }.frame(maxWidth: .infinity, maxHeight: .infinity) // This line
                         .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
+                        .background(bet.result == .notStarted ? K.finalColor.backgroundBlue : Color.backgroundForBetResult(bet.result))
+                        .cornerRadius(7.5)
                         
                         if bet.result == .notStarted && uid == Auth.auth().currentUser?.uid && selectedWeek == "current" && ownCard { // ONLY SHOWS DELETE BUTTON IF .NOTSTARTED
                             Button(action: {
