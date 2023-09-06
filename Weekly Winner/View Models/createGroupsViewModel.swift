@@ -12,9 +12,26 @@ import Firebase
 
 class createGroupsViewModel: ObservableObject {
     @Published var service = groupService()
+    @Published var groupImageURLString = ""
         
-    func createGroup(groupAdminUsername: String, groupName: String, groupSlogan: String, password: String, ticketFormat: [Int]) {
-        service.createGroup(groupAdminUsername: groupAdminUsername, groupName: groupName, groupSlogan: groupSlogan, password: password, ticketFormat: ticketFormat) { result in
+    func createGroup(groupImageURL: UIImage?, groupAdminUsername: String, groupName: String, groupSlogan: String, password: String, ticketFormat: [Int]) {
+        
+        if groupImageURL != nil {
+            imageUploader.uploadImage(use: "group", image: groupImageURL!) { URL in
+                
+                self.groupImageURLString = URL
+                self.service.createGroup(groupAdminUsername: groupAdminUsername, groupName: groupName, groupSlogan: groupSlogan, password: password, ticketFormat: ticketFormat, groupUrl: self.groupImageURLString) { result in
+                    switch result {
+                    case .success(let documentID):
+                        print("Document added with ID: \(documentID)")
+                    case .failure(let error):
+                        print("Error adding document: \(error)")
+                    }
+                }
+            }
+        }
+        else {
+            self.service.createGroup(groupAdminUsername: groupAdminUsername, groupName: groupName, groupSlogan: groupSlogan, password: password, ticketFormat: ticketFormat, groupUrl: "") { result in
                 switch result {
                 case .success(let documentID):
                     print("Document added with ID: \(documentID)")
@@ -23,6 +40,7 @@ class createGroupsViewModel: ObservableObject {
                 }
             }
         }
+    }
     
     func checkIfGroupNameTaken(_ groupName: String, completion: @escaping (Bool) -> Void) {
         let db = Firestore.firestore()
