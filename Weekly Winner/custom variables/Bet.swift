@@ -23,6 +23,10 @@ struct Bet: Identifiable, Codable {
     var result: BetResult
     var gameID: String
     var timestamp: Timestamp
+//    var opposingTeam: String?
+//    var commenceTime: Timestamp
+//    var homeTeamFinalScore: Int
+//    var awayTeamFinalScore: Int
 }
 
 
