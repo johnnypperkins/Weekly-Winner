@@ -714,7 +714,7 @@ struct BetCard: View {
                     HStack(alignment: .top, spacing: 10) {
                         if currentWeek {
                             HStack (alignment: .center) {
-                                Text("\(ticket.totalPotentialWon) ")
+                                Text("\(ticket.totalPotentialWon)")
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
                                     .foregroundColor(K.finalColor.potentialOrange)
                                     .frame(width: 45, height: 20, alignment: .center)
@@ -724,7 +724,7 @@ struct BetCard: View {
                             .cornerRadius(5)
                         }
                         HStack (alignment: .center) {
-                            Text("\(ticket.totalWon) ")
+                            Text("\(ticket.totalWon)")
                                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
                                 .foregroundColor(K.finalColor.winningGreen)
                                 .frame(width: currentWeek ? 45 : 110, height: 20, alignment: .center)

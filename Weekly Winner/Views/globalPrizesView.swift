@@ -12,6 +12,9 @@ import Firebase
 
 struct globalPrizesView: View {
     @StateObject private var viewModel = prizesViewModel()
+    
+    let prizeSize: CGFloat = 25
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -29,37 +32,37 @@ struct globalPrizesView: View {
                         VStack (alignment: .leading, spacing: 10){
                             Text("1st Place: ")
                                 .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
                             Text("2nd Place: ")
                                 .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
                             Text("3rd Place: ")
                                 .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
                             Text("4th Place: ")
                                 .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
                             Text("5th Place: ")
                                 .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
                         }
                         if viewModel.canViewPrizes {
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("$\(viewModel.prizes[0])")
                                     .foregroundColor(.white)
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
                                 Text("$\(viewModel.prizes[1])")
                                     .foregroundColor(.white)
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
                                 Text("$\(viewModel.prizes[2])")
                                     .foregroundColor(.white)
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
                                 Text("$\(viewModel.prizes[3])")
                                     .foregroundColor(.white)
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
                                 Text("$\(viewModel.prizes[4])")
                                     .foregroundColor(.white)
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
                             }
                         }
                     }

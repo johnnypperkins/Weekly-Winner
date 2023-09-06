@@ -321,7 +321,7 @@ class ticketViewModel: ObservableObject {
 
 func parlayTitle(ticketFormat: [Int], index: Int) -> String {
     guard index < ticketFormat.count else {
-        return "Index out of range" // Handle the case where index is out of bounds
+        return "..." // Handle the case where index is out of bounds
     }
     
     let valueAtIndex = ticketFormat[index]

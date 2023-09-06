@@ -222,14 +222,14 @@ func percentageToML(percentage: Double) -> String { // gets ML from percentage
 
 func percentageToTotalWin(percentage: Double) -> String {
     var toWin: Double
-    if percentage < 1 {
+    if percentage < 1 && percentage > 0 {
         toWin = (1-percentage) / percentage * 100
-        return "$" + String(Int(toWin))
+        return "$" + String(Int(round(toWin)))
     } else {
         return "n/a"
     }
-
 }
+
 
 func parlayNumToSpread(parlayNum: Int) -> Double {
     if parlayNum == 1 {

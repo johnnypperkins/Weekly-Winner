@@ -302,19 +302,25 @@ struct BetDetailsView: View {
     @State private var extra = "" // to add the extra detail of +, o, u
     @State private var uploadText = ""
     @State private var placeBetOpacity = 1.0
+    @State private var placeBetColor: Color = Color.clear
     @State private var placeholder = 5
     
     func checkTeamTaken() {
         if betNumber < 0 {
             uploadText = "Ticket Complete"
             placeBetOpacity = 0.6
+            placeBetColor = K.finalColor.titleBlue.opacity(0.6)
         } else {
             if ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) {
                 uploadText = "Place Bet"
                 placeBetOpacity = 1
+                placeBetColor = K.finalColor.winningGreen
+
             } else {
                 uploadText = "Team Taken"
                 placeBetOpacity = 0.6
+                placeBetColor = K.finalColor.titleBlue.opacity(0.6)
+
             }
         }
     }
@@ -490,7 +496,7 @@ struct BetDetailsView: View {
                                                         //.scaleEffect(x: 2)
                                                         Spacer()
                                                         
-                                                    }.padding(.top,12.5)
+                                                    }.padding(.top,15)
                                                 }
                                         }.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
                                     }
@@ -634,7 +640,7 @@ struct BetDetailsView: View {
                         .font(.custom(K.customFonts.lexendDecaMedium, size: 20.0))
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(K.finalColor.titleBlue.opacity(placeBetOpacity))
+                        .background(placeBetColor)
                         .cornerRadius(10)
                         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
                         //f.padding(.horizontal, 25)
