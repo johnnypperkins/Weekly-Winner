@@ -478,25 +478,25 @@ class groupsViewModel: ObservableObject {
     func populateArrayOfDates(from timestamp: Timestamp) -> [String] {
         var weeks: [String] = []
         var calendar = Calendar.current
-        calendar.timeZone = TimeZone(identifier: "America/New_York")! // Set to Eastern Time
+        calendar.timeZone = TimeZone(identifier: "CET")! // Set to Eastern Time
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMMM, d, yyyy" // Month, Date, Year
-        dateFormatter.timeZone = TimeZone(identifier: "America/New_York")! // Set to Eastern Time
+        dateFormatter.timeZone = TimeZone(identifier: "CET")! // Set to Eastern Time
 
         // Convert Firestore Timestamp to Date and adjust to Eastern Time
         let utcDate = timestamp.dateValue()
-        let inputDate = calendar.date(byAdding: .second, value: TimeZone(identifier: "America/New_York")!.secondsFromGMT(), to: utcDate)!
+        let inputDate = calendar.date(byAdding: .second, value: TimeZone(identifier: "CET")!.secondsFromGMT(), to: utcDate)!
 
         // Find the most recent Monday (at 12:01 am) in relation to the timestamp
         var currentMonday = inputDate
         while calendar.component(.weekday, from: currentMonday) != 2 { // 2 corresponds to Monday
             currentMonday = calendar.date(byAdding: .day, value: -1, to: currentMonday)!
         }
-        currentMonday = calendar.date(bySettingHour: 0, minute: 1, second: 0, of: currentMonday)!
+        currentMonday = calendar.date(bySettingHour: 6, minute: 1, second: 0, of: currentMonday)!
 
         // Get the current date in Eastern Time
-        let currentDateInEasternTime = calendar.date(byAdding: .second, value: TimeZone(identifier: "America/New_York")!.secondsFromGMT(), to: Date())!
-        print("CURRENT DATE EASTERN", currentDateInEasternTime)
+        let currentDateInEasternTime = calendar.date(byAdding: .second, value: TimeZone(identifier: "CET")!.secondsFromGMT(), to: Date())!
+        print("CURRENT DATE UTC+2", currentDateInEasternTime)
         
         // Keep adding Mondays one week later until a Monday in the future is added
         while currentMonday <= currentDateInEasternTime {
@@ -511,6 +511,9 @@ class groupsViewModel: ObservableObject {
 
         return weeks
     }
+
+
+
 
 
 

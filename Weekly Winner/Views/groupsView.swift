@@ -576,7 +576,7 @@ struct currentLeaderboardView: View {
                 ForEach(0..<viewModel.currentRankedGroupTickets.count, id: \.self) { index in
                     if (viewModel.currentRankedGroupTickets[index].uid != Auth.auth().currentUser?.uid) {
                         NavigationLink(destination:
-                                        ticketView(username: viewModel.currentRankedGroupTickets[index].username, uid: viewModel.currentRankedGroupTickets[index].uid, groupID: viewModel.currentRankedGroupTickets[index].groupID, selectedWeek: "current", ticketFormatForGroups: [], ownTicket: viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false), // FIX LATER ?
+                                        ticketView(username: viewModel.currentRankedGroupTickets[index].username, uid: viewModel.currentRankedGroupTickets[index].uid, groupID: viewModel.currentRankedGroupTickets[index].groupID, selectedWeek: "current", ticketFormatForGroups: [], ownTicket: viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, onTicketPage: false), // FIX LATER ?
                                        // viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false
                                        // , ownTicket: viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false
                            label: {
@@ -615,7 +615,7 @@ struct pastLeaderboardView: View {
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(0..<viewModel.pastRankedGroupTickets.count, id: \.self) { index in
                     NavigationLink(destination:
-                                    ticketView(username: viewModel.pastRankedGroupTickets[index].username, uid: viewModel.pastRankedGroupTickets[index].uid, groupID: viewModel.pastRankedGroupTickets[index].groupID, selectedWeek: selectedGroup > 0 ? "\(viewModel.totalArrayOfDates[selectedGroup-1][selectedWeek])" : "", ticketFormatForGroups: viewModel.pastRankedGroupTickets[index].ticketFormat, ownTicket: viewModel.pastRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false),
+                                    ticketView(username: viewModel.pastRankedGroupTickets[index].username, uid: viewModel.pastRankedGroupTickets[index].uid, groupID: viewModel.pastRankedGroupTickets[index].groupID, selectedWeek: selectedGroup > 0 ? "\(viewModel.totalArrayOfDates[selectedGroup-1][selectedWeek])" : "", ticketFormatForGroups: viewModel.pastRankedGroupTickets[index].ticketFormat, ownTicket: false, onTicketPage: false),
                        label: {
                         BetCard(viewModel: viewModel, ticket: viewModel.pastRankedGroupTickets[index], rank: (viewModel.pastRankedGroupTickets[index].rank), ownCard: false, currentWeek: false).padding(.bottom,16)
                     }).id(UUID())

@@ -24,7 +24,7 @@ class groupService {
         print(week, " is week")
         print(groupID, "is groupID")
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MM/dd/yy" // Month, Date
+        dateFormatter.dateFormat = "MM/dd/yy, HH:mm" // Month, Date
         guard let startDate = dateFormatter.date(from: week) else {
             completion(nil, NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey : "Invalid week format"]))
             return

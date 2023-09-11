@@ -110,7 +110,7 @@ class ticketViewModel: ObservableObject {
         
         print("PAST BETS ARE FETCHED")
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MM/dd/yy" // Month, Date
+        dateFormatter.dateFormat = "MM/dd/yy, HH:mm" // Month, Date
         guard let startDate = dateFormatter.date(from: selectedWeek) else {
             return
         }

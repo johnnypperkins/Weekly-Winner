@@ -12,6 +12,7 @@ struct ticketView: View {
     var selectedWeek: String
     var ticketFormatForGroups: [Int]
     var ownTicket: Bool
+    var onTicketPage: Bool
     var ticketIsEnabled: Bool {
         if selectedWeek != "current" {
             return true
@@ -25,13 +26,14 @@ struct ticketView: View {
     }
 
     
-    init(username: String, uid: String, groupID: String, selectedWeek: String, ticketFormatForGroups: [Int], ownTicket: Bool) {
+    init(username: String, uid: String, groupID: String, selectedWeek: String, ticketFormatForGroups: [Int], ownTicket: Bool, onTicketPage: Bool) {
         self.username = username
         self.uid = uid
         self.groupID = groupID
         self.selectedWeek = selectedWeek
         self.ticketFormatForGroups = ticketFormatForGroups
         self.ownTicket = ownTicket
+        self.onTicketPage = onTicketPage
         
         if uid != Auth.auth().currentUser?.uid{
             viewModel.fetchFriendTicket(uid: uid, with: groupID) { group in
@@ -195,33 +197,39 @@ struct ticketView: View {
                 .onAppear {
                     print("ticket format for groups " + "\(ticketFormatForGroups)" + "\(viewModel.totalBetArrays.count)")
                     selectedGroup = 0
-                    if uid != Auth.auth().currentUser?.uid{
+                    
+                    
+                    if !onTicketPage {
                         if selectedWeek == "current" {
                             viewModel.fetchFriendTicket(uid: uid, with: groupID) {_ in
-                                
                                 viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: viewModel.userTickets[0].ticketFormat, completion: {}) // usertickets is set to only one ticket here
                             }
                         }
                         else {
                             viewModel.fetchPastFriendTicket(uid: uid, with: groupID) {_ in
-                                
                                 viewModel.fetchPastBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
                             }
                         }
-                    }
-                        
-                    else{
-                        if selectedWeek == "current"{
-                            viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
-                                viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, completion: {}) // Fetch bets for selected group on view appear.
-                                
-                            }
+                    } else {
+                        viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
+                            viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, completion: {}) // Fetch bets for selected group on view appear.
                             
                         }
-                        else {
-                            viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
-                        }
                     }
+                    
+//                    if uid != Auth.auth().currentUser?.uid{
+//
+//                    }
+//
+//                    else{
+//                        if selectedWeek == "current"{
+//
+//
+//                        }
+//                        else {
+//                            viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
+//                        }
+//                    }
                 }
                 .onDisappear {
                     selectedGroup = 0
@@ -434,7 +442,7 @@ struct ticketView: View {
 
 struct ticketView_Previews: PreviewProvider {
     static var previews: some View {
-        ticketView(username: "Reid", uid: "", groupID: "", selectedWeek: "current", ticketFormatForGroups: [1,1,1], ownTicket: true)
+        ticketView(username: "Reid", uid: "", groupID: "", selectedWeek: "current", ticketFormatForGroups: [1,1,1], ownTicket: true, onTicketPage: true)
     }
 }
 
