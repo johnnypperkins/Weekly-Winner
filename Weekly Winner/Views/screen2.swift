@@ -78,6 +78,22 @@ struct BettingAppView: View {
                 
                 ScrollView {
                     VStack(spacing: 5) {
+                        if viewModel.selectedGameType == "Upcoming" {
+                            if !viewModel.upcomingGames.isEmpty {
+                                ForEach(viewModel.upcomingGames, id: \.idd) { game in
+                                    if game.commenceTime.dateValue() > Date() {
+                                        gameRowView(game: game, isDisabled: false)
+                                    } else {
+                                        gameRowView(game: game, isDisabled: true).opacity(0.5)
+                                    }
+                                }.padding(.horizontal)
+                            } else {
+                                Text("No Games Available")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                    .foregroundColor(K.finalColor.textWhite)
+                                    .padding()
+                            }
+                        }   
                         if viewModel.selectedGameType == "NFL" {
                             if !viewModel.NFLgames.isEmpty {
                                 ForEach(viewModel.NFLgames, id: \.idd) { game in // HARDCODE NCAAF
@@ -111,20 +127,7 @@ struct BettingAppView: View {
                                     .padding()
                             }
                         }
-                        if viewModel.selectedGameType == "Upcoming" {
-                            if !viewModel.upcomingGames.isEmpty {
-                                ForEach(viewModel.upcomingGames, id: \.idd) { game in
-                                    if game.commenceTime.dateValue() > Date() {
-                                        gameRowView(game: game, isDisabled: true)
-                                    }
-                                }.padding(.horizontal)
-                            } else {
-                                Text("No Games Available")
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
-                                    .foregroundColor(K.finalColor.textWhite)
-                                    .padding()
-                            }
-                        }
+                        
                     }.padding(.bottom,80)
                 }.padding(.top,10)
             }

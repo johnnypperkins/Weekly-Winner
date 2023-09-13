@@ -19,7 +19,7 @@ class bookViewModel: ObservableObject {
     @Published var arePopularBetsLoaded = false
 
     
-    @Published var selectedGameType = "NFL"
+    @Published var selectedGameType = "Upcoming"
     
 
     private let betService = BetService()
