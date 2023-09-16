@@ -249,6 +249,7 @@ struct ticketView: View {
        // let totalOdds: Double
         @ObservedObject var viewModel: ticketViewModel
         @ObservedObject var BookVM: bookViewModel
+        @State var expand = false
         
         var totalOdds: Double {
             var total: Double = 1
@@ -293,7 +294,16 @@ struct ticketView: View {
                         ForEach(0..<totalBetsCount, id: \.self) { index in
                             VStack(alignment: .center, spacing: 0) {
                                 if index < betArray.count {
-                                    BetCard(bet: betArray[index], uid: uid, selectedWeek: selectedWeek, ownCard: ownTicket, bookVM: BookVM, viewModel: viewModel)
+                                    Button {
+                                        withAnimation {
+                                            expand.toggle()
+                                        }
+                                        viewModel.fetchGameInfo()
+                                    } label: {
+                                        BetCard(bet: betArray[index], uid: uid, selectedWeek: selectedWeek, ownCard: ownTicket, bookVM: BookVM, viewModel: viewModel, expand: $expand)
+                                    }
+
+                                    
                                 } else {
                                     EmptyBetCard(betArray: betArray)
                                 }
@@ -327,10 +337,12 @@ struct ticketView: View {
             @State private var canDelete: Bool = false
             @State var moreInfoClicked = false
             @ObservedObject var bookVM: bookViewModel
+            
             //let ownBets: Bool
             
 
             @ObservedObject var viewModel: ticketViewModel
+            @Binding var expand: Bool
 
             var extra: String {
                 if bet.betType == .under {
@@ -347,7 +359,8 @@ struct ticketView: View {
 
             var body: some View {
                 //HStack {
-                    HStack {
+                HStack {
+                    VStack{
                         HStack (spacing: 0) {
                             if bet.result == .forcedLoss {
                                 Text("-")
@@ -357,36 +370,51 @@ struct ticketView: View {
                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                                     .foregroundColor(.white)
                                     .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 10))
-                                    //.background(Color.backgroundForBetResult(bet.result))
-                                    //.background(K.gra)
+                                //.background(Color.backgroundForBetResult(bet.result))
+                                //.background(K.gra)
                                 //.cornerRadius(7.5)
                                 Rectangle()
-                                      .fill(Color.white) // Color of the separator
-                                      .frame(width: 1, height: 20) // Adjust height as needed
+                                    .fill(Color.white) // Color of the separator
+                                    .frame(width: 1, height: 20) // Adjust height as needed
                                 //Spacer()
                                 Text("\(bet.teamBetOn ?? "Null Team") \(extra)\(bet.betLine, specifier: "%.0f")")
                                     .font(.custom(K.customFonts.lexendDecaMedium, size:
-                                        bet.teamBetOn?.count ?? 10 < 20 ? 16 : 13))
-                                                 //   (bet.teamBetOn?.count ?? 10 > 35 ? 9: 11)))
-
+                                                    bet.teamBetOn?.count ?? 10 < 20 ? 16 : 13))
+                                //   (bet.teamBetOn?.count ?? 10 > 35 ? 9: 11)))
+                                
                                     .foregroundColor(.white)
                                     .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 5))
                                     .cornerRadius(7.5)
                                     .frame(maxWidth: 250, alignment: .leading)
                                 //.background(Color.backgroundForBetResult(bet.result))
                                 
-//                                Text("\(extra)\(bet.betLine, specifier: "%.0f")")
-//                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
-//                                    .foregroundColor(.white)
-//                                    .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
-//                                    //.background(Color.backgroundForBetResult(bet.result))
-//                                    .cornerRadius(7.5)
-
+                                //                                Text("\(extra)\(bet.betLine, specifier: "%.0f")")
+                                //                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
+                                //                                    .foregroundColor(.white)
+                                //                                    .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+                                //                                    //.background(Color.backgroundForBetResult(bet.result))
+                                //                                    .cornerRadius(7.5)
+                                
+                                if expand {
+                                    Image(systemName: "chevron.down")
+                                        .frame(width: 20, height: 20)
+                                        .foregroundColor(.white)
+                                }
+                                else{
+                                    Image(systemName: "chevron.up")
+                                        .frame(width: 20, height: 20)
+                                        .foregroundColor(.white)
+                                }
                             }
-                        }.frame(maxWidth: .infinity, maxHeight: .infinity) // This line
-                        .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
-                        .background(bet.result == .notStarted ? K.finalColor.backgroundBlue : Color.backgroundForBetResult(bet.result))
-                        .cornerRadius(7.5)
+                        }
+                        if expand {
+                            Text("Expanded")
+                                .foregroundColor(.white)
+                        }
+                    }.frame(maxWidth: .infinity, maxHeight: .infinity) // This line
+                    .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
+                    .background(bet.result == .notStarted ? K.finalColor.backgroundBlue : Color.backgroundForBetResult(bet.result))
+                    .cornerRadius(7.5)
                         
                         if bet.result == .notStarted && uid == Auth.auth().currentUser?.uid && selectedWeek == "current" && ownCard { // ONLY SHOWS DELETE BUTTON IF .NOTSTARTED
                             Button(action: {

@@ -164,6 +164,11 @@ class ticketViewModel: ObservableObject {
         }
     }
     
+    func fetchGameInfo() {
+        
+        
+    }
+    
     func fetchBets(uid: String, for groupNumber: Int, ticketFormat: [Int], completion: @escaping () -> Void) {
             let query = self.db.collection("users").document(uid).collection("bets").document("week").collection("currentWeekBets")
                 .whereField("groupNumber", isEqualTo: groupNumber)
