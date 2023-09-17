@@ -755,7 +755,7 @@ struct BetSliderView: View {
                     .frame(width: 150, height: 40, alignment: .leading)
                     //.background(.white)
                 Spacer()
-                Text("\(internalExtra)\(String(format: "%.0f", chosenSpread))")
+                Text(chosenSpread == 0 ? "ML" : "\(internalExtra)\(String(format: "%.0f", chosenSpread))")
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
                     .foregroundColor(.white)
                     .frame(width: 55, alignment: .leading)

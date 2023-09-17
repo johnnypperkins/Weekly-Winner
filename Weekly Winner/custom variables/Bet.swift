@@ -27,6 +27,7 @@ struct Bet: Identifiable, Codable {
 //    var commenceTime: Timestamp
 //    var homeTeamFinalScore: Int
 //    var awayTeamFinalScore: Int
+    // when game starts
 }
 
 

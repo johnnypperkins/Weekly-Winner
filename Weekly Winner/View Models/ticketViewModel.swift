@@ -110,7 +110,7 @@ class ticketViewModel: ObservableObject {
         
         print("PAST BETS ARE FETCHED")
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MM/dd/yy, HH:mm" // Month, Date
+        dateFormatter.dateFormat = "MM/dd/yy" // Month, Date
         guard let startDate = dateFormatter.date(from: selectedWeek) else {
             return
         }
@@ -168,6 +168,53 @@ class ticketViewModel: ObservableObject {
         
         
     }
+    
+//    func fetchBetsForFrontPage(uid: String, completion: @escaping () -> Void) {
+//        let query = self.db.collection("users").document(uid).collection("bets").document("week").collection("currentWeekBets")
+//        query.getDocuments { (querySnapshot, error) in
+//            DispatchQueue.main.async {
+//                guard let documents = querySnapshot?.documents else {
+//                    print("No documents")
+//                    return
+//                }
+//                self.totalBetArrays.removeAll() // Clear previous data
+//                self.availableBetsArray.removeAll()
+//                for (index, parlayMax) in ticketFormat.enumerated() {
+//                    let betArray = self.totalBetArrays[index]
+//                    if betArray.filter({ $0.groupNumber == groupNumber }).count >= parlayMax {
+//                        //print("Appending betNumber:", parlayIndex + 1) // Debug print
+//                        self.availableBetsArray.append(-1)
+//                    } else {
+//                        if betArray.contains(where: { $0.result == .loss }) {
+//                            self.availableBetsArray.append(-1)
+//                        } else {
+//                            self.availableBetsArray.append(index+1)
+//                        }
+//                    }
+//                }
+////                for index in self.totalBetArrays.indices {
+////                    let bet = self.totalBetArrays[index]
+////                    if bet.count > 1 {
+////                        self.updateBetsInResponseToLoss(betArray: &self.totalBetArrays[index], maxBetsPlaced: self.currentTicketFormat[index], groupNumber: groupNumber, betNumber: index + 1)
+////                        print("BET UPDATED BLAH BLAH")
+////                    }
+////                }
+//                
+//                self.calculateTotals(for: groupNumber, ticketFormat: ticketFormat)
+//
+//                if let error = error {
+//                    print(error)
+//                } else {
+//                    self.currentTicketFormat = ticketFormat
+//                    self.isBetsLoaded = true
+//                    self.isTFLoaded = true
+//                }
+//
+//                // Call completion handler
+//                completion()
+//            }
+//        }
+//    }
     
     func fetchBets(uid: String, for groupNumber: Int, ticketFormat: [Int], completion: @escaping () -> Void) {
             let query = self.db.collection("users").document(uid).collection("bets").document("week").collection("currentWeekBets")

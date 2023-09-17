@@ -52,9 +52,10 @@ struct K {
         static let potentialOrange = Color(hex: "#FF8D07")
         static let winningGreen = Color(hex: "#3EDC06")
         static let textWhite = Color(hex: "#FFFFFF")
-        static let deleteRed = Color(hex: "#D22222")
+        static let deleteRed = Color(hex: "#DC3545")
         static let otherPurple = Color(hex: "#9C63FB")
         static let otherBeige = Color(hex: "#F8A680")
+        static let blueGray = Color(hex: "#607D8B")
     }
     
     struct finalUIColor {
@@ -161,7 +162,7 @@ struct formatDateMMMDHMM {
 
 func formatDateMMDDYY(from timestamp: Timestamp) -> String {
     let formatter = DateFormatter()
-    formatter.dateFormat = "MM/dd/yy, HH:mm" // Added hours and minutes to the format
+    formatter.dateFormat = "MM/dd/yy" // Added hours and minutes to the format
     return formatter.string(from: timestamp.dateValue())
 }
 

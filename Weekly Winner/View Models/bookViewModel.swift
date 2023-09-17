@@ -117,15 +117,17 @@ class bookViewModel: ObservableObject {
                         let data = doc.data()
                         //print("test")
                         if let idd = data["id"] as? String,
-                           let commenceTime = data["commenceTime"] as? Timestamp,
+                            let commenceTime = data["commenceTime"] as? Timestamp,
                             let totalOver = data["totalOver"] as? Double,
                             let totalUnder = data["totalUnder"] as? Double,
                             let homeTeam = data["homeTeam"] as? String,
                             let awayTeam = data["awayTeam"] as? String,
-                           let homeSpread = data["homeSpread"] as? Double,
-                           let awaySpread = data["awaySpread"] as? Double {
+                            let homeSpread = data["homeSpread"] as? Double,
+                            let awaySpread = data["awaySpread"] as? Double,
+                            let homeTeamScore = data["homeTeamScore"] as? Int,
+                            let awayTeamScore = data["awayTeamScore"] as? Int {
     //                       let completed = data["completed"] as? Bool {
-                            let newGame = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder)
+                            let newGame = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore )
                             //print("3")
                             
                             games.append(newGame)

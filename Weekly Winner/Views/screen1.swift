@@ -295,34 +295,6 @@ struct MostPopularBetsView: View {
                     }
                 }
             }
-//            HStack{
-//                ForEach(0...bookVM.mostPopularBets.count/2, id: \.self) { index in
-//
-//                    if index != 0 {
-//                        Spacer()
-//                        PopularBetView(index: index, bookVM: bookVM)
-//                    }
-//                    if index == bookVM.mostPopularBets.count/2 {
-//                        Spacer()
-//                    }
-//
-//                }
-//
-//            }
-//            //.padding(.top)
-//            HStack{
-//
-//                ForEach(bookVM.mostPopularBets.count/2...bookVM.mostPopularBets.count, id: \.self) { index in
-//                    if index != bookVM.mostPopularBets.count/2 {
-//                        Spacer()
-//                        PopularBetView(index: index, bookVM: bookVM)
-//                    }
-//                    if index == bookVM.mostPopularBets.count {
-//                        Spacer()
-//                    }
-//                }
-//
-//            }
         }
     }
 }
@@ -362,39 +334,11 @@ struct PopularBetView: View {
                 .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 5))
                 .cornerRadius(7.5)
                 .frame(maxWidth: 300, alignment: .leading)
-        }.frame(maxWidth: .infinity, maxHeight: .infinity) // This line
+        }.frame(maxWidth: .infinity, maxHeight: 40) // This line
         .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
         .background(K.finalColor.cardBlue)
         .cornerRadius(7.5)
-        
-        
-        
-        
-//
-//        VStack(spacing: 1) {
-////            HStack{
-////                Text("#\(index)")
-////                Spacer()
-////            }.frame(alignment: .top)
-//            VStack(spacing: 3.74) {
-//                Text("\(extra)\(bookVM.mostPopularBets[index-1].betLine)")
-//                    .font(.custom(K.customFonts.poppinsMedium, size: 16))
-//                    .foregroundColor(.white)
-//                Text("\(bookVM.mostPopularBets[index-1].teamName)")
-//                    .font(.custom(K.customFonts.poppinsRegular, size: 11))
-//                    .foregroundColor(.white)
-//                    .multilineTextAlignment(.center) // This will center the text when it wraps over multiple lines
-//
-//
-//            }
-//            .frame(width: 87.57)
-//        }
-//        .padding(
-//            EdgeInsets(top: 0, leading: 9.12, bottom: 0, trailing: 9.12)
-//        )
-//        .frame(height: 83)
-//        .background(K.finalColor.cardBlue)
-//        .cornerRadius(9.12)
+
     }
     
 }
