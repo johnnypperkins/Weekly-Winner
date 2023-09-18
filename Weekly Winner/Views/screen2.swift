@@ -206,9 +206,34 @@ struct gameRowView: View {
     var body: some View {
       
         HStack {
-            VStack() {
+            VStack(spacing:3) {
                 HStack{
-                    Text(game.homeTeam) // team name
+                    Text("\(game.awayTeam)")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                    Spacer()
+                    HStack(spacing: 15) {
+                        PlaceBetButton(isDisabled: isDisabled, betType: .betAwaySpread, currentBetType: $betType, title: titleStringA) {
+                            betType = .betAwaySpread
+                            showingSheet.toggle()
+                        }
+                        
+                        PlaceBetButton(isDisabled: isDisabled, betType: .under, currentBetType: $betType, title: "u" + String(format: "%.0f", game.totalUnder)) {
+                            betType = .under
+                            showingSheet.toggle()
+                        }
+                    }
+                    
+                }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
+
+                //Divider()
+                HStack {
+                    Text("@").foregroundColor(.white).font(.custom(K.customFonts.lexendDecaMedium, size: 10)).padding(EdgeInsets(top: 1.5, leading: 0, bottom: 0, trailing: 0))
+                    Spacer()
+                }.frame(height: 0)
+                
+                HStack {
+                    Text("\(game.homeTeam)") // team name
                         .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                         .foregroundColor(.white)
                     
@@ -221,27 +246,6 @@ struct gameRowView: View {
                         
                         PlaceBetButton(isDisabled: isDisabled, betType: .over, currentBetType: $betType, title: "o" + String(format: "%.0f", game.totalOver)) { // over
                             betType = .over
-                            showingSheet.toggle()
-                        }
-                    }
-                    
-                }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
-
-                //Divider()
-                
-                HStack {
-                    Text(game.awayTeam)
-                        .font(.headline)
-                        .foregroundColor(.white)
-                    Spacer()
-                    HStack(spacing: 15) {
-                        PlaceBetButton(isDisabled: isDisabled, betType: .betAwaySpread, currentBetType: $betType, title: titleStringA) {
-                            betType = .betAwaySpread
-                            showingSheet.toggle()
-                        }
-                        
-                        PlaceBetButton(isDisabled: isDisabled, betType: .under, currentBetType: $betType, title: "u" + String(format: "%.0f", game.totalUnder)) {
-                            betType = .under
                             showingSheet.toggle()
                         }
                     }
