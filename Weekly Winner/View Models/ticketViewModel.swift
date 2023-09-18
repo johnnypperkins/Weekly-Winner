@@ -38,7 +38,6 @@ class ticketViewModel: ObservableObject {
     
     private let groupServe = groupService()
     @Published var userTickets: [Ticket] = [] // Ticket99
-    
 
 
     func fetchFriendTicket(uid: String, with groupID: String, completion: @escaping (Result<Ticket, Error>) -> Void) { // Ticket99
@@ -97,6 +96,7 @@ class ticketViewModel: ObservableObject {
             } else if let tickets = tickets {
                 self.userTickets = tickets
                 self.currentTicketFormat = tickets[groupNumber].ticketFormat
+               
                 self.isTFLoaded = true
                 //self.isGroupsLoaded = true  // Set this to true when data is loaded
             }

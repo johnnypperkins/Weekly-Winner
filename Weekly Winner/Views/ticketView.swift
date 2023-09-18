@@ -321,16 +321,8 @@ struct ticketView: View {
                         ForEach(0..<totalBetsCount, id: \.self) { index in
                             VStack(alignment: .center, spacing: 0) {
                                 if index < betArray.count {
-                                    Button {
-                                        withAnimation {
-                                            expand.toggle()
-                                        }
-                                        viewModel.fetchGameInfo()
-                                    } label: {
-                                        BetCard(bet: betArray[index], uid: uid, selectedWeek: selectedWeek, ownCard: ownTicket, onTicketPage: onTicketPage, bookVM: BookVM, viewModel: viewModel, expand: $expand)
-                                    }
-
-                                    
+                                    BetCard(bet: betArray[index], uid: uid, selectedWeek: selectedWeek, ownCard: ownTicket, onTicketPage: onTicketPage, bookVM: BookVM, viewModel: viewModel)
+                   
                                 } else {
                                     EmptyBetCard(betArray: betArray)
                                 }
@@ -365,12 +357,13 @@ struct ticketView: View {
             @State private var canDelete: Bool = false
             @State var moreInfoClicked = false
             @ObservedObject var bookVM: bookViewModel
+            @State private var game: Game? = nil
+            @State var expand = false
             
             //let ownBets: Bool
             
 
             @ObservedObject var viewModel: ticketViewModel
-            @Binding var expand: Bool
 
             var extra: String {
                 if bet.betType == .under {
@@ -397,84 +390,129 @@ struct ticketView: View {
 
             var body: some View {
                 //HStack {
-                HStack {
-                    VStack{
-                        HStack (spacing: 0) {
-                            if bet.result == .forcedLoss {
-                                Text("-")
-                            } else {
-                                //Spacer()
-                                Text(percentageToML(percentage: Double(bet.betOdds)))
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                    .foregroundColor(.white)
-                                    .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 10))
-                                //.background(Color.backgroundForBetResult(bet.result))
-                                //.background(K.gra)
-                                //.cornerRadius(7.5)
-                                Rectangle()
-                                    .fill(Color.white) // Color of the separator
-                                    .frame(width: 1, height: 20) // Adjust height as needed
-                                //Spacer()
-                                Text("\(bet.teamBetOn ?? "Null Team") \(lineFinal)")
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size:
-                                                    bet.teamBetOn?.count ?? 10 < 20 ? 16 : 13))
-                                //   (bet.teamBetOn?.count ?? 10 > 35 ? 9: 11)))
-                                
-                                    .foregroundColor(.white)
-                                    .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 5))
-                                    .cornerRadius(7.5)
-                                    .frame(maxWidth: 250, alignment: .leading)
-                                //.background(Color.backgroundForBetResult(bet.result))
-                                
-                                //                                Text("\(extra)\(bet.betLine, specifier: "%.0f")")
-                                //                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
-                                //                                    .foregroundColor(.white)
-                                //                                    .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
-                                //                                    //.background(Color.backgroundForBetResult(bet.result))
-                                //                                    .cornerRadius(7.5)
-                                
-                                if expand {
-                                    Image(systemName: "chevron.down")
-                                        .frame(width: 20, height: 20)
-                                        .foregroundColor(.white)
-                                }
-                                else{
-                                    Image(systemName: "chevron.up")
-                                        .frame(width: 20, height: 20)
-                                        .foregroundColor(.white)
-                                }
-                            }
-                        }
-                        if expand {
-                            Text("Expanded")
-                                .foregroundColor(.white)
-                        }
-                    }.frame(maxWidth: .infinity, maxHeight: .infinity) // This line
-                    .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
-                    .background(bet.result == .notStarted ? K.finalColor.backgroundBlue : Color.backgroundForBetResult(bet.result))
-                    .cornerRadius(7.5)
-                        
-                        if bet.result == .notStarted && uid == Auth.auth().currentUser?.uid && selectedWeek == "current" && ownCard && onTicketPage{ // ONLY SHOWS DELETE BUTTON IF .NOTSTARTED
-                            Button(action: {
-                                if canDelete {
-                                    self.viewModel.deleteBet(bet: bet)
-                                }
-                                canDelete = true
-                            }) {
-                                Image(systemName: "xmark.circle")
-                                    .resizable()
-                                    .frame(width: 20, height: 20)
-                                    .foregroundColor(canDelete ? .red : .red.opacity(0.5))
-
-                            }
-                        }
-                    }.background(bet.result == .notStarted ? Color.clear : Color.backgroundForBetResult(bet.result))
-                    .cornerRadius(7.5)
-                    .frame(width: 320)
-                    .onAppear() {
-                        canDelete = false
+                Button {
+                    withAnimation {
+                        expand.toggle()
                     }
+                } label: {
+                    HStack {
+                        VStack{
+                            HStack (spacing: 0) {
+                                if bet.result == .forcedLoss {
+                                    Text("-")
+                                } else {
+                                    //Spacer()
+                                    Text(percentageToML(percentage: Double(bet.betOdds)))
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                        .foregroundColor(.white)
+                                        .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 10))
+                                    //.background(Color.backgroundForBetResult(bet.result))
+                                    //.background(K.gra)
+                                    //.cornerRadius(7.5)
+                                    Rectangle()
+                                        .fill(Color.white) // Color of the separator
+                                        .frame(width: 1, height: 20) // Adjust height as needed
+                                    //Spacer()
+                                    Text("\(bet.teamBetOn ?? "Null Team") \(lineFinal)")
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size:
+                                                        bet.teamBetOn?.count ?? 10 < 20 ? 16 : 13))
+                                    //   (bet.teamBetOn?.count ?? 10 > 35 ? 9: 11)))
+                                    
+                                        .foregroundColor(.white)
+                                        .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 5))
+                                        .cornerRadius(7.5)
+                                        .frame(maxWidth: 250, alignment: .leading)
+                                    //.background(Color.backgroundForBetResult(bet.result))
+                                    
+                                    //                                Text("\(extra)\(bet.betLine, specifier: "%.0f")")
+                                    //                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
+                                    //                                    .foregroundColor(.white)
+                                    //                                    .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+                                    //                                    //.background(Color.backgroundForBetResult(bet.result))
+                                    //                                    .cornerRadius(7.5)
+                                    
+                                    if expand {
+                                        Image(systemName: "chevron.down")
+                                            .frame(width: 20, height: 20)
+                                            .foregroundColor(.white)
+                                    }
+                                    else{
+                                        Image(systemName: "chevron.up")
+                                            .frame(width: 20, height: 20)
+                                            .foregroundColor(.white)
+                                    }
+                                }
+                            }
+                            if expand {
+                                Text(game?.homeTeam ?? "ff")
+                                    .foregroundColor(.white)
+                            }
+                        }.frame(maxWidth: .infinity, maxHeight: .infinity) // This line
+                        .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
+                        .background(bet.result == .notStarted ? K.finalColor.backgroundBlue : Color.backgroundForBetResult(bet.result))
+                        .cornerRadius(7.5)
+                            
+                            if bet.result == .notStarted && uid == Auth.auth().currentUser?.uid && selectedWeek == "current" && ownCard && onTicketPage{ // ONLY SHOWS DELETE BUTTON IF .NOTSTARTED
+                                Button(action: {
+                                    if canDelete {
+                                        self.viewModel.deleteBet(bet: bet)
+                                    }
+                                    canDelete = true
+                                }) {
+                                    Image(systemName: "xmark.circle")
+                                        .resizable()
+                                        .frame(width: 20, height: 20)
+                                        .foregroundColor(canDelete ? .red : .red.opacity(0.5))
+
+                                }
+                            }
+                        }.background(bet.result == .notStarted ? Color.clear : Color.backgroundForBetResult(bet.result))
+                        .cornerRadius(7.5)
+                        .frame(width: 320)
+                        .onAppear() {
+                            canDelete = false
+                            fetchGameDocument(byID: bet.gameID)
+                        }
+                }
+
             }
+            func fetchGameDocument(byID documentID: String) {
+                    let db = Firestore.firestore()
+                    
+                db.collectionGroup("games").whereField("id", isEqualTo: documentID).getDocuments { (querySnapshot, error) in
+                        if let error = error {
+                            print("Error getting game document: \(error)")
+                            return
+                        }
+                        
+                   if let document = querySnapshot?.documents.first {
+                                do {
+                                    var data = document.data()
+                                    if let idd = data["id"] as? String,
+                                        let commenceTime = data["commenceTime"] as? Timestamp,
+                                        let totalOver = data["totalOver"] as? Double,
+                                        let totalUnder = data["totalUnder"] as? Double,
+                                        let homeTeam = data["homeTeam"] as? String,
+                                        let awayTeam = data["awayTeam"] as? String,
+                                        let homeSpread = data["homeSpread"] as? Double,
+                                        let awaySpread = data["awaySpread"] as? Double,
+                                        let homeTeamScore = data["homeTeamScore"] as? Int,
+                                       let awayTeamScore = data["awayTeamScore"] as? Int {
+                                        //                       let completed = data["completed"] as? Bool {
+                                        let game = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore)
+                                        print("game \(game)")
+                                        self.game = game
+                                        
+                                    }
+                                    } catch let error {
+                                    print("Error decoding game document: \(error)")
+                                }
+                            }
+                    else{
+                        print("johnny")
+                    }
+                    }
+                }
         }
 
         struct EmptyBetCard: View {

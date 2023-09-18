@@ -962,7 +962,7 @@ struct GroupJoinSheet: View {
                         }
                     }
                     else{
-                        AppUtility.shared.showCustomAlert(alertType: .none, message: "Congradulations, you have joined \(group.groupName)", actionButtonTitle: nil, cancelButtonTitle: K.appButtonTitle.ok) { action in
+                        AppUtility.shared.showCustomAlert(alertType: .none, message: "Congratulations, you have joined \(group.groupName)", actionButtonTitle: nil, cancelButtonTitle: K.appButtonTitle.ok) { action in
                                 viewModel.joinGroup(group: group)
                                 isPresented = false
                         }
