@@ -206,7 +206,7 @@ struct gameRowView: View {
     var body: some View {
       
         HStack {
-            VStack(spacing:0) {
+            VStack(spacing:2) {
                 
                 
                 HStack{
@@ -265,7 +265,7 @@ struct gameRowView: View {
                             titleStringA = "+" + String(format: "%.0f", game.awaySpread)
                         }
                     }
-                Text("\(formatDateMMMDHMM.format(date: game.commenceTime.dateValue()))")
+                Text("\(formatDateEMMMDHMM.format(date: game.commenceTime.dateValue()))")
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
                     .foregroundColor(K.finalColor.textWhite)
                     .frame(maxWidth: .infinity, alignment: .center)

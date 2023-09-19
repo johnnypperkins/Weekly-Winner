@@ -160,6 +160,20 @@ struct formatDateMMMDHMM {
     }
 }
 
+struct formatDateEMMMDHMM {
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "E, MMM d, h:mm a"
+        formatter.timeZone = TimeZone(abbreviation: "EST") // Or whatever timezone the date is in
+        return formatter
+    }()
+
+    static func format(date: Date) -> String {
+        return dateFormatter.string(from: date)
+    }
+}
+
+
 func formatDateMMDDYY(from timestamp: Timestamp) -> String {
     let formatter = DateFormatter()
     formatter.dateFormat = "MM/dd/yy" // Added hours and minutes to the format

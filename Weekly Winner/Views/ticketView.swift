@@ -481,7 +481,7 @@ struct ticketView: View {
                                     
                                     HStack {
                                         Spacer()
-                                        Text("\(formatDateMMMDHMM.format(date: game?.commenceTime.dateValue() ?? Date()))")
+                                        Text("\(formatDateEMMMDHMM.format(date: game?.commenceTime.dateValue() ?? Date()))")
                                             .font(.custom(K.customFonts.lexendDecaMedium, size: 10))
                                             .foregroundColor(K.finalColor.textWhite)
                                             //.frame(maxWidth: .infinity, alignment: .center)
@@ -516,6 +516,9 @@ struct ticketView: View {
                     .onAppear() {
                         canDelete = false
                         fetchGameDocument(byID: bet.gameID)
+                    }
+                    .onDisappear() {
+                        expand = false
                     }
             
 

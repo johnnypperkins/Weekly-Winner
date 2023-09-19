@@ -33,7 +33,7 @@ class authenticationViewModel: ObservableObject {
     @Published var authResult: AuthDataResult? = nil
     @Published var errorMessage: String? = ""
     @Published var instagram: String = ""
-    let currentVersion: String = "1.05"
+    let currentVersion: String = "1.10"
     @Published var updateURL: String = ""
 
     
