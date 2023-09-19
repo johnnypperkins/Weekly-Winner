@@ -50,7 +50,7 @@ struct ticketView: View {
             VStack {
                 if uid == Auth.auth().currentUser?.uid && onTicketPage{
                     Text("Tickets").font(.custom(K.customFonts.lexendDecaMedium, size: 20)).foregroundColor(K.finalColor.textWhite).padding(.bottom)
-                    if (viewModel.userTickets.count <= 3) {
+                    if (viewModel.userTickets.count <= 2) {
                         HStack(alignment: .center, spacing: 10) {
                             Spacer()
                             ForEach(0..<viewModel.userTickets.count, id: \.self) { index in
@@ -69,7 +69,7 @@ struct ticketView: View {
                                         .padding()
                                         .font(.custom(K.customFonts.lexendDecaLight, size: 16))
                                         .foregroundColor(.white)
-                                        .frame(width: 107, height: 35, alignment: .center)
+                                        .frame(width: 115, height: 35, alignment: .center)
                                         .background(selectedGroup == index ? K.finalColor.titleBlue : K.finalColor.cardBlue)
                                         .cornerRadius(5)
                                 }
@@ -95,7 +95,7 @@ struct ticketView: View {
                                             .padding()
                                             .font(.custom(K.customFonts.lexendDecaLight, size: 16))
                                             .foregroundColor(.white)
-                                            .frame(width: 105, height: 30, alignment: .center)
+                                            .frame(width: 115, height: 35, alignment: .center)
                                             .background(selectedGroup == index ? K.finalColor.titleBlue : K.finalColor.cardBlue)
                                             .cornerRadius(5)
                                     }
@@ -390,90 +390,134 @@ struct ticketView: View {
 
             var body: some View {
                 //HStack {
-                Button {
-                    withAnimation {
-                        expand.toggle()
-                    }
-                } label: {
-                    HStack {
-                        VStack{
-                            HStack (spacing: 0) {
-                                if bet.result == .forcedLoss {
-                                    Text("-")
-                                } else {
-                                    //Spacer()
-                                    Text(percentageToML(percentage: Double(bet.betOdds)))
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                        .foregroundColor(.white)
-                                        .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 10))
-                                    //.background(Color.backgroundForBetResult(bet.result))
-                                    //.background(K.gra)
-                                    //.cornerRadius(7.5)
-                                    Rectangle()
-                                        .fill(Color.white) // Color of the separator
-                                        .frame(width: 1, height: 20) // Adjust height as needed
-                                    //Spacer()
-                                    Text("\(bet.teamBetOn ?? "Null Team") \(lineFinal)")
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size:
-                                                        bet.teamBetOn?.count ?? 10 < 20 ? 16 : 13))
-                                    //   (bet.teamBetOn?.count ?? 10 > 35 ? 9: 11)))
-                                    
-                                        .foregroundColor(.white)
-                                        .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 5))
-                                        .cornerRadius(7.5)
-                                        .frame(maxWidth: 250, alignment: .leading)
-                                    //.background(Color.backgroundForBetResult(bet.result))
-                                    
-                                    //                                Text("\(extra)\(bet.betLine, specifier: "%.0f")")
-                                    //                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
-                                    //                                    .foregroundColor(.white)
-                                    //                                    .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
-                                    //                                    //.background(Color.backgroundForBetResult(bet.result))
-                                    //                                    .cornerRadius(7.5)
-                                    
+                
+                HStack {
+                    VStack (spacing: 0){
+                        HStack (spacing: 0) {
+                            if bet.result == .forcedLoss {
+                                Text("-")
+                            } else {
+                                //Spacer()
+                                Text(percentageToML(percentage: Double(bet.betOdds)))
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                    .foregroundColor(.white)
+                                    .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 10))
+                                //.background(Color.backgroundForBetResult(bet.result))
+                                //.background(K.gra)
+                                //.cornerRadius(7.5)
+                                Rectangle()
+                                    .fill(Color.white) // Color of the separator
+                                    .frame(width: 1, height: 20) // Adjust height as needed
+                                //Spacer()
+                                Text("\(bet.teamBetOn ?? "Null Team") \(lineFinal)")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size:
+                                                    bet.teamBetOn?.count ?? 10 < 20 ? 16 : 13))
+                                //   (bet.teamBetOn?.count ?? 10 > 35 ? 9: 11)))
+                                
+                                    .foregroundColor(.white)
+                                    .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 5))
+                                    .cornerRadius(7.5)
+                                    .frame(maxWidth: 250, alignment: .leading)
+                                
+                                Button {
+                                    withAnimation {
+                                        expand.toggle()
+                                    }
+                                } label: {
                                     if expand {
                                         Image(systemName: "chevron.down")
-                                            .frame(width: 20, height: 20)
+                                            .frame(width: 16, height: 16)
                                             .foregroundColor(.white)
+                                            .frame(width: 30, height: 24)
+                                            //.background()
                                     }
                                     else{
                                         Image(systemName: "chevron.up")
-                                            .frame(width: 20, height: 20)
+                                            .frame(width: 16, height: 16)
                                             .foregroundColor(.white)
+                                            .frame(width: 30, height: 24)
                                     }
                                 }
                             }
-                            if expand {
-                                Text(game?.homeTeam ?? "ff")
-                                    .foregroundColor(.white)
-                            }
-                        }.frame(maxWidth: .infinity, maxHeight: .infinity) // This line
-                        .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
-                        .background(bet.result == .notStarted ? K.finalColor.backgroundBlue : Color.backgroundForBetResult(bet.result))
-                        .cornerRadius(7.5)
-                            
-                            if bet.result == .notStarted && uid == Auth.auth().currentUser?.uid && selectedWeek == "current" && ownCard && onTicketPage{ // ONLY SHOWS DELETE BUTTON IF .NOTSTARTED
-                                Button(action: {
-                                    if canDelete {
-                                        self.viewModel.deleteBet(bet: bet)
+                        }.padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
+                            .background(bet.result == .notStarted ? K.finalColor.backgroundBlue : Color.backgroundForBetResult(bet.result))
+                        if expand {
+                            HStack {
+                                VStack (spacing: 3){
+                                    if bet.result == .notStarted {
+                                        Rectangle()
+                                            .fill(Color.white) // Color of the separator
+                                            .frame(width: bet.result == .notStarted ? 240 : 300 , height: 1) // Adjust height as needed
                                     }
-                                    canDelete = true
-                                }) {
-                                    Image(systemName: "xmark.circle")
-                                        .resizable()
-                                        .frame(width: 20, height: 20)
-                                        .foregroundColor(canDelete ? .red : .red.opacity(0.5))
-
+                                    HStack {
+                                        VStack {
+                                            HStack {
+                                                Text(game?.homeTeam ?? "")
+                                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
+                                                    .foregroundColor(.white)
+                                                Spacer()
+                                            }
+                                            HStack {
+                                                Text(game?.awayTeam ?? "")
+                                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
+                                                    .foregroundColor(.white)
+                                                Spacer()
+                                            }
+                                        }.frame(width: 220)
+                                            .padding(.leading)
+                                        Spacer()
+                                        VStack {
+                                            Text((game?.homeTeamScore ?? -1) >= 0 ? "\(game?.homeTeamScore ?? -1)" : "")
+                                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                                .foregroundColor(.white)
+                                                .frame(width: 20)
+                                            Text((game?.awayTeamScore ?? -1) >= 0 ? "\(game?.awayTeamScore ?? -1)" : "")
+                                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                                .foregroundColor(.white)
+                                                .frame(width: 20)
+                                        }.padding(.trailing)
+                                        
+                                    }
+                                    
+                                    HStack {
+                                        Spacer()
+                                        Text("\(formatDateMMMDHMM.format(date: game?.commenceTime.dateValue() ?? Date()))")
+                                            .font(.custom(K.customFonts.lexendDecaMedium, size: 10))
+                                            .foregroundColor(K.finalColor.textWhite)
+                                            //.frame(maxWidth: .infinity, alignment: .center)
+                                        Spacer()
+                                    }
                                 }
-                            }
-                        }.background(bet.result == .notStarted ? Color.clear : Color.backgroundForBetResult(bet.result))
-                        .cornerRadius(7.5)
-                        .frame(width: 320)
-                        .onAppear() {
-                            canDelete = false
-                            fetchGameDocument(byID: bet.gameID)
+                                
+                            }.padding(EdgeInsets(top: 5, leading: 7.5, bottom: 5, trailing: 0))
+                            .background(K.finalColor.backgroundBlue)
                         }
-                }
+                    }.frame(maxWidth: .infinity, maxHeight: .infinity) // This line
+                    
+                    .cornerRadius(7.5)
+                        
+                        if bet.result == .notStarted && uid == Auth.auth().currentUser?.uid && selectedWeek == "current" && ownCard && onTicketPage{ // ONLY SHOWS DELETE BUTTON IF .NOTSTARTED
+                            Button(action: {
+                                if canDelete {
+                                    self.viewModel.deleteBet(bet: bet)
+                                }
+                                canDelete = true
+                            }) {
+                                Image(systemName: "xmark.circle")
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+                                    .foregroundColor(canDelete ? .red : .red.opacity(0.5))
+
+                            }
+                        }
+                    }.background(bet.result == .notStarted ? Color.clear : Color.backgroundForBetResult(bet.result))
+                    .cornerRadius(7.5)
+                    .frame(width: 320)
+                    .onAppear() {
+                        canDelete = false
+                        fetchGameDocument(byID: bet.gameID)
+                    }
+            
 
             }
             func fetchGameDocument(byID documentID: String) {

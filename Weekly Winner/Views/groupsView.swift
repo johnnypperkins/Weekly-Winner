@@ -298,7 +298,7 @@ struct groupsView: View {
                                                             .frame(width: 25, height: 25)
                                                         //.padding()
                                                             .foregroundColor(K.finalColor.winningGreen)
-                                                            .padding(.trailing, -3)
+                                                            .padding(.leading, -5)
                                                     }
                                                     .sheet(isPresented: $isGlobalPrizesShowing) {
                                                         globalPrizesView()
