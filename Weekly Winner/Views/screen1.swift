@@ -61,6 +61,9 @@ struct UserProfileView: View {
                 print("\(UserData.shared.username) is username")
             }
             groupsVM.fetchUserTickets() {}
+            groupsVM.fetchUserGroups {
+
+            }
             bookVM.fetchMostPopularBets()
         }.padding(.top, 35)
         //Spacer()
