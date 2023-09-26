@@ -8,36 +8,6 @@
 import SwiftUI
 import Kingfisher
 
-//struct profileView: View {
-//    @ObservedObject var viewModel: profileViewModel // For whatever reason this is causing infinite loop
-//   // @ObservedObject var viewModel2 = authenticationViewModel()
-////    @StateObject var groupsVM = groupsViewModel()
-////    @State var scrollViewOffset: CGFloat = 0
-////    //@State private var isShowingEditProfile: Bool = false
-////    @State private var isProfileEditing = false
-////    @Environment(\.dismiss) private var dismiss
-//    private var user: User
-////
-////    @State private var showDropdown = false
-////    @State private var selectedGroup = "global"
-////    var onOptionSelected: ((_ option: Ticket) -> Void)?
-////
-//
-//    init(user: User) {
-//        print("here")
-//        viewModel = profileViewModel(user: user)
-//        self.user = user
-//
-//        if viewModel.user.isCurrentUser == false{
-//
-//        }
-//    }
-//    var body: some View {
-//        Text("hello")
-//    }
-//}
-
-
 struct profileView: View {
     
     @ObservedObject var viewModel: profileViewModel
@@ -148,7 +118,7 @@ struct profileView: View {
                                         .frame(minWidth: 0, maxWidth: .infinity)
                                         .padding(.horizontal)
                                         
-                                        groupStats(viewModel: viewModel)
+                                        groupStats(stat1: viewModel.stats?.totalBetsPlaced ?? 0, stat2: viewModel.stats?.totalBetsWon ?? 0, stat3: percentageToML(percentage: viewModel.stats?.avgOddsPlaced ?? 0), stat4: String(format: "%.1f",viewModel.stats?.betScore ?? 0))
                                             .padding(.all,16)
                                     }.padding(.bottom, 120)
                                 }
@@ -190,7 +160,11 @@ struct profileView: View {
 }
 
 struct groupStats: View {
-    @ObservedObject var viewModel: profileViewModel
+    let stat1: Int?
+    let stat2: Int?
+    let stat3: String
+    let stat4: String
+   // @ObservedObject var viewModel: profileViewModel
   var body: some View {
       VStack() {
         HStack() {
@@ -200,7 +174,7 @@ struct groupStats: View {
             
             Spacer()
             
-            Text("\(viewModel.stats?.totalBetsPlaced ?? 0)")
+            Text("\(stat1 ?? 0)")
             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
             .foregroundColor(.white)
         }
@@ -213,6 +187,7 @@ struct groupStats: View {
             .overlay(Rectangle()
             .stroke(.white, lineWidth: 0.4))
             .padding(.horizontal)
+          
           HStack() {
             Text("Bets Won")
               .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
@@ -220,7 +195,7 @@ struct groupStats: View {
               
               Spacer()
               
-            Text("\(viewModel.stats?.totalBetsWon ?? 0)")
+            Text("\(stat2 ?? 0)")
               .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
               .foregroundColor(.white)
           }
@@ -235,13 +210,13 @@ struct groupStats: View {
             .stroke(.white, lineWidth: 0.4))
             .padding(.horizontal)
         HStack() {
-          Text("Average Ranking Percentile")
+          Text("Average Odds Placed")
             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
             .foregroundColor(.white)
             
             Spacer()
             
-          Text("Coming Soon")
+            Text("\(stat3)")
             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
             .foregroundColor(.white)
         }.padding(.horizontal)
@@ -254,13 +229,13 @@ struct groupStats: View {
             .stroke(.white, lineWidth: 0.4))
             .padding(.horizontal)
         HStack() {
-          Text("Global Ranking")
+          Text("Average Bet Winnings")
             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
             .foregroundColor(.white)
             
             Spacer()
             
-          Text("Coming Soon")
+          Text("\(stat4)")
                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
             .foregroundColor(.white)
         }.padding(.horizontal)

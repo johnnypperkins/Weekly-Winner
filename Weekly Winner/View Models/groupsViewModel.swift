@@ -5,6 +5,7 @@
 //  Created by Johnny Perkins on 7/16/23.
 //
 import Firebase
+import FirebaseFirestore
 
 
 class groupsViewModel: ObservableObject {

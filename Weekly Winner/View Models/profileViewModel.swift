@@ -56,7 +56,7 @@ class profileViewModel: ObservableObject {
                     let data = snapshot.data() as? [String: Any] ?? [:]
 
                     let avgOddsPlaced = data["avgOddsPlaced"] as? Double ?? 0
-                    let betScore = data["betScore"] as? Int ?? 0
+                    let betScore = data["betScore"] as? Double ?? 0
                     let totalBetsPlaced = data["totalBetsPlaced"] as? Int ?? 0
                     let totalBetsWon = data["totalBetsWon"] as? Int ?? 0
 

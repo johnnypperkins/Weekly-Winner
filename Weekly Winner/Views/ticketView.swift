@@ -1,11 +1,15 @@
 import SwiftUI
 import Firebase
+import Kingfisher
+import SafariServices
 
 struct ticketView: View {
     @ObservedObject var viewModel = ticketViewModel()
     @ObservedObject var bookVM = bookViewModel()
+    //@ObservedObject var profileVM = profileViewModel(user: user)
     @State private var selectedGroup = 0 // Variable to track the selected group
     @ObservedObject var authViewModel = authenticationViewModel()
+    @State var ticketShowing: Bool = true
     var username: String
     var uid: String
     var groupID: String
@@ -24,7 +28,6 @@ struct ticketView: View {
             }
         }
     }
-
     
     init(username: String, uid: String, groupID: String, selectedWeek: String, ticketFormatForGroups: [Int], ownTicket: Bool, onTicketPage: Bool) {
         self.username = username
@@ -34,11 +37,21 @@ struct ticketView: View {
         self.ticketFormatForGroups = ticketFormatForGroups
         self.ownTicket = ownTicket
         self.onTicketPage = onTicketPage
-        
+//        authViewModel.fetchUserInformation(uid: uid) { (userData) in
+//            self.user = userData
+//        }
+//
         if uid != Auth.auth().currentUser?.uid{
             viewModel.fetchFriendTicket(uid: uid, with: groupID) { group in
                 
             }
+            
+        }
+        viewModel.fetchStats(uid: uid) {
+
+        }
+        
+        viewModel.fetchUserProfilePic(uid: uid) {
             
         }
         
@@ -89,7 +102,7 @@ struct ticketView: View {
                                         else {
                                             viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
                                         }
-                                       // }
+                                        // }
                                     }) {
                                         Text(viewModel.userTickets[index].groupName)
                                             .padding()
@@ -106,28 +119,66 @@ struct ticketView: View {
                     }
                     
                 } else {
-//                    if uid != Auth.auth().currentUser?.uid {
                     if viewModel.isBetsLoaded {
-                        Text(viewModel.userTickets[0].groupName).font(.custom(K.customFonts.lexendDecaMedium, size: 20)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
-                        Text(username).font(.custom(K.customFonts.lexendDecaMedium, size: 15)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
+                        HStack {
+                            Spacer()
+                            if viewModel.profilePicUrl != "" {
+                                KFImage(URL(string: viewModel.profilePicUrl))
+                                    .resizable()
+                                    .clipShape(Circle())
+                                    .foregroundColor(.clear)
+                                    .frame(width: 65, height: 65)
+                            }
+                            //Text(viewModel.userTickets[0].groupName).font(.custom(K.customFonts.lexendDecaMedium, size: 20)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
+                            Text(username).font(.custom(K.customFonts.lexendDecaMedium, size: 25)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
+                            Spacer()
+                        }.padding(.top, 5)
+                        
+                        HStack (spacing: 5){
+                            Button(action: {
+                                ticketShowing = true
+                            }, label: {
+                                HStack {
+                                    Text("Ticket")
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                        .foregroundColor(.white)
+                                        .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                }.frame(width: 100, height: 30)
+                                .background(ticketShowing ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                .cornerRadius(5)
+                                
+                            })
+                            
+                            Button(action: {
+                                ticketShowing = false
+                            }, label: {
+                                HStack {
+                                    Text("Stats")
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                        .foregroundColor(.white)
+                                        .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                }.frame(width: 100, height: 30)
+                                .background(!ticketShowing ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                .cornerRadius(5)
+                                
+                            })
+                            
+                        }
                     }
-//                    }
-//                    else{
-//                        Text("loading")
-//                    }
                     
                 }
-
-                if (viewModel.isBetsLoaded) {
-                    if (ticketIsEnabled) {
-//                        if uid == Auth.auth().currentUser?.uid {
+                
+                if ticketShowing {
+                    if (viewModel.isBetsLoaded) {
+                        if (ticketIsEnabled) {
+                            //                        if uid == Auth.auth().currentUser?.uid {
                             HStack (alignment: .center, spacing: 23){
                                 HStack (spacing: 0) {
-                                        Text("Potential").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
-                                        Spacer()
-                                        Text("\(String(format: "%.0f", viewModel.totalPotentialWon))")
-                                            .font(.custom("Futura", size: 20))
-                                            .foregroundColor(K.finalColor.potentialOrange)
+                                    Text("Potential").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
+                                    Spacer()
+                                    Text("\(String(format: "%.0f", viewModel.totalPotentialWon))")
+                                        .font(.custom("Futura", size: 20))
+                                        .foregroundColor(K.finalColor.potentialOrange)
                                 }.padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
                                     .frame(width: 160, height: 55, alignment: .center)
                                     .background(
@@ -138,9 +189,9 @@ struct ticketView: View {
                                 
                                 HStack (spacing: 0){
                                     
-                                        Text("Total").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
-                                        Spacer()
-                                        Text("\(String(format: "%.0f", viewModel.totalWon))").font(.custom("Futura", size: 20)).foregroundColor(K.finalColor.winningGreen)
+                                    Text("Total").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
+                                    Spacer()
+                                    Text("\(String(format: "%.0f", viewModel.totalWon))").font(.custom("Futura", size: 20)).foregroundColor(K.finalColor.winningGreen)
                                 }
                                 .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
                                 .frame(width: 160, height: 55, alignment: .center)
@@ -152,89 +203,81 @@ struct ticketView: View {
                                 
                                 
                             }.padding([.horizontal,.top])
-                        
-                        ScrollView {
-                            VStack {
+                            
+                            ScrollView {
                                 VStack {
-                                    if selectedWeek == "current" {
-                                        ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
-                                            if viewModel.currentTicketFormat.count > 0 && viewModel.isTFLoaded == true && viewModel.totalBetArrays.count == viewModel.currentTicketFormat.count {
-                                                if viewModel.isBetsLoaded {
-                                                    SectionTitle(title: parlayTitle(ticketFormat: viewModel.currentTicketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.currentTicketFormat[parlayIndex], uid: Auth.auth().currentUser?.uid ?? "", selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, viewModel: viewModel, BookVM: bookVM)
+                                    VStack {
+                                        if selectedWeek == "current" {
+                                            ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
+                                                if viewModel.currentTicketFormat.count > 0 && viewModel.isTFLoaded == true && viewModel.totalBetArrays.count == viewModel.currentTicketFormat.count {
+                                                    if viewModel.isBetsLoaded {
+                                                        SectionTitle(title: parlayTitle(ticketFormat: viewModel.currentTicketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.currentTicketFormat[parlayIndex], uid: Auth.auth().currentUser?.uid ?? "", selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, viewModel: viewModel, BookVM: bookVM)
+                                                    }
+                                                }
                                             }
+                                        } else {
+                                            ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
+                                                SectionTitle(title: parlayTitle(ticketFormat: ticketFormatForGroups, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: ticketFormatForGroups[parlayIndex], uid: uid, selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, viewModel: viewModel, BookVM: bookVM)
                                             }
                                         }
-                                    } else {
-                                        ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
-                                            SectionTitle(title: parlayTitle(ticketFormat: ticketFormatForGroups, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: ticketFormatForGroups[parlayIndex], uid: uid, selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, viewModel: viewModel, BookVM: bookVM)
-                                        }
+                                        
+                                    }.onAppear() {
+                                        print("TOTAL BET ARRAY COUNT", viewModel.totalBetArrays.count)
+                                        print("TICKET FORMAT FOR GROUPS", ticketFormatForGroups)
                                     }
-
-                                }.onAppear() {
-                                    print("TOTAL BET ARRAY COUNT", viewModel.totalBetArrays.count)
-                                    print("TICKET FORMAT FOR GROUPS", ticketFormatForGroups)
-                                }
-
-                            }.padding(.bottom,60)
-                            .padding()
+                                    
+                                }.padding(.bottom,60)
+                                    .padding()
+                            }
+                            
+                        } else {
+                            Text("Disabled, talk to admin.")
+                                .font(.custom(K.customFonts.lexendDecaLight, size: 20))
+                                .foregroundColor(.white)
+                                .padding(.top, 75)
                         }
-
                     } else {
-                        Text("Disabled, talk to admin.")
-                            .font(.custom(K.customFonts.lexendDecaLight, size: 20))
+                        Text("")
+                            .font(.custom(K.customFonts.lexendDecaLight, size: 15))
                             .foregroundColor(.white)
-                            .padding(.top, 75)
+                            .padding(.top)
                     }
                 } else {
-                    Text("")
-                        .font(.custom(K.customFonts.lexendDecaLight, size: 15))
-                        .foregroundColor(.white)
-                        .padding(.top)
+                    groupStats(stat1: viewModel.stats?.totalBetsPlaced ?? 0, stat2: viewModel.stats?.totalBetsWon ?? 0, stat3: percentageToML(percentage: viewModel.stats?.avgOddsPlaced ?? 0), stat4: String(format: "%.1f",viewModel.stats?.betScore ?? 0))
+                        .padding()
                 }
-                Spacer()
-            }.padding(.top, onTicketPage ? 75 : 0)
-            //.background(K.finalColor.backgroundBlue)
-                .onAppear {
-                    print("ticket format for groups " + "\(ticketFormatForGroups)" + "\(viewModel.totalBetArrays.count)")
-                    selectedGroup = 0
-                    
-                    
-                    if !onTicketPage {
-                        if selectedWeek == "current" {
-                            viewModel.fetchFriendTicket(uid: uid, with: groupID) {_ in
-                                viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: viewModel.userTickets[0].ticketFormat, completion: {}) // usertickets is set to only one ticket here
+                
+                    Spacer()
+                }.padding(.top, onTicketPage ? 75 : 0)
+                //.background(K.finalColor.backgroundBlue)
+                    .onAppear {
+                        print("ticket format for groups " + "\(ticketFormatForGroups)" + "\(viewModel.totalBetArrays.count)")
+                        selectedGroup = 0
+                        
+                        
+                        if !onTicketPage {
+                            if selectedWeek == "current" {
+                                viewModel.fetchFriendTicket(uid: uid, with: groupID) {_ in
+                                    viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: viewModel.userTickets[0].ticketFormat, completion: {}) // usertickets is set to only one ticket here
+                                }
                             }
-                        }
-                        else {
-                            viewModel.fetchPastFriendTicket(uid: uid, with: groupID) {_ in
-                                viewModel.fetchPastBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
+                            else {
+                                viewModel.fetchPastFriendTicket(uid: uid, with: groupID) {_ in
+                                    viewModel.fetchPastBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
+                                }
                             }
-                        }
-                    } else {
-                        viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
-                            viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, completion: {}) // Fetch bets for selected group on view appear.
-                            
+
+                        } else {
+                            viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
+                                viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, completion: {}) // Fetch bets for selected group on view appear.
+                                
+                            }
                         }
                     }
-                    
-//                    if uid != Auth.auth().currentUser?.uid{
-//
-//                    }
-//
-//                    else{
-//                        if selectedWeek == "current"{
-//
-//
-//                        }
-//                        else {
-//                            viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
-//                        }
-//                    }
-                }
-                .onDisappear {
-                    selectedGroup = 0
-                    viewModel.stopListening() // Stop listening when view disappears
-                }
+                    .onDisappear {
+                        selectedGroup = 0
+                        viewModel.stopListening() // Stop listening when view disappears
+                    }
             
         }
     }

@@ -9,6 +9,7 @@ import FirebaseFirestoreSwift
 import FirebaseAuth
 import SwiftUI
 import Firebase
+import FirebaseFirestore
 
 class ticketViewModel: ObservableObject {
     
@@ -38,7 +39,66 @@ class ticketViewModel: ObservableObject {
     
     private let groupServe = groupService()
     @Published var userTickets: [Ticket] = [] // Ticket99
+    @Published var stats: Stats? = nil
+    @Published var profilePicUrl: String = ""
+//
+//    init() {
+//        fetchStats(uid: uid) {
+//            
+//        }
+//    }
+    
+    func fetchUserProfilePic(uid: String, completion: @escaping () -> Void) {
+        //let db = Firestore.firestore()
+        let userRef = db.collection("users").document(uid)
 
+        userRef.getDocument { (documentSnapshot, error) in
+            if let error = error {
+                print("Error checking if blocked: \(error.localizedDescription)")
+                completion()
+            } else {
+                let profileImageUrl = documentSnapshot?.data()?["profileImageUrl"] as? String
+                self.profilePicUrl = profileImageUrl ?? ""
+                completion()
+            }
+        }
+    }
+    
+    
+    func fetchStats(uid: String, completion: @escaping () -> Void) {
+        Firestore.firestore().collection("users").document(uid).collection("Misc")
+            .document("stats")
+            .getDocument { snapshot, error in
+                if let error = error {
+                    print("Error fetching stats: \(error.localizedDescription)")
+                    completion()
+                    return
+                }
+
+                guard let snapshot = snapshot else {
+                    print("Snapshot is nil.")
+                    completion()
+                    return
+                }
+
+                if snapshot.exists {
+                    let id = snapshot.documentID
+                    let data = snapshot.data() as? [String: Any] ?? [:]
+
+                    let avgOddsPlaced = data["avgOddsPlaced"] as? Double ?? 0
+                    let betScore = data["betScore"] as? Double ?? 0
+                    let totalBetsPlaced = data["totalBetsPlaced"] as? Int ?? 0
+                    let totalBetsWon = data["totalBetsWon"] as? Int ?? 0
+
+                    let statistics = Stats( avgOddsPlaced: avgOddsPlaced, betScore: betScore, totalBetsPlaced: totalBetsPlaced, totalBetsWon: totalBetsWon)
+                    self.stats = statistics
+                    completion()
+                } else {
+                    print("Document does not exist.")
+                    completion()
+                }
+            }
+    }
 
     func fetchFriendTicket(uid: String, with groupID: String, completion: @escaping (Result<Ticket, Error>) -> Void) { // Ticket99
         let db = Firestore.firestore()

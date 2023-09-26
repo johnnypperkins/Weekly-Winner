@@ -11,7 +11,7 @@ import FirebaseFirestoreSwift
 
 struct Stats: Decodable {
     var avgOddsPlaced: Double
-    var betScore: Int
+    var betScore: Double
     var totalBetsPlaced: Int
     var totalBetsWon: Int
 }

@@ -6,6 +6,8 @@
 //
 
 import Firebase
+import FirebaseFirestore
+
 
 
 enum AuthenticationState {
