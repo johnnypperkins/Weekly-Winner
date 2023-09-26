@@ -148,7 +148,7 @@ struct profileView: View {
                                         .frame(minWidth: 0, maxWidth: .infinity)
                                         .padding(.horizontal)
                                         
-                                        groupStats()
+                                        groupStats(viewModel: viewModel)
                                             .padding(.all,16)
                                     }.padding(.bottom, 120)
                                 }
@@ -190,6 +190,7 @@ struct profileView: View {
 }
 
 struct groupStats: View {
+    @ObservedObject var viewModel: profileViewModel
   var body: some View {
       VStack() {
         HStack() {
@@ -199,7 +200,7 @@ struct groupStats: View {
             
             Spacer()
             
-          Text("Coming Soon")
+            Text("\(viewModel.stats?.totalBetsPlaced ?? 0)")
             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
             .foregroundColor(.white)
         }
@@ -213,13 +214,13 @@ struct groupStats: View {
             .stroke(.white, lineWidth: 0.4))
             .padding(.horizontal)
           HStack() {
-            Text("Win Percentage")
+            Text("Bets Won")
               .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
               .foregroundColor(.white)
               
               Spacer()
               
-            Text("Coming Soon")
+            Text("\(viewModel.stats?.totalBetsWon ?? 0)")
               .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
               .foregroundColor(.white)
           }
@@ -253,7 +254,7 @@ struct groupStats: View {
             .stroke(.white, lineWidth: 0.4))
             .padding(.horizontal)
         HStack() {
-          Text("Highest Global Ranking")
+          Text("Global Ranking")
             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
             .foregroundColor(.white)
             

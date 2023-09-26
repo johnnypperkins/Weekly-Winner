@@ -15,6 +15,7 @@ class profileViewModel: ObservableObject {
     @Published var isBlocked: Bool = false
     @Published var isBlockedBy: Bool = false
     @Published var user: User
+    @Published var stats: Stats? = nil
     @Published var profileImageURLHolder: String
     
     init(user: User) {
@@ -22,6 +23,10 @@ class profileViewModel: ObservableObject {
         self.user = user
         self.profileImageURLHolder = user.profileImageUrl
         //self.isFollow = uService.isFollowed(id: user.id!)
+        fetchStats(uid: user.id!) {statistics in
+            self.stats = statistics
+            print("sdfsdfsdfsdfsdfsdfsd \(statistics)")
+        }
         Task{
             await self.checkIfBlocked()
             await self.checkIfBlockedBy()
@@ -29,6 +34,43 @@ class profileViewModel: ObservableObject {
         print(user.isCurrentUser)
         //self.fetchLikedTweets()
     }
+    
+    func fetchStats(uid: String, completion: @escaping (Stats?) -> Void) {
+        Firestore.firestore().collection("users").document(uid).collection("Misc")
+            .document("stats")
+            .getDocument { snapshot, error in
+                if let error = error {
+                    print("Error fetching stats: \(error.localizedDescription)")
+                    completion(nil)
+                    return
+                }
+
+                guard let snapshot = snapshot else {
+                    print("Snapshot is nil.")
+                    completion(nil)
+                    return
+                }
+
+                if snapshot.exists {
+                    let id = snapshot.documentID
+                    let data = snapshot.data() as? [String: Any] ?? [:]
+
+                    let avgOddsPlaced = data["avgOddsPlaced"] as? Double ?? 0
+                    let betScore = data["betScore"] as? Int ?? 0
+                    let totalBetsPlaced = data["totalBetsPlaced"] as? Int ?? 0
+                    let totalBetsWon = data["totalBetsWon"] as? Int ?? 0
+
+                    let statistics = Stats( avgOddsPlaced: avgOddsPlaced, betScore: betScore, totalBetsPlaced: totalBetsPlaced, totalBetsWon: totalBetsWon)
+                    completion(statistics)
+                } else {
+                    print("Document does not exist.")
+                    completion(nil)
+                }
+            }
+    }
+
+
+
     
     func fetchUser() {
             guard let uid = user.id else { return }
