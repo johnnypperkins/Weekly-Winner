@@ -9,6 +9,8 @@ import Foundation
 import SwiftUI
 import FirebaseAuth
 import Firebase
+import Kingfisher
+import SafariServices
 
 struct globalPrizesView: View {
     @StateObject private var viewModel = prizesViewModel()
@@ -66,6 +68,65 @@ struct globalPrizesView: View {
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+struct statsView: View {
+    @StateObject private var viewModel = statsViewModel()
+    
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                K.finalColor.backgroundBlue.ignoresSafeArea(.all)
+                VStack {
+                    HStack {
+                        Spacer()
+                        Text("Bet Score Leaderboard")
+                            .foregroundColor(.white)
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 25))
+                        Spacer()
+                    }
+                    Rectangle()
+                        .fill(Color.white) // Color of the separator
+                        .frame(width: 285 , height: 1) // Adjust height as needed
+                        .padding(.bottom, 5)
+                    VStack {
+                        ForEach(viewModel.top10players.indices, id: \.self) { index in
+                            HStack {
+                                HStack {
+                                    Text("\(index + 1).")
+                                        .foregroundColor(.white)
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
+                                }.frame(width: 22.5)
+                                if viewModel.top10players[index].profileImageUrl != "" {
+                                    KFImage(URL(string: viewModel.top10players[index].profileImageUrl))
+                                        .resizable()
+                                        .clipShape(Circle())
+                                        .foregroundColor(.clear)
+                                        .frame(width: 30, height: 30)
+                                }else {
+                                    Image(systemName: "photo.circle.fill")
+                                        .resizable()
+                                        .foregroundColor(K.finalColor.cardBlue)
+                                        .frame(width: 30, height: 30)
+                                        .clipShape(Circle())
+                                }
+                                Text("\(viewModel.top10players[index].username)")
+                                    .foregroundColor(.white)
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 17))
+                                Spacer()
+                                Text("\(String(format: "%.1f", viewModel.top10players[index].betScore))")
+                                    .foregroundColor(K.finalColor.titleBlue)
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 17))
+                            }
+                            
+                        }
+                    }.frame(width: 275)
+                        .padding(.horizontal)
+                    
                 }
             }
         }

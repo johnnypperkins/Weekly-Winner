@@ -522,76 +522,7 @@ struct BetDetailsView: View {
                                     .background(K.finalColor.cardBlue)
                                     .cornerRadius(7.5)
                             }
-                                
-//                                Picker("Bet Type", selection: $betNumber) {
-//                                    if betNumber >= 0 {
-//                                        ForEach(0..<1, id: \.self) { _ in
-//                                            //var parlayIndex = 1
-//                                            let availableBets = ticketVM.availableBetsArray
-//                                            let ticketFormat = ticketVM.currentTicketFormat
-//                                            ForEach(0..<availableBets.count, id: \.self) { index in
-//                                                //let index = bet - 1
-//                                                //let parlayType = ticketVM.currentTicketFormat[index]
-//                                                if availableBets[index] > 0 {
-//                                                    Text(parlayTitle(ticketFormat: ticketFormat, index: index)).tag(index+1)
-//                                                        .foregroundColor(K.finalColor.textWhite)
-//                                                        .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-//                                                        .scaleEffect(x: 2)
-//
-//                                                }
-//                                            }
-//                                        }
-//
-//                                    } else {
-//                                        Text("FULL")
-//                                            .foregroundColor(K.finalColor.textWhite)
-//                                            .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-//                                            .scaleEffect(x: 2)
-//                                    }
-//                                }.scaleEffect(x: 0.5)
-//                                .frame(width: 150, alignment: .center)
-//                                .padding(.horizontal)
-//                                .pickerStyle(WheelPickerStyle())
-//                                .onChange(of: betNumber) { newValue in
-//                                    print("Selection changed to: \(newValue)")
-//                                    checkTeamTaken()
-//                                    if betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 {
-//                                        if ticketVM.currentTicketFormat[newValue-1] == 5 {
-//                                            if betType == .betAwaySpread {
-//                                                chosenSpread = game.awaySpread + 1
-//                                            }
-//                                            if betType == .betHomeSpread {
-//                                                chosenSpread = game.homeSpread + 1
-//                                            }
-//                                            if betType == .over {
-//                                                chosenSpread = game.totalOver - 1
-//                                            }
-//                                            if betType == .under {
-//                                                chosenSpread = game.totalUnder + 1
-//                                            }
-//                                        }
-//                                    } else {
-//                                        if betType == .betAwaySpread {
-//                                            chosenSpread = game.awaySpread
-//                                        }
-//                                        if betType == .betHomeSpread {
-//                                            chosenSpread = game.homeSpread
-//                                        }
-//                                        if betType == .over {
-//                                            chosenSpread = game.totalOver
-//                                        }
-//                                        if betType == .under {
-//                                            chosenSpread = game.totalUnder
-//                                        }
-//                                    }
-//                                }
-//                                .onAppear {
-//                                    print("\(betNumber) is original betNumber")
-//                                }
-//
-                                
-
-                            }
+                        }
                         
                     }.cornerRadius(10)
                     

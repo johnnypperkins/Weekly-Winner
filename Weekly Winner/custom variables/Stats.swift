@@ -15,3 +15,10 @@ struct Stats: Decodable {
     var totalBetsPlaced: Int
     var totalBetsWon: Int
 }
+
+struct topStat: Decodable {
+    var betScore: Double
+    var profileImageUrl: String
+    var userID: String
+    var username: String
+}

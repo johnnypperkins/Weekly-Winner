@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C065BAA2AC714C40040D6CE /* statsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C065BA92AC714C40040D6CE /* statsViewModel.swift */; };
 		3C1091E62A7890B70049C278 /* Jura-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 866C52582A7709D9008BE839 /* Jura-Regular.ttf */; };
 		3C1091ED2A789A570049C278 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3C1091EC2A7898830049C278 /* Poppins-Medium.ttf */; };
 		3C1091EE2A789A5A0049C278 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3C1091EB2A7898790049C278 /* Poppins-Regular.ttf */; };
@@ -96,6 +97,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3C065BA92AC714C40040D6CE /* statsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = statsViewModel.swift; sourceTree = "<group>"; };
 		3C1091EA2A7897DC0049C278 /* LexendDeca-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LexendDeca-Medium.ttf"; sourceTree = "<group>"; };
 		3C1091EB2A7898790049C278 /* Poppins-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Regular.ttf"; sourceTree = "<group>"; };
 		3C1091EC2A7898830049C278 /* Poppins-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Medium.ttf"; sourceTree = "<group>"; };
@@ -244,6 +246,7 @@
 				864A2D692A6D82CF000FBA35 /* editProfileViewModel.swift */,
 				3C3DB73D2A7C7E3E000F6898 /* chatViewModel.swift */,
 				3C7C708B2A92F5F800C7C9DB /* prizesViewModel.swift */,
+				3C065BA92AC714C40040D6CE /* statsViewModel.swift */,
 			);
 			path = "View Models";
 			sourceTree = "<group>";
@@ -559,6 +562,7 @@
 				3C3DB73E2A7C7E3E000F6898 /* chatViewModel.swift in Sources */,
 				867801802A213CB9006FE479 /* tabBarView.swift in Sources */,
 				867713EE2AC3284A00B2B036 /* Stats.swift in Sources */,
+				3C065BAA2AC714C40040D6CE /* statsViewModel.swift in Sources */,
 				3CD023D02A84655E0033D761 /* groupSettingsView.swift in Sources */,
 				865C4A762A327CA600C3C626 /* authenticationView.swift in Sources */,
 				8668B3132A2EF06A00A1B343 /* gameService.swift in Sources */,

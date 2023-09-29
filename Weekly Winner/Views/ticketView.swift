@@ -125,9 +125,10 @@ struct ticketView: View {
                             if viewModel.profilePicUrl != "" {
                                 KFImage(URL(string: viewModel.profilePicUrl))
                                     .resizable()
+                                    .aspectRatio(contentMode: .fill)
                                     .clipShape(Circle())
-                                    .foregroundColor(.clear)
-                                    .frame(width: 65, height: 65)
+                                    .frame(width: 70, height: 70)
+                                
                             }
                             //Text(viewModel.userTickets[0].groupName).font(.custom(K.customFonts.lexendDecaMedium, size: 20)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
                             Text(username).font(.custom(K.customFonts.lexendDecaMedium, size: 25)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)

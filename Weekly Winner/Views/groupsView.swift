@@ -13,6 +13,7 @@ import Kingfisher
 struct groupsView: View {
     @State private var isJoinSheetPresented = false
     @State private var isGroupSettingsViewPresented: Bool = false
+    @State private var isStatsViewPresented: Bool = false
     @State private var isGlobalPrizesShowing: Bool = false
     @State private var searchText = ""
     @State private var isShowingSheet = false
@@ -339,11 +340,6 @@ struct groupsView: View {
                                     }
                                 }.frame(height: 25)
                                 Spacer()
-//                                VStack {
-//                                    HStack {
-//
-//                                    }
-//                                }
                                 Button(action: {
                                     showingChat = false
                                 }) {
@@ -352,6 +348,7 @@ struct groupsView: View {
                                         .frame(width: 25, height: 28)
                                         //.foregroundColor(showingChat ? .gray : .blue)
                                 }
+                                
                                 Button(action: {
                                     showingChat = true
                                 }) {
@@ -360,6 +357,21 @@ struct groupsView: View {
                                         .frame(width: 20, height: 20)
                                         .foregroundColor(showingChat ? .blue : .gray)
                                 }
+                                
+                                Button(action: {
+                                    isStatsViewPresented = true
+                                }) {
+                                    Image("StatsUnselected")
+                                        .resizable()
+                                        .frame(width: 20, height: 20)
+                                    //.padding()
+                                        .foregroundColor(.white)
+                                }
+                                .sheet(isPresented: $isStatsViewPresented) {
+                                    statsView()
+                                        .presentationDetents([.fraction(0.75)])
+                                }
+                                
                                 if Auth.auth().currentUser?.uid == "fg57TZhmLmWH9TT3WCA3WuXT7dy2" || viewModel.userTickets[selectedGroup-1].groupID != "Global" { // reidbrown1 id
                                     Button(action: {
                                         isGroupSettingsViewPresented = true
@@ -417,9 +429,9 @@ struct groupsView: View {
                 .onAppear(){
                     if selectedGroup > 0 {
                         print("on appear ranked")
-                        viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {
-                            viewModel.getGroupAdmin(groupID: viewModel.userTickets[selectedGroup-1].groupID) // keeps saying index out of range
-                        }
+//                        viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {
+//                            viewModel.getGroupAdmin(groupID: viewModel.userTickets[selectedGroup-1].groupID) // keeps saying index out of range
+//                        }
                     }
                 }
             }
@@ -881,7 +893,7 @@ struct GroupJoinSheet: View {
                     if group.groupImageURL != ""{
                         KFImage(URL(string: group.groupImageURL))
                             .resizable()
-                            .cornerRadius(25)
+                            .cornerRadius(20)
                             .frame(width: 40, height: 40, alignment: .leading)
                     }
                     else {
