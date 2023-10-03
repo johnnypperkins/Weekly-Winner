@@ -105,8 +105,8 @@ struct statsView: View {
                                     KFImage(URL(string: viewModel.top10players[index].profileImageUrl))
                                         .resizable()
                                         .clipShape(Circle())
+                                        .aspectRatio(contentMode: .fill)
                                         .foregroundColor(.clear)
-                                        .scaledToFit()
                                         .frame(width: 30, height: 30)
                                 }else {
                                     Image(systemName: "photo.circle.fill")

@@ -146,10 +146,10 @@ struct ticketView: View {
                                     Text("Joined: " + formatDateMMDDYY(from: viewModel.userInfo!.dateJoined))
                                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.medium))
                                         .foregroundColor(.white.opacity(0.75))
-                                        .padding(.leading, 2)
+                                        .padding(.leading, 1)
                                 }
                                 Spacer()
-                            }.padding(.top, 5)
+                            }.padding(.top, 6)
                             
                             HStack (spacing: 5){
                                 Button(action: {
@@ -180,7 +180,7 @@ struct ticketView: View {
                                     
                                 })
                                 
-                            }.padding(.bottom,5)
+                            }.padding(.bottom,6)
                         }.background(K.finalColor.cardBlue)
                             .cornerRadius(7.5)
                             .padding(.horizontal, 22.5)
