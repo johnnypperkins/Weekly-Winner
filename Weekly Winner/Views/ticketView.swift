@@ -55,6 +55,8 @@ struct ticketView: View {
             
         }
         
+
+        
     }
     
     var body: some View {
@@ -120,51 +122,70 @@ struct ticketView: View {
                     
                 } else {
                     if viewModel.isBetsLoaded {
-                        HStack {
-                            Spacer()
-                            if viewModel.profilePicUrl != "" {
-                                KFImage(URL(string: viewModel.profilePicUrl))
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .clipShape(Circle())
-                                    .frame(width: 70, height: 70)
+                        VStack {
+                            HStack {
+                                Spacer()
+                                if viewModel.profilePicUrl != "" {
+                                    KFImage(URL(string: viewModel.userInfo?.profileImageUrl ?? ""))
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .clipShape(Circle())
+                                        .frame(width: 80, height: 80)
+                                    
+                                } else {
+                                    Image(systemName: "photo.circle.fill")
+                                        .resizable()
+                                        .cornerRadius(7.5)
+                                        .foregroundColor(K.finalColor.titleBlue)
+                                        .scaledToFit()
+                                        .frame(height: 80)
+                                }
+                                //Text(viewModel.userTickets[0].groupName).font(.custom(K.customFonts.lexendDecaMedium, size: 20)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
+                                VStack (alignment: .leading, spacing: 0){
+                                    Text(viewModel.userInfo?.username ?? "").font(.custom(K.customFonts.lexendDecaMedium, size: 28)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
+                                    Text("Joined: " + formatDateMMDDYY(from: viewModel.userInfo!.dateJoined))
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.medium))
+                                        .foregroundColor(.white.opacity(0.75))
+                                        .padding(.leading, 2)
+                                }
+                                Spacer()
+                            }.padding(.top, 5)
+                            
+                            HStack (spacing: 5){
+                                Button(action: {
+                                    ticketShowing = true
+                                }, label: {
+                                    HStack {
+                                        Text("Ticket")
+                                            .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                            .foregroundColor(.white)
+                                            .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                    }.frame(width: 100, height: 30)
+                                        .background(ticketShowing ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                        .cornerRadius(5)
+                                    
+                                })
                                 
-                            }
-                            //Text(viewModel.userTickets[0].groupName).font(.custom(K.customFonts.lexendDecaMedium, size: 20)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
-                            Text(username).font(.custom(K.customFonts.lexendDecaMedium, size: 25)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
-                            Spacer()
-                        }.padding(.top, 5)
+                                Button(action: {
+                                    ticketShowing = false
+                                }, label: {
+                                    HStack {
+                                        Text("Stats")
+                                            .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                            .foregroundColor(.white)
+                                            .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                    }.frame(width: 100, height: 30)
+                                        .background(!ticketShowing ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                        .cornerRadius(5)
+                                    
+                                })
+                                
+                            }.padding(.bottom,5)
+                        }.background(K.finalColor.cardBlue)
+                            .cornerRadius(7.5)
+                            .padding(.horizontal, 22.5)
+                        //
                         
-                        HStack (spacing: 5){
-                            Button(action: {
-                                ticketShowing = true
-                            }, label: {
-                                HStack {
-                                    Text("Ticket")
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
-                                        .foregroundColor(.white)
-                                        .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
-                                }.frame(width: 100, height: 30)
-                                .background(ticketShowing ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                                .cornerRadius(5)
-                                
-                            })
-                            
-                            Button(action: {
-                                ticketShowing = false
-                            }, label: {
-                                HStack {
-                                    Text("Stats")
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
-                                        .foregroundColor(.white)
-                                        .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
-                                }.frame(width: 100, height: 30)
-                                .background(!ticketShowing ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                                .cornerRadius(5)
-                                
-                            })
-                            
-                        }
                     }
                     
                 }
@@ -267,6 +288,8 @@ struct ticketView: View {
                                     viewModel.fetchPastBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
                                 }
                             }
+                            
+                            viewModel.fetchUserInformation(uid: uid) {}
 
                         } else {
                             viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {

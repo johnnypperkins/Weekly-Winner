@@ -87,6 +87,15 @@ func returnOdds(betType: BetType, ogSpr: Int, chsSpr: Int) -> Double { // this i
            return 0.205
        } else if chosenSpread == originalSpread - 12 {
            return 0.19
+       } else if chosenSpread == originalSpread - 13 {
+           return 0.1825
+       } else if chosenSpread == originalSpread - 14 {
+           return 0.175
+       } else if chosenSpread == originalSpread - 15 {
+           return 0.1675
+
+           
+           
        }  else if chosenSpread == originalSpread + 1 {
            return 0.56
        } else if chosenSpread == originalSpread + 2 {
@@ -107,7 +116,20 @@ func returnOdds(betType: BetType, ogSpr: Int, chsSpr: Int) -> Double { // this i
            return 0.80
        } else if chosenSpread == originalSpread + 10 {
            return 0.82
+       } else if chosenSpread == originalSpread + 11 {
+           return 0.83
+       } else if chosenSpread == originalSpread + 12 {
+           return 0.84
+       } else if chosenSpread == originalSpread + 13 {
+           return 0.85
+       } else if chosenSpread == originalSpread + 14 {
+           return 0.86
+       } else if chosenSpread == originalSpread + 15 {
+           return 0.87
        }
+        
+        
+        
     } else if betType == .over { // ACTUALLY SPREAD
         if chosenSpread == originalSpread {
             return 0.5
@@ -135,6 +157,14 @@ func returnOdds(betType: BetType, ogSpr: Int, chsSpr: Int) -> Double { // this i
             return 0.218
         } else if chosenSpread == originalSpread + 12 {
             return 0.197
+        } else if chosenSpread == originalSpread + 13 {
+            return 0.182
+        } else if chosenSpread == originalSpread + 14 {
+            return 0.172
+        } else if chosenSpread == originalSpread + 15 {
+            return 0.165
+            
+            
         }  else if chosenSpread == originalSpread - 1 {
             return 0.515
         } else if chosenSpread == originalSpread - 2 {
@@ -155,7 +185,18 @@ func returnOdds(betType: BetType, ogSpr: Int, chsSpr: Int) -> Double { // this i
             return 0.75
         } else if chosenSpread == originalSpread - 10 {
             return 0.77
+        }  else if chosenSpread == originalSpread - 11 {
+            return 0.79
+        } else if chosenSpread == originalSpread - 12 {
+            return 0.81
+        } else if chosenSpread == originalSpread - 13 {
+            return 0.82
+        } else if chosenSpread == originalSpread - 14 {
+            return 0.83
+        } else if chosenSpread == originalSpread - 15 {
+            return 0.84
         }
+        
     } else if betType == .under {
         if chosenSpread == originalSpread {
             return 0.5
@@ -183,6 +224,14 @@ func returnOdds(betType: BetType, ogSpr: Int, chsSpr: Int) -> Double { // this i
             return 0.218
         } else if chosenSpread == originalSpread - 12 {
             return 0.197
+        } else if chosenSpread == originalSpread - 13 {
+            return 0.182
+        } else if chosenSpread == originalSpread - 14 {
+            return 0.172
+        } else if chosenSpread == originalSpread - 15 {
+            return 0.165
+            
+            
         }  else if chosenSpread == originalSpread + 1 {
             return 0.515
         } else if chosenSpread == originalSpread + 2 {
@@ -203,7 +252,17 @@ func returnOdds(betType: BetType, ogSpr: Int, chsSpr: Int) -> Double { // this i
             return 0.75
         } else if chosenSpread == originalSpread + 10 {
             return 0.77
-        }
+        } else if chosenSpread == originalSpread + 11 {
+           return 0.79
+       } else if chosenSpread == originalSpread + 12 {
+           return 0.80
+       } else if chosenSpread == originalSpread + 13 {
+           return 0.81
+       } else if chosenSpread == originalSpread + 14 {
+           return 0.82
+       } else if chosenSpread == originalSpread + 15 {
+           return 0.83
+       }
     }
     return 0.5
 }

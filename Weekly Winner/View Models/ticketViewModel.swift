@@ -41,6 +41,7 @@ class ticketViewModel: ObservableObject {
     @Published var userTickets: [Ticket] = [] // Ticket99
     @Published var stats: Stats? = nil
     @Published var profilePicUrl: String = ""
+    @Published var userInfo: User? = nil
 //
 //    init() {
 //        fetchStats(uid: uid) {
@@ -59,6 +60,33 @@ class ticketViewModel: ObservableObject {
             } else {
                 let profileImageUrl = documentSnapshot?.data()?["profileImageUrl"] as? String
                 self.profilePicUrl = profileImageUrl ?? ""
+                completion()
+            }
+        }
+    }
+    
+    func fetchUserInformation(uid: String, completion: @escaping () -> Void) {
+        let db = Firestore.firestore()
+        let userDocument = db.collection("users").document(uid)
+        
+        userDocument.getDocument { (document, error) in
+            if let error = error {
+                print("Error fetching user: \(error.localizedDescription)")
+                completion()
+                return
+            }
+            
+            if let document = document, document.exists {
+                do {
+                    let userData = try document.data(as: User.self)
+                    self.userInfo = userData
+                    completion()
+                } catch {
+                    print("Error decoding user: \(error)")
+                    completion()
+                }
+            } else {
+                print("Document does not exist")
                 completion()
             }
         }
@@ -228,53 +256,6 @@ class ticketViewModel: ObservableObject {
         
         
     }
-    
-//    func fetchBetsForFrontPage(uid: String, completion: @escaping () -> Void) {
-//        let query = self.db.collection("users").document(uid).collection("bets").document("week").collection("currentWeekBets")
-//        query.getDocuments { (querySnapshot, error) in
-//            DispatchQueue.main.async {
-//                guard let documents = querySnapshot?.documents else {
-//                    print("No documents")
-//                    return
-//                }
-//                self.totalBetArrays.removeAll() // Clear previous data
-//                self.availableBetsArray.removeAll()
-//                for (index, parlayMax) in ticketFormat.enumerated() {
-//                    let betArray = self.totalBetArrays[index]
-//                    if betArray.filter({ $0.groupNumber == groupNumber }).count >= parlayMax {
-//                        //print("Appending betNumber:", parlayIndex + 1) // Debug print
-//                        self.availableBetsArray.append(-1)
-//                    } else {
-//                        if betArray.contains(where: { $0.result == .loss }) {
-//                            self.availableBetsArray.append(-1)
-//                        } else {
-//                            self.availableBetsArray.append(index+1)
-//                        }
-//                    }
-//                }
-////                for index in self.totalBetArrays.indices {
-////                    let bet = self.totalBetArrays[index]
-////                    if bet.count > 1 {
-////                        self.updateBetsInResponseToLoss(betArray: &self.totalBetArrays[index], maxBetsPlaced: self.currentTicketFormat[index], groupNumber: groupNumber, betNumber: index + 1)
-////                        print("BET UPDATED BLAH BLAH")
-////                    }
-////                }
-//                
-//                self.calculateTotals(for: groupNumber, ticketFormat: ticketFormat)
-//
-//                if let error = error {
-//                    print(error)
-//                } else {
-//                    self.currentTicketFormat = ticketFormat
-//                    self.isBetsLoaded = true
-//                    self.isTFLoaded = true
-//                }
-//
-//                // Call completion handler
-//                completion()
-//            }
-//        }
-//    }
     
     func fetchBets(uid: String, for groupNumber: Int, ticketFormat: [Int], completion: @escaping () -> Void) {
             let query = self.db.collection("users").document(uid).collection("bets").document("week").collection("currentWeekBets")

@@ -106,6 +106,7 @@ struct statsView: View {
                                         .resizable()
                                         .clipShape(Circle())
                                         .foregroundColor(.clear)
+                                        .scaledToFit()
                                         .frame(width: 30, height: 30)
                                 }else {
                                     Image(systemName: "photo.circle.fill")

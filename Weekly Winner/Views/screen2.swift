@@ -229,11 +229,6 @@ struct gameRowView: View {
                     
                 }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
 
-                //Divider()
-//                HStack {
-//                    Text("@").foregroundColor(.white).font(.custom(K.customFonts.lexendDecaMedium, size: 10)).padding(EdgeInsets(top: 1.5, leading: 0, bottom: 0, trailing: 0))
-//                    Spacer()
-//                }.frame(height: 0)
                 
                 HStack {
                     Text("\(game.awayTeam)")
@@ -643,7 +638,7 @@ struct BetSliderView: View {
     var spreadExtension: Double {
         print("Parlay size: ", parlaySize)
         if parlaySize == 1 {
-            return 10
+            return 15
         } else if parlaySize == 2 {
             return 4
         } else if parlaySize == 3 {
@@ -704,7 +699,7 @@ struct BetSliderView: View {
                 .padding(.horizontal)
                 .background(K.finalColor.backgroundBlue)
             HStack {
-                Slider(value: $chosenSpread, in: betType == .over ? Double(originalSpread - 10)...Double(originalSpread + spreadExtension) : Double(originalSpread - spreadExtension)...Double(originalSpread + 10), step: 1)
+                Slider(value: $chosenSpread, in: betType == .over ? Double(originalSpread - 15)...Double(originalSpread + spreadExtension) : Double(originalSpread - spreadExtension)...Double(originalSpread + 15), step: 1)
                     .accentColor(K.finalColor.titleBlue)
             }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
                 .padding(.horizontal)
