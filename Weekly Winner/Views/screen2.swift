@@ -207,8 +207,6 @@ struct gameRowView: View {
       
         HStack {
             VStack(spacing:2) {
-                
-                
                 HStack{
                     Text("\(game.homeTeam)") // team name
                         .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
@@ -226,10 +224,7 @@ struct gameRowView: View {
                             showingSheet.toggle()
                         }
                     }
-                    
                 }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
-
-                
                 HStack {
                     Text("\(game.awayTeam)")
                         .font(.headline)
