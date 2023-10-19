@@ -148,7 +148,9 @@ class groupService {
                     groupAdmin: data["groupAdmin"] as! String,
                     ticketFormat: data["ticketFormat"] as! [Int] // ticketformat99
                 )
-                tickets.append(ticket)
+                if (ticket.totalWon > 0 || ticket.username == UserData.shared.username) || groupID != "Global" {
+                    tickets.append(ticket)
+                }
 //                print("\(tickets) are tickets")
             }
             
@@ -161,23 +163,24 @@ class groupService {
     }
 
     
-    func getCurrentRankedTickets(groupID: String, completion: @escaping ([Ticket]?, Error?) -> Void) {
+    func getCurrentRankedTickets(groupID: String, completion: @escaping ([Ticket]?, Int, Error?) -> Void) {
         let query = db.collectionGroup("currentWeekTickets")
             .whereField("groupID", isEqualTo: groupID)
             .order(by: "isEnabled", descending: true)
             .order(by: "totalWon", descending: true)
             .order(by: "totalPotentialWon", descending: true)
+//            .limit(to: 100)
 
         //print("here at ranked docs")
         query.getDocuments { (querySnapshot, error) in
             if let error = error {
-                completion(nil, error)
+                completion(nil, 0, error)
                 print("RANKED ERROR is \(error)")
                 return
             }
 
             guard let documents = querySnapshot?.documents else {
-                completion([], nil) // Empty array if no documents found
+                completion([],0, nil) // Empty array if no documents found
                 print("ERROR 222")
                 return
             }
@@ -186,6 +189,7 @@ class groupService {
             var totalsArray: [Int] = []
             var enabledStatusArray: [Bool] = []
             var ranksArray: [String] = []
+            var totalPlayers = 0
 
             // Step 1: Fill the totalsArray with all totals
             for document in documents {
@@ -255,11 +259,14 @@ class groupService {
                     groupAdmin: data["groupAdmin"] as! String,
                     ticketFormat: ["ticketFormat"] as? [Int] ?? [1,1,1] // ticketformat99
                 )
-                tickets.append(ticket)
+                if (ticket.totalPotentialWon + ticket.totalWon > 0) || groupID != "Global" {
+                    tickets.append(ticket)
+                }
+                totalPlayers+=1
 //                print("\(tickets) are tickets")
             }
             
-            completion(tickets, nil)
+            completion(tickets,totalPlayers, nil)
         }
     }
 

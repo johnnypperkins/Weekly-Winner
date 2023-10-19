@@ -307,10 +307,16 @@ struct groupsView: View {
                                                     }
                                                 }
                                             }
-                                            Text("\(viewModel.currentRankedGroupTickets.count) Members")
+                                            Text("\(viewModel.totalPlayers) Members")
                                                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.medium))
                                                 .foregroundColor(.white.opacity(0.75))
                                                 .padding(.leading, 3)
+                                            if selectedGroup == 1 {
+                                                Text("\(viewModel.currentRankedGroupTickets.count) Active")
+                                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.medium))
+                                                    .foregroundColor(.white.opacity(0.75))
+                                                    .padding(.leading, 3)
+                                            }
                                         }
                  
                                         Spacer()
@@ -535,32 +541,22 @@ struct currentLeaderboardView: View {
     @Binding var selectedGroup: Int
 
     var body: some View {
-
         VStack (spacing: 0) {
-           
-            ForEach(0..<viewModel.currentRankedGroupTickets.count, id: \.self) { index in
-                if (viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid) {
-                    HStack {
-                        Text("My Ticket")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.medium))
-                            .foregroundColor(.white.opacity(0.75))
-                            .padding(EdgeInsets(top: 0, leading: 2, bottom: 6, trailing: 0))
-                        Spacer()
-                    }
-                    
-                    NavigationLink(destination:
-                                    ticketView(username: viewModel.currentRankedGroupTickets[index].username, uid: viewModel.currentRankedGroupTickets[index].uid, groupID: viewModel.currentRankedGroupTickets[index].groupID, selectedWeek: "current", ticketFormatForGroups: [], ownTicket: viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, onTicketPage: false), // FIX LATER ?
-                                   // viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false
-                                   // , ownTicket: viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false
-                                   label: {
-                        BetCard(viewModel: viewModel, ticket: viewModel.currentRankedGroupTickets[index], rank: (viewModel.currentRankedGroupTickets[index].rank), ownCard: true, currentWeek: true).padding(.bottom,16)
-                    }).id(UUID())
+            if selectedGroup > 0 {
+                HStack {
+                    Text("My Ticket")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.medium))
+                        .foregroundColor(.white.opacity(0.75))
+                        .padding(EdgeInsets(top: 0, leading: 2, bottom: 6, trailing: 0))
+                    Spacer()
                 }
-//                else {
-//                    // doesnt click if its yourself
-//                    BetCard(viewModel: viewModel, ticket: viewModel.currentRankedGroupTickets[index], rank: (viewModel.currentRankedGroupTickets[index].rank), ownCard: true, currentWeek: true).padding(.bottom,16)
-//
-//                }
+                NavigationLink(destination:
+                                ticketView(username: viewModel.userTickets[selectedGroup-1].username, uid: viewModel.userTickets[selectedGroup-1].uid, groupID: viewModel.userTickets[selectedGroup-1].groupID, selectedWeek: "current", ticketFormatForGroups: [], ownTicket: viewModel.userTickets[selectedGroup-1].uid == Auth.auth().currentUser?.uid ? true : false, onTicketPage: false), // FIX LATER ?
+                               // viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false
+                               // , ownTicket: viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false
+                               label: {
+                    BetCard(viewModel: viewModel, ticket: viewModel.userTickets[selectedGroup-1], rank: (viewModel.userTickets[selectedGroup-1].rank), ownCard: true, currentWeek: true).padding(.bottom,16)
+                }).id(UUID())
             }
             HStack {
                 Text("Leaderboard")
@@ -611,6 +607,21 @@ struct pastLeaderboardView: View {
     @Binding var selectedWeek: Int
     var body: some View {
         VStack (spacing: 0) {
+            
+//            HStack {
+//                Text("My Ticket")
+//                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.medium))
+//                    .foregroundColor(.white.opacity(0.75))
+//                    .padding(EdgeInsets(top: 0, leading: 2, bottom: 6, trailing: 0))
+//                Spacer()
+//            }
+//            NavigationLink(destination:
+//                            ticketView(username: viewModel.userTickets[selectedGroup-1].username, uid: viewModel.userTickets[selectedGroup-1].uid, groupID: viewModel.userTickets[selectedGroup-1].groupID, selectedWeek: selectedGroup > 0 ? "\(viewModel.totalArrayOfDates[selectedGroup-1][selectedWeek])" : "", ticketFormatForGroups: viewModel.userTickets[selectedGroup-1].ticketFormat, ownTicket: false, onTicketPage: false),
+//                           label: {
+//                BetCard(viewModel: viewModel, ticket: viewModel.userTickets[selectedGroup-1], rank: (viewModel.userTickets[selectedGroup-1].rank), ownCard: true, currentWeek: false).padding(.bottom,16)
+//            }).id(UUID())
+            
+            
            
             ForEach(0..<viewModel.pastRankedGroupTickets.count, id: \.self) { index in
                 if viewModel.pastRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid {

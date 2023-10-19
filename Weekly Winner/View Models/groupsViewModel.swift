@@ -19,7 +19,7 @@ class groupsViewModel: ObservableObject {
     @Published var canGetHistoricalData: Bool = false
     @Published var totalArrayOfDates: [[String]] = []
     @Published var userGroupsLoaded: Bool = false
-    
+    @Published var totalPlayers: Int = 0
     @Published var canJoinGroup: Bool = true
     @Published var groupsFetched = false
     @Published var groupAdmin = ""
@@ -129,13 +129,14 @@ class groupsViewModel: ObservableObject {
     }
     
     func fetchCurrentRankedTickets(groupID: String, completion: @escaping () -> Void){
-        grpService.getCurrentRankedTickets(groupID: groupID) { [weak self] (tickets, error) in
+        grpService.getCurrentRankedTickets(groupID: groupID) { [weak self] (tickets, totalPlayers, error) in
                 if let error = error {
                     // Handle error
                     print("Error fetching groups CURRENT: \(error)")
                 } else if let tickets = tickets {
 //                    DispatchQueue.main.async {
                         self?.currentRankedGroupTickets = tickets
+                        self?.totalPlayers = totalPlayers
                         //print(tickets)
                         print("test print")
                     }

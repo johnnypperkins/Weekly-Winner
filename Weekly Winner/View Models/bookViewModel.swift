@@ -75,6 +75,8 @@ class bookViewModel: ObservableObject {
             }
         }
     
+    
+    
     func fetchUserTickets() {
         guard let userId = Auth.auth().currentUser?.uid else { return }
         groupServe.fetchUserTickets(userID: userId) { tickets, error in
