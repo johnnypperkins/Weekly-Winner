@@ -23,6 +23,7 @@ struct User: Identifiable, Decodable, Encodable {
     }
     let dateJoined: Timestamp
     let instagram: String
+    let promoCode: String
 }
 
 extension String { // Lmao what is this johnny

@@ -35,7 +35,8 @@ class authenticationViewModel: ObservableObject {
     @Published var authResult: AuthDataResult? = nil
     @Published var errorMessage: String? = ""
     @Published var instagram: String = ""
-    let currentVersion: String = "1.11"
+    @Published var promoCode: String = ""
+    let currentVersion: String = "1.12"
     @Published var updateURL: String = ""
 
     
@@ -88,7 +89,7 @@ class authenticationViewModel: ObservableObject {
                 //userSession = authResult!.user // added - Reid
                 let user = authResult!.user
                 
-                let newUser = User(username: username, firstName: firstName, lastName: lastName, profileImageUrl: "", email: email, dateJoined: Timestamp(date: Date()), instagram: instagram)
+                let newUser = User(username: username, firstName: firstName, lastName: lastName, profileImageUrl: "", email: email, dateJoined: Timestamp(date: Date()), instagram: instagram, promoCode: promoCode)
                 await uploadUser(newUser)
                 
                 authenticationState = .authenticated

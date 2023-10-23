@@ -126,7 +126,7 @@ struct ProfileHeaderView: View {
                     //Spacer()
                 }//.padding(.top, 20)
                     //.contentShape(Rectangle())
-                    .background(.brown) // Use the desired background color
+                    //.background(.brown) // Use the desired background color
                 //.cornerRadius(8)
                      // Adjust the padding as needed
             })
