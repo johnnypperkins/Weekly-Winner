@@ -66,7 +66,6 @@
 		867801862A213F9A006FE479 /* groupsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801852A213F99006FE479 /* groupsView.swift */; };
 		867801882A213FA5006FE479 /* ticketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801872A213FA5006FE479 /* ticketView.swift */; };
 		8678018A2A213FB1006FE479 /* profileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801892A213FB1006FE479 /* profileView.swift */; };
-		8678018C2A21662D006FE479 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8678018B2A21662D006FE479 /* GoogleService-Info.plist */; };
 		8678018F2A21691E006FE479 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8678018E2A21691E006FE479 /* FirebaseAnalytics */; };
 		867801912A21691E006FE479 /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 867801902A21691E006FE479 /* FirebaseAnalyticsSwift */; };
 		867801932A21691E006FE479 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 867801922A21691E006FE479 /* FirebaseAuth */; };
@@ -78,6 +77,7 @@
 		868FDA8B2A8AD4BC0092E3C5 /* splashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868FDA8A2A8AD4BC0092E3C5 /* splashScreenView.swift */; };
 		868FDA8D2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868FDA8C2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift */; };
 		868FDA8F2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868FDA8E2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift */; };
+		86CEA5E32AF169ED00845CD9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 86CEA5E22AF169ED00845CD9 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -160,10 +160,10 @@
 		867801852A213F99006FE479 /* groupsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = groupsView.swift; sourceTree = "<group>"; };
 		867801872A213FA5006FE479 /* ticketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ticketView.swift; sourceTree = "<group>"; };
 		867801892A213FB1006FE479 /* profileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = profileView.swift; sourceTree = "<group>"; };
-		8678018B2A21662D006FE479 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		868FDA8A2A8AD4BC0092E3C5 /* splashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = splashScreenView.swift; sourceTree = "<group>"; };
 		868FDA8C2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = profilePhotoSelectorView.swift; sourceTree = "<group>"; };
 		868FDA8E2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditionsSignupView.swift; sourceTree = "<group>"; };
+		86CEA5E22AF169ED00845CD9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -346,7 +346,7 @@
 				3C91B6C42A58B9E700398F53 /* UI */,
 				867801582A213015006FE479 /* Assets.xcassets */,
 				8678015A2A213015006FE479 /* Weekly_Winner.entitlements */,
-				8678018B2A21662D006FE479 /* GoogleService-Info.plist */,
+				86CEA5E22AF169ED00845CD9 /* GoogleService-Info.plist */,
 				8678015B2A213015006FE479 /* Preview Content */,
 			);
 			path = "Weekly Winner";
@@ -500,13 +500,13 @@
 				3C1091E62A7890B70049C278 /* Jura-Regular.ttf in Resources */,
 				8678015D2A213015006FE479 /* Preview Assets.xcassets in Resources */,
 				3C1091EE2A789A5A0049C278 /* Poppins-Regular.ttf in Resources */,
-				8678018C2A21662D006FE479 /* GoogleService-Info.plist in Resources */,
 				3C5F715E2A7983CB00B3AB4C /* LexendDeca-Light.ttf in Resources */,
 				3C1091EF2A789A5C0049C278 /* LexendDeca-Medium.ttf in Resources */,
 				3C1091ED2A789A570049C278 /* Poppins-Medium.ttf in Resources */,
 				867801592A213015006FE479 /* Assets.xcassets in Resources */,
 				866C525B2A7712F1008BE839 /* Poppins-Light.ttf in Resources */,
 				3C1091F12A789D290049C278 /* LexendDeca-SemiBold.ttf in Resources */,
+				86CEA5E32AF169ED00845CD9 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -734,7 +734,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Weekly Winner/Preview Content\"";
-				DEVELOPMENT_TEAM = XSX8J9H7YC;
+				DEVELOPMENT_TEAM = 7B34RR6HT7;
 				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				ENABLE_PREVIEWS = YES;
@@ -779,7 +779,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Weekly Winner/Preview Content\"";
-				DEVELOPMENT_TEAM = XSX8J9H7YC;
+				DEVELOPMENT_TEAM = 7B34RR6HT7;
 				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				ENABLE_PREVIEWS = YES;
