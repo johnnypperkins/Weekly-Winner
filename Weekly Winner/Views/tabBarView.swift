@@ -63,7 +63,7 @@ struct tabBarView: View {
                             EmptyView()
                         }
                     }.onAppear() {
-
+                        print(authViewModel.currUser)
                     }
                     //.edgesIgnoringSafeArea(.all)
 

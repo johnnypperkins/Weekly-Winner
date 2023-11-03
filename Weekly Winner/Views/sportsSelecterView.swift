@@ -48,6 +48,7 @@ struct sideMenuView: View {
     enum GameType: String, CaseIterable, Hashable {
         case collegeFootball = "College Football"
         case nfl = "NFL"
+        case nba = "NBA"
     }
 }
 

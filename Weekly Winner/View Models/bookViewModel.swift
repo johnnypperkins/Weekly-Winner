@@ -12,6 +12,7 @@ import FirebaseAuth
 class bookViewModel: ObservableObject {
     @Published var NFLgames: [Game] = []
     @Published var NCAAFGames: [Game] = []
+    @Published var NBAGames: [Game] = []
     @Published var upcomingGames: [Game] = []
     @Published var userTickets: [Ticket] = [] //ticket99
     @Published var isTicketsLoaded = false  // Add this line
@@ -30,6 +31,9 @@ class bookViewModel: ObservableObject {
         getGames(whichSport: "NFL"){
             self.combineGames()
         }
+        getGames(whichSport: "NBA"){
+            self.combineGames()
+        }
         getGames(whichSport: "NCAAF") {
             self.combineGames()
         }
@@ -39,11 +43,12 @@ class bookViewModel: ObservableObject {
     enum GameType: String, CaseIterable, Hashable {
         case collegeFootball = "College Football"
         case nfl = "NFL"
+        case NBA = "NBA"
     }
     
     func combineGames() {
         // Combine NFLgames and NCAAFGames
-        var combinedGames = NFLgames + NCAAFGames
+        var combinedGames = NFLgames + NCAAFGames + NBAGames
         
         // Sort the combined array based on commencement time
         combinedGames.sort { game1, game2 in
@@ -148,6 +153,9 @@ class bookViewModel: ObservableObject {
                     self.NFLgames = games
                 } else if (whichSport == "NCAAF") {
                     self.NCAAFGames = games
+                }
+                else if (whichSport == "NBA") {
+                    self.NBAGames = games
                 }
                 
                 completion() // Call the completion handler once the games are populated

@@ -12,12 +12,14 @@ enum sportsSelecterViewModel: Int, CaseIterable {
     case upcoming
     case NFL
     case NCAAF
+    case NBA
     
     var title: String {
         switch self {
             case .upcoming: return "Upcoming"
             case .NFL: return "NFL"
             case .NCAAF: return "NCAAF"
+            case .NBA: return "NBA"
         }
     }
         
@@ -27,6 +29,7 @@ enum sportsSelecterViewModel: Int, CaseIterable {
             case .upcoming: return "clock.arrow.circlepath"
             case .NFL: return "football.fill"
             case .NCAAF: return "figure.american.football"
+            case .NBA: return "basketball.fill"
         }
     }
     
