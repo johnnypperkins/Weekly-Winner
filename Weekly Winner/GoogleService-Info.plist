@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>74891887467-h8mp7asli0s92npdpjtgq58magi5nn4l.apps.googleusercontent.com</string>
+	<string>74891887467-l613m08tuiaommcln8tmor9vilfhq8ik.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.74891887467-h8mp7asli0s92npdpjtgq58magi5nn4l</string>
+	<string>com.googleusercontent.apps.74891887467-l613m08tuiaommcln8tmor9vilfhq8ik</string>
 	<key>API_KEY</key>
 	<string>AIzaSyC8RToZWSJcow2wVYtO4DyfZE3OhtT94rI</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>PerkinsBrown.Weekly-Winner</string>
+	<string>PerkinsBrown2.Weekly-Winner</string>
 	<key>PROJECT_ID</key>
 	<string>weekly-winner</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:74891887467:ios:c2c022829bbc5511bd022e</string>
+	<string>1:74891887467:ios:88954a89abff9917bd022e</string>
 </dict>
 </plist>
