@@ -311,6 +311,59 @@ struct yourGroups: View {
                         .cornerRadius(12)
                         .overlay(self.overlayShape(for: index))
                     }
+                    VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 3) {
+                                
+                                    HStack {
+                                        Spacer()
+                                        Image(systemName: "person.3.fill")
+                                            .resizable()
+                                            .cornerRadius(7.5)
+                                            .foregroundColor(.white)
+                                            .scaledToFit()
+                                            .frame(height: 95)
+                                        Spacer()
+                                    }
+                            HStack(alignment: .top) {
+                                Spacer()
+                                Text("Join/Create!")
+                                    .font(.custom(K.customFonts.poppinsMedium, size: 16))
+                                    .foregroundColor(.white)
+                                
+                                Spacer()
+                                
+                       
+                            }
+                           
+                            
+                        }
+                        VStack(alignment: .leading, spacing: 0) {
+                            Button {
+                                
+                            } label: {
+                                HStack{
+                                    Spacer()
+                                    
+                                    Image(systemName: "arrow.right")
+                                        .resizable()
+                                        .frame(width: 17, height: 10)
+                                        .foregroundColor(.white)
+                                    //shadow
+                                    
+                                    Spacer()
+                                }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 30 , maxHeight: 30)
+                                    .background(Color(red: 0.31, green: 0.57, blue: 1))
+                                    .cornerRadius(10)
+                                    .padding(.horizontal,16)
+                            }
+                               
+                        }
+                    }
+                    .padding(10)
+                    .frame(width: 140, height: 205)
+                    .background(K.finalColor.backgroundBlue)
+                    .cornerRadius(12)
+                    .overlay(self.overlayShape(for: 1))
                 }
             }
         }
