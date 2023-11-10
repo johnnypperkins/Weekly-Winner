@@ -65,6 +65,7 @@
 		866FFF8D2AFBAED900A0CA13 /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = 866FFF8C2AFBAED900A0CA13 /* FirebasePerformance */; };
 		866FFF8F2AFBAED900A0CA13 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 866FFF8E2AFBAED900A0CA13 /* FirebaseStorage */; };
 		866FFF912AFBB48B00A0CA13 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 866FFF902AFBB48B00A0CA13 /* GoogleService-Info.plist */; };
+		866FFFA82AFE630E00A0CA13 /* SignupIntro.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866FFFA72AFE630E00A0CA13 /* SignupIntro.swift */; };
 		867713EE2AC3284A00B2B036 /* Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867713ED2AC3284A00B2B036 /* Stats.swift */; };
 		867801552A213010006FE479 /* Weekly_WinnerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801542A213010006FE479 /* Weekly_WinnerApp.swift */; };
 		867801572A213010006FE479 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801562A213010006FE479 /* ContentView.swift */; };
@@ -148,6 +149,7 @@
 		866C52592A770B4E008BE839 /* Weekly-Winner-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Weekly-Winner-Info.plist"; sourceTree = SOURCE_ROOT; };
 		866C525A2A7712F1008BE839 /* Poppins-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Light.ttf"; sourceTree = "<group>"; };
 		866FFF902AFBB48B00A0CA13 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		866FFFA72AFE630E00A0CA13 /* SignupIntro.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupIntro.swift; sourceTree = "<group>"; };
 		867713ED2AC3284A00B2B036 /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
 		867801512A213010006FE479 /* Weekly Winner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Weekly Winner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		867801542A213010006FE479 /* Weekly_WinnerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weekly_WinnerApp.swift; sourceTree = "<group>"; };
@@ -224,6 +226,7 @@
 			isa = PBXGroup;
 			children = (
 				865C4A752A327CA600C3C626 /* authenticationView.swift */,
+				866FFFA72AFE630E00A0CA13 /* SignupIntro.swift */,
 				868FDA8C2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift */,
 				868FDA8E2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift */,
 				868FDA8A2A8AD4BC0092E3C5 /* splashScreenView.swift */,
@@ -552,6 +555,7 @@
 				8668B3112A2EE9CF00A1B343 /* bookViewModel.swift in Sources */,
 				3CB1AC8B2A61602700C931CA /* Group.swift in Sources */,
 				868FDA8F2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift in Sources */,
+				866FFFA82AFE630E00A0CA13 /* SignupIntro.swift in Sources */,
 				864A2D662A6D8090000FBA35 /* AlertView.swift in Sources */,
 				865C4A7A2A32890F00C3C626 /* userService.swift in Sources */,
 				867801882A213FA5006FE479 /* ticketView.swift in Sources */,

@@ -8,11 +8,20 @@
 import SwiftUI
 import Firebase
 
+enum Tab {
+    case dashboard
+    case book
+    case ticket
+    case groups
+    case profile
+}
+
 struct tabBarView: View {
     @State private var selectedTab = 0 // which tab selected
     @ObservedObject var authViewModel = authenticationViewModel()
     @State var showContentView = false
     @State private var isShowing = false
+    @State var selection: Tab = .dashboard
     
     var body: some View {
         NavigationStack{
@@ -20,21 +29,21 @@ struct tabBarView: View {
                 VStack(spacing: 0) {
                     //Spacer()
                     
-                    TabView {
+                    TabView (selection: $selection){
                         if let user = authViewModel.currUser {// the corresponding views go under this. Makes sense - Reid
-                            UserProfileView()
+                            UserProfileView(tab: $selection)
                                 .ignoresSafeArea(.all)
                                 .tabItem {
                                     CustomTabBarItem(index: 0, selectedTab: $selectedTab, item: TabItem(title: "Home", icon: Image(systemName: "house.fill"), color: .red))                                }
                                 //.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
-                                                .tag(0)
+                                .tag(Tab.dashboard)
                             //.background(K.veryLightBlue.opacity(0.5))
                             BettingAppView()
                                 .ignoresSafeArea(.all)
                                 .tabItem {
                                     CustomTabBarItem(index: 1, selectedTab: $selectedTab, item: TabItem(title: "Bets", icon: Image(systemName: "dollarsign.circle.fill"), color: .green))
                                     
-                                }.tag(1)
+                                }.tag(Tab.book)
                             
                             
                             ticketView(username: "", uid: Auth.auth().currentUser!.uid, groupID: "", selectedWeek: "current", ticketFormatForGroups: [], ownTicket: true, onTicketPage: true)
@@ -43,21 +52,21 @@ struct tabBarView: View {
                                 .tabItem {
                                     CustomTabBarItem(index: 2, selectedTab: $selectedTab, item: TabItem(title: "Tickets", icon: Image(systemName: "ticket.fill"), color: .blue))
                                 }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
-                                                .tag(2)
+                                                .tag(Tab.ticket)
                             
                             groupsView()
                                 .ignoresSafeArea(.all)
                                 .tabItem {
                                     CustomTabBarItem(index: 3, selectedTab: $selectedTab, item: TabItem(title: "Groups", icon: Image(systemName: "person.3.fill"), color: .purple))
                                 }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
-                                                .tag(3)
+                                                .tag(Tab.groups)
                             
                             profileView(user: authViewModel.currUser!)
                                 .ignoresSafeArea(.all)
                                 .tabItem {
                                     CustomTabBarItem(index: 4, selectedTab: $selectedTab, item: TabItem(title: "Profile", icon: Image(systemName: "person.crop.circle.fill"), color: .orange))
                                 }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
-                                                .tag(4)
+                                                .tag(Tab.profile)
                         }
                         else {
                             EmptyView()

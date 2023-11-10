@@ -18,23 +18,10 @@ struct UserProfileView: View {
     @ObservedObject private var groupsVM = groupsViewModel()
     @StateObject var countdownTimer = CountdownTimer()
     @State private var showWebpage = false
+    @Binding var tab: Tab
    // @State private var showRulesPage = false
     
-    init() {
-   
-        
-        print("appeared")
-        authenticationVM.fetchUser() {
-            
-            print("\(UserData.shared.username) is username")
-        }
-        groupsVM.fetchUserTickets() {}
-        groupsVM.fetchUserGroups {
 
-        }
-        bookVM.fetchMostPopularBets()
-    }
-    
     var body: some View {
         VStack(spacing: 15) {
             //Spacer()
@@ -46,7 +33,7 @@ struct UserProfileView: View {
                 .padding(.top, 5)
             //Spacer()
             VStack {
-                yourGroups(groupsVM: groupsVM)
+                yourGroups(groupsVM: groupsVM, tab: $tab)
                     .padding(.horizontal)
                 
                 MostPopularBetsView(bookVM: bookVM)
@@ -72,7 +59,15 @@ struct UserProfileView: View {
                     }
                 }
             }
-            
+            authenticationVM.fetchUser() {
+                
+                print("\(UserData.shared.username) is username")
+            }
+            groupsVM.fetchUserTickets() {}
+            groupsVM.fetchUserGroups {
+
+            }
+            bookVM.fetchMostPopularBets()
         }.padding(.top, 35)
         //Spacer()
     }
@@ -220,6 +215,8 @@ struct countDown: View {
 
 struct yourGroups: View {
     @StateObject var groupsVM: groupsViewModel
+    @Binding var tab: Tab
+    
     var body: some View {
         VStack(alignment: .center, spacing: 12) {
             Text("Your Groups")
@@ -340,6 +337,10 @@ struct yourGroups: View {
                         VStack(alignment: .leading, spacing: 0) {
                             Button {
                                 
+                                withAnimation {
+                                    tab = .groups
+                                }
+                                
                             } label: {
                                 HStack{
                                     Spacer()
@@ -456,8 +457,8 @@ struct PopularBetView: View {
     
 }
 
-struct UserProfileView_Previews: PreviewProvider {
-    static var previews: some View {
-        UserProfileView()
-    }
-}
+//struct UserProfileView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        UserProfileView(tab: .dashboard)
+//    }
+//}

@@ -53,11 +53,19 @@ struct groupsView: View {
                                 Button(action: {
                                     selectedGroup = 0
                                 }) {
-                                    Image(systemName: "plus")
-                                        .foregroundColor(.white)
-                                        .frame(width: 45, height: 35, alignment: .center)
-                                        .background(selectedGroup == 0 ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                                        .cornerRadius(5)
+                                    ZStack{
+                                        Image(systemName: "plus")
+                                            .foregroundColor(.white)
+                                            .frame(width: 45, height: 35, alignment: .center)
+                                            .background(selectedGroup == 0 ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                            .cornerRadius(5)
+                                        
+//                                        RoundedRectangle(cornerRadius: 5)
+//                                            .frame(width: 45,height: 35)
+//                                            .foregroundColor(.blue)
+//                                                                .blur(radius: 10) // This creates the glow effect
+//                                                                .opacity(selectedGroup == 0 ? 0 : 0.6)
+                                    }
                                     Spacer()
                                 }
                                     Spacer()
