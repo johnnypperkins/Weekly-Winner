@@ -18,38 +18,22 @@ struct SignupIntro: View {
             TabView{
                 
                 ForEach(colors.indices, id: \.self) { index in
-                    if index == 1 {
-                        colors[index]
-                            .overlay(
-                                GeometryReader {proxy -> Color in
-                                    let minX = proxy.frame(in: .global).minX
-                                    DispatchQueue.main.async {
-                                        withAnimation(.default) {
-                                            self.offset = -minX
-                                        }
-                                    }
-                                    return Color.clear
-                                }.frame(width: 0, height: 0)
-                                ,alignment: .leading
-                            )
-                    }
-                    else {
-                        colors[index]
-                    }
+                        
+                    colors[index]
                 }
-            }.tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                .overlay(
-                    HStack(spacing: 15) {
-                        ForEach(colors.indices, id: \.self) { index in
-                            Capsule()
-                                .fill(Color.white)
-                                .frame(width: 7, height: 7)
-                        }
-                    }
-                        .padding(.bottom, UIApplication.shared.windows.first?.safeAreaInsets.bottom)
-                        .padding(.bottom,10)
-                    ,alignment: .bottom
-                )
+            }.tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
+//                .overlay(
+//                    HStack(spacing: 15) {
+//                        ForEach(colors.indices, id: \.self) { index in
+//                            Capsule()
+//                                .fill(Color.white)
+//                                .frame(width: 7, height: 7)
+//                        }
+//                    }
+//                        .padding(.bottom, UIApplication.shared.windows.first?.safeAreaInsets.bottom)
+//                        .padding(.bottom,10)
+//                    ,alignment: .bottom
+//                )
         }
             .ignoresSafeArea()
         
