@@ -24,10 +24,11 @@ struct Bet: Identifiable, Codable {
     var gameID: String
     var whichSport: String
     var timestamp: Timestamp
-//    var opposingTeam: String?
-//    var commenceTime: Timestamp
-//    var homeTeamFinalScore: Int
-//    var awayTeamFinalScore: Int
+    var points_bought: Int
+//    var opposing_Team: String?
+//    var commence_Time: Timestamp
+//    var homeTeam_FinalScore: Int
+//    var awayTeam_FinalScore: Int
     // when game starts
 }
 
@@ -60,12 +61,85 @@ struct MostPopularBet: Identifiable, Codable {
 // This function converts the difference between the original spread and the chosenSpread into a percentage. Will then be converted into an actual "moneyline"
 func returnOdds(betType: BetType, ogSpr: Int, chsSpr: Int, whichSport: String) -> Double { // this is so retarded
     if whichSport == "NFL" || whichSport == "NCAAB" { // CHANGE
-        return NFL_and_NCAAF_ODDS(chosenSpread: chsSpr, originalSpread: ogSpr, betType: betType)
+        return NFL_and_NCAAF_Odds(chosenSpread: chsSpr, originalSpread: ogSpr, betType: betType)
     }
     return 0.5
 }
 
-func NFL_and_NCAAF_ODDS(chosenSpread: Int, originalSpread: Int, betType: BetType) -> Double {
+func NBAOdds(chosenSpread: Int, originalSpread: Int, betType: BetType) -> Double {
+    if betType == .betHomeSpread || betType == .betAwaySpread {
+        if (chosenSpread == originalSpread - 0) {
+            return 0.5;
+        } else if (chosenSpread == originalSpread - 1) {
+            return 0.524;
+        } else if (chosenSpread == originalSpread + 1) {
+            return 0.476;
+        } else if (chosenSpread == originalSpread - 2) {
+            return 0.545;
+        } else if (chosenSpread == originalSpread + 2) {
+            return 0.455;
+        } else if (chosenSpread == originalSpread - 3) {
+            return 0.574;
+        } else if (chosenSpread == originalSpread + 3) {
+            return 0.426;
+        } else if (chosenSpread == originalSpread - 4) {
+            return 0.600;
+        } else if (chosenSpread == originalSpread + 4) {
+            return 0.400;
+        } else if (chosenSpread == originalSpread - 5) {
+            return 0.636;
+        } else if (chosenSpread == originalSpread + 5) {
+            return 0.364;
+        } else if (chosenSpread == originalSpread - 6) {
+            return 0.667;
+        } else if (chosenSpread == originalSpread + 6) {
+            return 0.333;
+        } else if (chosenSpread == originalSpread - 7) {
+            return 0.692;
+        } else if (chosenSpread == originalSpread + 7) {
+            return 0.308;
+        } else if (chosenSpread == originalSpread - 8) {
+            return 0.718;
+        } else if (chosenSpread == originalSpread + 8) {
+            return 0.282;
+        } else if (chosenSpread == originalSpread - 9) {
+            return 0.744;
+        } else if (chosenSpread == originalSpread + 9) {
+            return 0.256;
+        } else if (chosenSpread == originalSpread - 10) {
+            return 0.767;
+        } else if (chosenSpread == originalSpread + 10) {
+            return 0.233;
+        } else if (chosenSpread == originalSpread - 11) {
+            return 0.783;
+        } else if (chosenSpread == originalSpread + 11) {
+            return 0.217;
+        } else if (chosenSpread == originalSpread - 12) {
+            return 0.798;
+        } else if (chosenSpread == originalSpread + 12) {
+            return 0.202;
+        } else if (chosenSpread == originalSpread - 13) {
+            return 0.815;
+        } else if (chosenSpread == originalSpread + 13) {
+            return 0.185;
+        } else if (chosenSpread == originalSpread - 14) {
+            return 0.831;
+        } else if (chosenSpread == originalSpread + 14) {
+            return 0.169;
+        } else if (chosenSpread == originalSpread - 15) {
+            return 0.845;
+        } else if (chosenSpread == originalSpread + 15) {
+            return 0.155;
+        }
+    } else if betType == .over {
+        
+    } else if betType == .under {
+        
+    }
+    return 0.5
+}
+
+func NFL_and_NCAAF_Odds(chosenSpread: Int, originalSpread: Int, betType: BetType) -> Double {
     if betType == .betHomeSpread || betType == .betAwaySpread {
         if chosenSpread == originalSpread {
             return 0.5
@@ -261,6 +335,9 @@ func NFL_and_NCAAF_ODDS(chosenSpread: Int, originalSpread: Int, betType: BetType
     }
     return 0.5
 }
+
+
+
 
 func percentageToML(percentage: Double) -> String { // gets ML from percentage
     var ML: Double

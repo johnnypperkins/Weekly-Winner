@@ -31,7 +31,8 @@ class BetService {
             "gameID": bet.gameID,
             "groupID": bet.groupID,
             "whichSport": bet.whichSport,
-            "timestamp": bet.timestamp
+            "timestamp": bet.timestamp,
+            "points_bought": bet.points_bought
             
         ]
         

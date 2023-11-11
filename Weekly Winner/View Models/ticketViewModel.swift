@@ -334,7 +334,7 @@ class ticketViewModel: ObservableObject {
             print("BET ARRAY COUNT", betArray.count)
             
             for _ in 0..<remainingSpots {
-                let emptyBet = Bet(groupNumber: groupNumber, groupID: "", betNumber: betNumber, betType: .None, betLine: 0, betOdds: 1, result: .forcedLoss, gameID: "null", whichSport: "", timestamp: Timestamp(date: Date())) // create as per your requirements
+                let emptyBet = Bet(groupNumber: groupNumber, groupID: "", betNumber: betNumber, betType: .None, betLine: 0, betOdds: 1, result: .forcedLoss, gameID: "null", whichSport: "", timestamp: Timestamp(date: Date()), points_bought: 0) // create as per your requirements
                 betArray.append(emptyBet)
             }
         }
