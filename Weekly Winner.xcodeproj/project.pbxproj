@@ -80,6 +80,9 @@
 		867801862A213F9A006FE479 /* groupsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801852A213F99006FE479 /* groupsView.swift */; };
 		867801882A213FA5006FE479 /* ticketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801872A213FA5006FE479 /* ticketView.swift */; };
 		8678018A2A213FB1006FE479 /* profileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801892A213FB1006FE479 /* profileView.swift */; };
+		8688C5902AFFDCBD007EED78 /* GifImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8688C58F2AFFDCBD007EED78 /* GifImage.swift */; };
+		8688C5922AFFDE28007EED78 /* out-_1_.gif in Resources */ = {isa = PBXBuildFile; fileRef = 8688C5912AFFDE28007EED78 /* out-_1_.gif */; };
+		8688C5942AFFDFCB007EED78 /* Iphone.gif in Resources */ = {isa = PBXBuildFile; fileRef = 8688C5932AFFDFCB007EED78 /* Iphone.gif */; };
 		868FDA8B2A8AD4BC0092E3C5 /* splashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868FDA8A2A8AD4BC0092E3C5 /* splashScreenView.swift */; };
 		868FDA8D2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868FDA8C2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift */; };
 		868FDA8F2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868FDA8E2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift */; };
@@ -168,6 +171,9 @@
 		867801852A213F99006FE479 /* groupsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = groupsView.swift; sourceTree = "<group>"; };
 		867801872A213FA5006FE479 /* ticketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ticketView.swift; sourceTree = "<group>"; };
 		867801892A213FB1006FE479 /* profileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = profileView.swift; sourceTree = "<group>"; };
+		8688C58F2AFFDCBD007EED78 /* GifImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifImage.swift; sourceTree = "<group>"; };
+		8688C5912AFFDE28007EED78 /* out-_1_.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "out-_1_.gif"; sourceTree = "<group>"; };
+		8688C5932AFFDFCB007EED78 /* Iphone.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Iphone.gif; sourceTree = "<group>"; };
 		868FDA8A2A8AD4BC0092E3C5 /* splashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = splashScreenView.swift; sourceTree = "<group>"; };
 		868FDA8C2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = profilePhotoSelectorView.swift; sourceTree = "<group>"; };
 		868FDA8E2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditionsSignupView.swift; sourceTree = "<group>"; };
@@ -217,6 +223,8 @@
 			children = (
 				3C91B6C52A58BA0E00398F53 /* UI Misc.swift */,
 				3C91B6C72A58BE6D00398F53 /* RoundingUI.swift */,
+				8688C5932AFFDFCB007EED78 /* Iphone.gif */,
+				8688C5912AFFDE28007EED78 /* out-_1_.gif */,
 				866C52572A7709BA008BE839 /* Fonts */,
 			);
 			path = UI;
@@ -227,6 +235,7 @@
 			children = (
 				865C4A752A327CA600C3C626 /* authenticationView.swift */,
 				866FFFA72AFE630E00A0CA13 /* SignupIntro.swift */,
+				8688C58F2AFFDCBD007EED78 /* GifImage.swift */,
 				868FDA8C2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift */,
 				868FDA8E2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift */,
 				868FDA8A2A8AD4BC0092E3C5 /* splashScreenView.swift */,
@@ -516,9 +525,11 @@
 			files = (
 				3C1091E62A7890B70049C278 /* Jura-Regular.ttf in Resources */,
 				8678015D2A213015006FE479 /* Preview Assets.xcassets in Resources */,
+				8688C5942AFFDFCB007EED78 /* Iphone.gif in Resources */,
 				3C1091EE2A789A5A0049C278 /* Poppins-Regular.ttf in Resources */,
 				3C5F715E2A7983CB00B3AB4C /* LexendDeca-Light.ttf in Resources */,
 				3C1091EF2A789A5C0049C278 /* LexendDeca-Medium.ttf in Resources */,
+				8688C5922AFFDE28007EED78 /* out-_1_.gif in Resources */,
 				3C1091ED2A789A570049C278 /* Poppins-Medium.ttf in Resources */,
 				866FFF912AFBB48B00A0CA13 /* GoogleService-Info.plist in Resources */,
 				867801592A213015006FE479 /* Assets.xcassets in Resources */,
@@ -592,6 +603,7 @@
 				867801802A213CB9006FE479 /* tabBarView.swift in Sources */,
 				867713EE2AC3284A00B2B036 /* Stats.swift in Sources */,
 				3C065BAA2AC714C40040D6CE /* statsViewModel.swift in Sources */,
+				8688C5902AFFDCBD007EED78 /* GifImage.swift in Sources */,
 				3CD023D02A84655E0033D761 /* groupSettingsView.swift in Sources */,
 				865C4A762A327CA600C3C626 /* authenticationView.swift in Sources */,
 				8668B3132A2EF06A00A1B343 /* gameService.swift in Sources */,
