@@ -54,9 +54,6 @@ struct ticketView: View {
         viewModel.fetchUserProfilePic(uid: uid) {
             
         }
-        
-
-        
     }
     
     var body: some View {
@@ -206,14 +203,13 @@ struct ticketView: View {
                                     .background(
                                         RoundedRectangle(cornerRadius: 7.5)
                                             .fill(K.finalColor.cardBlue) // Change the opacity as needed
-                                    )
-                                    .cornerRadius(7.5)
-                                
+                                    ).cornerRadius(7.5)
                                 HStack (spacing: 0){
-                                    
                                     Text("Total").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
                                     Spacer()
-                                    Text("\(String(format: "%.0f", viewModel.totalWon))").font(.custom("Futura", size: 20)).foregroundColor(K.finalColor.winningGreen)
+                                    Text("\(String(format: "%.0f", viewModel.totalWon))")
+                                        .font(.custom("Futura", size: 20))
+                                        .foregroundColor(viewModel.totalWon >= 0 ? K.finalColor.winningGreen : K.finalColor.deleteRed)
                                 }
                                 .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
                                 .frame(width: 160, height: 55, alignment: .center)
@@ -222,8 +218,6 @@ struct ticketView: View {
                                         .fill(K.finalColor.cardBlue) // Change the opacity as needed
                                 )
                                 .cornerRadius(7.5)
-                                
-                                
                             }.padding([.horizontal,.top])
                             
                             ScrollView {
@@ -602,7 +596,7 @@ struct ticketView: View {
                    if let document = querySnapshot?.documents.first {
                                 do {
                                     var data = document.data()
-                                    if let idd = data["id"] as? String,
+                                        if let idd = data["id"] as? String,
                                         let commenceTime = data["commenceTime"] as? Timestamp,
                                         let totalOver = data["totalOver"] as? Double,
                                         let totalUnder = data["totalUnder"] as? Double,
@@ -611,9 +605,11 @@ struct ticketView: View {
                                         let homeSpread = data["homeSpread"] as? Double,
                                         let awaySpread = data["awaySpread"] as? Double,
                                         let homeTeamScore = data["homeTeamScore"] as? Int,
-                                       let awayTeamScore = data["awayTeamScore"] as? Int {
+                                       let awayTeamScore = data["awayTeamScore"] as? Int,
+                                       let whichSport = data["whichSport"] as? String? ?? ""
+                                    {
                                         //                       let completed = data["completed"] as? Bool {
-                                        let game = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore)
+                                        let game = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport)
                                         print("game \(game)")
                                         self.game = game
                                         

@@ -22,6 +22,7 @@ struct Bet: Identifiable, Codable {
     var betOdds: Float
     var result: BetResult
     var gameID: String
+    var whichSport: String
     var timestamp: Timestamp
 //    var opposingTeam: String?
 //    var commenceTime: Timestamp
@@ -57,79 +58,78 @@ struct MostPopularBet: Identifiable, Codable {
 
 
 // This function converts the difference between the original spread and the chosenSpread into a percentage. Will then be converted into an actual "moneyline"
-func returnOdds(betType: BetType, ogSpr: Int, chsSpr: Int) -> Double { // this is so retarded
-    let chosenSpread = chsSpr
-    let originalSpread = ogSpr
+func returnOdds(betType: BetType, ogSpr: Int, chsSpr: Int, whichSport: String) -> Double { // this is so retarded
+    if whichSport == "NFL" || whichSport == "NCAAB" { // CHANGE
+        return NFL_and_NCAAF_ODDS(chosenSpread: chsSpr, originalSpread: ogSpr, betType: betType)
+    }
+    return 0.5
+}
+
+func NFL_and_NCAAF_ODDS(chosenSpread: Int, originalSpread: Int, betType: BetType) -> Double {
     if betType == .betHomeSpread || betType == .betAwaySpread {
         if chosenSpread == originalSpread {
-           return 0.5
-       } else if chosenSpread == originalSpread - 1 {
-           return 0.47
-       } else if chosenSpread == originalSpread - 2 {
-           return 0.44
-       } else if chosenSpread == originalSpread - 3 {
-           return 0.38
-       } else if chosenSpread == originalSpread - 4 {
-           return 0.34
-       } else if chosenSpread == originalSpread - 5 {
-           return 0.32
-       } else if chosenSpread == originalSpread - 6 {
-           return 0.305
-       } else if chosenSpread == originalSpread - 7 {
-           return 0.29
-       } else if chosenSpread == originalSpread - 8 {
-           return 0.28
-       } else if chosenSpread == originalSpread - 9 {
-           return 0.25
-       } else if chosenSpread == originalSpread - 10 {
-           return 0.225
-       } else if chosenSpread == originalSpread - 11 {
-           return 0.205
-       } else if chosenSpread == originalSpread - 12 {
-           return 0.19
-       } else if chosenSpread == originalSpread - 13 {
-           return 0.1825
-       } else if chosenSpread == originalSpread - 14 {
-           return 0.175
-       } else if chosenSpread == originalSpread - 15 {
-           return 0.1675
-
-           
-           
-       }  else if chosenSpread == originalSpread + 1 {
-           return 0.56
-       } else if chosenSpread == originalSpread + 2 {
-           return 0.59
-       } else if chosenSpread == originalSpread + 3 {
-           return 0.62
-       } else if chosenSpread == originalSpread + 4 {
-           return 0.68
-       } else if chosenSpread == originalSpread + 5 {
-           return 0.72 // -259
-       } else if chosenSpread == originalSpread + 6 {
-           return 0.74
-       } else if chosenSpread == originalSpread + 7 {
-           return 0.76
-       } else if chosenSpread == originalSpread + 8 {
-           return 0.78
-       } else if chosenSpread == originalSpread + 9 {
-           return 0.80
-       } else if chosenSpread == originalSpread + 10 {
-           return 0.82
-       } else if chosenSpread == originalSpread + 11 {
-           return 0.83
-       } else if chosenSpread == originalSpread + 12 {
-           return 0.84
-       } else if chosenSpread == originalSpread + 13 {
-           return 0.85
-       } else if chosenSpread == originalSpread + 14 {
-           return 0.86
-       } else if chosenSpread == originalSpread + 15 {
-           return 0.87
-       }
-        
-        
-        
+            return 0.5
+        } else if chosenSpread == originalSpread - 1 {
+            return 0.47
+        } else if chosenSpread == originalSpread - 2 {
+            return 0.44
+        } else if chosenSpread == originalSpread - 3 {
+            return 0.38
+        } else if chosenSpread == originalSpread - 4 {
+            return 0.34
+        } else if chosenSpread == originalSpread - 5 {
+            return 0.32
+        } else if chosenSpread == originalSpread - 6 {
+            return 0.305
+        } else if chosenSpread == originalSpread - 7 {
+            return 0.29
+        } else if chosenSpread == originalSpread - 8 {
+            return 0.28
+        } else if chosenSpread == originalSpread - 9 {
+            return 0.25
+        } else if chosenSpread == originalSpread - 10 {
+            return 0.225
+        } else if chosenSpread == originalSpread - 11 {
+            return 0.205
+        } else if chosenSpread == originalSpread - 12 {
+            return 0.19
+        } else if chosenSpread == originalSpread - 13 {
+            return 0.1825
+        } else if chosenSpread == originalSpread - 14 {
+            return 0.175
+        } else if chosenSpread == originalSpread - 15 {
+            return 0.1675
+        }  else if chosenSpread == originalSpread + 1 {
+            return 0.56
+        } else if chosenSpread == originalSpread + 2 {
+            return 0.59
+        } else if chosenSpread == originalSpread + 3 {
+            return 0.62
+        } else if chosenSpread == originalSpread + 4 {
+            return 0.68
+        } else if chosenSpread == originalSpread + 5 {
+            return 0.72 // -259
+        } else if chosenSpread == originalSpread + 6 {
+            return 0.74
+        } else if chosenSpread == originalSpread + 7 {
+            return 0.76
+        } else if chosenSpread == originalSpread + 8 {
+            return 0.78
+        } else if chosenSpread == originalSpread + 9 {
+            return 0.80
+        } else if chosenSpread == originalSpread + 10 {
+            return 0.82
+        } else if chosenSpread == originalSpread + 11 {
+            return 0.83
+        } else if chosenSpread == originalSpread + 12 {
+            return 0.84
+        } else if chosenSpread == originalSpread + 13 {
+            return 0.85
+        } else if chosenSpread == originalSpread + 14 {
+            return 0.86
+        } else if chosenSpread == originalSpread + 15 {
+            return 0.87
+        }
     } else if betType == .over { // ACTUALLY SPREAD
         if chosenSpread == originalSpread {
             return 0.5
@@ -163,8 +163,6 @@ func returnOdds(betType: BetType, ogSpr: Int, chsSpr: Int) -> Double { // this i
             return 0.172
         } else if chosenSpread == originalSpread + 15 {
             return 0.165
-            
-            
         }  else if chosenSpread == originalSpread - 1 {
             return 0.515
         } else if chosenSpread == originalSpread - 2 {
@@ -196,7 +194,6 @@ func returnOdds(betType: BetType, ogSpr: Int, chsSpr: Int) -> Double { // this i
         } else if chosenSpread == originalSpread - 15 {
             return 0.84
         }
-        
     } else if betType == .under {
         if chosenSpread == originalSpread {
             return 0.5
@@ -230,8 +227,6 @@ func returnOdds(betType: BetType, ogSpr: Int, chsSpr: Int) -> Double { // this i
             return 0.172
         } else if chosenSpread == originalSpread - 15 {
             return 0.165
-            
-            
         }  else if chosenSpread == originalSpread + 1 {
             return 0.515
         } else if chosenSpread == originalSpread + 2 {
@@ -253,16 +248,16 @@ func returnOdds(betType: BetType, ogSpr: Int, chsSpr: Int) -> Double { // this i
         } else if chosenSpread == originalSpread + 10 {
             return 0.77
         } else if chosenSpread == originalSpread + 11 {
-           return 0.79
-       } else if chosenSpread == originalSpread + 12 {
-           return 0.80
-       } else if chosenSpread == originalSpread + 13 {
-           return 0.81
-       } else if chosenSpread == originalSpread + 14 {
-           return 0.82
-       } else if chosenSpread == originalSpread + 15 {
-           return 0.83
-       }
+            return 0.79
+        } else if chosenSpread == originalSpread + 12 {
+            return 0.80
+        } else if chosenSpread == originalSpread + 13 {
+            return 0.81
+        } else if chosenSpread == originalSpread + 14 {
+            return 0.82
+        } else if chosenSpread == originalSpread + 15 {
+            return 0.83
+        }
     }
     return 0.5
 }

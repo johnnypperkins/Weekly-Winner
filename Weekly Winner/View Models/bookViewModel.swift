@@ -13,13 +13,13 @@ class bookViewModel: ObservableObject {
     @Published var NFLgames: [Game] = []
     @Published var NCAAFGames: [Game] = []
     @Published var NBAGames: [Game] = []
+    @Published var NCAABGames: [Game] = []
     @Published var upcomingGames: [Game] = []
     @Published var userTickets: [Ticket] = [] //ticket99
     @Published var isTicketsLoaded = false  // Add this line
     @Published var mostPopularBets: [MostPopularBet] = []
     @Published var arePopularBetsLoaded = false
 
-    
     @Published var selectedGameType = "Upcoming"
     
 
@@ -37,6 +37,9 @@ class bookViewModel: ObservableObject {
         getGames(whichSport: "NCAAF") {
             self.combineGames()
         }
+        getGames(whichSport: "NCAAB") {
+            self.combineGames()
+        }
         fetchUserTickets()
     }
     
@@ -47,8 +50,8 @@ class bookViewModel: ObservableObject {
     }
     
     func combineGames() {
-        // Combine NFLgames and NCAAFGames
-        var combinedGames = NFLgames + NCAAFGames + NBAGames
+        // Combine all games
+        var combinedGames = NFLgames + NCAAFGames + NBAGames + NCAABGames
         
         // Sort the combined array based on commencement time
         combinedGames.sort { game1, game2 in
@@ -56,15 +59,12 @@ class bookViewModel: ObservableObject {
         }
         
          upcomingGames = combinedGames
-        //print("aaaa")
-        //print(combinedGames)
-       // print("aaaa")
         
     }
     
-    func uploadBet(groupNumber: Int, groupID: String, betNumber: Int, team: String, betLine: Double, betOdds: Double, betType: BetType, gameID: String, completion: @escaping (Error?) -> Void) {
+    func uploadBet(groupNumber: Int, groupID: String, betNumber: Int, team: String, betLine: Double, betOdds: Double, betType: BetType, gameID: String, whichSport: String, completion: @escaping (Error?) -> Void) {
             // Prepare the data to upload
-        let bet = Bet(groupNumber: groupNumber, groupID: groupID, betNumber: betNumber, weekNumber: 1, betType: betType, teamBetOn: team, betLine: Float(betLine), betOdds: Float(betOdds), result: .notStarted, gameID: gameID, timestamp: Timestamp(date: Date()))
+        let bet = Bet(groupNumber: groupNumber, groupID: groupID, betNumber: betNumber, weekNumber: 1, betType: betType, teamBetOn: team, betLine: Float(betLine), betOdds: Float(betOdds), result: .notStarted, gameID: gameID, whichSport: whichSport, timestamp: Timestamp(date: Date()))
             
             // Perform the upload asynchronously
             betService.uploadBet(bet) { error in
@@ -132,9 +132,11 @@ class bookViewModel: ObservableObject {
                             let homeSpread = data["homeSpread"] as? Double,
                             let awaySpread = data["awaySpread"] as? Double,
                             let homeTeamScore = data["homeTeamScore"] as? Int,
-                            let awayTeamScore = data["awayTeamScore"] as? Int {
+                            let awayTeamScore = data["awayTeamScore"] as? Int,
+                            let whichSport = data["whichSport"] as? String? ?? ""
+                        {
     //                       let completed = data["completed"] as? Bool {
-                            let newGame = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore )
+                            let newGame = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport)
                             //print("3")
                             
                             games.append(newGame)
@@ -153,9 +155,10 @@ class bookViewModel: ObservableObject {
                     self.NFLgames = games
                 } else if (whichSport == "NCAAF") {
                     self.NCAAFGames = games
-                }
-                else if (whichSport == "NBA") {
+                } else if (whichSport == "NBA") {
                     self.NBAGames = games
+                } else if (whichSport == "NCAAB") {
+                    self.NCAABGames = games
                 }
                 
                 completion() // Call the completion handler once the games are populated

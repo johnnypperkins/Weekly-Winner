@@ -134,7 +134,7 @@ class groupService {
             for (index, document) in documents.enumerated() {
                 let data = document.data()
                 var ticket = Ticket(
-                    id: document.documentID,
+                    //id: document.documentID,
                     username: data["username"] as! String,
                     uid: data["uid"] as! String,
                     groupID: data["groupID"] as! String,
@@ -148,7 +148,7 @@ class groupService {
                     groupAdmin: data["groupAdmin"] as! String,
                     ticketFormat: data["ticketFormat"] as! [Int] // ticketformat99
                 )
-                if (ticket.totalWon > 0 || ticket.username == UserData.shared.username) || groupID != "Global" {
+                if (abs(ticket.totalWon) > 0 || ticket.username == UserData.shared.username) || groupID != "Global" {
                     tickets.append(ticket)
                 }
 //                print("\(tickets) are tickets")
@@ -245,7 +245,7 @@ class groupService {
             for (index, document) in documents.enumerated() {
                 let data = document.data()
                 var ticket = Ticket(
-                    id: document.documentID,
+                    //id: document.documentID,
                     username: data["username"] as! String,
                     uid: data["uid"] as! String,
                     groupID: data["groupID"] as! String,
@@ -259,7 +259,7 @@ class groupService {
                     groupAdmin: data["groupAdmin"] as! String,
                     ticketFormat: ["ticketFormat"] as? [Int] ?? [1,1,1] // ticketformat99
                 )
-                if (ticket.totalPotentialWon + ticket.totalWon > 0) || groupID != "Global" {
+                if (abs(ticket.totalPotentialWon) + abs(ticket.totalWon) > 0) || groupID != "Global" {
                     tickets.append(ticket)
                 }
                 totalPlayers+=1
@@ -449,7 +449,7 @@ class groupService {
                 var tickets: [Ticket] = [] // Ticket99
                 
                 for document in documents {
-                    let id = document.documentID
+                    //let id = document.documentID
                     let groupNumber = document.data()["groupNumber"] as? Int ?? 0 // default value if not found
                     let totalWon = document.data()["totalWon"] as? Int ?? 0 // default value if not found
                     let totalPotentialWon = document.data()["totalPotentialWon"] as? Int ?? 0 // default value if not found
@@ -461,7 +461,7 @@ class groupService {
                     let ticketFormat = document.data()["ticketFormat"] as? [Int] ?? [1,1,1,1,1]// default value if not found
                     let dateCreated = document.data()["dateCreated"] as! Timestamp
                     
-                    let ticket = Ticket(id: id, username: username, uid: userID, groupID: groupID, groupNumber: groupNumber, dateCreated: dateCreated, totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName, rank: String(rank), isEnabled: isEnabled, groupAdmin: groupAdmin, ticketFormat: ticketFormat)
+                    let ticket = Ticket(username: username, uid: userID, groupID: groupID, groupNumber: groupNumber, dateCreated: dateCreated, totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName, rank: String(rank), isEnabled: isEnabled, groupAdmin: groupAdmin, ticketFormat: ticketFormat)
                     tickets.append(ticket) // Ticket99
                 }
                 

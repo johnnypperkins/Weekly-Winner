@@ -22,6 +22,7 @@ struct Game: Identifiable, Decodable {
     var totalUnder: Double
     var homeTeamScore: Int
     var awayTeamScore: Int
+    var whichSport: String
 }
 
 struct P {

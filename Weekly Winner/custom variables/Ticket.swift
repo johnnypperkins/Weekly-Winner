@@ -11,7 +11,7 @@ import Firebase
 import FirebaseFirestoreSwift
 
 struct Ticket: Identifiable, Codable {
-    @DocumentID var id: String?
+    @DocumentID var id: String? 
     var username: String
     var uid: String
     var groupID: String

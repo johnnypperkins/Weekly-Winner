@@ -132,7 +132,7 @@ class groupsViewModel: ObservableObject {
         grpService.getCurrentRankedTickets(groupID: groupID) { [weak self] (tickets, totalPlayers, error) in
                 if let error = error {
                     // Handle error
-                    print("Error fetching groups CURRENT: \(error)")
+                    //print("Error fetching groups CURRENT: \(error)")
                 } else if let tickets = tickets {
 //                    DispatchQueue.main.async {
                         self?.currentRankedGroupTickets = tickets
@@ -202,14 +202,14 @@ class groupsViewModel: ObservableObject {
             guard let self = self else { return }
             
             if let error = error {
-                print("Error fetching groups: \(error.localizedDescription)")
+                //print("Error fetching groups: \(error.localizedDescription)")
                 return
             }
             
             guard let documents = snapshot?.documents, error == nil else { return }
             
             self.userTickets = documents.compactMap { snapshot in
-                print(snapshot)
+                //print(snapshot)
                 return try? snapshot.data(as: Ticket.self) // Ticket99
             }
             
@@ -286,69 +286,6 @@ class groupsViewModel: ObservableObject {
             }
         }
     }
-
-//    func fetchGroups(array1: [Ticket], completion: @escaping () -> Void) {
-//
-//        let array = array1.sorted { $0.groupNumber < $1.groupNumber }
-////       print("array printed")
-////        print(array)
-//
-//        // Firestore reference to the "groups" collection
-//        let groupsRef = Firestore.firestore().collection("groups")
-//
-//        // Initialize an empty array to store the matching groups
-//        var matchingGroups: [Group] = []
-//
-//        // Initialize a dispatch group to manage multiple asynchronous tasks
-//        let dispatchGroup = DispatchGroup()
-//
-//        // Iterate through the array and fetch groups with matching IDs
-//        for group in array {
-//            dispatchGroup.enter()
-//           let targetID = group.groupID
-//            print("target id" + targetID)
-//
-//            // Enter the dispatch group
-//
-//            // Query for the group with the specific document ID
-//            groupsRef.document(targetID).getDocument { (document, error) in
-//                print("jncjdcn")
-//                        if let error = error {
-//                            print("Error getting groups: \(error)")
-//                        } else if let document = document, document.exists {
-//                            // Get data and assign to Group struct
-//                            let data = document.data()
-//                            let group = Group(
-//                                id: document.documentID,
-//                                groupName: data?["groupName"] as? String ?? "",
-//                                dateCreated: data?["dateCreated"] as? Timestamp ?? Timestamp(), // Temporary
-//                                groupImageURL: data?["groupImageURL"] as? String ?? "",
-//                                groupSlogan: data?["groupSlogan"] as? String ?? "",
-//                                groupAdmin: data?["groupAdmin"] as? String ?? "",
-//                                password: data?["password"] as? String,
-//                                ticketFormat: data?["ticketFormat"] as? [Int] ?? []
-//                            )
-//                            print(" if   " + "\(group)")
-//                            matchingGroups.append(group)
-//                        }
-//                else{
-//                    print("sdkjfnsdkjfndskjf")
-//                }
-//
-//                        // Leave the dispatch group
-//                        dispatchGroup.leave()
-//                    }
-//        }
-//
-//        // Notify when all tasks are completed
-//        dispatchGroup.notify(queue: .main) {
-//            // Update the viewModel's userGroups property with all the matching groups
-//            self.userGroups = matchingGroups
-//            print("array printed")
-//            print(matchingGroups)
-//            completion()
-//        }
-//    }
 
     
     func fetchUserGroups(completion: @escaping () -> Void) {

@@ -13,18 +13,8 @@ import FirebaseFirestore
 
 class ticketViewModel: ObservableObject {
     
-    @Published var betArray1 = [Bet]() // Straight #1
-    @Published var betArray2 = [Bet]() // Straight #2
-    @Published var betArray3 = [Bet]() // Straight #3
-    @Published var betArray4 = [Bet]() // Straight #4
-    @Published var betArray5 = [Bet]() // 2 Leg #1
-    @Published var betArray6 = [Bet]() // 2 Leg #2
-    @Published var betArray7 = [Bet]() // 3 Leg #1
-    @Published var betArray8 = [Bet]() // 5 Leg
-    
     @Published var totalBetArrays = [[Bet]]()
     @Published var currentTicketFormat: [Int] = [1,1,1,1,1]
-    
     @Published var totalWon: Double = 0.0
     @Published var totalPotentialWon: Double = 0.0
     @Published var totalWonArray: [Int] = []
@@ -42,12 +32,6 @@ class ticketViewModel: ObservableObject {
     @Published var stats: Stats? = nil
     @Published var profilePicUrl: String = ""
     @Published var userInfo: User? = nil
-//
-//    init() {
-//        fetchStats(uid: uid) {
-//            
-//        }
-//    }
     
     func fetchUserProfilePic(uid: String, completion: @escaping () -> Void) {
         //let db = Firestore.firestore()
@@ -350,7 +334,7 @@ class ticketViewModel: ObservableObject {
             print("BET ARRAY COUNT", betArray.count)
             
             for _ in 0..<remainingSpots {
-                let emptyBet = Bet(groupNumber: groupNumber, groupID: "", betNumber: betNumber, betType: .None, betLine: 0, betOdds: 1, result: .forcedLoss, gameID: "null", timestamp: Timestamp(date: Date()) ) // create as per your requirements
+                let emptyBet = Bet(groupNumber: groupNumber, groupID: "", betNumber: betNumber, betType: .None, betLine: 0, betOdds: 1, result: .forcedLoss, gameID: "null", whichSport: "", timestamp: Timestamp(date: Date())) // create as per your requirements
                 betArray.append(emptyBet)
             }
         }
@@ -370,6 +354,10 @@ class ticketViewModel: ObservableObject {
 
                 if betArray.filter({ $0.groupNumber == groupNumber }).allSatisfy({ $0.result == .win }) {
                     totalWonLocal += potentialWin
+                }
+                
+                if betArray.filter({ $0.groupNumber == groupNumber }).contains(where: ({ $0.result == .loss })) {
+                    totalWonLocal -= 100
                 }
 
                 // check if not all elements in the array are a win

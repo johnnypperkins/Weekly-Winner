@@ -127,6 +127,38 @@ struct BettingAppView: View {
                                     .padding()
                             }
                         }
+                        if viewModel.selectedGameType == "NBA" {
+                            if !viewModel.NBAGames.isEmpty {
+                                ForEach(viewModel.NBAGames, id: \.idd) { game in // HARDCODE NCAAF
+                                    if game.commenceTime.dateValue() > Date() {
+                                        gameRowView(game: game, isDisabled: false)
+                                    } else {
+                                        gameRowView(game: game, isDisabled: true).opacity(0.5)
+                                    }
+                                }.padding(.horizontal)
+                            } else {
+                                Text("No Games Available")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                    .foregroundColor(K.finalColor.textWhite)
+                                    .padding()
+                            }
+                        }
+                        if viewModel.selectedGameType == "NCAAB" {
+                            if !viewModel.NCAABGames.isEmpty {
+                                ForEach(viewModel.NCAABGames, id: \.idd) { game in // HARDCODE NCAAF
+                                    if game.commenceTime.dateValue() > Date() {
+                                        gameRowView(game: game, isDisabled: false)
+                                    } else {
+                                        gameRowView(game: game, isDisabled: true).opacity(0.5)
+                                    }
+                                }.padding(.horizontal)
+                            } else {
+                                Text("No Games Available")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                    .foregroundColor(K.finalColor.textWhite)
+                                    .padding()
+                            }
+                        }
                         
                     }.padding(.bottom,80)
                 }.padding(.top,10)
@@ -152,6 +184,12 @@ struct BettingAppView: View {
         case "NFL":
             // return array of NFL games from your viewModel
             return viewModel.NFLgames
+        case "NBA":
+            // return array of NFL games from your viewModel
+            return viewModel.NBAGames
+        case "NCAAB":
+            // return array of NFL games from your viewModel
+            return viewModel.NCAABGames
         default:
             return []
         }
@@ -303,6 +341,7 @@ struct BetDetailsView: View {
     @State private var placeBetOpacity = 1.0
     @State private var placeBetColor: Color = Color.clear
     @State private var placeholder = 5
+    
     
     func checkTeamTaken() {
         if betNumber < 0 {
@@ -517,21 +556,21 @@ struct BetDetailsView: View {
                     }.cornerRadius(10)
                     
                     if betType == .betAwaySpread {
-                        BetSliderView(teamName: game.awayTeam, originalSpread: game.awaySpread, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: .betAwaySpread, chosenSpread: $chosenSpread)
+                        BetSliderView(whichSport: game.whichSport, teamName: game.awayTeam, originalSpread: game.awaySpread, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: .betAwaySpread, chosenSpread: $chosenSpread)
                             //.padding(.horizontal)
                     }
                     if betType == .betHomeSpread {
-                        BetSliderView(teamName: game.homeTeam, originalSpread: game.homeSpread, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: .betHomeSpread, chosenSpread: $chosenSpread)
+                        BetSliderView(whichSport: game.whichSport, teamName: game.homeTeam, originalSpread: game.homeSpread, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: .betHomeSpread, chosenSpread: $chosenSpread)
                             //.padding(.horizontal)
 
                     }
                     if betType == .over {
-                        BetSliderView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalOver, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: .over, chosenSpread: $chosenSpread)
+                        BetSliderView(whichSport: game.whichSport, teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalOver, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: .over, chosenSpread: $chosenSpread)
                             //.padding(.horizontal)
 
                     }
                     if betType == .under {
-                        BetSliderView(teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalUnder, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: .under, chosenSpread: $chosenSpread)
+                        BetSliderView(whichSport: game.whichSport, teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalUnder, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: .under, chosenSpread: $chosenSpread)
                             //.padding(.horizontal)
 
                     }
@@ -553,7 +592,7 @@ struct BetDetailsView: View {
                     
                 Button(action: {
                     print("groupNumber: \(groupNumber), betNumber: \(betNumber)")
-                    viewModel.uploadBet(groupNumber: groupNumber, groupID: groupsVM.userTickets[groupNumber].groupID, betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread)), betType: betType, gameID: game.idd ?? "null") {_ in
+                    viewModel.uploadBet(groupNumber: groupNumber, groupID: groupsVM.userTickets[groupNumber].groupID, betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread), whichSport: game.whichSport), betType: betType, gameID: game.idd ?? "null", whichSport: game.whichSport) {_ in
                         ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat, completion: {
                             let groupServe = groupService()
                             groupServe.setPotentialToWin(potential: Int(ticketVM.totalPotentialWon), groupNumber: groupNumber, completion: {_ in })
@@ -607,6 +646,7 @@ struct BetDetailsView: View {
 
 
 struct BetSliderView: View {
+    var whichSport: String
     var teamName: String
     var originalSpread: Double
     var parlaySize: Int
@@ -686,7 +726,7 @@ struct BetSliderView: View {
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
                     .foregroundColor(.white)
                     .frame(width: 55, alignment: .leading)
-                Text("\(percentageToML(percentage: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread))))")
+                Text("\(percentageToML(percentage: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread), whichSport: whichSport)))")
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
                     .foregroundColor(.white)
                     .frame(width: 65, alignment: .trailing)

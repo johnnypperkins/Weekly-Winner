@@ -592,18 +592,18 @@ struct currentLeaderboardView: View {
                     }
                 }
                 .onAppear(){
-                    viewModel.printTickets(ticket: viewModel.currentRankedGroupTickets)
+                    //viewModel.printTickets(ticket: viewModel.currentRankedGroupTickets)
                     
                 }
             }.padding(.bottom,40)
             .refreshable {
                 await viewModel.fetchUserTickets() {}
                 if selectedGroup != 0 {
-                    print("refresh ranked")
+                    //print("refresh ranked")
                     viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
                 }
             }.onAppear() {
-                print("\(viewModel.currentRankedGroupTickets.count) is count")
+                //print("\(viewModel.currentRankedGroupTickets.count) is count")
             }
         }
     }
@@ -615,22 +615,6 @@ struct pastLeaderboardView: View {
     @Binding var selectedWeek: Int
     var body: some View {
         VStack (spacing: 0) {
-            
-//            HStack {
-//                Text("My Ticket")
-//                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.medium))
-//                    .foregroundColor(.white.opacity(0.75))
-//                    .padding(EdgeInsets(top: 0, leading: 2, bottom: 6, trailing: 0))
-//                Spacer()
-//            }
-//            NavigationLink(destination:
-//                            ticketView(username: viewModel.userTickets[selectedGroup-1].username, uid: viewModel.userTickets[selectedGroup-1].uid, groupID: viewModel.userTickets[selectedGroup-1].groupID, selectedWeek: selectedGroup > 0 ? "\(viewModel.totalArrayOfDates[selectedGroup-1][selectedWeek])" : "", ticketFormatForGroups: viewModel.userTickets[selectedGroup-1].ticketFormat, ownTicket: false, onTicketPage: false),
-//                           label: {
-//                BetCard(viewModel: viewModel, ticket: viewModel.userTickets[selectedGroup-1], rank: (viewModel.userTickets[selectedGroup-1].rank), ownCard: true, currentWeek: false).padding(.bottom,16)
-//            }).id(UUID())
-            
-            
-           
             ForEach(0..<viewModel.pastRankedGroupTickets.count, id: \.self) { index in
                 if viewModel.pastRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid {
                     HStack {
@@ -666,7 +650,7 @@ struct pastLeaderboardView: View {
 
                 }.padding(.bottom,60)
                     .onAppear(){
-                        viewModel.printTickets(ticket: viewModel.pastRankedGroupTickets)
+                       // viewModel.printTickets(ticket: viewModel.pastRankedGroupTickets)
                     }
             }
             .onAppear() {
@@ -771,7 +755,7 @@ struct BetCard: View {
                         HStack (alignment: .center) {
                             Text("\(ticket.totalWon)")
                                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                .foregroundColor(K.finalColor.winningGreen)
+                                .foregroundColor(ticket.totalWon>=0 ? K.finalColor.winningGreen : K.finalColor.deleteRed)
                                 .frame(width: currentWeek ? 45 : 110, height: 20, alignment: .center)
                         }
                         .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
@@ -824,7 +808,7 @@ struct BetCard: View {
         
         .onAppear {
             isEnabled = ticket.isEnabled
-            print(ticket.uid)
+            //print(ticket.uid)
             viewModel.fetchUserProfilePic(uid: ticket.uid) { (profileImageUrl, error) in
                 if let error = error {
                     print("Error fetching profile image URL: \(error)")
