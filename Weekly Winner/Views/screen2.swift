@@ -13,6 +13,11 @@ struct BettingAppView: View {
     @StateObject private var viewModel = bookViewModel()
     @State private var showingSheet = false
     @State private var isShowing = false
+    @State private var searchTerm: String = ""
+
+    func shouldAppear(search: String, input: String) -> Bool {
+        return input.lowercased().contains(search.lowercased())
+    }
 
     var body: some View {
         ZStack{
@@ -27,6 +32,7 @@ struct BettingAppView: View {
                             withAnimation(.spring()) {
                                 isShowing.toggle()
                             }
+                            searchTerm = ""
                         }, label: {
                             HStack {
                                 Image(systemName: "line.horizontal.3")
@@ -46,6 +52,26 @@ struct BettingAppView: View {
                         .fontWeight(.bold)
                         .foregroundColor(K.finalColor.textWhite)
                 }
+                
+                HStack {
+                    TextField("Search", text: $searchTerm)
+                        .placeholder(when: searchTerm == "", placeholder: {
+                            Text("Search for games...").foregroundColor(.gray)
+                                .padding(.leading, 2)
+                        })
+                        .foregroundColor(.white)
+                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                        .accentColor(.white)
+                        .textInputAutocapitalization(.words)
+                        .disableAutocorrection(true)
+                        //.padding(.vertical, 5)
+                    
+                }
+                .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 15))
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 40, maxHeight: 40)
+                .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                .cornerRadius(7.5)
+                .padding(.horizontal, 14)
                 
                 HStack{
                     Text("Team Name") // team name
@@ -74,17 +100,21 @@ struct BettingAppView: View {
                             //.padding(.top, 100)
                             .padding(.horizontal)
                             .foregroundColor(.white), alignment: .bottom)
-               
+     
+                
+                   
                 
                 ScrollView {
                     VStack(spacing: 5) {
-                        if viewModel.selectedGameType == "Upcoming" {
-                            if !viewModel.upcomingGames.isEmpty {
-                                ForEach(viewModel.upcomingGames, id: \.idd) { game in
-                                    if game.commenceTime.dateValue() > Date() {
-                                        gameRowView(game: game, isDisabled: false)
-                                    } else {
-                                        gameRowView(game: game, isDisabled: true).opacity(0.5)
+                        if viewModel.selectedGameType == "All Games" {
+                            if !viewModel.allGames.isEmpty {
+                                ForEach(viewModel.allGames, id: \.idd) { game in
+                                    if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
+                                        if game.commenceTime.dateValue() > Date() {
+                                            gameRowView(game: game, isDisabled: false)
+                                        } else {
+                                            gameRowView(game: game, isDisabled: true).opacity(0.5)
+                                        }
                                     }
                                 }.padding(.horizontal)
                             } else {
@@ -97,10 +127,12 @@ struct BettingAppView: View {
                         if viewModel.selectedGameType == "NFL" {
                             if !viewModel.NFLgames.isEmpty {
                                 ForEach(viewModel.NFLgames, id: \.idd) { game in // HARDCODE NCAAF
-                                    if game.commenceTime.dateValue() > Date() {
-                                        gameRowView(game: game, isDisabled: false)
-                                    } else {
-                                        gameRowView(game: game, isDisabled: true).opacity(0.5)
+                                    if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
+                                        if game.commenceTime.dateValue() > Date() {
+                                            gameRowView(game: game, isDisabled: false)
+                                        } else {
+                                            gameRowView(game: game, isDisabled: true).opacity(0.5)
+                                        }
                                     }
                                 }.padding(.horizontal)
                             } else {
@@ -114,10 +146,12 @@ struct BettingAppView: View {
                         if viewModel.selectedGameType == "NCAAF" {
                             if !viewModel.NCAAFGames.isEmpty {
                                 ForEach(viewModel.NCAAFGames, id: \.idd) { game in // HARDCODE NCAAF
-                                    if game.commenceTime.dateValue() > Date() {
-                                        gameRowView(game: game, isDisabled: false)
-                                    } else {
-                                        gameRowView(game: game, isDisabled: true).opacity(0.5)
+                                    if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
+                                        if game.commenceTime.dateValue() > Date() {
+                                            gameRowView(game: game, isDisabled: false)
+                                        } else {
+                                            gameRowView(game: game, isDisabled: true).opacity(0.5)
+                                        }
                                     }
                                 }.padding(.horizontal)
                             } else {
@@ -130,10 +164,12 @@ struct BettingAppView: View {
                         if viewModel.selectedGameType == "NBA" {
                             if !viewModel.NBAGames.isEmpty {
                                 ForEach(viewModel.NBAGames, id: \.idd) { game in // HARDCODE NCAAF
-                                    if game.commenceTime.dateValue() > Date() {
-                                        gameRowView(game: game, isDisabled: false)
-                                    } else {
-                                        gameRowView(game: game, isDisabled: true).opacity(0.5)
+                                    if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
+                                        if game.commenceTime.dateValue() > Date() {
+                                            gameRowView(game: game, isDisabled: false)
+                                        } else {
+                                            gameRowView(game: game, isDisabled: true).opacity(0.5)
+                                        }
                                     }
                                 }.padding(.horizontal)
                             } else {
@@ -146,10 +182,12 @@ struct BettingAppView: View {
                         if viewModel.selectedGameType == "NCAAB" {
                             if !viewModel.NCAABGames.isEmpty {
                                 ForEach(viewModel.NCAABGames, id: \.idd) { game in // HARDCODE NCAAF
-                                    if game.commenceTime.dateValue() > Date() {
-                                        gameRowView(game: game, isDisabled: false)
-                                    } else {
-                                        gameRowView(game: game, isDisabled: true).opacity(0.5)
+                                    if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
+                                        if game.commenceTime.dateValue() > Date() {
+                                            gameRowView(game: game, isDisabled: false)
+                                        } else {
+                                            gameRowView(game: game, isDisabled: true).opacity(0.5)
+                                        }
                                     }
                                 }.padding(.horizontal)
                             } else {
@@ -176,8 +214,8 @@ struct BettingAppView: View {
     
     private var filteredGames: [Game] {
         switch viewModel.selectedGameType {
-        case "Upcoming":
-            return viewModel.upcomingGames
+        case "All Games":
+            return viewModel.allGames
         case "NCAAF":
             // return array of college football games from your viewModel
             return viewModel.NCAAFGames
@@ -293,8 +331,8 @@ struct gameRowView: View {
                             titleStringA = "+" + String(format: "%.0f", game.awaySpread)
                         }
                     }
-                Text("\(formatDateEMMMDHMM.format(date: game.commenceTime.dateValue()))")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                Text("\(formatDateEMMMDHMM.format(date: game.commenceTime.dateValue())) | \(game.whichSport)")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 11))
                     .foregroundColor(K.finalColor.textWhite)
                     .frame(maxWidth: .infinity, alignment: .center)
             }

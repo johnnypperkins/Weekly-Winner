@@ -14,13 +14,13 @@ class bookViewModel: ObservableObject {
     @Published var NCAAFGames: [Game] = []
     @Published var NBAGames: [Game] = []
     @Published var NCAABGames: [Game] = []
-    @Published var upcomingGames: [Game] = []
+    @Published var allGames: [Game] = []
     @Published var userTickets: [Ticket] = [] //ticket99
     @Published var isTicketsLoaded = false  // Add this line
     @Published var mostPopularBets: [MostPopularBet] = []
     @Published var arePopularBetsLoaded = false
 
-    @Published var selectedGameType = "Upcoming"
+    @Published var selectedGameType = "All Games"
     
 
     private let betService = BetService()
@@ -58,7 +58,7 @@ class bookViewModel: ObservableObject {
             return game1.commenceTime.dateValue() < game2.commenceTime.dateValue()
         }
         
-         upcomingGames = combinedGames
+         allGames = combinedGames
         
     }
     
