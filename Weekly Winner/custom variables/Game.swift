@@ -25,6 +25,7 @@ struct Game: Identifiable, Decodable {
     var whichSport: String
     
     var bet_statistics: [Int] // Home, Home Stats, Away, Away Stats, Under, Under Stats, Over, Over Stats
+    var total_plays: Int
 }
 
 struct P {

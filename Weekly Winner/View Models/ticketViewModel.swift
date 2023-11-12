@@ -312,10 +312,15 @@ class ticketViewModel: ObservableObject {
         ref2.getDocument { (document, error) in
             if let document = document, document.exists {
                 var betStatistics = document.get("bet_statistics") as? [Int] ?? []
+                var total_plays = document.get("total_plays") as? Int ?? 0
                 if whichToInc >= 0 && whichToInc < betStatistics.count {
                     betStatistics[whichToInc] -= 1
                     betStatistics[whichToInc+1] -= Int(bet.betLine)
-                    ref2.updateData(["bet_statistics": betStatistics]) { err in
+                    total_plays -= 1
+                    ref2.updateData([
+                        "bet_statistics": betStatistics,
+                        "total_plays": total_plays
+                    ]) { err in
                         if let err = err {
                             print("Error updating document: \(err)")
                         } else {

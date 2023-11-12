@@ -14,10 +14,31 @@ struct BettingAppView: View {
     @State private var showingSheet = false
     @State private var isShowing = false
     @State private var searchTerm: String = ""
+    
+    @State private var rankedCommence = true
 
     func shouldAppear(search: String, input: String) -> Bool {
         return input.lowercased().contains(search.lowercased())
     }
+    
+    // Add this computed property to determine which array of games to use
+    var gamesToDisplay: [Game] {
+        switch viewModel.selectedGameType {
+        case "All Games":
+            return rankedCommence ? viewModel.allGames : viewModel.allGamesPopular
+        case "NFL":
+            return rankedCommence ? viewModel.NFLgames : viewModel.NFLgamesPopular
+        case "NCAAF":
+            return rankedCommence ? viewModel.NCAAFGames : viewModel.NCAAFGamesPopular
+        case "NBA":
+            return rankedCommence ? viewModel.NBAGames : viewModel.NBAGamesPopular
+        case "NCAAB":
+            return rankedCommence ? viewModel.NCAABGames : viewModel.NCAABGamesPopular
+        default:
+            return []
+        }
+    }
+
 
     var body: some View {
         ZStack{
@@ -25,7 +46,6 @@ struct BettingAppView: View {
                 sideMenuView(bookVM: viewModel, isShowing: $isShowing)
             }
             VStack {
-
                 ZStack {
                     HStack {
                         Button(action: {
@@ -33,6 +53,7 @@ struct BettingAppView: View {
                                 isShowing.toggle()
                             }
                             searchTerm = ""
+                            rankedCommence = true
                         }, label: {
                             HStack {
                                 Image(systemName: "line.horizontal.3")
@@ -52,27 +73,43 @@ struct BettingAppView: View {
                         .fontWeight(.bold)
                         .foregroundColor(K.finalColor.textWhite)
                 }
-                
                 HStack {
-                    TextField("Search", text: $searchTerm)
-                        .placeholder(when: searchTerm == "", placeholder: {
-                            Text("Search for games...").foregroundColor(.gray)
-                                .padding(.leading, 2)
-                        })
-                        .foregroundColor(.white)
-                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                        .accentColor(.white)
-                        .textInputAutocapitalization(.words)
-                        .disableAutocorrection(true)
+                    HStack {
+                        TextField("Search", text: $searchTerm)
+                            .placeholder(when: searchTerm == "", placeholder: {
+                                Text("Search for games...").foregroundColor(.gray)
+                                    .padding(.leading, 2)
+                            })
+                            .foregroundColor(.white)
+                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                            .accentColor(.white)
+                            .textInputAutocapitalization(.words)
+                            .disableAutocorrection(true)
                         //.padding(.vertical, 5)
+                       
+                        
+                    }
+                    .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 15))
+                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 40, maxHeight: 40)
+                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                    .cornerRadius(7.5)
+                    .padding(EdgeInsets(top: 0, leading: 14, bottom: 0, trailing: 10))
                     
+                    Button(action: {
+                        searchTerm = ""
+                        rankedCommence.toggle()
+                    }, label: {
+                        HStack {
+                            Text("\(rankedCommence ? "Upcoming" : "Popular")")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                                .foregroundStyle(.white)
+                        }
+                            .frame(width: 80, height: 40)
+                            .background(K.finalColor.titleBlue)
+                            .cornerRadius(7.5)
+                            .padding(.trailing, 14)
+                    })
                 }
-                .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 15))
-                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 40, maxHeight: 40)
-                .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                .cornerRadius(7.5)
-                .padding(.horizontal, 14)
-                
                 HStack{
                     Text("Team Name") // team name
                         .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
@@ -100,102 +137,25 @@ struct BettingAppView: View {
                             //.padding(.top, 100)
                             .padding(.horizontal)
                             .foregroundColor(.white), alignment: .bottom)
-     
-                
-                   
-                
+
                 ScrollView {
                     VStack(spacing: 5) {
-                        if viewModel.selectedGameType == "All Games" {
-                            if !viewModel.allGames.isEmpty {
-                                ForEach(viewModel.allGames, id: \.idd) { game in
-                                    if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
-                                        if game.commenceTime.dateValue() > Date() {
-                                            gameRowView(game: game, isDisabled: false)
-                                        } else {
-                                            gameRowView(game: game, isDisabled: true).opacity(0.5)
-                                        }
+                        // Displaying games
+                        if !gamesToDisplay.isEmpty {
+                            ForEach(gamesToDisplay, id: \.idd) { game in
+                                if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
+                                    if game.commenceTime.dateValue() > Date() {
+                                        gameRowView(game: game, isDisabled: false)
+                                    } else {
+                                        gameRowView(game: game, isDisabled: true).opacity(0.5)
                                     }
-                                }.padding(.horizontal)
-                            } else {
-                                Text("No Games Available")
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
-                                    .foregroundColor(K.finalColor.textWhite)
-                                    .padding()
-                            }
-                        }   
-                        if viewModel.selectedGameType == "NFL" {
-                            if !viewModel.NFLgames.isEmpty {
-                                ForEach(viewModel.NFLgames, id: \.idd) { game in // HARDCODE NCAAF
-                                    if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
-                                        if game.commenceTime.dateValue() > Date() {
-                                            gameRowView(game: game, isDisabled: false)
-                                        } else {
-                                            gameRowView(game: game, isDisabled: true).opacity(0.5)
-                                        }
-                                    }
-                                }.padding(.horizontal)
-                            } else {
-                                Text("No Games Available")
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
-                                    .foregroundColor(K.finalColor.textWhite)
-                                    .padding()
-                                    //.frame(width: 50, alignment: .center)
-                            }
-                        }
-                        if viewModel.selectedGameType == "NCAAF" {
-                            if !viewModel.NCAAFGames.isEmpty {
-                                ForEach(viewModel.NCAAFGames, id: \.idd) { game in // HARDCODE NCAAF
-                                    if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
-                                        if game.commenceTime.dateValue() > Date() {
-                                            gameRowView(game: game, isDisabled: false)
-                                        } else {
-                                            gameRowView(game: game, isDisabled: true).opacity(0.5)
-                                        }
-                                    }
-                                }.padding(.horizontal)
-                            } else {
-                                Text("No Games Available")
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
-                                    .foregroundColor(K.finalColor.textWhite)
-                                    .padding()
-                            }
-                        }
-                        if viewModel.selectedGameType == "NBA" {
-                            if !viewModel.NBAGames.isEmpty {
-                                ForEach(viewModel.NBAGames, id: \.idd) { game in // HARDCODE NCAAF
-                                    if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
-                                        if game.commenceTime.dateValue() > Date() {
-                                            gameRowView(game: game, isDisabled: false)
-                                        } else {
-                                            gameRowView(game: game, isDisabled: true).opacity(0.5)
-                                        }
-                                    }
-                                }.padding(.horizontal)
-                            } else {
-                                Text("No Games Available")
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
-                                    .foregroundColor(K.finalColor.textWhite)
-                                    .padding()
-                            }
-                        }
-                        if viewModel.selectedGameType == "NCAAB" {
-                            if !viewModel.NCAABGames.isEmpty {
-                                ForEach(viewModel.NCAABGames, id: \.idd) { game in // HARDCODE NCAAF
-                                    if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
-                                        if game.commenceTime.dateValue() > Date() {
-                                            gameRowView(game: game, isDisabled: false)
-                                        } else {
-                                            gameRowView(game: game, isDisabled: true).opacity(0.5)
-                                        }
-                                    }
-                                }.padding(.horizontal)
-                            } else {
-                                Text("No Games Available")
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
-                                    .foregroundColor(K.finalColor.textWhite)
-                                    .padding()
-                            }
+                                }
+                            }.padding(.horizontal)
+                        } else {
+                            Text("No Games Available")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                .foregroundColor(K.finalColor.textWhite)
+                                .padding()
                         }
                         
                     }.padding(.bottom,80)
@@ -210,6 +170,9 @@ struct BettingAppView: View {
         }.background(K.finalColor.backgroundBlue)
             .padding(.top, 65)
             .navigationBarHidden(false)
+            .onAppear() {
+                rankedCommence = true
+            }
     }
     
     private var filteredGames: [Game] {
