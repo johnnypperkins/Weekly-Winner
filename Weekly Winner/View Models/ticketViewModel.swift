@@ -297,6 +297,37 @@ class ticketViewModel: ObservableObject {
     }
     
     func deleteBet(bet: Bet) {
+        var whichToInc = -1
+        if bet.betType.rawValue == "betHomeSpread" {
+            whichToInc = 0
+        } else if bet.betType.rawValue == "betAwaySpread" {
+            whichToInc = 2
+        } else if bet.betType.rawValue == "over" {
+            whichToInc = 4
+        } else if bet.betType.rawValue == "under" {
+            whichToInc = 6
+        }
+        let ref2 = db.collection("Book").document(bet.whichSport).collection("games").document(bet.gameID)
+
+        ref2.getDocument { (document, error) in
+            if let document = document, document.exists {
+                var betStatistics = document.get("bet_statistics") as? [Int] ?? []
+                if whichToInc >= 0 && whichToInc < betStatistics.count {
+                    betStatistics[whichToInc] -= 1
+                    betStatistics[whichToInc+1] -= Int(bet.betLine)
+                    ref2.updateData(["bet_statistics": betStatistics]) { err in
+                        if let err = err {
+                            print("Error updating document: \(err)")
+                        } else {
+                            print("Document successfully updated")
+                        }
+                    }
+                }
+            } else if let err = error {
+                print("Error getting document: \(err)")
+            }
+        }
+        
         guard let userId = Auth.auth().currentUser?.uid else { return }
         
         db.collection("users").document(userId).collection("bets").document("week").collection("currentWeekBets").document(bet.id ?? "").delete { error in
@@ -310,6 +341,8 @@ class ticketViewModel: ObservableObject {
                 }
             }
         }
+        
+        
     }
     
     // Ok so this function deals with the other bets if there is a loss in a parlay. All .notStarted bets are removed, all empty bets are pushed to null and the betArray is filled

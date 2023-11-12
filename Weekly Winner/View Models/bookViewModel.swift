@@ -124,19 +124,28 @@ class bookViewModel: ObservableObject {
                         let data = doc.data()
                         //print("test")
                         if let idd = data["id"] as? String,
-                            let commenceTime = data["commenceTime"] as? Timestamp,
-                            let totalOver = data["totalOver"] as? Double,
-                            let totalUnder = data["totalUnder"] as? Double,
-                            let homeTeam = data["homeTeam"] as? String,
-                            let awayTeam = data["awayTeam"] as? String,
-                            let homeSpread = data["homeSpread"] as? Double,
-                            let awaySpread = data["awaySpread"] as? Double,
-                            let homeTeamScore = data["homeTeamScore"] as? Int,
-                            let awayTeamScore = data["awayTeamScore"] as? Int,
-                            let whichSport = data["whichSport"] as? String? ?? ""
+                           let commenceTime = data["commenceTime"] as? Timestamp,
+                           let totalOver = data["totalOver"] as? Double,
+                           let totalUnder = data["totalUnder"] as? Double,
+                           let homeTeam = data["homeTeam"] as? String,
+                           let awayTeam = data["awayTeam"] as? String,
+                           let homeSpread = data["homeSpread"] as? Double,
+                           let awaySpread = data["awaySpread"] as? Double,
+                           let homeTeamScore = data["homeTeamScore"] as? Int,
+                           let awayTeamScore = data["awayTeamScore"] as? Int,
+                           let whichSport = data["whichSport"] as? String? ?? "",
+                           let bet_statistics = data["bet_statistics"] as? [Int]
+                            
+//                           let under_bets_count = data["under_bets_count"] as? Int,
+//                           let over_bets_count = data["over_bets_count"] as? Int,
+//                           let home_team_bets_count = data["home_team_bets_count"] as? Int,
+//                           let away_team_bets_count = data["away_team_bets_count"] as? Int
+                           
+                           
+                           
                         {
     //                       let completed = data["completed"] as? Bool {
-                            let newGame = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport)
+                            let newGame = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics)
                             //print("3")
                             
                             games.append(newGame)
@@ -165,5 +174,49 @@ class bookViewModel: ObservableObject {
             }
     }
 
+    
+    func fetchGameDocument(byID documentID: String, completion: @escaping (Game?) -> Void) {
+            let db = Firestore.firestore()
+            
+        db.collectionGroup("games").whereField("id", isEqualTo: documentID).getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    print("Error getting game document: \(error)")
+                    return
+                }
+                
+           if let document = querySnapshot?.documents.first {
+                        do {
+                            var data = document.data()
+                                 if let idd = data["id"] as? String,
+                                    let commenceTime = data["commenceTime"] as? Timestamp,
+                                    let totalOver = data["totalOver"] as? Double,
+                                    let totalUnder = data["totalUnder"] as? Double,
+                                    let homeTeam = data["homeTeam"] as? String,
+                                    let awayTeam = data["awayTeam"] as? String,
+                                    let homeSpread = data["homeSpread"] as? Double,
+                                    let awaySpread = data["awaySpread"] as? Double,
+                                    let homeTeamScore = data["homeTeamScore"] as? Int,
+                                    let awayTeamScore = data["awayTeamScore"] as? Int,
+                                    let whichSport = data["whichSport"] as? String? ?? "",
+                                    let bet_statistics = data["bet_statistics"] as? [Int]
+ {
+                                     
+                                        let game = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics)
+                                        
+                                        completion(game) // Call completion with the game object
+
+                                }
+                            } catch let error {
+                                print("Error decoding game document: \(error)")
+                                completion(nil)
+                        }
+                    }
+            else {
+                print("johnny")
+                completion(nil)
+            }
+        }
+    }
+    
     
 }

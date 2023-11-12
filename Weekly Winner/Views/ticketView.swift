@@ -355,25 +355,29 @@ struct ticketView: View {
             ZStack {
                 VStack (alignment: .leading) {
                     HStack() {
-                        Text(title)
-                            .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-                            .foregroundColor(.white)
+                        
+                        Text("\(title) | \(percentageToTotalWin(percentage: totalOdds))")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                            .foregroundColor(.white.opacity(0.9))
                         Spacer()
-                        HStack(alignment: .top, spacing: 17) {
-                            Text("\(percentageToML(percentage: totalOdds))")
-                                .font(.custom(K.customFonts.lexendDecaLight, size: 12))
-                                .foregroundColor(.white)
-                            Text("\(percentageToTotalWin(percentage: totalOdds))")
-                                .font(.custom(K.customFonts.lexendDecaLight, size: 12))
-                                .foregroundColor(.white)
-                        }
+//                        Text()
+//                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+//                            .foregroundColor(.white)
+                        //Spacer()
+//                        HStack(alignment: .top, spacing: 17) {
+////                            Text("\(percentageToML(percentage: totalOdds))")
+////                                .font(.custom(K.customFonts.lexendDecaLight, size: 12))
+////                                .foregroundColor(.white)
+//                            
+//                            
+//                        }
                     }
-                    .frame(height: 20)
+                    .frame(height: 5)
                     .padding(.top, 10)
                     Rectangle()
                         .frame(height: 0.75)
                         .padding(EdgeInsets(top: 5, leading: 0, bottom: 2, trailing: 0))
-                        .foregroundColor(K.finalColor.textWhite)
+                        .foregroundColor(K.finalColor.textWhite.opacity(0.9))
                     
                     VStack(alignment: .center) {
                         let emptyBoxesCount = max(0, maxBetsPlaced - betArray.count)
@@ -461,7 +465,7 @@ struct ticketView: View {
                                 //Spacer()
                                 Text(percentageToML(percentage: Double(bet.betOdds)))
                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.white.opacity(0.9))
                                     .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 10))
                                 //.background(Color.backgroundForBetResult(bet.result))
                                 //.background(K.gra)
@@ -475,7 +479,7 @@ struct ticketView: View {
                                                     bet.teamBetOn?.count ?? 10 < 20 ? 16 : 13))
                                 //   (bet.teamBetOn?.count ?? 10 > 35 ? 9: 11)))
                                 
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.white.opacity(0.9))
                                     .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 5))
                                     .cornerRadius(7.5)
                                     .frame(maxWidth: 250, alignment: .leading)
@@ -513,15 +517,18 @@ struct ticketView: View {
                                     HStack {
                                         VStack {
                                             HStack {
-                                                Text(game?.homeTeam ?? "")
+                                                Text("\(game?.homeTeam ?? "")")
                                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
                                                     .foregroundColor(.white)
                                                 Spacer()
                                             }
-                                            HStack {
-                                                Text(game?.awayTeam ?? "")
+                                            HStack(spacing: 0) {
+                                                Text("\(game?.awayTeam ?? "")")
                                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
                                                     .foregroundColor(.white)
+//                                                Text(" @")
+//                                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 8))
+//                                                    .foregroundColor(.white)
                                                 Spacer()
                                             }
                                         }.frame(width: 220)
@@ -542,7 +549,7 @@ struct ticketView: View {
                                     
                                     HStack {
                                         Spacer()
-                                        Text("\(formatDateEMMMDHMM.format(date: game?.commenceTime.dateValue() ?? Date()))")
+                                        Text("\(game?.whichSport ?? "") | \(formatDateEMMMDHMM.format(date: game?.commenceTime.dateValue() ?? Date()))")
                                             .font(.custom(K.customFonts.lexendDecaMedium, size: 10))
                                             .foregroundColor(K.finalColor.textWhite)
                                             //.frame(maxWidth: .infinity, alignment: .center)
@@ -576,53 +583,23 @@ struct ticketView: View {
                     .frame(width: 320)
                     .onAppear() {
                         canDelete = false
-                        fetchGameDocument(byID: bet.gameID)
+                        
+                        bookVM.fetchGameDocument(byID: bet.gameID) { fetchedGame in
+                            if let fetchedGame = fetchedGame {
+                                print("Fetched game: \(fetchedGame)")
+                                self.game = fetchedGame
+                            } else {
+                                print("Failed to fetch game")
+                                // Handle the error or absence of the game
+                            }
+                        }
+
                     }
                     .onDisappear() {
                         expand = false
                     }
-            
-
             }
-            func fetchGameDocument(byID documentID: String) {
-                    let db = Firestore.firestore()
-                    
-                db.collectionGroup("games").whereField("id", isEqualTo: documentID).getDocuments { (querySnapshot, error) in
-                        if let error = error {
-                            print("Error getting game document: \(error)")
-                            return
-                        }
-                        
-                   if let document = querySnapshot?.documents.first {
-                                do {
-                                    var data = document.data()
-                                        if let idd = data["id"] as? String,
-                                        let commenceTime = data["commenceTime"] as? Timestamp,
-                                        let totalOver = data["totalOver"] as? Double,
-                                        let totalUnder = data["totalUnder"] as? Double,
-                                        let homeTeam = data["homeTeam"] as? String,
-                                        let awayTeam = data["awayTeam"] as? String,
-                                        let homeSpread = data["homeSpread"] as? Double,
-                                        let awaySpread = data["awaySpread"] as? Double,
-                                        let homeTeamScore = data["homeTeamScore"] as? Int,
-                                       let awayTeamScore = data["awayTeamScore"] as? Int,
-                                       let whichSport = data["whichSport"] as? String? ?? ""
-                                    {
-                                        //                       let completed = data["completed"] as? Bool {
-                                        let game = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport)
-                                        print("game \(game)")
-                                        self.game = game
-                                        
-                                    }
-                                    } catch let error {
-                                    print("Error decoding game document: \(error)")
-                                }
-                            }
-                    else{
-                        print("johnny")
-                    }
-                    }
-                }
+            
         }
 
         struct EmptyBetCard: View {
@@ -644,7 +621,7 @@ struct ticketView: View {
                         .frame(width: 291, height: 30)
                         .overlay(
                             Text("Empty Bet")
-                                .font(.custom(K.customFonts.lexendDecaLight, size: 14))
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
                                 .foregroundColor(.white)
                         ).cornerRadius(5)
                 }

@@ -7,6 +7,7 @@
 
 import Foundation
 import Firebase
+import FirebaseFirestore
 
 class BetService {
     private let db = Firestore.firestore()
@@ -16,6 +17,18 @@ class BetService {
             completion(AuthError.userNotFound)
             return
         }
+        
+        var whichToInc = -1
+        if bet.betType.rawValue == "betHomeSpread" {
+            whichToInc = 0
+        } else if bet.betType.rawValue == "betAwaySpread" {
+            whichToInc = 2
+        } else if bet.betType.rawValue == "over" {
+            whichToInc = 4
+        } else if bet.betType.rawValue == "under" {
+            whichToInc = 6
+        }
+      
         
         //let db = Firestore.firestore()
         var ref: DocumentReference? = nil
@@ -50,6 +63,31 @@ class BetService {
                 completion(nil)
             }
         }
+
+        // Assuming 'db' is your Firestore instance and 'bet' is an object with 'whichSport' and 'gameID' properties
+        let ref2 = db.collection("Book").document(bet.whichSport).collection("games").document(bet.gameID)
+
+        ref2.getDocument { (document, error) in
+            if let document = document, document.exists {
+                var betStatistics = document.get("bet_statistics") as? [Int] ?? []
+                if whichToInc >= 0 && whichToInc < betStatistics.count {
+                    betStatistics[whichToInc] += 1
+                    betStatistics[whichToInc+1] += Int(bet.betLine)
+                    ref2.updateData(["bet_statistics": betStatistics]) { err in
+                        if let err = err {
+                            print("Error updating document: \(err)")
+                        } else {
+                            print("Document successfully updated")
+                        }
+                    }
+                }
+            } else if let err = error {
+                print("Error getting document: \(err)")
+            }
+        }
+
+        
+        
     }
     
     func fetchPopularBets(completion: @escaping ([MostPopularBet]?, Error?) -> Void) {

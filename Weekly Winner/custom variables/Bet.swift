@@ -502,7 +502,7 @@ func percentageToTotalWin(percentage: Double) -> String {
         toWin = (1-percentage) / percentage * 100
         return "$" + String(Int(round(toWin)))
     } else {
-        return "n/a"
+        return "$0"
     }
 }
 

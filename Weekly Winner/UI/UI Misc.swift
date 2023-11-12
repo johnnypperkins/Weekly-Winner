@@ -49,6 +49,13 @@ struct K {
         static let backgroundBlue = Color(hex: "#050C42")
         static let cardBlue = Color(hex: "#202456")
         static let tabSelectedBlue = Color(hex: "#75B5FB")
+        
+//        static let titleBlue = Color(hex: "#4F91FF")
+//        static let backgroundBlue = Color(hex: "#E8F5E9")
+//        static let cardBlue = Color(hex: "#42A5F5")
+//        static let tabSelectedBlue = Color(hex: "#75B5FB")
+        
+        
         static let potentialOrange = Color(hex: "#FF8D07")
         static let winningGreen = Color(hex: "#3EDC06")
         static let textWhite = Color(hex: "#FFFFFF")
