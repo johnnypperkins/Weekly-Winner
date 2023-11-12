@@ -25,7 +25,7 @@ struct profilePhotoSelectorView: View {
         NavigationStack{
             VStack {
                 
-                Text("Profile Photo!")
+                Text("Complete Your Profile!")
                     .font(Font.custom(K.customFonts.lexendDecaSB, size: 24).weight(.semibold))
                       .foregroundColor(.white)
                     .padding(.top)
@@ -59,6 +59,114 @@ struct profilePhotoSelectorView: View {
                        .padding(.top)
                        .padding(.bottom)
                 
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Country")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                        .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                    HStack() {
+                        TextField("Country", text: $viewModel.username)
+                            
+                            .placeholder(when: viewModel.username
+                                .isEmpty, placeholder: {
+                                    Text("Country").foregroundColor(.gray)
+                                })
+                            .foregroundColor(.white)
+                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                            .accentColor(.white)
+                            .textInputAutocapitalization(.words)
+                            .disableAutocorrection(true)
+                            .autocapitalization(.none)
+//                                            .textCase(.lowercase)
+//                            .focused($focus, equals: .username)
+                            .submitLabel(.next)
+                            .onSubmit {
+//                                withAnimation {
+//                                    self.focus = .instagram
+//                                }
+                            }
+                        
+                    }
+                    .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                    .cornerRadius(15)
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+                .padding(.horizontal,16)
+//                .id(FocusableFieldSignup.username)
+                
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("State")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                        .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                    HStack() {
+                        TextField("State", text: $viewModel.username)
+                            
+                            .placeholder(when: viewModel.username
+                                .isEmpty, placeholder: {
+                                    Text("State").foregroundColor(.gray)
+                                })
+                            .foregroundColor(.white)
+                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                            .accentColor(.white)
+                            .textInputAutocapitalization(.words)
+                            .disableAutocorrection(true)
+                            .autocapitalization(.none)
+//                                            .textCase(.lowercase)
+//                            .focused($focus, equals: .username)
+                            .submitLabel(.next)
+                            .onSubmit {
+//                                withAnimation {
+//                                    self.focus = .instagram
+//                                }
+                            }
+                        
+                    }
+                    .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                    .cornerRadius(15)
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+                .padding(.horizontal,16)
+//                .id(FocusableFieldSignup.username)
+                
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Age")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                        .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                    HStack() {
+                        TextField("Age", text: $viewModel.username)
+                            
+                            .placeholder(when: viewModel.username
+                                .isEmpty, placeholder: {
+                                    Text("Age").foregroundColor(.gray)
+                                })
+                            .foregroundColor(.white)
+                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                            .accentColor(.white)
+                            .textInputAutocapitalization(.words)
+                            .disableAutocorrection(true)
+                            .autocapitalization(.none)
+//                                            .textCase(.lowercase)
+//                            .focused($focus, equals: .username)
+                            .submitLabel(.next)
+                            .onSubmit {
+//                                withAnimation {
+//                                    self.focus = .instagram
+//                                }
+                            }
+                        
+                    }
+                    .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                    .cornerRadius(15)
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+                .padding(.horizontal,16)
+//                .id(FocusableFieldSignup.username)
+                
                 Spacer()
                 
                 if let selectedImage = selectedImage  {
@@ -79,12 +187,12 @@ struct profilePhotoSelectorView: View {
                                 .padding(.horizontal,16)
                                 .padding(.bottom,30)
                     })
-                    .simultaneousGesture(TapGesture().onEnded{
-                        viewModel.uploadProfileImage(selectedImage)
-                        Task{
-                            await wait()
-                        }
-                    })
+//                    .simultaneousGesture(TapGesture().onEnded{
+//                        viewModel.uploadProfileImage(selectedImage)
+//                        Task{
+//                            await wait()
+//                        }
+//                    })
                 }
                 
                 Spacer()
@@ -108,3 +216,5 @@ struct profilePhotoSelectorView: View {
         catch { }
     }
 }
+
+

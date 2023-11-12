@@ -26,9 +26,10 @@ struct SignupIntro: View {
                     .foregroundColor(K.finalColor.titleBlue)
                 Spacer()
                 if pageIndex < 2 {
-                    Button {
-                        
-                    } label: {
+                    NavigationLink (destination:{
+                        tabBarView()
+                            .environmentObject(viewModel)
+                    }, label: {
                         HStack{
                             
                             Spacer()
@@ -43,6 +44,8 @@ struct SignupIntro: View {
                             .background(Color(red: 0.31, green: 0.57, blue: 1))
                             .cornerRadius(10)
                             .padding(16)
+                    }).onSubmit {
+                        viewModel.showMainScreen()
                     }
                 }
             }.padding(.leading,15)
@@ -65,7 +68,9 @@ struct SignupIntro: View {
                 Spacer()
                 if pageIndex < 2 {
                     Button {
-                        pageIndex += 1
+                        withAnimation{
+                            pageIndex += 1
+                        }
                     } label: {
                         Image(systemName: "arrow.forward")
                             .resizable()
@@ -108,8 +113,11 @@ struct SignupIntro: View {
             //                        .padding(.bottom,10)
             //                    ,alignment: .bottom
             //                )
-        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+        }.ignoresSafeArea()
+        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             .background(Color(red: 0.02, green: 0.05, blue: 0.26))
+            .padding(.top,45)
+            .navigationBarBackButtonHidden(true)
    
         
     }
@@ -234,8 +242,8 @@ struct Intro3: View {
 
 
 
-//struct SignupIntro_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SignupIntro()
-//    }
-//}
+struct SignupIntro_Previews: PreviewProvider {
+    static var previews: some View {
+        SignupIntro(viewModel: authenticationViewModel())
+    }
+}

@@ -355,6 +355,7 @@ struct SignupView: View {
                             .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
                         HStack() {
                             TextField("Username", text: $viewModel.username)
+                                
                                 .placeholder(when: viewModel.username
                                     .isEmpty, placeholder: {
                                         Text("Username").foregroundColor(.gray)
@@ -364,6 +365,8 @@ struct SignupView: View {
                                 .accentColor(.white)
                                 .textInputAutocapitalization(.words)
                                 .disableAutocorrection(true)
+                                .autocapitalization(.none)
+                                                .textCase(.lowercase)
                                 .focused($focus, equals: .username)
                                 .submitLabel(.next)
                                 .onSubmit {
