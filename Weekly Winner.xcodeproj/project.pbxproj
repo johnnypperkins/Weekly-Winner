@@ -69,7 +69,6 @@
 		867713EE2AC3284A00B2B036 /* Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867713ED2AC3284A00B2B036 /* Stats.swift */; };
 		867801552A213010006FE479 /* Weekly_WinnerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801542A213010006FE479 /* Weekly_WinnerApp.swift */; };
 		867801572A213010006FE479 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801562A213010006FE479 /* ContentView.swift */; };
-		867801592A213015006FE479 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 867801582A213015006FE479 /* Assets.xcassets */; };
 		8678015D2A213015006FE479 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8678015C2A213015006FE479 /* Preview Assets.xcassets */; };
 		867801672A213015006FE479 /* Weekly_WinnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801662A213015006FE479 /* Weekly_WinnerTests.swift */; };
 		867801712A213015006FE479 /* Weekly_WinnerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801702A213015006FE479 /* Weekly_WinnerUITests.swift */; };
@@ -83,6 +82,7 @@
 		8688C5902AFFDCBD007EED78 /* GifImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8688C58F2AFFDCBD007EED78 /* GifImage.swift */; };
 		8688C5922AFFDE28007EED78 /* out-_1_.gif in Resources */ = {isa = PBXBuildFile; fileRef = 8688C5912AFFDE28007EED78 /* out-_1_.gif */; };
 		8688C5942AFFDFCB007EED78 /* Iphone.gif in Resources */ = {isa = PBXBuildFile; fileRef = 8688C5932AFFDFCB007EED78 /* Iphone.gif */; };
+		8688C5962B00CEF3007EED78 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8688C5952B00CEF3007EED78 /* Assets.xcassets */; };
 		868FDA8B2A8AD4BC0092E3C5 /* splashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868FDA8A2A8AD4BC0092E3C5 /* splashScreenView.swift */; };
 		868FDA8D2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868FDA8C2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift */; };
 		868FDA8F2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868FDA8E2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift */; };
@@ -157,7 +157,6 @@
 		867801512A213010006FE479 /* Weekly Winner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Weekly Winner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		867801542A213010006FE479 /* Weekly_WinnerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weekly_WinnerApp.swift; sourceTree = "<group>"; };
 		867801562A213010006FE479 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		867801582A213015006FE479 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8678015A2A213015006FE479 /* Weekly_Winner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Weekly_Winner.entitlements; sourceTree = "<group>"; };
 		8678015C2A213015006FE479 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		867801622A213015006FE479 /* Weekly WinnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Weekly WinnerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -174,6 +173,7 @@
 		8688C58F2AFFDCBD007EED78 /* GifImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifImage.swift; sourceTree = "<group>"; };
 		8688C5912AFFDE28007EED78 /* out-_1_.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "out-_1_.gif"; sourceTree = "<group>"; };
 		8688C5932AFFDFCB007EED78 /* Iphone.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Iphone.gif; sourceTree = "<group>"; };
+		8688C5952B00CEF3007EED78 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		868FDA8A2A8AD4BC0092E3C5 /* splashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = splashScreenView.swift; sourceTree = "<group>"; };
 		868FDA8C2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = profilePhotoSelectorView.swift; sourceTree = "<group>"; };
 		868FDA8E2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditionsSignupView.swift; sourceTree = "<group>"; };
@@ -366,9 +366,9 @@
 				864A2D642A6D8052000FBA35 /* CustomAlert */,
 				865C4A7D2A32BFF500C3C626 /* services */,
 				3C91B6C42A58B9E700398F53 /* UI */,
-				867801582A213015006FE479 /* Assets.xcassets */,
 				8678015A2A213015006FE479 /* Weekly_Winner.entitlements */,
 				866FFF902AFBB48B00A0CA13 /* GoogleService-Info.plist */,
+				8688C5952B00CEF3007EED78 /* Assets.xcassets */,
 				8678015B2A213015006FE479 /* Preview Content */,
 			);
 			path = "Weekly Winner";
@@ -532,8 +532,8 @@
 				8688C5922AFFDE28007EED78 /* out-_1_.gif in Resources */,
 				3C1091ED2A789A570049C278 /* Poppins-Medium.ttf in Resources */,
 				866FFF912AFBB48B00A0CA13 /* GoogleService-Info.plist in Resources */,
-				867801592A213015006FE479 /* Assets.xcassets in Resources */,
 				866C525B2A7712F1008BE839 /* Poppins-Light.ttf in Resources */,
+				8688C5962B00CEF3007EED78 /* Assets.xcassets in Resources */,
 				3C1091F12A789D290049C278 /* LexendDeca-SemiBold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

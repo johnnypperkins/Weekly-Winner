@@ -156,8 +156,8 @@ struct TermsAndConditionsView: View {
                     .padding()
                     
                     NavigationLink(destination: {
-                            tabBarView()
-                            .environmentObject(viewModel)
+                        SignupIntro(viewModel: viewModel)
+                            
        
                     }, label: {
                         HStack{

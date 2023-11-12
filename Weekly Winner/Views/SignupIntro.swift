@@ -13,8 +13,8 @@ import WebKit
 struct SignupIntro: View {
     @State var offset: CGFloat = 0
     @State  var pageIndex: Int = 0
+    @ObservedObject var viewModel: authenticationViewModel
     
-    var colors: [Color] = [.red,.blue,.pink]
     
     
     var body: some View {
@@ -73,16 +73,20 @@ struct SignupIntro: View {
                             .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
                     }
                 } else {
-                    NavigationLink {
-                        
-                    } label: {
+                    NavigationLink (destination: {
+                        tabBarView()
+                            .environmentObject(viewModel)
+                    }, label: {
                         Text("Continue")
                             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
                             .foregroundColor(.white)
                         //shadow
                         
                        
-                    }.frame(minWidth: 0, maxWidth: 80, minHeight: 40 , maxHeight: 40)
+                    }).onSubmit {
+                        viewModel.showMainScreen()
+                    }
+                    .frame(minWidth: 0, maxWidth: 80, minHeight: 40 , maxHeight: 40)
                         .background(Color(red: 0.31, green: 0.57, blue: 1))
                         .cornerRadius(10)
                     
@@ -118,17 +122,43 @@ struct SignupIntro: View {
 
 struct Intro1: View {
     @Binding var pageIndex: Int
+    @State private var isGlowing = false
     var body: some View {
         
         VStack{
-            Text("Hello World")
-                .foregroundColor(.white)
-            Button {
-                pageIndex+=1
-            } label: {
-                Text("Click me")
-            }
-
+            Image("groupsImage")
+                .resizable()
+                .frame(width: 400,height: 300)
+                .overlay(
+                                    Circle()
+                                        .stroke(Color.blue, lineWidth: 3) // Customize the color and width of the outline
+                                        .frame(width: 30, height: 30) // Adjust the size of the circle as needed
+                                        .offset(x: 2, y: 0) // Adjust the offset to position the circle in the top-left corner
+                                        .blur(radius:isGlowing ? 2.0 : 0)
+                                        .opacity(isGlowing ? 1.0 : 0.3)
+                                    ,alignment: .topLeading
+                                    // Opacity for the glow effect
+                                        
+                                )
+                .onAppear() {
+                    withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                                        self.isGlowing.toggle()
+                                    }
+                                }
+            HStack{
+                Text("Create and Join Groups")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 25))
+                    .foregroundColor(K.finalColor.textWhite)
+                    .padding(.top,15)
+                
+            }.padding(.horizontal,15)
+            
+            Text("Grab a group of friends and bet against each other to see who is the ultimate sports wizard. There is only one thing more valuable than money: bragging rights. Only the best will win!")
+                .font(.custom(K.customFonts.lexendDecaLight, size: 15))
+                .foregroundColor(K.finalColor.textWhite)
+                .padding(.top,20)
+                .padding(.horizontal,15)
+            Spacer()
         }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             .background(K.finalColor.cardBlue)
             .cornerRadius(30)
@@ -142,13 +172,27 @@ struct Intro2: View {
     var body: some View {
         
         VStack{
-            Text("Hello ")
-                .foregroundColor(.white)
-            Button {
-                pageIndex+=1
-            } label: {
-                Text("Click me")
-            }
+            
+            Image("bets")
+                .resizable()
+                .frame(width: 380,height: 380)
+                .padding(.top,-40)
+            HStack{
+                Text("Place Bets")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 25))
+                    .foregroundColor(K.finalColor.textWhite)
+                    .padding(.top,-50)
+                
+            }.padding(.horizontal,15)
+            
+            Text("Complete your weekly tickets with customized bets from the book page. Bet on your favorite teams across many different sports! Tailor your bet odds using the slider to fit your risk tolerance. ")
+                .font(.custom(K.customFonts.lexendDecaLight, size: 15))
+                .foregroundColor(K.finalColor.textWhite)
+                .padding(.top,20)
+                .padding(.horizontal,15)
+            
+            Spacer()
+            
         }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             .background(K.finalColor.cardBlue)
             .cornerRadius(30)
@@ -165,13 +209,20 @@ struct Intro3: View {
             GifImage("Iphone")
                 .frame(width: 500,height: 250)
             
-            Text(" World")
-                .foregroundColor(.white)
-            Button {
-                pageIndex+=1
-            } label: {
-                Text("Click me")
-            }
+            HStack{
+                Text("Welcome!")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 25))
+                    .foregroundColor(K.finalColor.textWhite)
+                    .padding(.top,25)
+                
+            }.padding(.horizontal,15)
+            
+            Text("Good luck with your bets this week. We look forward to seeing you at the top of the leaderboard!  ")
+                .font(.custom(K.customFonts.lexendDecaLight, size: 15))
+                .foregroundColor(K.finalColor.textWhite)
+                .padding(.top,20)
+                .padding(.horizontal,15)
+            Spacer()
         }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             .background(K.finalColor.cardBlue)
             .cornerRadius(30)
@@ -183,8 +234,8 @@ struct Intro3: View {
 
 
 
-struct SignupIntro_Previews: PreviewProvider {
-    static var previews: some View {
-        SignupIntro()
-    }
-}
+//struct SignupIntro_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SignupIntro()
+//    }
+//}
