@@ -17,6 +17,25 @@ struct profilePhotoSelectorView: View {
     @State private var collegeName: String = ""
     @State private var sourceType: UIImagePickerController.SourceType = .camera
     
+    @State var selectedState = ""
+    @State var age: Int = -99
+    @State var country: String = ""
+    @State private var selectedGender = "Male"
+    
+    let states = [
+            "Choose here","Alabama", "Alaska", "Arizona", "Arkansas", "California",
+            "Colorado", "Connecticut", "Delaware", "Florida", "Georgia",
+            "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
+            "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts",
+            "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana",
+            "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico",
+            "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma",
+            "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
+            "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington",
+            "West Virginia", "Wisconsin", "Wyoming"
+        ]
+    
+    
     init(model: authenticationViewModel) {
         viewModel = model
     }
@@ -95,38 +114,26 @@ struct profilePhotoSelectorView: View {
                 .padding(.horizontal,16)
 //                .id(FocusableFieldSignup.username)
                 
-                VStack(alignment: .leading, spacing: 10) {
+                HStack {
                     Text("State")
                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
                         .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                    HStack() {
-                        TextField("State", text: $viewModel.username)
-                            
-                            .placeholder(when: viewModel.username
-                                .isEmpty, placeholder: {
-                                    Text("State").foregroundColor(.gray)
-                                })
-                            .foregroundColor(.white)
-                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                            .accentColor(.white)
-                            .textInputAutocapitalization(.words)
-                            .disableAutocorrection(true)
-                            .autocapitalization(.none)
-//                                            .textCase(.lowercase)
-//                            .focused($focus, equals: .username)
-                            .submitLabel(.next)
-                            .onSubmit {
-//                                withAnimation {
-//                                    self.focus = .instagram
-//                                }
-                            }
                         
-                    }
-                    .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                    .cornerRadius(15)
-                }
+                    Text("(if residing in the USA):")
+                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 12).weight(.light))
+                        .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                        .padding(.trailing,10)
+                    
+                    Spacer()
+                            Picker("Select a state", selection: $selectedState) {
+                                ForEach(states, id: \.self) { state in
+                                    Text(state)
+                                }
+                            }
+                            .pickerStyle(DefaultPickerStyle())
+                       
+                            
+                        }
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
                 .padding(.horizontal,16)
 //                .id(FocusableFieldSignup.username)
@@ -166,10 +173,25 @@ struct profilePhotoSelectorView: View {
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
                 .padding(.horizontal,16)
 //                .id(FocusableFieldSignup.username)
+                HStack{
+                    Text("Select Your Sex:")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                        .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                    
+                    Spacer()
+                    
+                    Picker("Sex", selection: $selectedGender) {
+                                   Text("Male").tag("Male")
+                                   Text("Female").tag("Female")
+                               }
+                   
+                }.padding(.horizontal,16)
+                    .padding(.top,5)
                 
                 Spacer()
                 
                 if let selectedImage = selectedImage  {
+                    if selectedState != "" && age != -99 {
                     NavigationLink(destination: {
                         TermsAndConditionsView(viewModel: viewModel) },label: {
                             HStack{
@@ -178,7 +200,7 @@ struct profilePhotoSelectorView: View {
                                 Text("Continue")
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
                                     .foregroundColor(.white)
-                                                //shadow
+                                //shadow
                                 
                                 Spacer()
                             }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
@@ -186,13 +208,15 @@ struct profilePhotoSelectorView: View {
                                 .cornerRadius(10)
                                 .padding(.horizontal,16)
                                 .padding(.bottom,30)
+                        })
+                    .simultaneousGesture(TapGesture().onEnded{
+                        viewModel.uploadProfileImage(selectedImage)
+                        viewModel.uploadSupplementaryData(country: country, age: age, state: selectedState, gender: selectedGender)
+                        Task{
+                            await wait()
+                        }
                     })
-//                    .simultaneousGesture(TapGesture().onEnded{
-//                        viewModel.uploadProfileImage(selectedImage)
-//                        Task{
-//                            await wait()
-//                        }
-//                    })
+                }
                 }
                 
                 Spacer()
@@ -200,6 +224,7 @@ struct profilePhotoSelectorView: View {
             }.navigationBarBackButtonHidden(true)
         }.frame(minWidth: 0,maxWidth: .infinity,minHeight: 0,maxHeight: .infinity)
             .background(Color(red: 0.02, green: 0.05, blue: 0.26))
+            .ignoresSafeArea()
     }
     
     func loadImage() {

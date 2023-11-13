@@ -81,6 +81,27 @@ class authenticationViewModel: ObservableObject {
         print("helllllllll\(userSession)")
         
     }
+    
+    func uploadSupplementaryData(country: String, age: Int, state: String, gender: String) {
+        guard let uid = Auth.auth().currentUser else {return }
+        Firestore.firestore().collection("users").document(uid.uid).updateData(["country": country]) { _ in
+            
+        }
+        Firestore.firestore().collection("users").document(uid.uid).updateData(["age": age]) { _ in
+            
+        }
+        Firestore.firestore().collection("users").document(uid.uid).updateData(["gender": gender]) { _ in
+            
+        }
+        if state != "Choose here" {
+            Firestore.firestore().collection("users").document(uid.uid).updateData(["state": state]) { _ in
+            
+        }
+    }
+        
+    }
+    
+    
     func signUp() async {
             authenticationState = .authenticating
             
@@ -89,7 +110,7 @@ class authenticationViewModel: ObservableObject {
                 //userSession = authResult!.user // added - Reid
                 let user = authResult!.user
                 
-                let newUser = User(username: username, firstName: firstName, lastName: lastName, profileImageUrl: "", email: email, dateJoined: Timestamp(date: Date()), instagram: instagram, promoCode: promoCode)
+                let newUser = User(username: username, firstName: firstName, lastName: lastName, profileImageUrl: "", email: email, dateJoined: Timestamp(date: Date()), instagram: instagram, promoCode: promoCode, country: "",state: "", age: -99, gender: "")
                 await uploadUser(newUser)
                 
                 authenticationState = .authenticated

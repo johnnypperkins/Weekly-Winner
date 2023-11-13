@@ -24,6 +24,10 @@ struct User: Identifiable, Decodable, Encodable {
     let dateJoined: Timestamp
     let instagram: String
     let promoCode: String
+    let country: String
+    let state: String
+    let age: Int
+    let gender: String
 }
 
 extension String { // Lmao what is this johnny
