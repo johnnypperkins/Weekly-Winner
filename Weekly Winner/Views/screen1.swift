@@ -21,7 +21,7 @@ struct UserProfileView: View {
     @Binding var tab: Tab
    // @State private var showRulesPage = false
     
-
+    
     var body: some View {
         VStack(spacing: 15) {
             //Spacer()
@@ -36,8 +36,13 @@ struct UserProfileView: View {
                 yourGroups(groupsVM: groupsVM, tab: $tab)
                     .padding(.horizontal)
                 
-                MostPopularBetsView(bookVM: bookVM)
+//                MostPopularBetsView(bookVM: bookVM)
+//                    .padding(.horizontal)
+                
+                weeklyGlobalLeaders(viewModel: groupsVM)
                     .padding(.horizontal)
+                
+                
                 Spacer()
             }.padding(.bottom,45)
 
@@ -59,6 +64,7 @@ struct UserProfileView: View {
                     }
                 }
             }
+            groupsVM.fetchCurrentRankedTickets(groupID: "Global") {}
             authenticationVM.fetchUser() {
                 
                 print("\(UserData.shared.username) is username")
@@ -72,6 +78,39 @@ struct UserProfileView: View {
         //Spacer()
     }
 }
+
+struct weeklyGlobalLeaders: View {
+    @StateObject var viewModel: groupsViewModel
+  var body: some View {
+    ZStack() {
+        VStack(alignment: .center) {
+            Text("Weekly Leaders")
+                .font(.custom(K.customFonts.lexendDecaMedium, size: 24).weight(.medium))
+                .foregroundColor(.white)
+
+            ForEach(0..<min(3, viewModel.currentRankedGroupTickets.count), id: \.self) { index in
+                let ticket = viewModel.currentRankedGroupTickets[index]
+
+                BetCard(
+                    viewModel: viewModel,
+                    ticket: ticket,
+                    rank: ticket.rank,
+                    ownCard: ticket.uid == Auth.auth().currentUser?.uid,
+                    currentWeek: true
+                )
+                .padding(.bottom, 10)
+            }
+        }
+      .frame(height: 230)
+    }
+    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 250, maxHeight: 250)
+    .background(K.finalColor.cardBlue)
+    .cornerRadius(10)
+//    .padding(.horizontal, 10)
+    .padding(.top,15)
+  }
+}
+
 
 struct SafariView: UIViewControllerRepresentable {
     let url: URL
@@ -104,11 +143,10 @@ struct ProfileHeaderView: View {
                     .frame(width: 30, height: 30)
             }
             
-            Text(authVM.currUser?.username ?? "nil")
-                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                .foregroundColor(Color(red: 0.94, green: 0.94, blue: 0.94))
-                .frame(height: 30)
-
+            Text("WagerPool")
+                .font(.custom(K.customFonts.lexendDecaSB, size: 24))
+                .foregroundColor(K.finalColor.titleBlue)
+            
             Spacer()
             
             Button(action: {
@@ -120,40 +158,40 @@ struct ProfileHeaderView: View {
                         .foregroundColor(.white)
                     //Spacer()
                 }//.padding(.top, 20)
-                    //.contentShape(Rectangle())
-                    //.background(.brown) // Use the desired background color
+                //.contentShape(Rectangle())
+                //.background(.brown) // Use the desired background color
                 //.cornerRadius(8)
-                     // Adjust the padding as needed
+                // Adjust the padding as needed
             })
             
             
-//            Link("@WagerPool", destination: URL(string: "https://www.instagram.com/wagerpool/")!)
-//                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-//                .foregroundColor(.white)
-//                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 10)) // Adds padding around the link
-                //.background(Color.blue) // Use any color you prefer for the background
-
-//            Button(action: {
-//                                            self.showWebpage = true
-//                                        }) {
-//                                            Text("@WagerPool")
-//                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-//                                                .foregroundColor(.white)
-//                                                .padding([.leading,.bottom])
-//                                        }
-//                                        .sheet(isPresented: $showWebpage) {
-//                                            SafariView(url: URL(string: "https://www.instagram.com/wagerpool/")!)
-//                                        }
+            //            Link("@WagerPool", destination: URL(string: "https://www.instagram.com/wagerpool/")!)
+            //                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+            //                .foregroundColor(.white)
+            //                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 10)) // Adds padding around the link
+            //.background(Color.blue) // Use any color you prefer for the background
+            
+            //            Button(action: {
+            //                                            self.showWebpage = true
+            //                                        }) {
+            //                                            Text("@WagerPool")
+            //                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+            //                                                .foregroundColor(.white)
+            //                                                .padding([.leading,.bottom])
+            //                                        }
+            //                                        .sheet(isPresented: $showWebpage) {
+            //                                            SafariView(url: URL(string: "https://www.instagram.com/wagerpool/")!)
+            //                                        }
             
             
         }
         .padding(.top,5)
         .sheet(isPresented: $showRulesPage) {
             rulesView()
-                //.padding(.horizontal)
-            .presentationDetents([.fraction(0.65)])
-            .presentationDragIndicator(.hidden)
-            .background(K.finalColor.backgroundBlue)
+            //.padding(.horizontal)
+                .presentationDetents([.fraction(0.65)])
+                .presentationDragIndicator(.hidden)
+                .background(K.finalColor.backgroundBlue)
         }//.edgesIgnoringSafeArea(.top)
     }
 }
@@ -185,33 +223,58 @@ struct rulesView: View {
 
 struct countDown: View {
     @StateObject var countdownTimer = CountdownTimer()
-  var body: some View {
-    ZStack() {
-        VStack(alignment: .center) {
-          HStack{
-              Text("WagerPool")
-                  .font(.custom(K.customFonts.lexendDecaSB, size: 24))
-                  .foregroundColor(K.finalColor.titleBlue)
-              //Spacer()
-          }.frame(minWidth: 0, maxWidth: .infinity)
-              .padding(.horizontal)
-            VStack(spacing: 0) {
-                Text(countdownTimer.timeRemaining)
-                    .font(.custom(K.customFonts.juraRegular, size: 20))
-                    .foregroundColor(.white)
-                    .padding(.bottom)
+    var body: some View {
+        ZStack() {
+            VStack(alignment: .center) {
+//                HStack{
+                    //              Text("WagerPool")
+                    //                  .font(.custom(K.customFonts.lexendDecaSB, size: 24))
+                    //                  .foregroundColor(K.finalColor.titleBlue)
+                    //Spacer()
+                    //          }.frame(minWidth: 0, maxWidth: .infinity)
+                    //              .padding(.horizontal)
+                    VStack(spacing: 0) {
+                        Text(countdownTimer.timeRemaining)
+                            .font(.custom(K.customFonts.juraRegular, size: 25))
+                            .foregroundColor(.white)
+                            .padding(.vertical)
+                    }
+                    .frame(height: 25)
+                    
+                HStack{
+                    
+                    Image(systemName: "trophy.fill")
+                        .foregroundColor(.yellow)
+                    
+                    Text("1st: $50  ")
+                        .foregroundColor(.white)
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                    
+                    Image(systemName: "medal.fill")
+                        .foregroundColor(.gray)
+                    
+                    Text("2nd: $40  ")
+                        .foregroundColor(.white)
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                    
+                    Image(systemName: "rosette")
+                        .foregroundColor(.brown)
+                    
+                    Text("3rd: $30  ")
+                        .foregroundColor(.white)
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                }
+                .padding(.top,5)
+                }
+                .frame(height: 60)
             }
-          .frame(height: 25)
-          
-      }
-      .frame(height: 60)
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+            .background(K.finalColor.cardBlue)
+            .cornerRadius(10)
+            .padding(.horizontal, 16)
+        }
     }
-    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-    .background(K.finalColor.cardBlue)
-    .cornerRadius(10)
-    .padding(.horizontal, 16)
-  }
-}
+
 
 struct yourGroups: View {
     @StateObject var groupsVM: groupsViewModel
