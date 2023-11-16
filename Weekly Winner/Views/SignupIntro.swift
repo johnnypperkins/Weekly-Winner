@@ -19,6 +19,7 @@ struct SignupIntro: View {
     
     var body: some View {
         //        ScrollView(.init()){
+        NavigationStack{
             VStack{
                 HStack{
                     Text("WagerPool")
@@ -113,10 +114,14 @@ struct SignupIntro: View {
                 //                        .padding(.bottom,10)
                 //                    ,alignment: .bottom
                 //                )
-            }.ignoresSafeArea()
+            }.padding(.top,45)
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+            .background(Color(red: 0.02, green: 0.05, blue: 0.26))
+            
+        }.ignoresSafeArea()
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                 .background(Color(red: 0.02, green: 0.05, blue: 0.26))
-                .padding(.top,45)
+            
                 .navigationBarBackButtonHidden(true)
             
             

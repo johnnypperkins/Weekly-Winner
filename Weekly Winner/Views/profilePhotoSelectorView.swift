@@ -18,7 +18,7 @@ struct profilePhotoSelectorView: View {
     @State private var sourceType: UIImagePickerController.SourceType = .camera
     
     @State var selectedState = ""
-    @State var age: Int = -99
+    @State var age: Int = 0
     @State var country: String = ""
     @State private var selectedGender = "Male"
     
@@ -41,7 +41,7 @@ struct profilePhotoSelectorView: View {
     }
     
     var body: some View {
-        NavigationStack{
+//        NavigationStack{
             VStack {
                 
                 Text("Complete Your Profile!")
@@ -83,9 +83,9 @@ struct profilePhotoSelectorView: View {
                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
                         .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
                     HStack() {
-                        TextField("Country", text: $viewModel.username)
+                        TextField("Country", text: $country)
                             
-                            .placeholder(when: viewModel.username
+                            .placeholder(when: country
                                 .isEmpty, placeholder: {
                                     Text("Country").foregroundColor(.gray)
                                 })
@@ -143,12 +143,12 @@ struct profilePhotoSelectorView: View {
                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
                         .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
                     HStack() {
-                        TextField("Age", text: $viewModel.username)
+                        TextField("Age", text: Binding(
+                            get: { String(self.age) },
+                            set: { if let newValue = Int($0) { self.age = newValue } }
+                        ))
                             
-                            .placeholder(when: viewModel.username
-                                .isEmpty, placeholder: {
-                                    Text("Age").foregroundColor(.gray)
-                                })
+                            
                             .foregroundColor(.white)
                             .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
                             .accentColor(.white)
@@ -191,7 +191,7 @@ struct profilePhotoSelectorView: View {
                 Spacer()
                 
                 if let selectedImage = selectedImage  {
-                    if selectedState != "" && age != -99 {
+                    if country != "" && String(age) != "0" {
                     NavigationLink(destination: {
                         TermsAndConditionsView(viewModel: viewModel) },label: {
                             HStack{
@@ -222,9 +222,10 @@ struct profilePhotoSelectorView: View {
                 Spacer()
                 
             }.navigationBarBackButtonHidden(true)
-        }.frame(minWidth: 0,maxWidth: .infinity,minHeight: 0,maxHeight: .infinity)
+        .frame(minWidth: 0,maxWidth: .infinity,minHeight: 0,maxHeight: .infinity)
             .background(Color(red: 0.02, green: 0.05, blue: 0.26))
             .ignoresSafeArea()
+            .navigationBarBackButtonHidden(true)
     }
     
     func loadImage() {
