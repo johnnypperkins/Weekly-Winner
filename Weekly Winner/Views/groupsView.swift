@@ -563,7 +563,7 @@ struct currentLeaderboardView: View {
                                // viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false
                                // , ownTicket: viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false
                                label: {
-                    BetCard(viewModel: viewModel, ticket: viewModel.userTickets[selectedGroup-1], rank: (viewModel.userTickets[selectedGroup-1].rank), ownCard: true, currentWeek: true).padding(.bottom,16)
+                    BetCard(viewModel: viewModel, ticket: viewModel.userTickets[selectedGroup-1], rank: (viewModel.userTickets[selectedGroup-1].rank), ownCard: true, currentWeek: true, homePage: false).padding(.bottom,16)
                 }).id(UUID())
             }
             HStack {
@@ -582,7 +582,7 @@ struct currentLeaderboardView: View {
                                            // viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false
                                            // , ownTicket: viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false
                                            label: {
-                                BetCard(viewModel: viewModel, ticket: viewModel.currentRankedGroupTickets[index], rank: (viewModel.currentRankedGroupTickets[index].rank), ownCard: viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, currentWeek: true).padding(.bottom,16)
+                                BetCard(viewModel: viewModel, ticket: viewModel.currentRankedGroupTickets[index], rank: (viewModel.currentRankedGroupTickets[index].rank), ownCard: viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, currentWeek: true, homePage: false).padding(.bottom,16)
                             }).id(UUID())
 //                        } else {
 //                            // doesnt click if its yourself
@@ -627,7 +627,7 @@ struct pastLeaderboardView: View {
                     NavigationLink(destination:
                                     ticketView(username: viewModel.pastRankedGroupTickets[index].username, uid: viewModel.pastRankedGroupTickets[index].uid, groupID: viewModel.pastRankedGroupTickets[index].groupID, selectedWeek: selectedGroup > 0 ? "\(viewModel.totalArrayOfDates[selectedGroup-1][selectedWeek])" : "", ticketFormatForGroups: viewModel.pastRankedGroupTickets[index].ticketFormat, ownTicket: false, onTicketPage: false),
                                    label: {
-                        BetCard(viewModel: viewModel, ticket: viewModel.pastRankedGroupTickets[index], rank: (viewModel.pastRankedGroupTickets[index].rank), ownCard: true, currentWeek: false).padding(.bottom,16)
+                        BetCard(viewModel: viewModel, ticket: viewModel.pastRankedGroupTickets[index], rank: (viewModel.pastRankedGroupTickets[index].rank), ownCard: true, currentWeek: false, homePage: false).padding(.bottom,16)
                     }).id(UUID())
                 }
             }
@@ -644,7 +644,7 @@ struct pastLeaderboardView: View {
                             NavigationLink(destination:
                                             ticketView(username: viewModel.pastRankedGroupTickets[index].username, uid: viewModel.pastRankedGroupTickets[index].uid, groupID: viewModel.pastRankedGroupTickets[index].groupID, selectedWeek: selectedGroup > 0 ? "\(viewModel.totalArrayOfDates[selectedGroup-1][selectedWeek])" : "", ticketFormatForGroups: viewModel.pastRankedGroupTickets[index].ticketFormat, ownTicket: false, onTicketPage: false),
                                            label: {
-                                BetCard(viewModel: viewModel, ticket: viewModel.pastRankedGroupTickets[index], rank: (viewModel.pastRankedGroupTickets[index].rank), ownCard: viewModel.pastRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, currentWeek: false).padding(.bottom,16)
+                                BetCard(viewModel: viewModel, ticket: viewModel.pastRankedGroupTickets[index], rank: (viewModel.pastRankedGroupTickets[index].rank), ownCard: viewModel.pastRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, currentWeek: false, homePage: false).padding(.bottom,16)
                             }).id(UUID())
                         }
 
@@ -667,6 +667,7 @@ struct BetCard: View {
     let rank: String
     let ownCard: Bool
     let currentWeek: Bool
+    let homePage: Bool
     @State private var profileImageURL = ""
     var adminCard: Bool {
         if ticket.groupAdmin == ticket.uid {
@@ -769,13 +770,14 @@ struct BetCard: View {
                     
                     
                     // Arrow
-                    
-                    HStack {
-                        Image(systemName: "chevron.right") // Use any image you'd like
-                            .resizable()
-                            .frame(width: 7.5, height: 10) // Adjust size to your liking
-                            .foregroundColor(ticket.isEnabled ? .white : .clear) // Choose color
-                        //.padding(.trailing,2.5) // Add padding to move away from the edge
+                    if homePage == false {
+                        HStack {
+                            Image(systemName: "chevron.right") // Use any image you'd like
+                                .resizable()
+                                .frame(width: 7.5, height: 10) // Adjust size to your liking
+                                .foregroundColor(ticket.isEnabled ? .white : .clear) // Choose color
+                            //.padding(.trailing,2.5) // Add padding to move away from the edge
+                        }
                     }
                     
                 }.padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))

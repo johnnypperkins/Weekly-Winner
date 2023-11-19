@@ -263,41 +263,43 @@ struct ticketView: View {
                         .padding()
                 }
                 
-                    Spacer()
-                }.padding(.top, onTicketPage ? 75 : 0)
-                //.background(K.finalColor.backgroundBlue)
-                    .onAppear {
-                        print("ticket format for groups " + "\(ticketFormatForGroups)" + "\(viewModel.totalBetArrays.count)")
-                        selectedGroup = 0
-                        
-                        
-                        if !onTicketPage {
-                            if selectedWeek == "current" {
-                                viewModel.fetchFriendTicket(uid: uid, with: groupID) {_ in
-                                    viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: viewModel.userTickets[0].ticketFormat, completion: {}) // usertickets is set to only one ticket here
-                                }
-                            }
-                            else {
-                                viewModel.fetchPastFriendTicket(uid: uid, with: groupID) {_ in
-                                    viewModel.fetchPastBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
-                                }
-                            }
-                            
-                            viewModel.fetchUserInformation(uid: uid) {}
-
-                        } else {
-                            viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
-                                viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, completion: {}) // Fetch bets for selected group on view appear.
-                                
+                Spacer()
+            }.padding(.top, onTicketPage ? 75 : 0)
+            //.background(K.finalColor.backgroundBlue)
+                .onAppear {
+                    print("ticket format for groups " + "\(ticketFormatForGroups)" + "\(viewModel.totalBetArrays.count)")
+                    selectedGroup = 0
+                    
+                    
+                    if !onTicketPage {
+                        if selectedWeek == "current" {
+                            viewModel.fetchFriendTicket(uid: uid, with: groupID) {_ in
+                                viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: viewModel.userTickets[0].ticketFormat, completion: {}) // usertickets is set to only one ticket here
                             }
                         }
+                        else {
+                            viewModel.fetchPastFriendTicket(uid: uid, with: groupID) {_ in
+                                viewModel.fetchPastBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
+                            }
+                        }
+                        
+                        viewModel.fetchUserInformation(uid: uid) {}
+                        
+                    } else {
+                        viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
+                            viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, completion: {}) // Fetch bets for selected group on view appear.
+                            
+                        }
                     }
-                    .onDisappear {
-                        selectedGroup = 0
-                        viewModel.stopListening() // Stop listening when view disappears
-                    }
+                }
+                .onDisappear {
+                    selectedGroup = 0
+                    viewModel.stopListening() // Stop listening when view disappears
+                }
             
         }
+        
+           
     }
     
     struct SectionTitle: View {

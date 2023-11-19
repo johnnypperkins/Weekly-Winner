@@ -7,6 +7,7 @@
 
 
 import SwiftUI
+import Firebase
 
 struct profilePhotoSelectorView: View {
     
@@ -18,7 +19,7 @@ struct profilePhotoSelectorView: View {
     @State private var sourceType: UIImagePickerController.SourceType = .camera
     
     @State var selectedState = ""
-    @State var age: Int = 0
+    @State var age: Timestamp?
     @State var country: String = ""
     @State private var selectedGender = "Male"
     

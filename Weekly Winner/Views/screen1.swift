@@ -19,13 +19,17 @@ struct UserProfileView: View {
     @StateObject var countdownTimer = CountdownTimer()
     @State private var showWebpage = false
     @Binding var tab: Tab
+    
+    
+    
+    
    // @State private var showRulesPage = false
     
     
     var body: some View {
         VStack(spacing: 15) {
             //Spacer()
-            ProfileHeaderView(authVM: authenticationVM)
+            ProfileHeaderView()
                 .padding(.top, 10)
                 .padding(.horizontal)
             
@@ -96,19 +100,24 @@ struct weeklyGlobalLeaders: View {
                     ticket: ticket,
                     rank: ticket.rank,
                     ownCard: ticket.uid == Auth.auth().currentUser?.uid,
-                    currentWeek: true
+                    currentWeek: true,
+                    homePage: true
                 )
-                .padding(.bottom, 10)
+                
+                .padding(.bottom, 5)
             }
         }
-      .frame(height: 230)
+      .frame(height: 210)
     }
-    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 250, maxHeight: 250)
+    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 230, maxHeight: 230)
     .background(K.finalColor.cardBlue)
     .cornerRadius(10)
 //    .padding(.horizontal, 10)
     .padding(.top,15)
-  }
+    
+        
+
+    }
 }
 
 
@@ -127,21 +136,21 @@ struct SafariView: UIViewControllerRepresentable {
 struct ProfileHeaderView: View {
     @State private var showWebpage = false
     @State private var showRulesPage = false
-    @StateObject var authVM: authenticationViewModel
+//    @StateObject var authVM: authenticationViewModel
     var body: some View {
         HStack() {
-            if authVM.currUser?.profileImageUrl != nil {
-                KFImage(URL(string: authVM.currUser?.profileImageUrl ?? "sampleImage"))
-                    .resizable()
-                    .clipShape(Circle())
-                    .foregroundColor(.clear)
-                    .frame(width: 30, height: 30)
-            }else {
-                Image("sampleImage")
-                    .resizable()
-                    .foregroundColor(.clear)
-                    .frame(width: 30, height: 30)
-            }
+//            if authVM.currUser?.profileImageUrl != nil {
+//                KFImage(URL(string: authVM.currUser?.profileImageUrl ?? "sampleImage"))
+//                    .resizable()
+//                    .clipShape(Circle())
+//                    .foregroundColor(.clear)
+//                    .frame(width: 30, height: 30)
+//            }else {
+//                Image("sampleImage")
+//                    .resizable()
+//                    .foregroundColor(.clear)
+//                    .frame(width: 30, height: 30)
+//            }
             
             Text("WagerPool")
                 .font(.custom(K.customFonts.lexendDecaSB, size: 24))
@@ -223,6 +232,7 @@ struct rulesView: View {
 
 struct countDown: View {
     @StateObject var countdownTimer = CountdownTimer()
+    @StateObject var prizesVM = prizesViewModel()
     var body: some View {
         ZStack() {
             VStack(alignment: .center) {
@@ -246,23 +256,43 @@ struct countDown: View {
                     Image(systemName: "trophy.fill")
                         .foregroundColor(.yellow)
                     
-                    Text("1st: $50  ")
+                    Text("1st: $")
                         .foregroundColor(.white)
                         .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                    if prizesVM.canViewPrizes == true {
+                        Text("\(prizesVM.prizes[0])  ")
+                            .foregroundColor(.white)
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                            .padding(.leading,-8)
+                    }
                     
                     Image(systemName: "medal.fill")
                         .foregroundColor(.gray)
                     
-                    Text("2nd: $40  ")
+                    Text("2nd: $")
                         .foregroundColor(.white)
                         .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                    
+                    if prizesVM.canViewPrizes == true {
+                        Text("\(prizesVM.prizes[1])  ")
+                            .foregroundColor(.white)
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                            .padding(.leading,-8)
+                    }
                     
                     Image(systemName: "rosette")
                         .foregroundColor(.brown)
                     
-                    Text("3rd: $30  ")
+                    Text("3rd: $")
                         .foregroundColor(.white)
                         .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                    
+                        if prizesVM.canViewPrizes == true {
+                            Text("\(prizesVM.prizes[2])  ")
+                                .foregroundColor(.white)
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                .padding(.leading,-8)
+                        }
                 }
                 .padding(.top,5)
                 }
@@ -514,8 +544,26 @@ struct PopularBetView: View {
         }.frame(maxWidth: .infinity, maxHeight: 40) // This line
         .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
         .background(K.finalColor.cardBlue)
+        .overlay(self.overlayShape(for: 2))
         .cornerRadius(7.5)
+        
 
+    }
+    
+    func overlayShape(for index: Int) -> some View {
+        RoundedRectangle(cornerRadius: 12)
+            .inset(by: 0.50)
+            .stroke(self.overlayColor(for: index), lineWidth: 0.50)
+    }
+    
+    func overlayColor(for index: Int) -> Color {
+        if index % 3 == 0 {
+            return Color(red: 0.14, green: 0.61, blue: 0.85)
+        } else if index % 3 == 1 {
+            return Color(red: 0.15, green: 0.90, blue: 0.69)
+        } else {
+            return Color(red: 1, green: 0.74, blue: 0.60)
+        }
     }
     
 }
