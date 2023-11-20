@@ -245,7 +245,7 @@ struct countDown: View {
                     //              .padding(.horizontal)
                     VStack(spacing: 0) {
                         Text(countdownTimer.timeRemaining)
-                            .font(.custom(K.customFonts.juraRegular, size: 25))
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 25))
                             .foregroundColor(.white)
                             .padding(.vertical)
                     }

@@ -26,7 +26,7 @@ struct User: Identifiable, Decodable, Encodable {
     let promoCode: String
     let country: String
     let state: String
-    let age: Timestamp
+    let age: Int
     let gender: String
 }
 

@@ -19,7 +19,7 @@ struct profilePhotoSelectorView: View {
     @State private var sourceType: UIImagePickerController.SourceType = .camera
     
     @State var selectedState = ""
-    @State var age: Timestamp?
+    @State var age: Int?
     @State var country: String = ""
     @State private var selectedGender = "Male"
     
@@ -145,7 +145,7 @@ struct profilePhotoSelectorView: View {
                         .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
                     HStack() {
                         TextField("Age", text: Binding(
-                            get: { String(self.age) },
+                            get: { String(self.age ?? -99) },
                             set: { if let newValue = Int($0) { self.age = newValue } }
                         ))
                             
@@ -192,7 +192,7 @@ struct profilePhotoSelectorView: View {
                 Spacer()
                 
                 if let selectedImage = selectedImage  {
-                    if country != "" && String(age) != "0" {
+                    if country != "" && String(age ?? -99) != "0" {
                     NavigationLink(destination: {
                         TermsAndConditionsView(viewModel: viewModel) },label: {
                             HStack{
@@ -212,7 +212,7 @@ struct profilePhotoSelectorView: View {
                         })
                     .simultaneousGesture(TapGesture().onEnded{
                         viewModel.uploadProfileImage(selectedImage)
-                        viewModel.uploadSupplementaryData(country: country, age: age, state: selectedState, gender: selectedGender)
+                        viewModel.uploadSupplementaryData(country: country, age: age ?? -99, state: selectedState, gender: selectedGender)
                         Task{
                             await wait()
                         }
