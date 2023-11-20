@@ -70,6 +70,7 @@ class bookViewModel: ObservableObject {
         case collegeFootball = "College Football"
         case nfl = "NFL"
         case NBA = "NBA"
+        case NCAAB = "NCAAB"
     }
     
     func combineGamesCommence() {

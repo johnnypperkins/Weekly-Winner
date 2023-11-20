@@ -158,8 +158,8 @@ struct BettingAppView: View {
                                 .padding()
                         }
                         
-                    }.padding(.bottom,80)
-                }.padding(.top,10)
+                    }.padding(.bottom,40)
+                }.padding(EdgeInsets(top: 10, leading: 0, bottom: 30, trailing: 0))
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(K.finalColor.backgroundBlue)
@@ -168,7 +168,7 @@ struct BettingAppView: View {
                 .offset(x:isShowing ? 300 : 0, y: isShowing ? 100 : 0)
                 .scaleEffect(isShowing ? 0.8 : 1)
         }.background(K.finalColor.backgroundBlue)
-            .padding(.top, 65)
+            .padding(EdgeInsets(top: 65, leading: 0, bottom: 55, trailing: 0))
             .navigationBarHidden(false)
             .onAppear() {
                 rankedCommence = true
@@ -180,16 +180,12 @@ struct BettingAppView: View {
         case "All Games":
             return viewModel.allGames
         case "NCAAF":
-            // return array of college football games from your viewModel
             return viewModel.NCAAFGames
         case "NFL":
-            // return array of NFL games from your viewModel
             return viewModel.NFLgames
         case "NBA":
-            // return array of NFL games from your viewModel
             return viewModel.NBAGames
         case "NCAAB":
-            // return array of NFL games from your viewModel
             return viewModel.NCAABGames
         default:
             return []

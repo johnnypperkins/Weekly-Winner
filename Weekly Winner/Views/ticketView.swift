@@ -242,7 +242,7 @@ struct ticketView: View {
                                         print("TICKET FORMAT FOR GROUPS", ticketFormatForGroups)
                                     }
                                     
-                                }.padding(.bottom,60)
+                                }.padding(.bottom,65)
                                     .padding()
                             }
                             

@@ -104,13 +104,14 @@ struct weeklyGlobalLeaders: View {
                     homePage: true
                 )
                 
-                .padding(.bottom, 5)
+                .padding(EdgeInsets(top: 0, leading: 8, bottom: 5, trailing: 8))
+                
             }
         }
       .frame(height: 210)
     }
     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 230, maxHeight: 230)
-    .background(K.finalColor.cardBlue)
+    .background(.clear)
     .cornerRadius(10)
 //    .padding(.horizontal, 10)
     .padding(.top,15)
@@ -298,7 +299,7 @@ struct countDown: View {
                 }
                 .frame(height: 60)
             }
-            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 100, maxHeight: 100)
             .background(K.finalColor.cardBlue)
             .cornerRadius(10)
             .padding(.horizontal, 16)

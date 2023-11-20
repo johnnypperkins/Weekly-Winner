@@ -21,6 +21,7 @@
 		3C7C708C2A92F5F800C7C9DB /* prizesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7C708B2A92F5F800C7C9DB /* prizesViewModel.swift */; };
 		3C91B6C62A58BA0E00398F53 /* UI Misc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C91B6C52A58BA0E00398F53 /* UI Misc.swift */; };
 		3C91B6C82A58BE6D00398F53 /* RoundingUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C91B6C72A58BE6D00398F53 /* RoundingUI.swift */; };
+		3C97BA5D2B0BDF7A00FE7A6B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3C97BA5C2B0BDF7A00FE7A6B /* GoogleService-Info.plist */; };
 		3CB1AC8B2A61602700C931CA /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB1AC8A2A61602700C931CA /* Group.swift */; };
 		3CD023D02A84655E0033D761 /* groupSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD023CF2A84655E0033D761 /* groupSettingsView.swift */; };
 		863CB8FC2B04BB4D00D25F0D /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 863CB8FB2B04BB4D00D25F0D /* Kingfisher */; };
@@ -64,7 +65,6 @@
 		866FFF8B2AFBAED900A0CA13 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 866FFF8A2AFBAED900A0CA13 /* FirebaseMessaging */; };
 		866FFF8D2AFBAED900A0CA13 /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = 866FFF8C2AFBAED900A0CA13 /* FirebasePerformance */; };
 		866FFF8F2AFBAED900A0CA13 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 866FFF8E2AFBAED900A0CA13 /* FirebaseStorage */; };
-		866FFF912AFBB48B00A0CA13 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 866FFF902AFBB48B00A0CA13 /* GoogleService-Info.plist */; };
 		866FFFA82AFE630E00A0CA13 /* SignupIntro.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866FFFA72AFE630E00A0CA13 /* SignupIntro.swift */; };
 		867713EE2AC3284A00B2B036 /* Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867713ED2AC3284A00B2B036 /* Stats.swift */; };
 		867801552A213010006FE479 /* Weekly_WinnerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801542A213010006FE479 /* Weekly_WinnerApp.swift */; };
@@ -120,6 +120,7 @@
 		3C7C708B2A92F5F800C7C9DB /* prizesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = prizesViewModel.swift; sourceTree = "<group>"; };
 		3C91B6C52A58BA0E00398F53 /* UI Misc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UI Misc.swift"; sourceTree = "<group>"; };
 		3C91B6C72A58BE6D00398F53 /* RoundingUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundingUI.swift; sourceTree = "<group>"; };
+		3C97BA5C2B0BDF7A00FE7A6B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3CB1AC8A2A61602700C931CA /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
 		3CD023CF2A84655E0033D761 /* groupSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = groupSettingsView.swift; sourceTree = "<group>"; };
 		863FC0502A41176400405F2A /* ticketViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ticketViewModel.swift; sourceTree = "<group>"; };
@@ -151,7 +152,6 @@
 		866C52582A7709D9008BE839 /* Jura-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Jura-Regular.ttf"; sourceTree = "<group>"; };
 		866C52592A770B4E008BE839 /* Weekly-Winner-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Weekly-Winner-Info.plist"; sourceTree = SOURCE_ROOT; };
 		866C525A2A7712F1008BE839 /* Poppins-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Light.ttf"; sourceTree = "<group>"; };
-		866FFF902AFBB48B00A0CA13 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		866FFFA72AFE630E00A0CA13 /* SignupIntro.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupIntro.swift; sourceTree = "<group>"; };
 		867713ED2AC3284A00B2B036 /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
 		867801512A213010006FE479 /* Weekly Winner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Weekly Winner.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -367,7 +367,7 @@
 				865C4A7D2A32BFF500C3C626 /* services */,
 				3C91B6C42A58B9E700398F53 /* UI */,
 				8678015A2A213015006FE479 /* Weekly_Winner.entitlements */,
-				866FFF902AFBB48B00A0CA13 /* GoogleService-Info.plist */,
+				3C97BA5C2B0BDF7A00FE7A6B /* GoogleService-Info.plist */,
 				8688C5952B00CEF3007EED78 /* Assets.xcassets */,
 				8678015B2A213015006FE479 /* Preview Content */,
 			);
@@ -528,10 +528,10 @@
 				8688C5942AFFDFCB007EED78 /* Iphone.gif in Resources */,
 				3C1091EE2A789A5A0049C278 /* Poppins-Regular.ttf in Resources */,
 				3C5F715E2A7983CB00B3AB4C /* LexendDeca-Light.ttf in Resources */,
+				3C97BA5D2B0BDF7A00FE7A6B /* GoogleService-Info.plist in Resources */,
 				3C1091EF2A789A5C0049C278 /* LexendDeca-Medium.ttf in Resources */,
 				8688C5922AFFDE28007EED78 /* out-_1_.gif in Resources */,
 				3C1091ED2A789A570049C278 /* Poppins-Medium.ttf in Resources */,
-				866FFF912AFBB48B00A0CA13 /* GoogleService-Info.plist in Resources */,
 				866C525B2A7712F1008BE839 /* Poppins-Light.ttf in Resources */,
 				8688C5962B00CEF3007EED78 /* Assets.xcassets in Resources */,
 				3C1091F12A789D290049C278 /* LexendDeca-SemiBold.ttf in Resources */,
@@ -790,7 +790,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
-				MARKETING_VERSION = 1.20;
+				MARKETING_VERSION = 1.21;
 				PRODUCT_BUNDLE_IDENTIFIER = "PerkinsBrown2.Weekly-Winner";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -836,7 +836,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
-				MARKETING_VERSION = 1.20;
+				MARKETING_VERSION = 1.21;
 				PRODUCT_BUNDLE_IDENTIFIER = "PerkinsBrown2.Weekly-Winner";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

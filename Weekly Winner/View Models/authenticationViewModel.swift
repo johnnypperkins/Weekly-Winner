@@ -36,7 +36,7 @@ class authenticationViewModel: ObservableObject {
     @Published var errorMessage: String? = ""
     @Published var instagram: String = ""
     @Published var promoCode: String = ""
-    let currentVersion: String = "1.20"
+    let currentVersion: String = "1.21"
     @Published var updateURL: String = ""
 
     
