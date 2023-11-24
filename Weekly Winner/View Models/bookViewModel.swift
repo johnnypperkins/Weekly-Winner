@@ -92,7 +92,7 @@ class bookViewModel: ObservableObject {
         
         // Sort the combined array based on commencement time
         combinedGamesPopular.sort { game1, game2 in
-            return game1.commenceTime.dateValue() < game2.commenceTime.dateValue()
+            return game1.total_plays > game2.total_plays
         }
          allGamesPopular = combinedGamesPopular
     }
@@ -195,7 +195,7 @@ class bookViewModel: ObservableObject {
     
     func getGamesMostPopular(whichSport: String, completion: @escaping () -> Void) {
         Firestore.firestore().collection("Book").document(whichSport).collection("games")
-            .order(by: "total_plays")
+            .order(by: "total_plays", descending: true)
             .addSnapshotListener {  querySnapshot, error in
                 guard (querySnapshot?.documents) != nil else {
                     print("Error fetching documents: \(error?.localizedDescription ?? "Unknown error")")

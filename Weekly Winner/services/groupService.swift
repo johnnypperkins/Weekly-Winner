@@ -148,10 +148,13 @@ class groupService {
                     groupAdmin: data["groupAdmin"] as! String,
                     ticketFormat: data["ticketFormat"] as! [Int] // ticketformat99
                 )
-                if (abs(ticket.totalWon) > 0 || ticket.username == UserData.shared.username) || groupID != "Global" {
+//                if (abs(ticket.totalWon) > 0 || ticket.username == UserData.shared.username) || groupID != "Global" {
+//                    tickets.append(ticket)
+//                }
+//                print("\(tickets) are tickets")
+                if ticket.isEnabled {
                     tickets.append(ticket)
                 }
-//                print("\(tickets) are tickets")
             }
             
             //tickets.sort { $0.totalWon > $1.totalWon }
@@ -259,7 +262,9 @@ class groupService {
                     groupAdmin: data["groupAdmin"] as! String,
                     ticketFormat: ["ticketFormat"] as? [Int] ?? [1,1,1] // ticketformat99
                 )
-                if (abs(ticket.totalPotentialWon) + abs(ticket.totalWon) > 0) || groupID != "Global" {
+//                if (abs(ticket.totalPotentialWon) + abs(ticket.totalWon) > 0) || groupID != "Global" {
+//                }
+                if ticket.isEnabled {
                     tickets.append(ticket)
                 }
                 totalPlayers+=1

@@ -21,7 +21,7 @@ struct ticketView: View {
         if selectedWeek != "current" {
             return true
         } else {
-            if viewModel.userTickets[selectedGroup].isEnabled {
+            if viewModel.userTickets[selectedGroup].isEnabled || viewModel.userTickets[selectedGroup].groupID == "Global" {
                 return true
             } else {
                 return false

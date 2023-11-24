@@ -146,9 +146,10 @@ struct BettingAppView: View {
                                 if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
                                     if game.commenceTime.dateValue() > Date() {
                                         gameRowView(game: game, isDisabled: false)
-                                    } else {
-                                        gameRowView(game: game, isDisabled: true).opacity(0.5)
                                     }
+//                                    else {
+//                                        gameRowView(game: game, isDisabled: true).opacity(0.5)
+//                                    }
                                 }
                             }.padding(.horizontal)
                         } else {

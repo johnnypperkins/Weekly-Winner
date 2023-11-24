@@ -693,7 +693,8 @@ struct BetCard: View {
                 HStack {
                     HStack(spacing: 11) {
                         HStack(spacing: 0) {
-                            Text("\(rank).")
+                            
+                            Text("\(ticket.isEnabled ? "\(rank)." : "-")")
                                 .font(Font.custom(K.customFonts.poppinsMedium, size: 12).weight(.medium))
                                 .foregroundColor(.white)
                                 .padding(.leading,3)
@@ -1200,24 +1201,6 @@ struct reportComment: View {
 
     var body: some View {
         VStack {
-//            HStack {
-//                Button {
-//                    // 2
-//                    dismiss()
-//
-//                } label: {
-//                    HStack {
-//                        Image(systemName: "arrowshape.backward.fill")
-//                            .resizable()
-//                            .foregroundColor(Color("Color 1"))
-//                            .padding(.leading)
-//                            .frame(width: 40,height: 17)
-//                    }
-//                }
-//                Spacer()
-//            }
-//            .padding(.top)
-            
 
             Text("Report Comment")
                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 24).weight(.medium))
