@@ -342,6 +342,7 @@ struct groupsView: View {
                                                     .foregroundColor(.white)
                                             }
                                         }.pickerStyle(MenuPickerStyle())
+                                            .frame(maxHeight: 200)
                                             .onChange(of: whichWeek) { newWeek in
                                                 if(newWeek == 0) {
                                                     viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
@@ -456,6 +457,13 @@ struct groupsView: View {
 //                }
             }.padding(.top, 75)
             .background(Color(red: 0.02, green: 0.05, blue: 0.26))
+    }
+}
+
+extension UISegmentedControl {
+    override open func didMoveToSuperview() {
+        super.didMoveToSuperview()
+        self.setContentHuggingPriority(.defaultLow, for: .vertical)  // << here !!
     }
 }
 

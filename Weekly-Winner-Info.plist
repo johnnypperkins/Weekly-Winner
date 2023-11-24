@@ -17,6 +17,10 @@
 			</array>
 		</dict>
 	</array>
+	<key>NSServices</key>
+	<array>
+		<dict/>
+	</array>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Jura-Regular.ttf</string>
