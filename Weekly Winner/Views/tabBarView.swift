@@ -57,7 +57,7 @@ struct tabBarView: View {
                             groupsView()
                                 .ignoresSafeArea(.all)
                                 .tabItem {
-                                    CustomTabBarItem(index: 3, selectedTab: $selectedTab, item: TabItem(title: "Groups", icon: Image(systemName: "person.3.fill"), color: .purple))
+                                    CustomTabBarItem(index: 3, selectedTab: $selectedTab, item: TabItem(title: "Standings", icon: Image(systemName: "person.3.fill"), color: .purple))
                                 }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
                                                 .tag(Tab.groups)
                             

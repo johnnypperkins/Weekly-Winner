@@ -30,6 +30,11 @@ struct Bet: Identifiable, Codable {
 //    var homeTeam_FinalScore: Int
 //    var awayTeam_FinalScore: Int
     // when game starts
+    
+    
+    // Currency
+    // Bet Amount
+    // Daily/Weekly
 }
 
 

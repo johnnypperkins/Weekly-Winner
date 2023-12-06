@@ -36,7 +36,7 @@ class authenticationViewModel: ObservableObject {
     @Published var errorMessage: String? = ""
     @Published var instagram: String = ""
     @Published var promoCode: String = ""
-    let currentVersion: String = "1.21"
+    let currentVersion: String = "1.23"
     @Published var updateURL: String = ""
 
     
@@ -208,7 +208,7 @@ class authenticationViewModel: ObservableObject {
     func joinGlobal(completion: @escaping (Error?) -> Void) {
         Task {
             let username = username // Access the username asynchronously
-            var enabled = true
+            var enabled = false
             let db = Firestore.firestore()
             
             // Fetch the ticketFormat from the database

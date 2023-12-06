@@ -23,6 +23,7 @@ class groupsViewModel: ObservableObject {
     @Published var canJoinGroup: Bool = true
     @Published var groupsFetched = false
     @Published var groupAdmin = ""
+    @Published var weekIndex = -99
     private let grpService = groupService()
     
     private let db = Firestore.firestore()
@@ -137,6 +138,8 @@ class groupsViewModel: ObservableObject {
 //                    DispatchQueue.main.async {
                         self?.currentRankedGroupTickets = tickets
                         self?.totalPlayers = totalPlayers
+                        //self?.weekIndex = totalArrayOfDates[0].count
+                    
                         //print(tickets)
                         print("test print")
                     }
@@ -324,7 +327,7 @@ class groupsViewModel: ObservableObject {
                     }
 
                     if let groupName = data["groupName"] as? String,
-                       let dateCreated = data["dateCreated"] as? Timestamp,
+                       let dateCreated = Timestamp(date: Calendar.current.date(from: DateComponents(year: 2023, month: 11, day: 22))!) as? Timestamp,
                        let groupImageURL = data["groupImageURL"] as? String,
                        let groupSlogan = data["groupSlogan"] as? String,
                        let groupAdmin = data["groupAdmin"] as? String,
@@ -353,9 +356,10 @@ class groupsViewModel: ObservableObject {
                     } else {
                         print("Failed to extract data for groupID: \(groupID)")
                     }
-                    print("joined groups " + "\(self.joinedGroups)")
+                    //print("joined groups " + "\(self.joinedGroups)")
+                    self.weekIndex = 0
                     self.canGetHistoricalData = true
-                    print("TotalArrayOfDates: ", self.totalArrayOfDates)
+                    //print("TotalArrayOfDates: ", self.totalArrayOfDates)
                     semaphore.signal()
                 }
                 

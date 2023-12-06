@@ -373,7 +373,7 @@ struct yourGroups: View {
                                         .foregroundColor(.white)
                                 }
                                 HStack() {
-                                    Text("Potential")
+                                    Text("Pending")
                                         .font(.custom(K.customFonts.poppinsRegular, size: 12))
                                         .foregroundColor(.white)
                                     

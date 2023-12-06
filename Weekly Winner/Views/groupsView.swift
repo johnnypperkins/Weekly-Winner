@@ -22,9 +22,10 @@ struct groupsView: View {
     @ObservedObject private var chatVM = chatViewModel()
     @State private var selectedGroup = 1
     @State private var showingChat: Bool = false
-    @State private var whichWeek: Int = 0
     @State private var currentWeekSelected: Bool = true
-    @State var selectedGroupBar: Group?
+    @State private var onDaily = true
+   // @State var selectedGroupBar: Group?
+//    @State private var weekIndex: Int = -99
     //@State private var groupsFetched = false
 
     init() {
@@ -32,7 +33,11 @@ struct groupsView: View {
             //viewModel.fetchUserGroups() {}
         }
         
-        viewModel.fetchCurrentRankedTickets(groupID: "Global") {}
+        viewModel.fetchCurrentRankedTickets(groupID: "Global") {
+        }
+        
+
+        
     }
     
     var body: some View {
@@ -48,229 +53,48 @@ struct groupsView: View {
         NavigationStack {
             if (viewModel.userTickets.count > 0) {
                 VStack {
-                    if viewModel.userTickets.count <= 2 {
-                        ZStack {
-                                Button(action: {
-                                    selectedGroup = 0
-                                }) {
-                                    ZStack{
-                                        Image(systemName: "plus")
-                                            .foregroundColor(.white)
-                                            .frame(width: 45, height: 35, alignment: .center)
-                                            .background(selectedGroup == 0 ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                                            .cornerRadius(5)
-                                        
-//                                        RoundedRectangle(cornerRadius: 5)
-//                                            .frame(width: 45,height: 35)
-//                                            .foregroundColor(.blue)
-//                                                                .blur(radius: 10) // This creates the glow effect
-//                                                                .opacity(selectedGroup == 0 ? 0 : 0.6)
-                                    }
-                                    Spacer()
-                                }
-                                    Spacer()
-                                    HStack {
-                                        ForEach(1..<viewModel.userTickets.count+1, id: \.self) { index in
-                                            Button(action: {
-                                                self.selectedGroup = index
-                                                //viewModel.canGetHistoricalData = false
-                                                viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[index-1].groupID) {
-                                                }
-                                                whichWeek = 0
-                                                showingChat = false
-                                                print("\(selectedGroup) is selected")
-                                            }) {
-                                                Text(viewModel.userTickets[index-1].groupName)
-                                                    .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-                                                    .foregroundColor(.white)
-                                                    .frame(width: 105, height: 35, alignment: .center)
-                                                    .background(selectedGroup == index ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                                                    .cornerRadius(5)
-                                            }
-                                        }
-                                    }
-                                Spacer()
-
-                        }.padding(.horizontal, 10)
-                        
-                    } else {
-                        
-                        HStack(spacing: 10) {
-                            Button(action: {
-                                selectedGroup = 0
-                            }) {
-                                Image(systemName: "plus")
-                                    .foregroundColor(.white)
-                                    .frame(width: 45, height: 35, alignment: .center)
-                                    .background(selectedGroup == 0 ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                                    .cornerRadius(5)
-                            }
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack {
-                                    ForEach(1..<viewModel.userTickets.count+1, id: \.self) { index in
-                                        
-                                        Button(action: {
-                                            self.selectedGroup = index
-                                            viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[index-1].groupID) {}
-                                            showingChat = false
-                                            whichWeek = 0
-                                            print("\(selectedGroup) is selected")
-                                        }) {
-                                            Text(viewModel.userTickets[index-1].groupName)
-                                                .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-                                                .foregroundColor(.white)
-                                                .frame(width: 105, height: 35, alignment: .center)
-                                                .background(selectedGroup == index ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                                                .cornerRadius(5)
-                                        }
-                                        
-                                    }
-                                }
-                        }
-                        
-                        }.padding(.horizontal, 16)
                     
+                    HStack {
+                        Button(action: {
+                            //self.selectedGroup = index
+                            //viewModel.canGetHistoricalData = false
+                            viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[self.selectedGroup-1].groupID) {
+                            }
+                            showingChat = false
+                            onDaily = true
+                            //print("\(selectedGroup) is selected")
+                        }) {
+                            //Text(viewModel.userTickets[self.selectedGroup-1].groupName)
+                            Text("Daily")
+                                .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                .foregroundColor(.white)
+                                .frame(width: 105, height: 35, alignment: .center)
+                                .background(onDaily ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                .cornerRadius(5)
+                        }
+                        Button(action: {
+                            //self.selectedGroup = index
+                            //viewModel.canGetHistoricalData = false
+//                            viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[self.selectedGroup-1].groupID) {
+//                            }
+//                            showingChat = false
+//                            //print("\(selectedGroup) is selected")
+                            onDaily = false
+                        }) {
+                            //Text(viewModel.userTickets[self.selectedGroup-1].groupName)
+                            Text("Weekly")
+                                .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                .foregroundColor(.white)
+                                .frame(width: 105, height: 35, alignment: .center)
+                                .background(!onDaily ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                .cornerRadius(5)
+                        }
                     }
-                    if selectedGroup == 0 {
-                        Text("Search Group")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
-                            .foregroundColor(.white)
-                            .padding(.top,20)
-                        
-                        SearchBar(text: keywordBinding, placeholder: "Search Groups")
-                        if (viewModel.userTickets.count >= P.maxNumGroupsCanJoin) {
-                            Text("Max Groups Joined")
-                                .foregroundColor(Color.red)
-                        }
-                        ZStack{
-                            if !viewModel.queriedGroups.isEmpty {
-                                withAnimation {
-                                    ScrollView {
-                                        VStack {
-                                            ForEach(viewModel.queriedGroups, id: \.groupName) { group in
-                                                let group1 = group
-                                                if (viewModel.userTickets.count < P.maxNumGroupsCanJoin) {
-                                                    Button(action: {
-                                                        // Destination view code
-                                                        selectedGroupBar = group
-                                                        isJoinSheetPresented.toggle()
-                                                    }) {
-                                                        HStack{
-                                                            VStack(alignment: .leading){
-                                                                HStack{
-                                                                    if group.groupImageURL != ""{
-                                                                        KFImage(URL(string: group.groupImageURL))
-                                                                            .resizable()
-                                                                            .cornerRadius(25)
-                                                                            .frame(width: 40, height: 40, alignment: .leading)
-                                                                    }
-                                                                    else {
-                                                                        Image(systemName: "person.3.fill")
-                                                                            .resizable()
-                                                                            .cornerRadius(25)
-                                                                            .frame(width: 40, height: 40, alignment: .leading)
-                                                                    }
-                                                                    
-                                                                    VStack(alignment: .leading) {
-                                                                        
-                                                                        HStack {
-                                                                            Text("\(group.groupName)")
-                                                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                                                                .foregroundColor(.white)
-                                                                            
-                                                                            Spacer()
-                                                                            if group.password != "" {
-                                                                                Text("Private Group")
-                                                                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
-                                                                                    .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
-                                                                                    .frame(alignment: .top)
-                                                                            }
-                                                                            else{
-                                                                                Text("Public Group")
-                                                                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
-                                                                                    .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
-                                                                                    .frame(alignment: .top)
-                                                                            }
-                                                                        }.frame(minWidth: 0, maxWidth: .infinity)
-                                                                        
-                                                                        Text("\(group.groupSlogan)")
-                                                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
-                                                                              .foregroundColor(.white)
-                                                                    }
-                                                                    Spacer()
-                                                                    
-                                                                }
-                                                                HStack {
-                                                                    Text("Group Admin")
-                                                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
-                                                                      .foregroundColor(.white)
-                                                                    Spacer()
-                                                                    Text(group.groupAdminUsername)
-                                                                      .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
-                                                                      .foregroundColor(.white)
-                                                                }
-                                                                .padding(.top,10)
+                    
+                    
 
-                                                                HStack{
-                                                                    Spacer()
-                                                                    
-                                                                    Text("Join")
-                                                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                                                        .foregroundColor(.white)
-                                                                                    //shadow
-                                                                    
-                                                                    Spacer()
-                                                                }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 40 , maxHeight: 40)
-                                                                    .background(Color(red: 0.31, green: 0.57, blue: 1))
-                                                                    .cornerRadius(10)
-                                                                    .padding(.top,10)
-                                                                
-                                                            }.frame(minWidth: 0, maxWidth: .infinity)
-                                                                .padding(.horizontal,15)
-                                                                .padding(.vertical,20)
-                                                        }
-                                                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                                        .cornerRadius(10)
-                                                        .padding(.horizontal,16)
-                                                    }
-                                                    .sheet(item: $selectedGroupBar) {
-                                                        groupSelected in
-                                                        GroupJoinSheet(group: groupSelected, viewModel: viewModel, isPresented: $isJoinSheetPresented)
-                                                            .presentationDetents([.fraction(0.50)])
-                                                    }
-                                                } else {
-                                                    groupBarView(group: group)
-                                                }
-                                            }.padding(.bottom,10)
-                                        }.padding(.bottom, 60)
-                                    }
-                                }.animation(.easeInOut, value: 20)
-                            }
-                            if searchText.isEmpty {
-                                VStack {
-                                    Spacer()
-                                    Button {
-                                        print(viewModel.userTickets)
-                                        isShowingSheet.toggle()
-                                    } label: {
-                                        HStack{
-                                            Spacer()
-                                            
-                                            Text("Create")
-                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
-                                                .foregroundColor(.white)
-                                            //shadow
-                                            
-                                            Spacer()
-                                        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                                            .background(Color(red: 0.31, green: 0.57, blue: 1))
-                                            .cornerRadius(10)
-                                            .padding(.horizontal,16)
-                                            .padding(.bottom,100)
-                                    }
-                                }.frame(minHeight: 0, maxHeight: .infinity)
-                            }
-                        }
+                    if selectedGroup == 0 {
+                        
                         
                     } else { // not looking for group
                         VStack {
@@ -295,7 +119,8 @@ struct groupsView: View {
                                         }
                                         VStack (alignment: .leading, spacing: 0){
                                             HStack {
-                                                Text(viewModel.userTickets[selectedGroup-1].groupName)
+                                                //Text(viewModel.userTickets[selectedGroup-1].groupName)
+                                                Text(onDaily ? "Daily" : "Weekly")
                                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 28))
                                                     .foregroundColor(.white)
                                                 if viewModel.userTickets[selectedGroup-1].groupID == "Global" {
@@ -335,21 +160,53 @@ struct groupsView: View {
                             Spacer()
                             HStack {
                                 VStack {
-                                    if (viewModel.canGetHistoricalData && !showingChat) {
-                                        Picker("Which Week", selection: $whichWeek) {
-                                            ForEach(0..<viewModel.totalArrayOfDates[selectedGroup-1].count, id: \.self) { index in
-                                                Text(viewModel.totalArrayOfDates[selectedGroup-1][index])
-                                                    .foregroundColor(.white)
-                                            }
-                                        }.pickerStyle(MenuPickerStyle())
-                                            .frame(maxHeight: 200)
-                                            .onChange(of: whichWeek) { newWeek in
-                                                if(newWeek == 0) {
-                                                    viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
-                                                } else {
-                                                    viewModel.fetchPastRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID, week: viewModel.totalArrayOfDates[selectedGroup-1][newWeek]) {}
+                                    if (viewModel.canGetHistoricalData && !showingChat && viewModel.weekIndex >= 0 && viewModel.weekIndex <= viewModel.totalArrayOfDates[0].count) {
+                                        HStack {
+                                            Button(action: {
+                                                if viewModel.weekIndex < viewModel.totalArrayOfDates[0].count-1  {
+                                                    viewModel.weekIndex = viewModel.weekIndex + 1
+//                                                    if(viewModel.weekIndex == 0) {
+//                                                        viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[0].groupID) {}
+//                                                    } else {
+                                                        viewModel.fetchPastRankedTickets(groupID: viewModel.userTickets[0].groupID, week: viewModel.totalArrayOfDates[0][viewModel.weekIndex]) {}
+//                                                    }
                                                 }
-                                            }
+                                            }, label: {
+                                                if viewModel.weekIndex < viewModel.totalArrayOfDates[0].count-1  {
+                                                    Image(systemName: "chevron.left")
+                                                        .foregroundColor(.white)
+                                                } else {
+                                                    Image(systemName: "chevron.left")
+                                                        .foregroundColor(.white).opacity(0.6)
+                                                }
+                                            })
+                                            
+                                            Text(viewModel.totalArrayOfDates[0][viewModel.weekIndex])
+                                                .foregroundColor(.white)
+                                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                            
+                                            Button(action: {
+                                                if viewModel.weekIndex > 0 {
+                                                    viewModel.weekIndex = viewModel.weekIndex - 1
+                                                    if(viewModel.weekIndex == 0) {
+                                                        viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[0].groupID) {}
+                                                    } else {
+                                                        viewModel.fetchPastRankedTickets(groupID: viewModel.userTickets[0].groupID, week: viewModel.totalArrayOfDates[0][viewModel.weekIndex]) {}
+                                                    }
+                                                }
+                                            }, label: {
+                                                if viewModel.weekIndex > 0 {
+                                                    Image(systemName: "chevron.right")
+                                                        .foregroundColor(.white)
+                                                } else {
+                                                    Image(systemName: "chevron.right")
+                                                        .foregroundColor(.white).opacity(0.6)
+                                                }
+                                            })
+                                        }.padding(.leading)
+
+                                        
+                                        
                                     } else {
                                         Text("Test").foregroundColor(.clear)
                                     }
@@ -411,11 +268,11 @@ struct groupsView: View {
                         Divider().background(.white).padding(EdgeInsets(top: 10, leading: 18, bottom: 4.5, trailing: 18))
                         VStack(alignment: .leading, spacing: 0) {
                             if !showingChat {
-                                if whichWeek == 0 {
+                                if viewModel.weekIndex == 0 {
                                     currentLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup)
                                     //Spacer()
                                 } else {
-                                    pastLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup, selectedWeek: $whichWeek)
+                                    pastLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup, selectedWeek: $viewModel.weekIndex)
                                 }
                             } else {
                                 chatView(viewModel: chatVM, selectedGroup: $selectedGroup, groupsViewModel: viewModel)

@@ -193,7 +193,7 @@ struct ticketView: View {
                             //                        if uid == Auth.auth().currentUser?.uid {
                             HStack (alignment: .center, spacing: 23){
                                 HStack (spacing: 0) {
-                                    Text("Potential").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
+                                    Text("Pending").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
                                     Spacer()
                                     Text("\(String(format: "%.0f", viewModel.totalPotentialWon))")
                                         .font(.custom("Futura", size: 20))
@@ -205,7 +205,7 @@ struct ticketView: View {
                                             .fill(K.finalColor.cardBlue) // Change the opacity as needed
                                     ).cornerRadius(7.5)
                                 HStack (spacing: 0){
-                                    Text("Total").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
+                                    Text("Balance").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
                                     Spacer()
                                     Text("\(String(format: "%.0f", viewModel.totalWon))")
                                         .font(.custom("Futura", size: 20))
