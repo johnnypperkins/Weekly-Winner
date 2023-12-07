@@ -1,7 +1,13 @@
 import Firebase
 import FirebaseCore
+import FirebaseFirestore
+import FirebaseAuth
 import FirebaseMessaging
 import UserNotifications
+import FirebaseAnalytics
+
+// Log a test event
+
 import SwiftUI
 
 final class AppDelegate: NSObject, UIApplicationDelegate {
@@ -10,6 +16,10 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         FirebaseApp.configure()
+        Analytics.logEvent("test_event", parameters: [
+            "name": "test_name" as NSObject,
+            "value": 123 as NSObject
+        ])
 
         Messaging.messaging().delegate = self
 
