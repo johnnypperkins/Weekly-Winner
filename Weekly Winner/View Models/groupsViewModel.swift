@@ -30,15 +30,16 @@ class groupsViewModel: ObservableObject {
 
     
     init() {
-        fetchUserTickets() {
+        fetchUserTickets(timeFrame: "weekly") {
             self.groupsFetched = true
             self.fetchUserGroups {
                 self.userGroupsLoaded = true
             }
-//            self.fetchGroups(array1: self.userTickets) {
-//                print("yeehaw" + "\(self.userGroups)")
-//            }
+            //self.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: "weekly") {}
+
+
         }
+        fetchUserTickets(timeFrame: "daily") {}
     }
     
     func uploadGroupImage(_ image: UIImage, group: Group, completion: @escaping (String) -> Void) {
@@ -129,8 +130,8 @@ class groupsViewModel: ObservableObject {
         print("hereeeee")
     }
     
-    func fetchCurrentRankedTickets(groupID: String, completion: @escaping () -> Void){
-        grpService.getCurrentRankedTickets(groupID: groupID) { [weak self] (tickets, totalPlayers, error) in
+    func fetchCurrentRankedTickets(groupID: String, timeFrame: String, completion: @escaping () -> Void){
+        grpService.getCurrentRankedTickets(groupID: groupID, timeFrame: timeFrame) { [weak self] (tickets, totalPlayers, error) in
                 if let error = error {
                     // Handle error
                     //print("Error fetching groups CURRENT: \(error)")
@@ -164,64 +165,86 @@ class groupsViewModel: ObservableObject {
     }
     
     
-    func joinGroup(group: Group) { // Group99
-        
-        grpService.joinGroup(userID: Auth.auth().currentUser!.uid, group: group){ error in
-            self.fetchUserTickets() {
-//                self.fetchGroups(array1: self.userTickets){
-//
+//    func joinGroup(group: Group) { // Group99
+//        
+//        grpService.joinGroup(userID: Auth.auth().currentUser!.uid, group: group){ error in
+//            self.fetchUserTickets() {
+////                self.fetchGroups(array1: self.userTickets){
+////
+////                }
+//                self.fetchUserGroups {
 //                }
-                self.fetchUserGroups {
-                }
-                
-                print(self.userTickets)
-            }
-        }
-    }
+//                
+//                print(self.userTickets)
+//            }
+//        }
+//    }
     
-    func checkIfGroupAlreadyJoined(group: Group, completion: @escaping (Bool) -> Void) {
-        self.fetchUserTickets() {
-            for groupsJoined in self.userTickets {
-                if group.id == groupsJoined.groupID {
-                    completion(true)
-                    return
-                }
-            }
-            completion(false)
-        }
-    }
+//    func checkIfGroupAlreadyJoined(group: Group, completion: @escaping (Bool) -> Void) {
+//        self.fetchUserTickets() {
+//            for groupsJoined in self.userTickets {
+//                if group.id == groupsJoined.groupID {
+//                    completion(true)
+//                    return
+//                }
+//            }
+//            completion(false)
+//        }
+//    }
 
 
-    func fetchUserTickets(completion: @escaping () -> Void) {
-        print("Fetch started")
-        guard let currentUser = Auth.auth().currentUser else {
-            return
-        }
-        
-        let db = Firestore.firestore()
-        let ticketsCollection = db.collection("users").document(currentUser.uid).collection("tickets").document("week").collection("currentWeekTickets")
-        
-        ticketsCollection.order(by: "groupNumber").getDocuments { [weak self] snapshot, error in
-            guard let self = self else { return }
-            
+//    func fetchUserTickets(timeFrame: String, completion: @escaping () -> Void) {
+//        print("Fetch started")
+//      
+//        
+//        let db = Firestore.firestore()
+//        let ticketsCollection = db.collection("users").document(currentUser.uid).collection("tickets").document("week").collection("currentWeekTickets")
+//        
+//        ticketsCollection.order(by: "groupNumber").getDocuments { [weak self] snapshot, error in
+//            guard let self = self else { return }
+//            
+//            if let error = error {
+//                //print("Error fetching groups: \(error.localizedDescription)")
+//                return
+//            }
+//            
+//            guard let documents = snapshot?.documents, error == nil else { return }
+//            
+//            self.userTickets = documents.compactMap { snapshot in
+//                //print(snapshot)
+//                return try? snapshot.data(as: Ticket.self) // Ticket99
+//            }
+//            
+//            
+//            
+//            // Call the completion closure after fetching and processing
+//            completion()
+//        }
+//    }
+    
+    func fetchUserTickets(timeFrame: String, completion: @escaping () -> Void) {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        grpService.fetchUserTickets(userID: userId, timeFrame: timeFrame) { tickets, error in
             if let error = error {
-                //print("Error fetching groups: \(error.localizedDescription)")
-                return
+                print("Error fetching user groups: \(error.localizedDescription)")
+            } else if let tickets = tickets {
+                self.userTickets = tickets
+                if timeFrame == "weekly" {
+                    StaticUserData.shared.weeklyTicket = tickets[0]
+                } else if timeFrame == "daily" {
+                    StaticUserData.shared.dailyTicket = tickets[0]
+
+                }
+                //self.currentTicketFormat = tickets[groupNumber].ticketFormat
+               
+                //self.isTFLoaded = true
+                //self.isGroupsLoaded = true  // Set this to true when data is loaded
             }
-            
-            guard let documents = snapshot?.documents, error == nil else { return }
-            
-            self.userTickets = documents.compactMap { snapshot in
-                //print(snapshot)
-                return try? snapshot.data(as: Ticket.self) // Ticket99
-            }
-            
-            
-            
-            // Call the completion closure after fetching and processing
             completion()
+            //print(groups)
+            //print(userId)
         }
-    }
+    }//test
   
     func fetchGroups(array1: [Ticket], completion: @escaping () -> Void) {
         
@@ -376,47 +399,47 @@ class groupsViewModel: ObservableObject {
 
 
 
-    func leaveGroup(ticket: Ticket, completion: @escaping () -> Void) {
-        // Get a reference to Firestore and the current user
-        guard let currentUser = Auth.auth().currentUser?.uid else {
-            print("No current user")
-            return
-        }
-        grpService.leaveGroup(ticket: ticket, userID: currentUser) { error in
-            self.fetchUserTickets() {
-                //self.fetchGroups(array1: self.userTickets){}
-                self.fetchUserGroups {
-                    
-                }
-            }
-        }
-
-        
-        func deleteGroupIfNeeded(groupID: String) {
-            db.collection("groups").document(groupID).getDocument { document, error in
-                if let error = error {
-                    print("Error fetching group: \(error.localizedDescription)")
-                    return
-                }
-                guard let document = document, document.exists, let members = document.get("members") as? [String] else {
-                    // If the group still has members, we don't delete it.
-                    return
-                }
-                print("Members: \(members)") // Debug line
-                print("Members count: \(members.count)") // Debug line
-                if members.isEmpty {
-                    // If no members left, delete the group.
-                    document.reference.delete { error in
-                        if let error = error {
-                            print("Error deleting group: \(error.localizedDescription)")
-                        } else {
-                            print("Group successfully deleted!")
-                        }
-                    }
-                }
-            }
-        }
-    }
+//    func leaveGroup(ticket: Ticket, completion: @escaping () -> Void) {
+//        // Get a reference to Firestore and the current user
+//        guard let currentUser = Auth.auth().currentUser?.uid else {
+//            print("No current user")
+//            return
+//        }
+//        grpService.leaveGroup(ticket: ticket, userID: currentUser) { error in
+//            self.fetchUserTickets() {
+//                //self.fetchGroups(array1: self.userTickets){}
+//                self.fetchUserGroups {
+//                    
+//                }
+//            }
+//        }
+//
+//        
+//        func deleteGroupIfNeeded(groupID: String) {
+//            db.collection("groups").document(groupID).getDocument { document, error in
+//                if let error = error {
+//                    print("Error fetching group: \(error.localizedDescription)")
+//                    return
+//                }
+//                guard let document = document, document.exists, let members = document.get("members") as? [String] else {
+//                    // If the group still has members, we don't delete it.
+//                    return
+//                }
+//                print("Members: \(members)") // Debug line
+//                print("Members count: \(members.count)") // Debug line
+//                if members.isEmpty {
+//                    // If no members left, delete the group.
+//                    document.reference.delete { error in
+//                        if let error = error {
+//                            print("Error deleting group: \(error.localizedDescription)")
+//                        } else {
+//                            print("Group successfully deleted!")
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
     
     func populateArrayOfDates(from timestamp: Timestamp) -> [String] {
         var weeks: [String] = []

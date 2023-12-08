@@ -47,7 +47,7 @@ class chatViewModel:ObservableObject {
     func uploadChat(message: String, groupID: String) {
         guard let userID = Auth.auth().currentUser?.uid else { return }
         
-        var messageData = Message(messageContent: message, timeSent: Date.now, userID: userID, username: UserData.shared.username, groupID: groupID)
+        var messageData = Message(messageContent: message, timeSent: Date.now, userID: userID, username: StaticUserData.shared.username, groupID: groupID)
         chatService.uploadMessage(messageData: messageData, groupID: groupID) { error in
             if let error = error {
                 print(error)

@@ -174,7 +174,7 @@ class authenticationViewModel: ObservableObject {
             service.fetchUser(withUid: uid) { user in
                 //print(user)
                 self.currUser = user
-                UserData.shared.username = self.currUser!.username
+                StaticUserData.shared.username = self.currUser!.username
                 //print(UserData.shared.username)
             }
         }

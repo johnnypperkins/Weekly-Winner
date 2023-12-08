@@ -157,9 +157,9 @@ struct groupSettingsView: View {
                                     AppUtility.shared.showCustomAlert(alertType: .none, message: "Are you sure you want to leave?", actionButtonTitle: K.appButtonTitle.leaveGroup, cancelButtonTitle: K.appButtonTitle.cancel) { action in
                                         if action == AlertButtonAction.okButton{
                                             selectedGroup -= 1
-                                            viewModel.leaveGroup(ticket: viewModel.userTickets[selectedGroup]) {
-                                                //selectedGroup = 1
-                                            }
+//                                            viewModel.leaveGroup(ticket: viewModel.userTickets[selectedGroup]) {
+//                                                //selectedGroup = 1
+//                                            }
                                             dismiss()
                                         }
                                         

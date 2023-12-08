@@ -12,11 +12,26 @@ import FirebaseFirestore
 class BetService {
     private let db = Firestore.firestore()
     
-    func uploadBet(_ bet: Bet, completion: @escaping (Error?) -> Void) {
+    func uploadBet(_ bet: Bet, timeFrame: String, completion: @escaping (Error?) -> Void) {
         guard let userID = Auth.auth().currentUser?.uid else {
             completion(AuthError.userNotFound)
             return
         }
+        let documentLoc:String = {
+            if timeFrame == "weekly" {
+                return "week"
+            } else {
+                return "day"
+            }
+        }()
+        
+        let collectionLoc:String = {
+            if timeFrame == "weekly" {
+                return "currentWeekBets"
+            } else {
+                return "currentDayBets"
+            }
+        }()
         
         var whichToInc = -1
         if bet.betType.rawValue == "betHomeSpread" {
@@ -29,7 +44,6 @@ class BetService {
             whichToInc = 6
         }
       
-        
         //let db = Firestore.firestore()
         var ref: DocumentReference? = nil
         
@@ -46,6 +60,7 @@ class BetService {
             "whichSport": bet.whichSport,
             "timestamp": bet.timestamp,
             "points_bought": bet.points_bought,
+            "timeFrame": timeFrame
             
         ]
         
@@ -54,7 +69,7 @@ class BetService {
         }
         
         // Upload the data to Firestore
-        ref = db.collection("users").document(userID).collection("bets").document("week").collection("currentWeekBets").addDocument(data: data) { error in
+        ref = db.collection("users").document(userID).collection("bets").document(documentLoc).collection(collectionLoc).addDocument(data: data) { error in
             if let error = error {
                 // Handle the error
                 completion(error)

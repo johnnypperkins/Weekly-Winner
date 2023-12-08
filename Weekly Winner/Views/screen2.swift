@@ -340,6 +340,8 @@ struct BetDetailsView: View {
     @State private var placeBetColor: Color = Color.clear
     @State private var placeholder = 5
     
+    @State private var timeFrame = "daily"
+    
     
     func checkTeamTaken() {
         if betNumber < 0 {
@@ -362,6 +364,9 @@ struct BetDetailsView: View {
     }
     
     var body: some View {
+        
+        // if bet starts before midnight EST
+        
         ZStack {
             K.finalColor.backgroundBlue.ignoresSafeArea(.all)
             VStack {
@@ -394,34 +399,101 @@ struct BetDetailsView: View {
                                         .background(K.finalColor.backgroundBlue)
                                 }
                                 VStack {
-                                    ScrollView {
-                                        ForEach(0..<viewModel.userTickets.count, id: \.self) { index in
-                                            Button(action: {
-                                                groupNumber = index
-                                                ticketVM.fetchUserTickets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber) {
-                                                    ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat) {
-                                                        if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
-                                                            betNumber = firstNumberGreaterThanZero
-                                                        } else {
-                                                            betNumber = -99
-                                                        }
-                                                        checkTeamTaken()
-                                                    }
+                                    
+                                    Button(action: {
+                                        //groupNumber = index
+                                        timeFrame = "daily"
+                                        
+//                                        ticketVM.fetchUserTickets(timeFrame: "daily") {
+//                                            ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: 0, ticketFormat: ticketVM.currentTicketFormat) {
+//                                                if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
+//                                                    betNumber = firstNumberGreaterThanZero
+//                                                } else {
+//                                                    betNumber = -99
+//                                                }
+//                                                checkTeamTaken()
+//                                            }
+//                                        }
+                                        
+                                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: 0, ticketFormat: StaticUserData.shared.dailyTicket.ticketFormat, timeFrame: timeFrame) {
+                                                if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
+                                                    betNumber = firstNumberGreaterThanZero
+                                                } else {
+                                                    betNumber = -99
                                                 }
-                                            }, label: {
-                                                HStack {
-                                                    Text(viewModel.userTickets[index].groupName).tag(index)
-                                                        .foregroundColor(K.finalColor.textWhite)
-                                                        .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-                                                }.frame(width: 100, alignment: .center)
-                                                    .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
-                                                    .background(groupNumber == index ? K.finalColor.titleBlue : K.veryLightGray.opacity(0.4))
-                                                    .cornerRadius(5)
-                                                //.scaleEffect(x: 2)
-                                            })
-                                            
-                                        }
-                                    }.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+                                                checkTeamTaken()
+                                            }
+                                        
+                                    }, label: {
+                                        HStack {
+                                            Text("Daily")
+                                                .foregroundColor(K.finalColor.textWhite)
+                                                .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                        }.frame(width: 100, alignment: .center)
+                                            .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                            .background(timeFrame == "daily" ? K.finalColor.titleBlue : K.veryLightGray.opacity(0.4))
+                                            //.background(K.finalColor.titleBlue) // will fix this later
+                                            .cornerRadius(5)
+                                        //.scaleEffect(x: 2)
+                                    })
+                                    
+                                    Button(action: {
+                                        //groupNumber = index
+                                        timeFrame = "weekly"
+                                        //ticketVM.fetchUserTickets(timeFrame: "weekly") {
+                                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: 0, ticketFormat: StaticUserData.shared.weeklyTicket.ticketFormat, timeFrame: timeFrame) {
+                                                if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
+                                                    betNumber = firstNumberGreaterThanZero
+                                                } else {
+                                                    betNumber = -99
+                                                }
+                                                checkTeamTaken()
+                                            }
+                                       // }
+                                    }, label: {
+                                        HStack {
+                                            Text("Weekly")
+                                                .foregroundColor(K.finalColor.textWhite)
+                                                .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                        }.frame(width: 100, alignment: .center)
+                                            .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                            .background(timeFrame == "weekly" ? K.finalColor.titleBlue : K.veryLightGray.opacity(0.4))
+                                           // .background(K.finalColor.titleBlue) // will fix this later
+                                            .cornerRadius(5)
+                                        //.scaleEffect(x: 2)
+                                    })
+                                    
+                                    
+//                                    ScrollView {
+//                                        ForEach(0..<viewModel.userTickets.count, id: \.self) { index in
+//                                            Button(action: {
+//                                                groupNumber = index
+//                                                ticketVM.fetchUserTickets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber) {
+//                                                    ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat) {
+//                                                        if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
+//                                                            betNumber = firstNumberGreaterThanZero
+//                                                        } else {
+//                                                            betNumber = -99
+//                                                        }
+//                                                        checkTeamTaken()
+//                                                    }
+//                                                }
+//                                            }, label: {
+//                                                HStack {
+//                                                    Text(viewModel.userTickets[index].groupName).tag(index)
+//                                                        .foregroundColor(K.finalColor.textWhite)
+//                                                        .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+//                                                }.frame(width: 100, alignment: .center)
+//                                                    .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+//                                                    .background(groupNumber == index ? K.finalColor.titleBlue : K.veryLightGray.opacity(0.4))
+//                                                    .cornerRadius(5)
+//                                                //.scaleEffect(x: 2)
+//                                            })
+//                                            
+//                                        }
+//                                    }.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+                                    
+                                    
                                 }.frame(width: 120, height: 120)
                                 .padding(.horizontal)
                                 .onAppear {
@@ -450,7 +522,7 @@ struct BetDetailsView: View {
                             }
                             if ticketVM.isBetsLoaded {
                                 VStack {
-                                    if viewModel.userTickets.count > 0 {
+                                    
                                         ScrollView {
                                             //ForEach(0..<viewModel.userTickets.count, id: \.self) { index in
                                                 if betNumber >= 0 {
@@ -535,7 +607,7 @@ struct BetDetailsView: View {
                                                     }.padding(.top,15)
                                                 }
                                         }.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
-                                    }
+                                    
                                 }.frame(width: 120, height: 120)
                                     .padding(.horizontal)
                                     .onAppear {
@@ -574,8 +646,8 @@ struct BetDetailsView: View {
                     }
                 }
                 .onAppear {
-                    ticketVM.fetchUserTickets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber) {
-                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat) {
+                    ticketVM.fetchUserTickets(timeFrame: timeFrame) {
+                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat, timeFrame: timeFrame) {
                             if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
                                 betNumber = firstNumberGreaterThanZero
                             } else {
@@ -590,11 +662,11 @@ struct BetDetailsView: View {
                     
                 Button(action: {
                     print("groupNumber: \(groupNumber), betNumber: \(betNumber)")
-                    viewModel.uploadBet(groupNumber: groupNumber, groupID: groupsVM.userTickets[groupNumber].groupID, betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread), whichSport: game.whichSport), betType: betType, gameID: game.idd, whichSport: game.whichSport, points_bought: Int(chosenSpread-originalSpread)) {_ in
-                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat, completion: {
+                    viewModel.uploadBet(groupNumber: groupNumber, groupID: groupsVM.userTickets[groupNumber].groupID, betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread), whichSport: game.whichSport), betType: betType, gameID: game.idd, whichSport: game.whichSport, points_bought: Int(chosenSpread-originalSpread), timeFrame: timeFrame) {_ in
+                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat, timeFrame: timeFrame) {
                             let groupServe = groupService()
-                            groupServe.setPotentialToWin(potential: Int(ticketVM.totalPotentialWon), groupNumber: groupNumber, completion: {_ in })
-                        })
+                            groupServe.setPotentialToWin(potential: Int(ticketVM.totalPotentialWon), groupNumber: groupNumber, timeFrame: timeFrame, completion: {_ in })
+                        }
                     }
                     withAnimation {
                         dismiss()

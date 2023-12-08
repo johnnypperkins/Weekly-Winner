@@ -166,8 +166,25 @@ class groupService {
     }
 
     
-    func getCurrentRankedTickets(groupID: String, completion: @escaping ([Ticket]?, Int, Error?) -> Void) {
-        let query = db.collectionGroup("currentWeekTickets")
+    func getCurrentRankedTickets(groupID: String, timeFrame: String, completion: @escaping ([Ticket]?, Int, Error?) -> Void) {
+        
+        let documentLoc:String = {
+            if timeFrame == "weekly" {
+                return "week"
+            } else {
+                return "day"
+            }
+        }()
+        
+        let collectionGroupLoc:String = {
+            if timeFrame == "weekly" {
+                return "currentWeekTickets"
+            } else {
+                return "currentDayTickets"
+            }
+        }()
+        
+        let query = db.collectionGroup(collectionGroupLoc)
             .whereField("groupID", isEqualTo: groupID)
             .order(by: "isEnabled", descending: true)
             .order(by: "totalWon", descending: true)
@@ -282,46 +299,46 @@ class groupService {
 
 
     
-    func createGroup(groupAdminUsername: String, groupName: String, groupSlogan: String, password: String?, ticketFormat: [Int], groupUrl: String, completion: @escaping (Result<String, Error>) -> Void) {
-            
-        guard let currentUser = Auth.auth().currentUser else {
-                    completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No user is currently logged in"])))
-                    return
-                }
-        let time = Timestamp()
-            var ref: DocumentReference? = nil
-            ref = db.collection("groups").addDocument(data: [
-                "groupName": groupName,
-                "dateCreated": time,
-                "groupImageURL": groupUrl,
-                "groupSlogan": groupSlogan,
-                "groupAdmin": currentUser.uid,
-                "groupAdminUsername": groupAdminUsername,
-                "password": password ?? NSNull(),
-                "ticketFormat": ticketFormat
-            ]) { err in
-                if let err = err {
-                                completion(.failure(err))
-                } else {
-                    guard let groupID = ref?.documentID else {
-                        completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to retrieve group ID"])))
-                        return
-                    }
-                    self.db.collection("groups").document(groupID).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": currentUser.uid])
-                    let group = Group(id: groupID, groupName: groupName, dateCreated: time, groupImageURL: groupUrl, groupSlogan: groupSlogan, groupAdmin: currentUser.uid, groupAdminUsername: groupAdminUsername, ticketFormat: ticketFormat)
-                    self.joinGroup(userID: currentUser.uid, group: group){error in
-                        
-                    }
-                        
-                    
-                    do {
-                        Firestore.firestore().collection("groups").document(groupID).updateData(["keywordsForLookup": group.keywordsForLookup])
-                    } catch let error {
-                        print("Error updating data: \(error)")
-                    }
-                }
-            }
-        }
+//    func createGroup(groupAdminUsername: String, groupName: String, groupSlogan: String, password: String?, ticketFormat: [Int], groupUrl: String, completion: @escaping (Result<String, Error>) -> Void) {
+//            
+//        guard let currentUser = Auth.auth().currentUser else {
+//                    completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No user is currently logged in"])))
+//                    return
+//                }
+//        let time = Timestamp()
+//            var ref: DocumentReference? = nil
+//            ref = db.collection("groups").addDocument(data: [
+//                "groupName": groupName,
+//                "dateCreated": time,
+//                "groupImageURL": groupUrl,
+//                "groupSlogan": groupSlogan,
+//                "groupAdmin": currentUser.uid,
+//                "groupAdminUsername": groupAdminUsername,
+//                "password": password ?? NSNull(),
+//                "ticketFormat": ticketFormat
+//            ]) { err in
+//                if let err = err {
+//                                completion(.failure(err))
+//                } else {
+//                    guard let groupID = ref?.documentID else {
+//                        completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to retrieve group ID"])))
+//                        return
+//                    }
+//                    self.db.collection("groups").document(groupID).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": currentUser.uid])
+//                    let group = Group(id: groupID, groupName: groupName, dateCreated: time, groupImageURL: groupUrl, groupSlogan: groupSlogan, groupAdmin: currentUser.uid, groupAdminUsername: groupAdminUsername, ticketFormat: ticketFormat)
+//                    self.joinGroup(userID: currentUser.uid, group: group){error in
+//                        
+//                    }
+//                        
+//                    
+//                    do {
+//                        Firestore.firestore().collection("groups").document(groupID).updateData(["keywordsForLookup": group.keywordsForLookup])
+//                    } catch let error {
+//                        print("Error updating data: \(error)")
+//                    }
+//                }
+//            }
+//        }
     
 
 
@@ -350,41 +367,41 @@ class groupService {
         return await authData?.username ?? ""
         }
     
-    func joinGroup(userID: String, group: Group, completion: @escaping (Error?) -> Void) {
-        Task {
-                
-                var enabled = false
-                ticketCount(userID: userID) { num, error in
-                    if group.groupAdmin == userID {
-                        enabled = true
-                    }
-                    let db = Firestore.firestore()
-                    db.collection("groups").document(group.id!).collection("members").getDocuments { (snapshot, error) in
-                        if let error = error {
-                            print("Error getting documents: \(error)")
-                        } else {
-                            let rank = (snapshot?.documents.count)! + 1 ?? -99
-                            let userTicketsCollection = db.collection("users").document(userID).collection("tickets").document("week").collection("currentWeekTickets")
-                            let ticket = Ticket(username: UserData.shared.username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, dateCreated: Timestamp(date: Date()), totalWon: 0, totalPotentialWon: 0, groupName: group.groupName, rank: String(rank), isEnabled: enabled, groupAdmin: group.groupAdmin, ticketFormat: group.ticketFormat)
-                            do {
-                                let _ = try userTicketsCollection.addDocument(from: ticket) { error in
-                                    if let error = error {
-                                        print("Error uploading group: \(error)")
-                                    } else {
-                                        print("Joined group successfully!")
-                                        self.db.collection("groups").document(group.id!).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": userID])
-                                    }
-                                }
-                            } catch {
-                                print("Error encoding group: \(error)")
-                            }
-                            completion(error)
-                        }
-                    }
-                }
-                completion(nil)
-        }
-    }
+//    func joinGroup(userID: String, group: Group, completion: @escaping (Error?) -> Void) {
+//        Task {
+//                
+//                var enabled = false
+//                ticketCount(userID: userID) { num, error in
+//                    if group.groupAdmin == userID {
+//                        enabled = true
+//                    }
+//                    let db = Firestore.firestore()
+//                    db.collection("groups").document(group.id!).collection("members").getDocuments { (snapshot, error) in
+//                        if let error = error {
+//                            print("Error getting documents: \(error)")
+//                        } else {
+//                            let rank = (snapshot?.documents.count)! + 1 ?? -99
+//                            let userTicketsCollection = db.collection("users").document(userID).collection("tickets").document("week").collection("currentWeekTickets")
+//                            let ticket = Ticket(username: UserData.shared.username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, dateCreated: Timestamp(date: Date()), totalWon: 0, totalPotentialWon: 0, groupName: group.groupName, rank: String(rank), isEnabled: enabled, groupAdmin: group.groupAdmin, ticketFormat: group.ticketFormat)
+//                            do {
+//                                let _ = try userTicketsCollection.addDocument(from: ticket) { error in
+//                                    if let error = error {
+//                                        print("Error uploading group: \(error)")
+//                                    } else {
+//                                        print("Joined group successfully!")
+//                                        self.db.collection("groups").document(group.id!).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": userID])
+//                                    }
+//                                }
+//                            } catch {
+//                                print("Error encoding group: \(error)")
+//                            }
+//                            completion(error)
+//                        }
+//                    }
+//                }
+//                completion(nil)
+//        }
+//    }
 
 
 
@@ -441,11 +458,28 @@ class groupService {
     
     
     
-    func fetchUserTickets(userID: String, completion: @escaping ([Ticket]?, Error?) -> Void) { // Ticket99
+    func fetchUserTickets(userID: String, timeFrame: String, completion: @escaping ([Ticket]?, Error?) -> Void) { // Ticket99
+        
+        let documentLoc:String = {
+            if timeFrame == "weekly" {
+                return "week"
+            } else {
+                return "day"
+            }
+        }()
+        
+        let collectionLoc:String = {
+            if timeFrame == "weekly" {
+                return "currentWeekTickets"
+            } else {
+                return "currentDayTickets"
+            }
+        }()
+        
         Task{
-            let username = await self.getUsername() // Access the username asynchronously
+            let username = StaticUserData.shared.username
             
-            db.collection("users").document(userID).collection("tickets").document("week").collection("currentWeekTickets").getDocuments { querySnapshot, error in
+            db.collection("users").document(userID).collection("tickets").document(documentLoc).collection(collectionLoc).getDocuments { querySnapshot, error in
                 guard let documents = querySnapshot?.documents else {
                     completion(nil, error)
                     return
@@ -460,7 +494,7 @@ class groupService {
                     let totalPotentialWon = document.data()["totalPotentialWon"] as? Int ?? 0 // default value if not found
                     let groupName = document.data()["groupName"] as? String ?? "null"
                     let groupID = document.data()["groupID"] as? String ?? "null"// default value if not found
-                    let rank = document.data()["rank"] as? Int ?? -99
+                    let rank = document.data()["rank"] as? String ?? "-"
                     let isEnabled = document.data()["isEnabled"] as? Bool ?? false// default value if not found
                     let groupAdmin = document.data()["groupAdmin"] as? String ?? "null"// default value if not found
                     let ticketFormat = document.data()["ticketFormat"] as? [Int] ?? [1,1,1,1,1]// default value if not found
@@ -472,13 +506,37 @@ class groupService {
                 
                 // sorts them based on groupNum
                 tickets.sort { $0.groupNumber < $1.groupNumber }
+                print("HEREEEE")
+                print(tickets)
+                
+//                else {
+//                    StaticUserData.shared.dailyTicket = tickets[0]
+//                }
                 
                 completion(tickets, nil)
             }
         }
     }
     
-    func setPotentialToWin(potential potentialToWin: Int, groupNumber: Int, completion: @escaping (Error?) -> Void) {
+    func setPotentialToWin(potential potentialToWin: Int, groupNumber: Int, timeFrame: String, completion: @escaping (Error?) -> Void) {
+        
+        let documentLoc:String = {
+            if timeFrame == "weekly" {
+                return "week"
+            } else {
+                return "day"
+            }
+        }()
+        
+        let collectionGroupLoc:String = {
+            if timeFrame == "weekly" {
+                return "currentWeekTickets"
+            } else {
+                return "currentDayTickets"
+            }
+        }()
+        
+        
         guard let userID = Auth.auth().currentUser?.uid else {
             completion(AuthError.userNotFound)
             return
@@ -487,7 +545,7 @@ class groupService {
         let db = Firestore.firestore()
         
         // Query the document where the 'groupNumber' field is equal to the given groupNumber
-        db.collection("users").document(userID).collection("tickets").document("week").collection("currentWeekTickets")
+        db.collection("users").document(userID).collection("tickets").document(documentLoc).collection(collectionGroupLoc)
             .whereField("groupNumber", isEqualTo: groupNumber)
             .getDocuments { (querySnapshot, err) in
                 if let err = err {

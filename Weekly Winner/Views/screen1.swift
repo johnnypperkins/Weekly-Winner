@@ -25,6 +25,11 @@ struct UserProfileView: View {
     
    // @State private var showRulesPage = false
     
+//    init() {
+//        groupsVM.fetchUserTickets(timeFrame: "weekly") {}
+//        groupsVM.fetchUserTickets(timeFrame: "daily") {}
+//    }
+    
     
     var body: some View {
         VStack(spacing: 15) {
@@ -58,6 +63,14 @@ struct UserProfileView: View {
         
         .background(K.finalColor.backgroundBlue)
         .onAppear() {
+//            groupsVM.fetchUserTickets(timeFrame: "weekly") {
+//                groupsVM.groupsFetched = true
+//                groupsVM.fetchUserGroups {
+//                    groupsVM.userGroupsLoaded = true
+//                }
+                groupsVM.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: "weekly") {}
+//            }
+//            groupsVM.fetchUserTickets(timeFrame: "daily") {}
             authenticationVM.forceUpdate () {
                 if authenticationVM.updateURL != ""{
                     AppUtility.shared.showCustomAlert(alertType: .none, message: "There is a new, necessary update. Sorry we know this is annoying...", actionButtonTitle: K.appButtonTitle.ok, cancelButtonTitle: nil) { action in
@@ -68,16 +81,15 @@ struct UserProfileView: View {
                     }
                 }
             }
-            groupsVM.fetchCurrentRankedTickets(groupID: "Global") {}
             authenticationVM.fetchUser() {
                 
-                print("\(UserData.shared.username) is username")
+                print("\(StaticUserData.shared.username) is username")
             }
-            groupsVM.fetchUserTickets() {}
+            
             groupsVM.fetchUserGroups {
 
             }
-            bookVM.fetchMostPopularBets()
+            //bookVM.fetchMostPopularBets()
         }.padding(.top, 35)
         //Spacer()
     }
@@ -354,11 +366,7 @@ struct yourGroups: View {
                                         .foregroundColor(.white)
                                     
                                     Spacer()
-                                    
-                           
                                 }
-                               
-                                
                             }
                             VStack(alignment: .leading, spacing: 0) {
                                 HStack() {

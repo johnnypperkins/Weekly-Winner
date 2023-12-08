@@ -63,7 +63,8 @@ class bookViewModel: ObservableObject {
         getGamesMostPopular(whichSport: "NCAAB") {
             self.combineGamesPopular()
         }
-        fetchUserTickets()
+        //fetchUserTickets(timeFrame: "weekly")
+        //fetchUserTickets(timeFrame: "daily")
     }
     
     enum GameType: String, CaseIterable, Hashable {
@@ -99,12 +100,12 @@ class bookViewModel: ObservableObject {
     
     
     
-    func uploadBet(groupNumber: Int, groupID: String, betNumber: Int, team: String, betLine: Double, betOdds: Double, betType: BetType, gameID: String, whichSport: String, points_bought: Int, completion: @escaping (Error?) -> Void) {
+    func uploadBet(groupNumber: Int, groupID: String, betNumber: Int, team: String, betLine: Double, betOdds: Double, betType: BetType, gameID: String, whichSport: String, points_bought: Int, timeFrame: String, completion: @escaping (Error?) -> Void) {
             // Prepare the data to upload
         let bet = Bet(groupNumber: groupNumber, groupID: groupID, betNumber: betNumber, weekNumber: 1, betType: betType, teamBetOn: team, betLine: Float(betLine), betOdds: Float(betOdds), result: .notStarted, gameID: gameID, whichSport: whichSport, timestamp: Timestamp(date: Date()), points_bought: points_bought)
             
             // Perform the upload asynchronously
-            betService.uploadBet(bet) { error in
+            betService.uploadBet(bet, timeFrame: timeFrame) { error in
                 if let error = error {
                     // Handle the error
                     print("Error uploading bet: \(error)")
@@ -119,17 +120,15 @@ class bookViewModel: ObservableObject {
     
     
     
-    func fetchUserTickets() {
+    func fetchUserTickets(timeFrame: String) {
         guard let userId = Auth.auth().currentUser?.uid else { return }
-        groupServe.fetchUserTickets(userID: userId) { tickets, error in
+        groupServe.fetchUserTickets(userID: userId, timeFrame: timeFrame) { tickets, error in
             if let error = error {
                 print("Error fetching user groups: \(error.localizedDescription)")
             } else if let tickets = tickets {
                 self.userTickets = tickets
                 self.isTicketsLoaded = true  // Set this to true when data is loaded
             }
-            //print(groups)
-            //print(userId)
         }
     }
     

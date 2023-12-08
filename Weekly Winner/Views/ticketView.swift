@@ -10,6 +10,8 @@ struct ticketView: View {
     @State private var selectedGroup = 0 // Variable to track the selected group
     @ObservedObject var authViewModel = authenticationViewModel()
     @State var ticketShowing: Bool = true
+    @State private var timeFrame: String
+    
     var username: String
     var uid: String
     var groupID: String
@@ -17,19 +19,34 @@ struct ticketView: View {
     var ticketFormatForGroups: [Int]
     var ownTicket: Bool
     var onTicketPage: Bool
+    //@Binding var passedTimeFrame: String
+    
     var ticketIsEnabled: Bool {
-        if selectedWeek != "current" {
-            return true
-        } else {
-            if viewModel.userTickets[selectedGroup].isEnabled || viewModel.userTickets[selectedGroup].groupID == "Global" {
+        if timeFrame == "weekly" {
+            if selectedWeek != "current" {
                 return true
             } else {
-                return false
+                if StaticUserData.shared.weeklyTicket.isEnabled || StaticUserData.shared.weeklyTicket.groupID == "Global" {
+                    return true
+                } else {
+                    return false
+                }
+            }
+        } else {
+            if selectedWeek != "current" {
+                return true
+            } else {
+                if StaticUserData.shared.dailyTicket.isEnabled || StaticUserData.shared.dailyTicket.groupID == "Global" {
+                    return true
+                } else {
+                    return false
+                }
             }
         }
+        
     }
     
-    init(username: String, uid: String, groupID: String, selectedWeek: String, ticketFormatForGroups: [Int], ownTicket: Bool, onTicketPage: Bool) {
+    init(username: String, uid: String, groupID: String, selectedWeek: String, ticketFormatForGroups: [Int], ownTicket: Bool, onTicketPage: Bool, passedTimeFrame: String) {
         self.username = username
         self.uid = uid
         self.groupID = groupID
@@ -37,10 +54,9 @@ struct ticketView: View {
         self.ticketFormatForGroups = ticketFormatForGroups
         self.ownTicket = ownTicket
         self.onTicketPage = onTicketPage
-//        authViewModel.fetchUserInformation(uid: uid) { (userData) in
-//            self.user = userData
-//        }
-//
+        self._timeFrame = State(initialValue: passedTimeFrame)
+
+
         if uid != Auth.auth().currentUser?.uid{
             viewModel.fetchFriendTicket(uid: uid, with: groupID) { group in
                 
@@ -62,60 +78,76 @@ struct ticketView: View {
             VStack {
                 if uid == Auth.auth().currentUser?.uid && onTicketPage{
                     Text("Tickets").font(.custom(K.customFonts.lexendDecaMedium, size: 20)).foregroundColor(K.finalColor.textWhite).padding(.bottom)
-                    if (viewModel.userTickets.count <= 2) {
+                    
                         HStack(alignment: .center, spacing: 10) {
                             Spacer()
-                            ForEach(0..<viewModel.userTickets.count, id: \.self) { index in
-                                Button(action: {
-                                    self.selectedGroup = index
-                                    //viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
-                                    viewModel.isBetsLoaded = false
-                                    viewModel.isTFLoaded = false
-                                    if selectedWeek == "current" {
-                                        viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, completion: {})
-                                    } else {
-                                        viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
-                                    }
-                                }) {
-                                    Text(viewModel.userTickets[index].groupName)
-                                        .padding()
-                                        .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-                                        .foregroundColor(.white)
-                                        .frame(width: 115, height: 35, alignment: .center)
-                                        .background(selectedGroup == index ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                                        .cornerRadius(5)
+                            
+                            Button(action: {
+                                //self.selectedGroup = index
+                                //viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
+                                timeFrame = "daily"
+                                viewModel.isBetsLoaded = false
+                                viewModel.isTFLoaded = false
+                                if selectedWeek == "current" {
+                                    viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: StaticUserData.shared.dailyTicket.ticketFormat, timeFrame: timeFrame, completion: {})
+                                } else {
+                                    viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
                                 }
+                            }) {
+                                Text("Daily")
+                                    .padding()
+                                    .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                    .foregroundColor(.white)
+                                    .frame(width: 115, height: 35, alignment: .center)
+                                    .background(timeFrame == "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                    .cornerRadius(5)
                             }
+
+                            Button(action: {
+                                //self.selectedGroup = index
+                                //viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
+                                timeFrame = "weekly"
+                                viewModel.isBetsLoaded = false
+                                viewModel.isTFLoaded = false
+                                if selectedWeek == "current" {
+                                    viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: StaticUserData.shared.weeklyTicket.ticketFormat, timeFrame: timeFrame, completion: {})
+                                } else {
+                                    viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
+                                }
+                            }) {
+                                Text("Weekly")
+                                    .padding()
+                                    .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                                    .foregroundColor(.white)
+                                    .frame(width: 115, height: 35, alignment: .center)
+                                    .background(timeFrame == "weekly" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                    .cornerRadius(5)
+                            }
+                            
+//                            ForEach(0..<viewModel.userTickets.count, id: \.self) { index in
+//                                Button(action: {
+//                                    self.selectedGroup = index
+//                                    //viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
+//                                    viewModel.isBetsLoaded = false
+//                                    viewModel.isTFLoaded = false
+//                                    if selectedWeek == "current" {
+//                                        viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, timeFrame: timeFrame, completion: {})
+//                                    } else {
+//                                        viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
+//                                    }
+//                                }) {
+//                                    Text(viewModel.userTickets[index].groupName)
+//                                        .padding()
+//                                        .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+//                                        .foregroundColor(.white)
+//                                        .frame(width: 115, height: 35, alignment: .center)
+//                                        .background(selectedGroup == index ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+//                                        .cornerRadius(5)
+//                                }
+//                            }
                             Spacer()
                         }
-                    } else {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(alignment: .center, spacing: 10) {
-                                ForEach(0..<viewModel.userTickets.count, id: \.self) { index in
-                                    Button(action: {
-                                        self.selectedGroup = index
-                                        //viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
-                                        if selectedWeek == "current" {
-                                            viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, completion: {})
-                                        }
-                                        else {
-                                            viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
-                                        }
-                                        // }
-                                    }) {
-                                        Text(viewModel.userTickets[index].groupName)
-                                            .padding()
-                                            .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-                                            .foregroundColor(.white)
-                                            .frame(width: 115, height: 35, alignment: .center)
-                                            .background(selectedGroup == index ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                                            .cornerRadius(5)
-                                    }
-                                }
-                            }
-                        }.padding(.leading)
-                            .padding(.bottom,10)
-                    }
+                    
                     
                 } else {
                     if viewModel.isBetsLoaded {
@@ -269,12 +301,20 @@ struct ticketView: View {
                 .onAppear {
                     print("ticket format for groups " + "\(ticketFormatForGroups)" + "\(viewModel.totalBetArrays.count)")
                     selectedGroup = 0
+                    let currentTicketFormat = {
+                        if timeFrame == "daily" {
+                            return StaticUserData.shared.dailyTicket.ticketFormat
+                        } else {
+                            return StaticUserData.shared.weeklyTicket.ticketFormat
+
+                        }
+                    }()
                     
                     
                     if !onTicketPage {
                         if selectedWeek == "current" {
                             viewModel.fetchFriendTicket(uid: uid, with: groupID) {_ in
-                                viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: viewModel.userTickets[0].ticketFormat, completion: {}) // usertickets is set to only one ticket here
+                                viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: currentTicketFormat, timeFrame: timeFrame, completion: {}) // usertickets is set to only one ticket here
                             }
                         }
                         else {
@@ -286,10 +326,10 @@ struct ticketView: View {
                         viewModel.fetchUserInformation(uid: uid) {}
                         
                     } else {
-                        viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
-                            viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, completion: {}) // Fetch bets for selected group on view appear.
+                        //viewModel.fetchUserTickets(timeFrame: "weekly") { // CHANGE FROM TOP
+                            viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: currentTicketFormat, timeFrame: timeFrame, completion: {}) // Fetch bets for selected group on view appear.
                             
-                        }
+                        //}
                     }
                 }
                 .onDisappear {
@@ -635,7 +675,7 @@ struct ticketView: View {
 
 struct ticketView_Previews: PreviewProvider {
     static var previews: some View {
-        ticketView(username: "Reid", uid: "", groupID: "", selectedWeek: "current", ticketFormatForGroups: [1,1,1], ownTicket: true, onTicketPage: true)
+        ticketView(username: "Reid", uid: "", groupID: "", selectedWeek: "current", ticketFormatForGroups: [1,1,1], ownTicket: true, onTicketPage: true, passedTimeFrame: "daily")
     }
 }
 

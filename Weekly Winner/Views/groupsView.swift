@@ -23,17 +23,18 @@ struct groupsView: View {
     @State private var selectedGroup = 1
     @State private var showingChat: Bool = false
     @State private var currentWeekSelected: Bool = true
-    @State private var onDaily = true
+    @State private var timeFrame = "daily"
+    
    // @State var selectedGroupBar: Group?
 //    @State private var weekIndex: Int = -99
     //@State private var groupsFetched = false
 
     init() {
-        viewModel.fetchUserTickets() {
-            //viewModel.fetchUserGroups() {}
-        }
+//        viewModel.fetchUserTickets(timeFrame: "daily") {
+//            
+//        }
         
-        viewModel.fetchCurrentRankedTickets(groupID: "Global") {
+        viewModel.fetchCurrentRankedTickets(groupID: "Global", timeFrame: timeFrame) {
         }
         
 
@@ -56,12 +57,12 @@ struct groupsView: View {
                     
                     HStack {
                         Button(action: {
-                            //self.selectedGroup = index
                             //viewModel.canGetHistoricalData = false
-                            viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[self.selectedGroup-1].groupID) {
+                            timeFrame = "daily"
+                            viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {
                             }
                             showingChat = false
-                            onDaily = true
+                            
                             //print("\(selectedGroup) is selected")
                         }) {
                             //Text(viewModel.userTickets[self.selectedGroup-1].groupName)
@@ -69,24 +70,23 @@ struct groupsView: View {
                                 .font(.custom(K.customFonts.lexendDecaLight, size: 16))
                                 .foregroundColor(.white)
                                 .frame(width: 105, height: 35, alignment: .center)
-                                .background(onDaily ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                .background(timeFrame == "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
                                 .cornerRadius(5)
                         }
                         Button(action: {
-                            //self.selectedGroup = index
                             //viewModel.canGetHistoricalData = false
-//                            viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[self.selectedGroup-1].groupID) {
-//                            }
+                            timeFrame = "weekly"
+                            viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {
+                            }
 //                            showingChat = false
 //                            //print("\(selectedGroup) is selected")
-                            onDaily = false
                         }) {
                             //Text(viewModel.userTickets[self.selectedGroup-1].groupName)
                             Text("Weekly")
                                 .font(.custom(K.customFonts.lexendDecaLight, size: 16))
                                 .foregroundColor(.white)
                                 .frame(width: 105, height: 35, alignment: .center)
-                                .background(!onDaily ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                .background(timeFrame == "weekly" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
                                 .cornerRadius(5)
                         }
                     }
@@ -120,10 +120,10 @@ struct groupsView: View {
                                         VStack (alignment: .leading, spacing: 0){
                                             HStack {
                                                 //Text(viewModel.userTickets[selectedGroup-1].groupName)
-                                                Text(onDaily ? "Daily" : "Weekly")
+                                                Text(timeFrame == "daily" ? "Daily" : "Weekly")
                                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 28))
                                                     .foregroundColor(.white)
-                                                if viewModel.userTickets[selectedGroup-1].groupID == "Global" {
+                                                if StaticUserData.shared.weeklyTicket.groupID == "Global" {
                                                     Button(action: {
                                                         isGlobalPrizesShowing = true
                                                     }) {
@@ -168,7 +168,7 @@ struct groupsView: View {
 //                                                    if(viewModel.weekIndex == 0) {
 //                                                        viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[0].groupID) {}
 //                                                    } else {
-                                                        viewModel.fetchPastRankedTickets(groupID: viewModel.userTickets[0].groupID, week: viewModel.totalArrayOfDates[0][viewModel.weekIndex]) {}
+                                                        viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, week: viewModel.totalArrayOfDates[0][viewModel.weekIndex]) {}
 //                                                    }
                                                 }
                                             }, label: {
@@ -189,9 +189,13 @@ struct groupsView: View {
                                                 if viewModel.weekIndex > 0 {
                                                     viewModel.weekIndex = viewModel.weekIndex - 1
                                                     if(viewModel.weekIndex == 0) {
-                                                        viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[0].groupID) {}
+                                                        if timeFrame == "daily" {
+                                                            viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {}
+                                                        } else {
+                                                            viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {}
+                                                        }
                                                     } else {
-                                                        viewModel.fetchPastRankedTickets(groupID: viewModel.userTickets[0].groupID, week: viewModel.totalArrayOfDates[0][viewModel.weekIndex]) {}
+                                                        viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, week: viewModel.totalArrayOfDates[0][viewModel.weekIndex]) {}
                                                     }
                                                 }
                                             }, label: {
@@ -269,10 +273,10 @@ struct groupsView: View {
                         VStack(alignment: .leading, spacing: 0) {
                             if !showingChat {
                                 if viewModel.weekIndex == 0 {
-                                    currentLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup)
+                                    currentLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup, timeFrame: $timeFrame)
                                     //Spacer()
                                 } else {
-                                    pastLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup, selectedWeek: $viewModel.weekIndex)
+                                    pastLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup, selectedWeek: $viewModel.weekIndex, timeFrame: $timeFrame)
                                 }
                             } else {
                                 chatView(viewModel: chatVM, selectedGroup: $selectedGroup, groupsViewModel: viewModel)
@@ -295,7 +299,11 @@ struct groupsView: View {
                         // The sheet was dismissed
                         selectedGroup = 1
                         print("onChange ranked")
-                        viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
+                        if timeFrame == "daily" {
+                            viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {}
+                        } else {
+                            viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {}
+                        }                   
                     }
                 }
                 .onAppear(){
@@ -412,6 +420,7 @@ struct groupBarView: View {
 struct currentLeaderboardView: View {
     @ObservedObject var viewModel: groupsViewModel
     @Binding var selectedGroup: Int
+    @Binding var timeFrame: String
 
     var body: some View {
         VStack (spacing: 0) {
@@ -424,11 +433,13 @@ struct currentLeaderboardView: View {
                     Spacer()
                 }
                 NavigationLink(destination:
-                                ticketView(username: viewModel.userTickets[selectedGroup-1].username, uid: viewModel.userTickets[selectedGroup-1].uid, groupID: viewModel.userTickets[selectedGroup-1].groupID, selectedWeek: "current", ticketFormatForGroups: [], ownTicket: viewModel.userTickets[selectedGroup-1].uid == Auth.auth().currentUser?.uid ? true : false, onTicketPage: false), // FIX LATER ?
-                               // viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false
-                               // , ownTicket: viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false
+                                ticketView(username: StaticUserData.shared.username, uid: StaticUserData.shared.dailyTicket.uid, groupID: StaticUserData.shared.dailyTicket.groupID, selectedWeek: "current", ticketFormatForGroups: [], ownTicket: true, onTicketPage: false, passedTimeFrame: timeFrame),
                                label: {
-                    BetCard(viewModel: viewModel, ticket: viewModel.userTickets[selectedGroup-1], rank: (viewModel.userTickets[selectedGroup-1].rank), ownCard: true, currentWeek: true, homePage: false).padding(.bottom,16)
+                    if timeFrame == "weekly" {
+                        BetCard(viewModel: viewModel, ticket: StaticUserData.shared.weeklyTicket, rank: StaticUserData.shared.weeklyTicket.rank, ownCard: true, currentWeek: true, homePage: false).padding(.bottom,16)
+                    } else {
+                        BetCard(viewModel: viewModel, ticket: StaticUserData.shared.dailyTicket, rank: StaticUserData.shared.dailyTicket.rank, ownCard: true, currentWeek: true, homePage: false).padding(.bottom,16)
+                    }
                 }).id(UUID())
             }
             HStack {
@@ -443,9 +454,7 @@ struct currentLeaderboardView: View {
                     ForEach(0..<viewModel.currentRankedGroupTickets.count, id: \.self) { index in
                         //if (viewModel.currentRankedGroupTickets[index].uid != Auth.auth().currentUser?.uid) {
                             NavigationLink(destination:
-                                            ticketView(username: viewModel.currentRankedGroupTickets[index].username, uid: viewModel.currentRankedGroupTickets[index].uid, groupID: viewModel.currentRankedGroupTickets[index].groupID, selectedWeek: "current", ticketFormatForGroups: [], ownTicket: viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, onTicketPage: false), // FIX LATER ?
-                                           // viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false
-                                           // , ownTicket: viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false
+                                            ticketView(username: viewModel.currentRankedGroupTickets[index].username, uid: viewModel.currentRankedGroupTickets[index].uid, groupID: viewModel.currentRankedGroupTickets[index].groupID, selectedWeek: "current", ticketFormatForGroups: [], ownTicket: viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, onTicketPage: false, passedTimeFrame: timeFrame), // FIX LATER ?
                                            label: {
                                 BetCard(viewModel: viewModel, ticket: viewModel.currentRankedGroupTickets[index], rank: (viewModel.currentRankedGroupTickets[index].rank), ownCard: viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, currentWeek: true, homePage: false).padding(.bottom,16)
                             }).id(UUID())
@@ -462,11 +471,14 @@ struct currentLeaderboardView: View {
                 }
             }.padding(.bottom,40)
             .refreshable {
-                await viewModel.fetchUserTickets() {}
+                await viewModel.fetchUserTickets(timeFrame: timeFrame) {}
                 if selectedGroup != 0 {
                     //print("refresh ranked")
-                    viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {}
-                }
+                    if timeFrame == "daily" {
+                        viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {}
+                    } else {
+                        viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {}
+                    }                }
             }.onAppear() {
                 //print("\(viewModel.currentRankedGroupTickets.count) is count")
             }
@@ -478,6 +490,8 @@ struct pastLeaderboardView: View {
     @ObservedObject var viewModel: groupsViewModel
     @Binding var selectedGroup: Int
     @Binding var selectedWeek: Int
+    @Binding var timeFrame: String
+    
     var body: some View {
         VStack (spacing: 0) {
             ForEach(0..<viewModel.pastRankedGroupTickets.count, id: \.self) { index in
@@ -490,7 +504,7 @@ struct pastLeaderboardView: View {
                         Spacer()
                     }
                     NavigationLink(destination:
-                                    ticketView(username: viewModel.pastRankedGroupTickets[index].username, uid: viewModel.pastRankedGroupTickets[index].uid, groupID: viewModel.pastRankedGroupTickets[index].groupID, selectedWeek: selectedGroup > 0 ? "\(viewModel.totalArrayOfDates[selectedGroup-1][selectedWeek])" : "", ticketFormatForGroups: viewModel.pastRankedGroupTickets[index].ticketFormat, ownTicket: false, onTicketPage: false),
+                                    ticketView(username: viewModel.pastRankedGroupTickets[index].username, uid: viewModel.pastRankedGroupTickets[index].uid, groupID: viewModel.pastRankedGroupTickets[index].groupID, selectedWeek: selectedGroup > 0 ? "\(viewModel.totalArrayOfDates[selectedGroup-1][selectedWeek])" : "", ticketFormatForGroups: viewModel.pastRankedGroupTickets[index].ticketFormat, ownTicket: false, onTicketPage: false, passedTimeFrame: timeFrame),
                                    label: {
                         BetCard(viewModel: viewModel, ticket: viewModel.pastRankedGroupTickets[index], rank: (viewModel.pastRankedGroupTickets[index].rank), ownCard: true, currentWeek: false, homePage: false).padding(.bottom,16)
                     }).id(UUID())
@@ -507,7 +521,7 @@ struct pastLeaderboardView: View {
                 VStack(alignment: .leading, spacing: 0) {
                         ForEach(0..<viewModel.pastRankedGroupTickets.count, id: \.self) { index in
                             NavigationLink(destination:
-                                            ticketView(username: viewModel.pastRankedGroupTickets[index].username, uid: viewModel.pastRankedGroupTickets[index].uid, groupID: viewModel.pastRankedGroupTickets[index].groupID, selectedWeek: selectedGroup > 0 ? "\(viewModel.totalArrayOfDates[selectedGroup-1][selectedWeek])" : "", ticketFormatForGroups: viewModel.pastRankedGroupTickets[index].ticketFormat, ownTicket: false, onTicketPage: false),
+                                            ticketView(username: viewModel.pastRankedGroupTickets[index].username, uid: viewModel.pastRankedGroupTickets[index].uid, groupID: viewModel.pastRankedGroupTickets[index].groupID, selectedWeek: selectedGroup > 0 ? "\(viewModel.totalArrayOfDates[selectedGroup-1][selectedWeek])" : "", ticketFormatForGroups: viewModel.pastRankedGroupTickets[index].ticketFormat, ownTicket: false, onTicketPage: false, passedTimeFrame: timeFrame),
                                            label: {
                                 BetCard(viewModel: viewModel, ticket: viewModel.pastRankedGroupTickets[index], rank: (viewModel.pastRankedGroupTickets[index].rank), ownCard: viewModel.pastRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, currentWeek: false, homePage: false).padding(.bottom,16)
                             }).id(UUID())
@@ -651,9 +665,9 @@ struct BetCard: View {
                     Spacer()
                     if(!ownCard && ticket.groupAdmin == Auth.auth().currentUser?.uid && currentWeek) {
                         Button(ticket.isEnabled ? "Enabled" : "Disabled", action: {
-                            viewModel.updateIsEnabled(ticket: self.ticket, isEnabled: ticket.isEnabled ? false : true) {_ in
-                                viewModel.fetchCurrentRankedTickets(groupID: ticket.groupID) {}
-                            }
+//                            viewModel.updateIsEnabled(ticket: self.ticket, isEnabled: ticket.isEnabled ? false : true) {_ in
+//                                viewModel.fetchCurrentRankedTickets(groupID: ticket.groupID) {}
+//                            }
                         }).foregroundColor(.white)
                             .font(.custom(K.customFonts.lexendDecaLight, size: 12))
 //                        .foregroundColor(!ticket.isEnabled ? Color.red : K.darkGreen)
@@ -666,7 +680,7 @@ struct BetCard: View {
         }
         .opacity(ticket.isEnabled || ticket.groupAdmin == Auth.auth().currentUser?.uid ? 1 : 0.66)
         .padding(.vertical, 10)
-        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 44, maxHeight: ticket.groupAdmin != Auth.auth().currentUser?.uid || ticket.username == UserData.shared.username ? 44 : 64)
+        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 44, maxHeight: ticket.groupAdmin != Auth.auth().currentUser?.uid || ticket.username == StaticUserData.shared.username ? 44 : 64)
         .background(ownCard ? K.finalColor.otherPurple.opacity(0.35): K.finalColor.cardBlue)
         .cornerRadius(10)
         //.overlay(ownCard ? RoundedRectangle(cornerRadius: 10).stroke(Color.white, lineWidth: 1) : RoundedRectangle(cornerRadius: 10).stroke(Color.clear, lineWidth: 0))
@@ -846,7 +860,7 @@ struct GroupJoinSheet: View {
                     }
                     else{
                         AppUtility.shared.showCustomAlert(alertType: .none, message: "Congratulations, you have joined \(group.groupName)", actionButtonTitle: nil, cancelButtonTitle: K.appButtonTitle.ok) { action in
-                                viewModel.joinGroup(group: group)
+                               // viewModel.joinGroup(group: group)
                                 isPresented = false
                         }
                     }
@@ -885,13 +899,13 @@ struct GroupJoinSheet: View {
         }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
         .padding()
         .onAppear() {
-            viewModel.checkIfGroupAlreadyJoined(group: group) { (alreadyJoined) in
-                if !alreadyJoined {
-                    canJoin = true
-                } else {
-                    canJoin = false
-                }
-            }
+//            viewModel.checkIfGroupAlreadyJoined(group: group) { (alreadyJoined) in
+//                if !alreadyJoined {
+//                    canJoin = true
+//                } else {
+//                    canJoin = false
+//                }
+//            }
             authVM.fetchUserInformation(uid: group.groupAdmin) { (user) in
                 if let user = user {
                     adminUsername = user.username

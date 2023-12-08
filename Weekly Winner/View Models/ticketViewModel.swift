@@ -160,23 +160,22 @@ class ticketViewModel: ObservableObject {
             }
     }
 
-    func fetchUserTickets(uid: String, groupNumber: Int, completion: @escaping () -> Void) {
+    func fetchUserTickets(timeFrame: String, completion: @escaping () -> Void) {
         guard let userId = Auth.auth().currentUser?.uid else { return }
-        groupServe.fetchUserTickets(userID: userId) { tickets, error in
+        groupServe.fetchUserTickets(userID: userId, timeFrame: timeFrame) { tickets, error in
             if let error = error {
                 print("Error fetching user groups: \(error.localizedDescription)")
             } else if let tickets = tickets {
                 self.userTickets = tickets
-                self.currentTicketFormat = tickets[groupNumber].ticketFormat
+                self.currentTicketFormat = tickets[0].ticketFormat
                
                 self.isTFLoaded = true
                 //self.isGroupsLoaded = true  // Set this to true when data is loaded
             }
             completion()
-            //print(groups)
-            //print(userId)
+
         }
-    }//test
+    }
     
     func fetchPastBets(uid: String, for groupNumber: Int, ticketFormat: [Int], selectedWeek: String, completion: @escaping () -> Void) {
         
@@ -241,8 +240,25 @@ class ticketViewModel: ObservableObject {
         
     }
     
-    func fetchBets(uid: String, for groupNumber: Int, ticketFormat: [Int], completion: @escaping () -> Void) {
-            let query = self.db.collection("users").document(uid).collection("bets").document("week").collection("currentWeekBets")
+    func fetchBets(uid: String, for groupNumber: Int, ticketFormat: [Int], timeFrame: String, completion: @escaping () -> Void) {
+        
+        let documentLoc:String = {
+            if timeFrame == "weekly" {
+                return "week"
+            } else {
+                return "day"
+            }
+        }()
+        
+        let collectionLoc:String = {
+            if timeFrame == "weekly" {
+                return "currentWeekBets"
+            } else {
+                return "currentDayBets"
+            }
+        }()
+        
+            let query = self.db.collection("users").document(uid).collection("bets").document(documentLoc).collection(collectionLoc)
                 .whereField("groupNumber", isEqualTo: groupNumber)
         query.getDocuments { (querySnapshot, error) in
             DispatchQueue.main.async {
@@ -339,11 +355,11 @@ class ticketViewModel: ObservableObject {
             if let error = error {
                 print("Error removing document: \(error)")
             } else {
-                self.fetchUserTickets(uid: userId, groupNumber: bet.groupNumber) {
-                    self.fetchBets(uid: userId, for: bet.groupNumber, ticketFormat: self.currentTicketFormat) {print("Document successfully removed!")
-                        self.groupServe.setPotentialToWin(potential: Int(self.totalPotentialWon), groupNumber: bet.groupNumber, completion: {_ in })
-                    } // fetch the updated list of bets
-                }
+//                self.fetchUserTickets(uid: userId, groupNumber: bet.groupNumber) {
+//                    self.fetchBets(uid: userId, for: bet.groupNumber, ticketFormat: self.currentTicketFormat) {print("Document successfully removed!")
+//                        self.groupServe.setPotentialToWin(potential: Int(self.totalPotentialWon), groupNumber: bet.groupNumber, completion: {_ in })
+//                    } // fetch the updated list of bets
+//                }
             }
         }
         
@@ -414,13 +430,13 @@ class ticketViewModel: ObservableObject {
         totalPotentialWon = totalPotentialWonLocal
     }
     
-    
-    func returnTotal(uid: String, groupNumber: Int, completion: @escaping (Int) -> Void) {
-        fetchBets(uid: uid, for: groupNumber, ticketFormat: self.currentTicketFormat){
-            let result = Int(self.totalWon)
-            completion(result)
-        }
-    }
+//    
+//    func returnTotal(uid: String, groupNumber: Int, completion: @escaping (Int) -> Void) {
+//        fetchBets(uid: uid, for: groupNumber, ticketFormat: self.currentTicketFormat){
+//            let result = Int(self.totalWon)
+//            completion(result)
+//        }
+//    }
 
     func isTeamAvailable(_ team: String,_ groupNumber: Int, _ betType: BetType) -> Bool {
         for betArray in totalBetArrays {

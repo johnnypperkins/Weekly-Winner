@@ -43,14 +43,21 @@ extension String { // Lmao what is this johnny
 }
 
 
-class UserData: ObservableObject {
+class StaticUserData: ObservableObject {
     @Published var username: String
+    @Published var dailyTicket: Ticket
+    @Published var weeklyTicket: Ticket
 
-    init(username: String) {
+    init(username: String, dailyTicket: Ticket, weeklyTicket: Ticket) {
         self.username = username
+        self.dailyTicket = dailyTicket
+        self.weeklyTicket = weeklyTicket
     }
 
     // Singleton instance
-    static let shared = UserData(username: "")
+    static let shared = StaticUserData(
+        username: "",
+        dailyTicket: Ticket(id: "", username: "", uid: "", groupID: "", groupNumber: -99, dateCreated: Timestamp(date:Date()), totalWon: 0, totalPotentialWon: 0, groupName: "", rank: "", isEnabled: false, groupAdmin: "", ticketFormat: [0]),
+        weeklyTicket: Ticket(id: "", username: "", uid: "", groupID: "", groupNumber: -99, dateCreated: Timestamp(date:Date()), totalWon: 0, totalPotentialWon: 0, groupName: "", rank: "", isEnabled: false, groupAdmin: "", ticketFormat: [0]))
 }
 

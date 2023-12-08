@@ -4,7 +4,7 @@ import FirebaseFirestore
 import FirebaseAuth
 import FirebaseMessaging
 import UserNotifications
-import FirebaseAnalytics
+//import FirebaseAnalytics
 
 // Log a test event
 
@@ -16,10 +16,10 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         FirebaseApp.configure()
-        Analytics.logEvent("test_event", parameters: [
-            "name": "test_name" as NSObject,
-            "value": 123 as NSObject
-        ])
+//        Analytics.logEvent("test_event", parameters: [
+//            "name": "test_name" as NSObject,
+//            "value": 123 as NSObject
+//        ])
 
         Messaging.messaging().delegate = self
 
