@@ -68,7 +68,6 @@ struct UserProfileView: View {
 //                groupsVM.fetchUserGroups {
 //                    groupsVM.userGroupsLoaded = true
 //                }
-                groupsVM.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: "weekly") {}
 //            }
 //            groupsVM.fetchUserTickets(timeFrame: "daily") {}
             authenticationVM.forceUpdate () {
@@ -331,7 +330,7 @@ struct yourGroups: View {
             
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
-                    ForEach(0..<groupsVM.userTickets.count, id: \.self) { index in
+                    ForEach(0..<2, id: \.self) { index in
                         // Use your custom view or data here.
                         // Replace `Text("Item \(index)")` with your custom view
                         VStack(alignment: .leading, spacing: 8) {
@@ -358,51 +357,52 @@ struct yourGroups: View {
                                             .scaledToFit()
                                             .frame(height: 95)
                                     }
+                                    HStack(alignment: .top) {
+                                        Spacer()
+                                        Text(groupsVM.userGroups[index].groupName)
+                                            .font(.custom(K.customFonts.poppinsMedium, size: 16))
+                                            .foregroundColor(.white)
+                                        
+                                        Spacer()
+                                    }
                                 }
-                                HStack(alignment: .top) {
-                                    Spacer()
-                                    Text(groupsVM.userTickets[index].groupName)
-                                        .font(.custom(K.customFonts.poppinsMedium, size: 16))
-                                        .foregroundColor(.white)
-                                    
-                                    Spacer()
-                                }
+                               
                             }
-                            VStack(alignment: .leading, spacing: 0) {
-                                HStack() {
-                                    Text("Rank")
-                                        .font(.custom(K.customFonts.poppinsRegular, size: 12))
-                                        .foregroundColor(.white)
-                                    
-                                    Spacer()
-                                    
-                                    Text("#\(groupsVM.userTickets[index].rank)")
-                                        .font(.custom(K.customFonts.poppinsRegular, size: 14))
-                                        .foregroundColor(.white)
-                                }
-                                HStack() {
-                                    Text("Pending")
-                                        .font(.custom(K.customFonts.poppinsRegular, size: 12))
-                                        .foregroundColor(.white)
-                                    
-                                    Spacer()
-                                    
-                                    Text("\(groupsVM.userTickets[index].totalPotentialWon)")
-                                        .font(.custom(K.customFonts.poppinsRegular, size: 14))
-                                        .foregroundColor(.white)
-                                }
-                                HStack() {
-                                    Text("Total Won")
-                                        .font(.custom(K.customFonts.poppinsRegular, size: 12))
-                                        .foregroundColor(.white)
-                                    
-                                    Spacer()
-                                    
-                                    Text("\(groupsVM.userTickets[index].totalWon)")
-                                        .font(.custom(K.customFonts.poppinsRegular, size: 14))
-                                        .foregroundColor(.white)
-                                }
-                            }
+//                            VStack(alignment: .leading, spacing: 0) {
+//                                HStack() {
+//                                    Text("Rank")
+//                                        .font(.custom(K.customFonts.poppinsRegular, size: 12))
+//                                        .foregroundColor(.white)
+//                                    
+//                                    Spacer()
+//                                    
+//                                    Text("#\(groupsVM.userTickets[index].rank)")
+//                                        .font(.custom(K.customFonts.poppinsRegular, size: 14))
+//                                        .foregroundColor(.white)
+//                                }
+//                                HStack() {
+//                                    Text("Pending")
+//                                        .font(.custom(K.customFonts.poppinsRegular, size: 12))
+//                                        .foregroundColor(.white)
+//                                    
+//                                    Spacer()
+//                                    
+//                                    Text("\(groupsVM.userTickets[index].totalPotentialWon)")
+//                                        .font(.custom(K.customFonts.poppinsRegular, size: 14))
+//                                        .foregroundColor(.white)
+//                                }
+//                                HStack() {
+//                                    Text("Total Won")
+//                                        .font(.custom(K.customFonts.poppinsRegular, size: 12))
+//                                        .foregroundColor(.white)
+//                                    
+//                                    Spacer()
+//                                    
+//                                    Text("\(groupsVM.userTickets[index].totalWon)")
+//                                        .font(.custom(K.customFonts.poppinsRegular, size: 14))
+//                                        .foregroundColor(.white)
+//                                }
+//                            }
                         }
                         .padding(10)
                         .frame(width: 135, height: 205)

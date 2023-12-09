@@ -30,16 +30,16 @@ class groupsViewModel: ObservableObject {
 
     
     init() {
-        fetchUserTickets(timeFrame: "weekly") {
+        fetchUserTickets(timeFrame: "daily") {
             self.groupsFetched = true
             self.fetchUserGroups {
                 self.userGroupsLoaded = true
             }
-            //self.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: "weekly") {}
+            self.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: "daily") {}
 
 
         }
-        fetchUserTickets(timeFrame: "daily") {}
+        fetchUserTickets(timeFrame: "weekly") {}
     }
     
     func uploadGroupImage(_ image: UIImage, group: Group, completion: @escaping (String) -> Void) {
@@ -316,11 +316,11 @@ class groupsViewModel: ObservableObject {
     
     func fetchUserGroups(completion: @escaping () -> Void) {
         
-        let tempArray = self.userTickets.sorted { $0.groupNumber < $1.groupNumber }
-        var groupIDs: [String] = []
-        for ticket in tempArray {
-            groupIDs.append(ticket.groupID)
-        }
+//        let tempArray = self.userTickets.sorted { $0.groupNumber < $1.groupNumber }
+        var groupIDs: [String] = ["Global", "GlobalDaily"]
+//        for ticket in tempArray {
+//            groupIDs.append(ticket.groupID)
+//        }
         let groupsCollection = db.collection("groups")
         
         if self.totalArrayOfDates.count < groupIDs.count {
@@ -484,7 +484,32 @@ class groupsViewModel: ObservableObject {
 
 
 
-    func resetTicketFormat(newTicketFormat: [Int], groupID: String, completion: @escaping () -> Void) {
+    func resetTicketFormat(newTicketFormat: [Int], groupID: String, timeFrame: String, completion: @escaping () -> Void) {
+        
+        let documentLoc:String = {
+            if timeFrame == "weekly" {
+                return "week"
+            } else {
+                return "day"
+            }
+        }()
+        
+        let collectionLoc:String = {
+            if timeFrame == "weekly" {
+                return "currentWeekTickets"
+            } else {
+                return "currentDayTickets"
+            }
+        }()
+        
+        let collectionLoc2:String = {
+            if timeFrame == "weekly" {
+                return "currentWeekBets"
+            } else {
+                return "currentDayBets"
+            }
+        }()
+        
         let db = Firestore.firestore()
         print("NEW TICKET FORMAT", newTicketFormat)
         print("GROUPID", groupID)
@@ -515,7 +540,7 @@ class groupsViewModel: ObservableObject {
                     group.enter()
                     
                     // Step 3: Update ticketFormat for the user's group ticket
-                    let ticketsRef = db.collection("users").document(userID).collection("tickets").document("week").collection("currentWeekTickets")
+                    let ticketsRef = db.collection("users").document(userID).collection("tickets").document(documentLoc).collection(collectionLoc)
                     ticketsRef.whereField("groupID", isEqualTo: groupID).getDocuments { (snapshot, err) in
                         if let err = err {
                             print("Error getting tickets: \(err)")
@@ -534,7 +559,7 @@ class groupsViewModel: ObservableObject {
                         }
 
                         // Step 4: Delete all bets for the group
-                        let betsRef = db.collection("users").document(userID).collection("bets").document("week").collection("currentWeekBets")
+                        let betsRef = db.collection("users").document(userID).collection("bets").document(documentLoc).collection(collectionLoc2)
                         betsRef.whereField("groupID", isEqualTo: groupID).getDocuments { (snapshot, err) in
                             if let err = err {
                                 print("Error getting bets: \(err)")

@@ -17,6 +17,7 @@ struct groupSettingsView: View {
     let groupAdmin: String
     let groupNum: Int
     let ticketFormat: [Int]
+    let timeFrame: String
 
     @State private var oneLegNum: Int
     @State private var twoLegNum: Int
@@ -25,12 +26,13 @@ struct groupSettingsView: View {
     @State private var fiveLegNum: Int
     @State private var showingAlert2 = false
     
-    init(selectedGroup: Binding<Int>, viewModel: groupsViewModel, groupAdmin: String, groupNum: Int, ticketFormat: [Int]) {
+    init(selectedGroup: Binding<Int>, viewModel: groupsViewModel, groupAdmin: String, groupNum: Int, ticketFormat: [Int], timeFrame: String) {
             self._selectedGroup = selectedGroup
             self.viewModel = viewModel
             self.groupAdmin = groupAdmin
             self.groupNum = groupNum
-           self.ticketFormat = ticketFormat
+            self.ticketFormat = ticketFormat
+            self.timeFrame = timeFrame
 
             self._oneLegNum = State(initialValue: ticketFormat.filter { $0 == 1 }.count)
             self._twoLegNum = State(initialValue: ticketFormat.filter { $0 == 2 }.count)
@@ -125,7 +127,7 @@ struct groupSettingsView: View {
                             }.padding(.horizontal)
                             if customizeTicketFormat(oneLegNum,twoLegNum,threeLegNum,fourLegNum,fiveLegNum) != ticketFormat {
                                 Button(action: {
-                                    viewModel.resetTicketFormat(newTicketFormat: customizeTicketFormat(oneLegNum,twoLegNum,threeLegNum,fourLegNum,fiveLegNum), groupID: viewModel.userTickets[selectedGroup-1].groupID) {
+                                    viewModel.resetTicketFormat(newTicketFormat: customizeTicketFormat(oneLegNum,twoLegNum,threeLegNum,fourLegNum,fiveLegNum), groupID: viewModel.userTickets[selectedGroup-1].groupID, timeFrame: timeFrame) {
                                         
                                     }
                                     if selectedImage != nil {

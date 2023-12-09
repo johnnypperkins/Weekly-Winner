@@ -36,7 +36,7 @@ struct ticketView: View {
             if selectedWeek != "current" {
                 return true
             } else {
-                if StaticUserData.shared.dailyTicket.isEnabled || StaticUserData.shared.dailyTicket.groupID == "Global" {
+                if StaticUserData.shared.dailyTicket.isEnabled || StaticUserData.shared.dailyTicket.groupID == "GlobalDaily" {
                     return true
                 } else {
                     return false

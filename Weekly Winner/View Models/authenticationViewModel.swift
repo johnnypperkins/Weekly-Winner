@@ -211,7 +211,7 @@ class authenticationViewModel: ObservableObject {
             var enabled = false
             let db = Firestore.firestore()
             
-            // Fetch the ticketFormat from the database
+            // Join Global Weekly
             db.collection("groups").document("Global").getDocument { (document, error) in
                 if let error = error {
                     print("Error getting document: \(error)")
@@ -253,6 +253,54 @@ class authenticationViewModel: ObservableObject {
                     completion(NSError(domain: "", code: 404, userInfo: [NSLocalizedDescriptionKey : "Document not found"]))
                 }
             }
+            
+            // Join daily
+            db.collection("groups").document("GlobalDaily").getDocument { (document, error) in
+                if let error = error {
+                    print("Error getting document: \(error)")
+                    completion(error)
+                } else if let document = document, document.exists {
+                    guard let ticketFormat = document.get("ticketFormat") as? [Int] else {
+                        print("Ticket format not found or is of incorrect type")
+                        completion(NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey : "Ticket format not found"]))
+                        return
+                    }
+                    
+                    db.collection("groups").document("GlobalDaily").collection("members").getDocuments { (snapshot, error) in
+                        if let error = error {
+                            print("Error getting documents: \(error)")
+                            completion(error)
+                        } else {
+                            let rank = (snapshot?.documents.count)! + 1 ?? -99
+                            let userTicketsCollection = db.collection("users").document(Auth.auth().currentUser!.uid).collection("tickets").document("day").collection("currentDayTickets")
+                            let ticket = Ticket(username: username, uid: Auth.auth().currentUser!.uid, groupID: "GlobalDaily", groupNumber: 0, dateCreated: Timestamp(date: Date()), totalWon: 0, totalPotentialWon: 0, groupName: "Daily", rank: String(rank), isEnabled: enabled, groupAdmin: "GOD", ticketFormat: ticketFormat) // Using ticketFormat from database
+                            do {
+                                let _ = try userTicketsCollection.addDocument(from: ticket) { error in
+                                    if let error = error {
+                                        print("Error uploading group: \(error)")
+                                        completion(error)
+                                    } else {
+                                        print("Joined group successfully!")
+                                        self.db.collection("groups").document("GlobalDaily").collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": Auth.auth().currentUser!.uid])
+                                        completion(nil)
+                                    }
+                                }
+                            } catch {
+                                print("Error encoding group: \(error)")
+                                completion(error)
+                            }
+                        }
+                    }
+                } else {
+                    print("Document does not exist")
+                    completion(NSError(domain: "", code: 404, userInfo: [NSLocalizedDescriptionKey : "Document not found"]))
+                }
+            }
+            
+            
+            
+            
+            
         }
     }
 

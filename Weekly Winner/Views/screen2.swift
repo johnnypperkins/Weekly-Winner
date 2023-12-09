@@ -662,7 +662,8 @@ struct BetDetailsView: View {
                     
                 Button(action: {
                     print("groupNumber: \(groupNumber), betNumber: \(betNumber)")
-                    viewModel.uploadBet(groupNumber: groupNumber, groupID: groupsVM.userTickets[groupNumber].groupID, betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread), whichSport: game.whichSport), betType: betType, gameID: game.idd, whichSport: game.whichSport, points_bought: Int(chosenSpread-originalSpread), timeFrame: timeFrame) {_ in
+                    viewModel.uploadBet(groupNumber: groupNumber, groupID: timeFrame == "daily" ? StaticUserData.shared.dailyTicket.groupID : StaticUserData.shared.weeklyTicket.groupID
+                                        , betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread), whichSport: game.whichSport), betType: betType, gameID: game.idd, whichSport: game.whichSport, points_bought: Int(chosenSpread-originalSpread), timeFrame: timeFrame) {_ in
                         ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat, timeFrame: timeFrame) {
                             let groupServe = groupService()
                             groupServe.setPotentialToWin(potential: Int(ticketVM.totalPotentialWon), groupNumber: groupNumber, timeFrame: timeFrame, completion: {_ in })

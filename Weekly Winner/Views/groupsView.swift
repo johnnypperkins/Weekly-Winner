@@ -30,11 +30,8 @@ struct groupsView: View {
     //@State private var groupsFetched = false
 
     init() {
-//        viewModel.fetchUserTickets(timeFrame: "daily") {
-//            
-//        }
-        
-        viewModel.fetchCurrentRankedTickets(groupID: "Global", timeFrame: timeFrame) {
+
+        viewModel.fetchCurrentRankedTickets(groupID: "GlobalDaily", timeFrame: "daily") {
         }
         
 
@@ -52,7 +49,7 @@ struct groupsView: View {
             }
         )
         NavigationStack {
-            if (viewModel.userTickets.count > 0) {
+            if (StaticUserData.shared.weeklyTicket.groupID == "Global") {
                 VStack {
                     
                     HStack {
@@ -78,10 +75,7 @@ struct groupsView: View {
                             timeFrame = "weekly"
                             viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {
                             }
-//                            showingChat = false
-//                            //print("\(selectedGroup) is selected")
                         }) {
-                            //Text(viewModel.userTickets[self.selectedGroup-1].groupName)
                             Text("Weekly")
                                 .font(.custom(K.customFonts.lexendDecaLight, size: 16))
                                 .foregroundColor(.white)
@@ -140,10 +134,10 @@ struct groupsView: View {
                                                     }
                                                 }
                                             }
-                                            Text("\(viewModel.totalPlayers) Members")
-                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.medium))
-                                                .foregroundColor(.white.opacity(0.75))
-                                                .padding(.leading, 3)
+//                                            Text("\(viewModel.totalPlayers) Members")
+//                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.medium))
+//                                                .foregroundColor(.white.opacity(0.75))
+//                                                .padding(.leading, 3)
                                             if selectedGroup == 1 {
                                                 Text("\(viewModel.currentRankedGroupTickets.count) Active")
                                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.medium))
@@ -165,11 +159,7 @@ struct groupsView: View {
                                             Button(action: {
                                                 if viewModel.weekIndex < viewModel.totalArrayOfDates[0].count-1  {
                                                     viewModel.weekIndex = viewModel.weekIndex + 1
-//                                                    if(viewModel.weekIndex == 0) {
-//                                                        viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[0].groupID) {}
-//                                                    } else {
-                                                        viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, week: viewModel.totalArrayOfDates[0][viewModel.weekIndex]) {}
-//                                                    }
+                                                    viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, week: viewModel.totalArrayOfDates[0][viewModel.weekIndex]) {}
                                                 }
                                             }, label: {
                                                 if viewModel.weekIndex < viewModel.totalArrayOfDates[0].count-1  {
@@ -222,7 +212,7 @@ struct groupsView: View {
                                     Image(showingChat ? "podiumUnselected" : "podiumSelected") // Assuming "ticket" and "ticket.fill" are your symbols
                                         .resizable()
                                         .frame(width: 25, height: 28)
-                                        //.foregroundColor(showingChat ? .gray : .blue)
+                                        
                                 }
                                 
                                 Button(action: {
@@ -240,7 +230,6 @@ struct groupsView: View {
                                     Image("StatsUnselected")
                                         .resizable()
                                         .frame(width: 20, height: 20)
-                                    //.padding()
                                         .foregroundColor(.white)
                                 }
                                 .sheet(isPresented: $isStatsViewPresented) {
@@ -248,7 +237,7 @@ struct groupsView: View {
                                         .presentationDetents([.fraction(0.75)])
                                 }
                                 
-                                if Auth.auth().currentUser?.uid == "fg57TZhmLmWH9TT3WCA3WuXT7dy2" || viewModel.userTickets[selectedGroup-1].groupID != "Global" { // reidbrown1 id
+                                if Auth.auth().currentUser?.uid == "fg57TZhmLmWH9TT3WCA3WuXT7dy2" { // reidbrown1 id
                                     Button(action: {
                                         isGroupSettingsViewPresented = true
                                     }) {
@@ -259,16 +248,17 @@ struct groupsView: View {
                                             .foregroundColor(.white)
                                     }
                                     .sheet(isPresented: $isGroupSettingsViewPresented) {
-                                        groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel, groupAdmin: viewModel.userTickets[selectedGroup-1].groupAdmin, groupNum: selectedGroup-1, ticketFormat: viewModel.userTickets[selectedGroup-1].ticketFormat)
-                                            .presentationDetents([viewModel.userTickets[selectedGroup-1].groupAdmin == Auth.auth().currentUser?.uid ? .fraction(0.75) : .fraction(0.15)])
+                                        
+                                        groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel, groupAdmin: StaticUserData.shared.weeklyTicket.groupAdmin, groupNum: 0,
+                                                          ticketFormat: timeFrame == "weekly" ? StaticUserData.shared.weeklyTicket.ticketFormat : StaticUserData.shared.dailyTicket.ticketFormat, timeFrame: timeFrame)
+                                            .presentationDetents([.fraction(0.75)])
                                     }
                                 }
                                 
                             }.padding(EdgeInsets(top: 5, leading: 5, bottom: 10, trailing: 16))
                         }.frame(height: 130)
                             .padding(.bottom, 7.5)
-//                            .background(K.finalColor.cardBlue)
-//                            .cornerRadius(7.5)
+
                         Divider().background(.white).padding(EdgeInsets(top: 10, leading: 18, bottom: 4.5, trailing: 18))
                         VStack(alignment: .leading, spacing: 0) {
                             if !showingChat {
@@ -279,7 +269,7 @@ struct groupsView: View {
                                     pastLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup, selectedWeek: $viewModel.weekIndex, timeFrame: $timeFrame)
                                 }
                             } else {
-                                chatView(viewModel: chatVM, selectedGroup: $selectedGroup, groupsViewModel: viewModel)
+                                chatView(viewModel: chatVM, selectedGroup: $selectedGroup, groupsViewModel: viewModel, timeFrame: $timeFrame)
                             }
                             // .clipShape(RoundedRectangle(cornerRadius: 10)) // Apply corner radius to the ScrollView
                             
@@ -309,17 +299,12 @@ struct groupsView: View {
                 .onAppear(){
                     if selectedGroup > 0 {
                         print("on appear ranked")
-//                        viewModel.fetchCurrentRankedTickets(groupID: viewModel.userTickets[selectedGroup-1].groupID) {
-//                            viewModel.getGroupAdmin(groupID: viewModel.userTickets[selectedGroup-1].groupID) // keeps saying index out of range
-//                        }
                     }
                 }
             }
         }.navigationTitle("Groups")
             .onAppear() {
-//                viewModel.fetchUserTickets() {
-//                    viewModel.fetchUserGroups {}
-//                }
+                
             }.padding(.top, 75)
             .background(Color(red: 0.02, green: 0.05, blue: 0.26))
     }
@@ -923,6 +908,9 @@ struct chatView: View {
     @Binding var selectedGroup: Int
     @ObservedObject var groupsViewModel: groupsViewModel
     @State private var chatMessage: String = "" // State variable to hold the chat message
+    
+    @Binding var timeFrame: String
+    
     //@State private var isChatsLoaded: Bool = false
     
     
@@ -978,7 +966,7 @@ struct chatView: View {
             
         }.padding([.horizontal, .top])
         .onAppear() {
-            viewModel.getChats(groupID: groupsViewModel.userTickets[selectedGroup-1].groupID) {_ in
+            viewModel.getChats(groupID: timeFrame == "weekly" ? StaticUserData.shared.weeklyTicket.groupID : StaticUserData.shared.dailyTicket.groupID) {_ in
             }
             let formatter = DateFormatter()
             formatter.dateFormat = "MMM d, h:mma"
@@ -988,7 +976,7 @@ struct chatView: View {
     
     func submitMessage() {
         if !chatMessage.isEmpty {
-            viewModel.uploadChat(message: chatMessage, groupID: groupsViewModel.userTickets[selectedGroup-1].groupID)
+            viewModel.uploadChat(message: chatMessage, groupID: timeFrame == "weekly" ? StaticUserData.shared.weeklyTicket.groupID : StaticUserData.shared.dailyTicket.groupID)
             chatMessage = "" // clear the text field
             hideKeyboard() // hide keyboard
         }
