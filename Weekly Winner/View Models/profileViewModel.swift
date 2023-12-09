@@ -75,9 +75,9 @@ class profileViewModel: ObservableObject {
     func fetchUser() {
             guard let uid = user.id else { return }
             
-            service.fetchUser(withUid: uid) { user in
-                self.user = user
-                self.profileImageURLHolder = user.profileImageUrl
+        service.fetchUser(uid: uid) { user,success  in
+            self.user = user!
+            self.profileImageURLHolder = user!.profileImageUrl
             }
         }
     

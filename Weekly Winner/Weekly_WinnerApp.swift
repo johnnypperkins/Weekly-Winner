@@ -1,4 +1,5 @@
 import Firebase
+import GoogleSignIn
 import FirebaseCore
 import FirebaseFirestore
 import FirebaseAuth
@@ -51,6 +52,11 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
             readableToken += String(format: "%02.2hhx", deviceToken[index] as CVarArg)
         }
         print("Received an APNs device token: \(readableToken)")
+    }
+    func application(_ app: UIApplication,
+                     open url: URL,
+                     options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+      return GIDSignIn.sharedInstance.handle(url)
     }
 }
 

@@ -8,7 +8,9 @@
 import Firebase
 import FirebaseFirestore
 
-
+import FirebaseCore
+import FirebaseAuth
+import GoogleSignIn
 
 enum AuthenticationState {
   case unauthenticated
@@ -45,6 +47,69 @@ class authenticationViewModel: ObservableObject {
         self.fetchUser() {}
         
     }
+    
+    enum AuthenticationError: Error {
+      case tokenError(message: String)
+    }
+    
+    func signInWithGoogle() async  {
+        authenticationState = .authenticating
+        guard let clientID = FirebaseApp.app()?.options.clientID else {
+          fatalError("No client ID found in Firebase configuration")
+        }
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.configuration = config
+
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first,
+              let rootViewController = window.rootViewController else {
+          print("There is no root view controller!")
+          return
+        }
+
+          do {
+            let userAuthentication = try await GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController)
+
+            let user = userAuthentication.user
+            guard let idToken = user.idToken else { throw AuthenticationError.tokenError(message: "ID token missing") }
+            let accessToken = user.accessToken
+
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken.tokenString,
+                                                           accessToken: accessToken.tokenString)
+
+            authResult = try await Auth.auth().signIn(with: credential)
+              let firebaseUser = authResult!.user
+              authenticationState = .authenticated
+            print("User \(firebaseUser.uid) signed in with email \(firebaseUser.email ?? "unknown")")
+              self.userSession = firebaseUser
+              
+              service.fetchUser(uid: firebaseUser.uid) { user,success  in
+                  if success == false {
+                      let newUser = User(username: "", firstName: "", lastName: "", profileImageUrl: "", email: firebaseUser.email ?? "", dateJoined: Timestamp(date: Date()), instagram: "", promoCode: "", country: "",state: "", age: -99, gender: "")
+                      self.currUser = newUser
+                      Task{
+                          await self.uploadUser(newUser)
+                      }
+                      self.joinGlobal { error in
+                          
+                      }
+                  }
+                  else{
+                      self.fetchUser {
+
+                      }
+                  }
+              }
+              
+              
+            return
+          }
+          catch {
+            print(error.localizedDescription)
+            self.errorMessage = error.localizedDescription
+            return
+          }
+      }
     
     func forceUpdate(completion: @escaping () -> Void) {
         let db = Firestore.firestore()
@@ -110,7 +175,7 @@ class authenticationViewModel: ObservableObject {
                 //userSession = authResult!.user // added - Reid
                 let user = authResult!.user
                 
-                let newUser = User(username: username, firstName: firstName, lastName: lastName, profileImageUrl: "", email: email, dateJoined: Timestamp(date: Date()), instagram: instagram, promoCode: promoCode, country: "",state: "", age: -99, gender: "")
+                let newUser = User(username: username.lowercased(), firstName: firstName, lastName: lastName, profileImageUrl: "", email: email, dateJoined: Timestamp(date: Date()), instagram: instagram, promoCode: promoCode, country: "",state: "", age: -99, gender: "")
                 await uploadUser(newUser)
                 
                 authenticationState = .authenticated
@@ -169,13 +234,14 @@ class authenticationViewModel: ObservableObject {
         }
     
     func fetchUser(completion: @escaping () -> Void) {
-            guard let uid = self.userSession?.uid else { return }
+        guard let uid = self.userSession?.uid else { return }
             
-            service.fetchUser(withUid: uid) { user in
+        service.fetchUser(uid: uid) { user,success  in
                 //print(user)
                 self.currUser = user
-                StaticUserData.shared.username = self.currUser!.username
+//                StaticUserData.shared.username = self.currUser!.username
                 //print(UserData.shared.username)
+                print(user)
             }
         }
     

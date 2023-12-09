@@ -10,16 +10,20 @@ import FirebaseFirestoreSwift
 
 struct userService {
     
-    func fetchUser(withUid uid: String, completion: @escaping(User) -> Void) {
-            Firestore.firestore().collection("users")
-                .document(uid)
-                .getDocument { snapshot, _ in
-                    guard let snapshot = snapshot else { return }
-                    
-                    guard let user = try? snapshot.data(as: User.self) else { return }
-                   completion(user)
-                }
+    func fetchUser(uid: String, completion: @escaping (User?, Bool) -> Void) {
+        Firestore.firestore().collection("users").document(uid).getDocument { snapshot, error in
+            guard let snapshot = snapshot else {
+                completion(nil, false) // Return false if there's an issue with document retrieval
+                return
+            }
+            
+            if let user = try? snapshot.data(as: User.self) {
+                completion(user, true) // Return true and the user object if successfully retrieved
+            } else {
+                completion(nil, false) // Return false if there's an issue converting data to User
+            }
         }
+    }
     
    
     struct MyDocument: Codable {

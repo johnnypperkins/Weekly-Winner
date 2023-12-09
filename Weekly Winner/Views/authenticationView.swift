@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+import FirebaseCore
+import FirebaseAuth
+import GoogleSignIn
 
 struct authenticationView: View {
     @State private var isShowingSignup = false
@@ -158,30 +161,94 @@ struct LoginView: View {
                             .presentationDetents([.fraction(0.65)])
                     }
                     
-                    
-                    Button(action: {
-                        viewModel.signIn()
-                        
-                        if viewModel.errorMessage != "" && viewModel.authenticationState == .unauthenticated {
-                            AppUtility.shared.showCustomAlert(alertType: .none, message: viewModel.errorMessage ?? "", actionButtonTitle: nil, cancelButtonTitle: K.appButtonTitle.ok) { action in
+                    ZStack{
+                        Button(action: {
+                            viewModel.signIn()
+                            
+                            if viewModel.errorMessage != "" && viewModel.authenticationState == .unauthenticated {
+                                AppUtility.shared.showCustomAlert(alertType: .none, message: viewModel.errorMessage ?? "", actionButtonTitle: nil, cancelButtonTitle: K.appButtonTitle.ok) { action in
+                                    
+                                }
+                            }
+                            
+                        }) {
+                            HStack{
+                                Spacer()
+                                Text("Login")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .foregroundColor(.white)
+                                Spacer()
+                            }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 55 , maxHeight: 55)
+                                .background(Color(red: 0.31, green: 0.57, blue: 1))
+                                .cornerRadius(10)
+                                .padding(.horizontal,16)
+                            
+                            
+                        }
+                        if viewModel.authenticationState == .authenticated && viewModel.currUser?.email != "" {
+                            
+                            
+                            NavigationLink {profilePhotoSelectorView(model: viewModel)/*.environmentObject(AuthenticationViewModel())*/} label: {
+                                
+                                Text("Welcome")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .frame(maxWidth: .infinity)
+                                    .background(Color.green)
+                                    .cornerRadius(10)
                                 
                             }
                         }
-                        
-                    }) {
-                        HStack{
-                            Spacer()
-                            Text("Login")
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
-                                .foregroundColor(.white)
-                            Spacer()
-                        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                            .background(Color(red: 0.31, green: 0.57, blue: 1))
-                            .cornerRadius(10)
-                            .padding(.horizontal,16)
-                            .padding(.bottom,100)
-                        
                     }
+                    VStack{
+                        HStack {
+                            Rectangle()
+                                .frame(height: 0.5)
+                                .foregroundColor(.white)
+                            
+                            Text("Or")
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 10)
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 13))
+                            
+                            Rectangle()
+                                .frame(height: 0.5)
+                                .foregroundColor(.white)
+                        }.padding(.horizontal,16)
+                        HStack{
+                            Button {
+                                Task{
+                                    await viewModel.signInWithGoogle()
+                                }
+                            } label: {
+                                Image("googleLogo")
+                                    .resizable()
+                                    .frame(width: 50, height: 50)
+                            }
+//                            Button {
+//
+//                            } label: {
+//                                Image("appleLogo")
+//                                    .resizable()
+//                                    .frame(width: 50, height: 50)
+//                                    .cornerRadius(25)
+//                            }.padding(.leading,12)
+//                            Button {
+//                                Task{
+//                                    await viewModel.signInWithGoogle()
+//                                }
+//                            } label: {
+//                                Image("googleSignIn")
+//                                    .resizable()
+//                                    .frame(width:300, height: 69)
+//                            }
+
+                            
+                        }.padding(.top,5)
+                    }
+                    .padding(.bottom,75)
+                    .padding(.top,20)
                     Spacer()
                     
                     
@@ -219,6 +286,13 @@ struct LoginView: View {
                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             }
     }
+//    private func signInWithGoogle() {
+//        Task {
+//          if await viewModel.signInWithGoogle() == true {
+//            dismiss()
+//          }
+//        }
+//      }
 }
 extension View {
     func placeholder<Content: View>(
@@ -655,7 +729,7 @@ struct PasswordResetView: View {
             Spacer()
                 Button(action: {
                     viewModel.forgotPassButton_Tapped(email: email) {
-                        if viewModel.errorMessage == "" {
+                        if viewModel.errorMessage == nil {
                             AppUtility.shared.showCustomAlert(alertType: .none, message: "A link has been sent to your email with instructions to reset your password", actionButtonTitle: nil, cancelButtonTitle: K.appButtonTitle.ok) { action in
                             }
                         }
