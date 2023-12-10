@@ -477,7 +477,7 @@ class groupService {
         }()
         
         Task{
-            let username = StaticUserData.shared.username
+            //let username = StaticUserData.shared.username
             
             db.collection("users").document(userID).collection("tickets").document(documentLoc).collection(collectionLoc).getDocuments { querySnapshot, error in
                 guard let documents = querySnapshot?.documents else {
@@ -499,6 +499,7 @@ class groupService {
                     let groupAdmin = document.data()["groupAdmin"] as? String ?? "null"// default value if not found
                     let ticketFormat = document.data()["ticketFormat"] as? [Int] ?? [1,1,1,1,1]// default value if not found
                     let dateCreated = document.data()["dateCreated"] as! Timestamp
+                    let username = document.data()["username"] as? String ?? ""
                     
                     let ticket = Ticket(username: username, uid: userID, groupID: groupID, groupNumber: groupNumber, dateCreated: dateCreated, totalWon: totalWon, totalPotentialWon: totalPotentialWon, groupName: groupName, rank: String(rank), isEnabled: isEnabled, groupAdmin: groupAdmin, ticketFormat: ticketFormat)
                     tickets.append(ticket) // Ticket99

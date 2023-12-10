@@ -19,6 +19,7 @@ struct UserProfileView: View {
     @StateObject var countdownTimer = CountdownTimer()
     @State private var showWebpage = false
     @Binding var tab: Tab
+    @State var timeFrame = "weekly"
     
     
     
@@ -34,7 +35,7 @@ struct UserProfileView: View {
     var body: some View {
         VStack(spacing: 15) {
             //Spacer()
-            ProfileHeaderView()
+            ProfileHeaderView(timeFrame: $timeFrame, authVM: authenticationVM)
                 .padding(.top, 10)
                 .padding(.horizontal)
             
@@ -148,65 +149,83 @@ struct SafariView: UIViewControllerRepresentable {
 struct ProfileHeaderView: View {
     @State private var showWebpage = false
     @State private var showRulesPage = false
+    @Binding var timeFrame: String
+    @StateObject var authVM: authenticationViewModel
 //    @StateObject var authVM: authenticationViewModel
     var body: some View {
         HStack() {
-//            if authVM.currUser?.profileImageUrl != nil {
-//                KFImage(URL(string: authVM.currUser?.profileImageUrl ?? "sampleImage"))
-//                    .resizable()
-//                    .clipShape(Circle())
-//                    .foregroundColor(.clear)
-//                    .frame(width: 30, height: 30)
-//            }else {
-//                Image("sampleImage")
-//                    .resizable()
-//                    .foregroundColor(.clear)
-//                    .frame(width: 30, height: 30)
-//            }
-            
-            Text("WagerPool")
-                .font(.custom(K.customFonts.lexendDecaSB, size: 24))
-                .foregroundColor(K.finalColor.titleBlue)
+            if authVM.currUser?.profileImageUrl != nil {
+                KFImage(URL(string: authVM.currUser?.profileImageUrl ?? "sampleImage"))
+                    .resizable()
+                    .clipShape(Circle())
+                    .foregroundColor(.clear)
+                    .frame(width: 30, height: 30)
+            }else {
+                Image("sampleImage")
+                    .resizable()
+                    .foregroundColor(.clear)
+                    .frame(width: 30, height: 30)
+            }
+            Text("\(authVM.currUser?.username ?? "")")
+                .font(.custom(K.customFonts.lexendDecaSB, size: 18))
+                .foregroundColor(.white)
+                //.frame(width: 180, height: 50)
+               // .background(K.accentRed)
             
             Spacer()
             
-            Button(action: {
-                showRulesPage.toggle()
-            }, label: {
-                VStack {
-                    Text("How to play?")
-                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-                        .foregroundColor(.white)
-                    //Spacer()
-                }//.padding(.top, 20)
-                //.contentShape(Rectangle())
-                //.background(.brown) // Use the desired background color
-                //.cornerRadius(8)
-                // Adjust the padding as needed
-            })
+            
+            Link("@WagerPool", destination: URL(string: "https://www.instagram.com/wagerpool/")!)
+                .font(.custom(K.customFonts.lexendDecaSB, size: 18))
+                .foregroundColor(.white)
+                .frame(height: 50)
+               // .background(K.accentRed)
+            
+
+//            Button(action: {
+//                showRulesPage.toggle()
+//            }, label: {
+//                VStack {
+//                    Text("How to play?")
+//                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+//                        .foregroundColor(.white)
+//                    //Spacer()
+//                }//.padding(.top, 20)
+//                    .frame(width: 100, height: 50)
+//                //.background(.brown) // Use the desired background color
+//                //.cornerRadius(8)
+//                // Adjust the padding as needed
+//            })
             
             
-            //            Link("@WagerPool", destination: URL(string: "https://www.instagram.com/wagerpool/")!)
-            //                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-            //                .foregroundColor(.white)
-            //                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 10)) // Adds padding around the link
-            //.background(Color.blue) // Use any color you prefer for the background
+//            Link("@WagerPool", destination: URL(string: "https://www.instagram.com/wagerpool/")!)
+//                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+//                .foregroundColor(.white)
+//                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 10))
+//                .frame(width: 150, height: 50)// Adds padding around the link
+//            .background(Color.blue) // Use any color you prefer for the background
             
-            //            Button(action: {
-            //                                            self.showWebpage = true
-            //                                        }) {
-            //                                            Text("@WagerPool")
-            //                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-            //                                                .foregroundColor(.white)
-            //                                                .padding([.leading,.bottom])
-            //                                        }
-            //                                        .sheet(isPresented: $showWebpage) {
-            //                                            SafariView(url: URL(string: "https://www.instagram.com/wagerpool/")!)
-            //                                        }
+//            Button(action: {
+//                if timeFrame == "weekly" {
+//                    timeFrame = "daily"
+//                } else if timeFrame == "daily" {
+//                    timeFrame = "weekly"
+//                }
+//            }) {
+//                Text("\(timeFrame == "weekly" ? "Weekly" : "Daily")")
+//                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 24))
+//                    .foregroundColor(.white)
+//                    //.padding([.leading,.bottom])
+//                    .frame(width: 150, height: 50)
+//                    .background(K.accentRed)
+//            }
+//            .sheet(isPresented: $showWebpage) {
+//                SafariView(url: URL(string: "https://www.instagram.com/wagerpool/")!)
+//            }
             
             
         }
-        .padding(.top,5)
+        .padding(.top,15)
         .sheet(isPresented: $showRulesPage) {
             rulesView()
             //.padding(.horizontal)
@@ -321,7 +340,8 @@ struct countDown: View {
 struct yourGroups: View {
     @StateObject var groupsVM: groupsViewModel
     @Binding var tab: Tab
-    
+    @State private var showRulesPage = false
+
     var body: some View {
         VStack(alignment: .center, spacing: 12) {
             Text("Your Groups")
@@ -337,10 +357,10 @@ struct yourGroups: View {
                             VStack(alignment: .leading, spacing: 3) {
                                 
                                 if groupsVM.userGroupsLoaded {
-                                    if groupsVM.userGroups[index].groupImageURL != "" {
+                                    if groupsVM.userGroups[0].groupImageURL != "" {
                                         HStack {
                                             Spacer()
-                                            KFImage(URL(string: groupsVM.userGroups[index].groupImageURL))
+                                            KFImage(URL(string: groupsVM.userGroups[0].groupImageURL))
                                                 .resizable()
                                                 .cornerRadius(7.5)
                                                 .foregroundColor(.clear)
@@ -359,7 +379,7 @@ struct yourGroups: View {
                                     }
                                     HStack(alignment: .top) {
                                         Spacer()
-                                        Text(groupsVM.userGroups[index].groupName)
+                                        Text("\(index == 0 ? "Daily" : "Weekly")")
                                             .font(.custom(K.customFonts.poppinsMedium, size: 16))
                                             .foregroundColor(.white)
                                         
@@ -368,41 +388,41 @@ struct yourGroups: View {
                                 }
                                
                             }
-//                            VStack(alignment: .leading, spacing: 0) {
-//                                HStack() {
-//                                    Text("Rank")
-//                                        .font(.custom(K.customFonts.poppinsRegular, size: 12))
-//                                        .foregroundColor(.white)
-//                                    
-//                                    Spacer()
-//                                    
-//                                    Text("#\(groupsVM.userTickets[index].rank)")
-//                                        .font(.custom(K.customFonts.poppinsRegular, size: 14))
-//                                        .foregroundColor(.white)
-//                                }
-//                                HStack() {
-//                                    Text("Pending")
-//                                        .font(.custom(K.customFonts.poppinsRegular, size: 12))
-//                                        .foregroundColor(.white)
-//                                    
-//                                    Spacer()
-//                                    
-//                                    Text("\(groupsVM.userTickets[index].totalPotentialWon)")
-//                                        .font(.custom(K.customFonts.poppinsRegular, size: 14))
-//                                        .foregroundColor(.white)
-//                                }
-//                                HStack() {
-//                                    Text("Total Won")
-//                                        .font(.custom(K.customFonts.poppinsRegular, size: 12))
-//                                        .foregroundColor(.white)
-//                                    
-//                                    Spacer()
-//                                    
-//                                    Text("\(groupsVM.userTickets[index].totalWon)")
-//                                        .font(.custom(K.customFonts.poppinsRegular, size: 14))
-//                                        .foregroundColor(.white)
-//                                }
-//                            }
+                            VStack(alignment: .leading, spacing: 0) {
+                                HStack() {
+                                    Text("Rank")
+                                        .font(.custom(K.customFonts.poppinsRegular, size: 12))
+                                        .foregroundColor(.white)
+                                    
+                                    Spacer()
+                                    
+                                    Text("#\(index == 0 ? StaticUserData.shared.dailyTicket.rank : StaticUserData.shared.weeklyTicket.rank)")
+                                        .font(.custom(K.customFonts.poppinsRegular, size: 14))
+                                        .foregroundColor(.white)
+                                }
+                                HStack() {
+                                    Text("Pending")
+                                        .font(.custom(K.customFonts.poppinsRegular, size: 12))
+                                        .foregroundColor(.white)
+                                    
+                                    Spacer()
+                                    
+                                    Text("\(index == 0 ? StaticUserData.shared.dailyTicket.totalPotentialWon : StaticUserData.shared.weeklyTicket.totalPotentialWon)")
+                                        .font(.custom(K.customFonts.poppinsRegular, size: 14))
+                                        .foregroundColor(.white)
+                                }
+                                HStack() {
+                                    Text("Total Won")
+                                        .font(.custom(K.customFonts.poppinsRegular, size: 12))
+                                        .foregroundColor(.white)
+                                    
+                                    Spacer()
+                                    
+                                    Text("\(index == 0 ? StaticUserData.shared.dailyTicket.totalWon : StaticUserData.shared.weeklyTicket.totalWon)")
+                                        .font(.custom(K.customFonts.poppinsRegular, size: 14))
+                                        .foregroundColor(.white)
+                                }
+                            }
                         }
                         .padding(10)
                         .frame(width: 135, height: 205)
@@ -425,7 +445,7 @@ struct yourGroups: View {
                                     }
                             HStack(alignment: .top) {
                                 Spacer()
-                                Text("Join/Create!")
+                                Text("How to play?")
                                     .font(.custom(K.customFonts.poppinsMedium, size: 16))
                                     .foregroundColor(.white)
                                 
@@ -439,9 +459,10 @@ struct yourGroups: View {
                         VStack(alignment: .leading, spacing: 0) {
                             Button {
                                 
-                                withAnimation {
-                                    tab = .groups
-                                }
+//                                withAnimation {
+//                                    tab = .groups
+//                                }
+                                showRulesPage.toggle()
                                 
                             } label: {
                                 HStack{
@@ -469,6 +490,12 @@ struct yourGroups: View {
                     .overlay(self.overlayShape(for: 1))
                 }
             }
+        }.sheet(isPresented: $showRulesPage) {
+            rulesView()
+            //.padding(.horizontal)
+                .presentationDetents([.fraction(0.65)])
+                .presentationDragIndicator(.hidden)
+                .background(K.finalColor.backgroundBlue)
         }
     }
     func backgroundColor(for index: Int) -> LinearGradient {
