@@ -51,39 +51,80 @@ struct groupsView: View {
         NavigationStack {
             if (StaticUserData.shared.weeklyTicket.groupID == "Global") {
                 VStack {
-                    
-                    HStack {
-                        Button(action: {
-                            //viewModel.canGetHistoricalData = false
-                            timeFrame = "daily"
-                            viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {
-                            }
-                            showingChat = false
+
+//                    GeometryReader { geometry in
+//                           VStack {
+//                               HStack {
+//                                   Button("Button A") {
+//                                       withAnimation {
+//                                          // selectedButton = .A
+//                                       }
+//                                   }
+//
+//                                   Button("Button B") {
+//                                       withAnimation {
+//                                           selectedButton = .B
+//                                       }
+//                                   }
+//                                   .scaleEffect(selectedButton == .B ? 1.0 : 0.8)
+//                               }
+//
+//                              
+//                           }
+//                    }.padding(.bottom)
+                    Spacer()
+                    VStack (spacing: 5){
+                        HStack (spacing: 0){
+                            Button(action: {
+                                //viewModel.canGetHistoricalData = false
+                                if timeFrame != "daily" {
+                                    withAnimation {
+                                        timeFrame = "daily"
+                                        viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {
+                                        }
+                                        showingChat = false
+                                    }
+                                }
+                                
+                            }) {
+                                //Text(viewModel.userTickets[self.selectedGroup-1].groupName)
+                                Text("Daily")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
+                                    .foregroundColor(.white)
+                                    .frame(width: 150, height: 35, alignment: .center)
+                                    //.background(timeFrame == "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                    .cornerRadius(5)
+                            }.scaleEffect(timeFrame == "daily" ? 1.0 : 1.0)
                             
-                            //print("\(selectedGroup) is selected")
-                        }) {
-                            //Text(viewModel.userTickets[self.selectedGroup-1].groupName)
-                            Text("Daily")
-                                .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-                                .foregroundColor(.white)
-                                .frame(width: 105, height: 35, alignment: .center)
-                                .background(timeFrame == "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                                .cornerRadius(5)
+                            Button(action: {
+                                //viewModel.canGetHistoricalData = false
+                                if timeFrame == "daily" {
+                                    
+                                    withAnimation {
+                                        timeFrame = "weekly"
+                                        viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {
+                                        }
+                                    }
+                                }
+                                
+                            }) {
+                                Text("Weekly")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
+                                    .foregroundColor(.white)
+                                    .frame(width: 150, height: 35, alignment: .center)
+                                    //.background(timeFrame == "weekly" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                    .cornerRadius(5)
+                            }.scaleEffect(timeFrame == "weekly" ? 1.0 : 1.0)
                         }
-                        Button(action: {
-                            //viewModel.canGetHistoricalData = false
-                            timeFrame = "weekly"
-                            viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {
-                            }
-                        }) {
-                            Text("Weekly")
-                                .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-                                .foregroundColor(.white)
-                                .frame(width: 105, height: 35, alignment: .center)
-                                .background(timeFrame == "weekly" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                                .cornerRadius(5)
-                        }
-                    }
+                        Rectangle()
+                            .fill(Color.white) // Sets the rectangle's fill color to white
+                            .frame(width: 140, height: 3)
+                            .cornerRadius(1) // Apply rounded corners
+                            .offset(x: timeFrame == "daily" ? -75 : 75, y: 0)
+                            .animation(.easeInOut(duration: 0.5))
+                    }.padding(8)
+                       // .background(K.finalColor.cardBlue)
+                        .cornerRadius(7.5)
                     
                     
 
@@ -114,9 +155,10 @@ struct groupsView: View {
                                         VStack (alignment: .leading, spacing: 0){
                                             HStack {
                                                 //Text(viewModel.userTickets[selectedGroup-1].groupName)
-                                                Text(timeFrame == "daily" ? "Daily" : "Weekly")
+                                                Text(timeFrame == "daily" ? "Dailyyy Challenge" : "Weekly Challenge")
                                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 28))
                                                     .foregroundColor(.white)
+                                                    .lineLimit(2)
                                                 if StaticUserData.shared.weeklyTicket.groupID == "Global" {
                                                     Button(action: {
                                                         isGlobalPrizesShowing = true
@@ -305,7 +347,7 @@ struct groupsView: View {
         }.navigationTitle("Groups")
             .onAppear() {
                 
-            }.padding(.top, 75)
+            }.padding(.top, 50)
             .background(Color(red: 0.02, green: 0.05, blue: 0.26))
     }
 }
@@ -418,7 +460,7 @@ struct currentLeaderboardView: View {
                     Spacer()
                 }
                 NavigationLink(destination:
-                                ticketView(username: StaticUserData.shared.username, uid: StaticUserData.shared.dailyTicket.uid, groupID: StaticUserData.shared.dailyTicket.groupID, selectedWeek: "current", ticketFormatForGroups: [], ownTicket: true, onTicketPage: false, passedTimeFrame: timeFrame),
+                                ticketView(username: StaticUserData.shared.username, uid: StaticUserData.shared.dailyTicket.uid, groupID: timeFrame == "weekly" ? "Global" : "GlobalDaily", selectedWeek: "current", ticketFormatForGroups: [], ownTicket: true, onTicketPage: false, passedTimeFrame: timeFrame),
                                label: {
                     if timeFrame == "weekly" {
                         BetCard(viewModel: viewModel, ticket: StaticUserData.shared.weeklyTicket, rank: StaticUserData.shared.weeklyTicket.rank, ownCard: true, currentWeek: true, homePage: false).padding(.bottom,16)
@@ -665,7 +707,7 @@ struct BetCard: View {
         }
         .opacity(ticket.isEnabled || ticket.groupAdmin == Auth.auth().currentUser?.uid ? 1 : 0.66)
         .padding(.vertical, 10)
-        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 44, maxHeight: ticket.groupAdmin != Auth.auth().currentUser?.uid || ticket.username == StaticUserData.shared.username ? 44 : 64)
+        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 44, maxHeight: ticket.groupAdmin != Auth.auth().currentUser?.uid || ticket.username == StaticUserData.shared.username ? 44 : 44)
         .background(ownCard ? K.finalColor.otherPurple.opacity(0.35): K.finalColor.cardBlue)
         .cornerRadius(10)
         //.overlay(ownCard ? RoundedRectangle(cornerRadius: 10).stroke(Color.white, lineWidth: 1) : RoundedRectangle(cornerRadius: 10).stroke(Color.clear, lineWidth: 0))

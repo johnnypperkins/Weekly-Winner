@@ -21,6 +21,12 @@ struct UserProfileView: View {
     @Binding var tab: Tab
     @State var timeFrame = "weekly"
     
+//    @State private var selectedButton: ButtonType = .A
+//
+//    enum ButtonType {
+//        case A, B
+//    }
+
     
     
     
@@ -35,10 +41,11 @@ struct UserProfileView: View {
     var body: some View {
         VStack(spacing: 15) {
             //Spacer()
+
             ProfileHeaderView(timeFrame: $timeFrame, authVM: authenticationVM)
                 .padding(.top, 10)
                 .padding(.horizontal)
-            
+           
             countDown()
                 .padding(.top, 5)
             //Spacer()

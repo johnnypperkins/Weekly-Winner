@@ -58,7 +58,7 @@ struct ticketView: View {
 
 
         if uid != Auth.auth().currentUser?.uid{
-            viewModel.fetchFriendTicket(uid: uid, with: groupID) { group in
+            viewModel.fetchFriendTicket(uid: uid, with: groupID, timeFrame: timeFrame) { group in
                 
             }
             
@@ -313,7 +313,7 @@ struct ticketView: View {
                     
                     if !onTicketPage {
                         if selectedWeek == "current" {
-                            viewModel.fetchFriendTicket(uid: uid, with: groupID) {_ in
+                            viewModel.fetchFriendTicket(uid: uid, with: groupID, timeFrame: timeFrame) {_ in
                                 viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: currentTicketFormat, timeFrame: timeFrame, completion: {}) // usertickets is set to only one ticket here
                             }
                         }

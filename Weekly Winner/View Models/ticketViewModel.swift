@@ -112,10 +112,26 @@ class ticketViewModel: ObservableObject {
             }
     }
 
-    func fetchFriendTicket(uid: String, with groupID: String, completion: @escaping (Result<Ticket, Error>) -> Void) { // Ticket99
+    func fetchFriendTicket(uid: String, with groupID: String, timeFrame: String, completion: @escaping (Result<Ticket, Error>) -> Void) { // Ticket99
         let db = Firestore.firestore()
         
-        db.collection("users").document(uid).collection("tickets").document("week").collection("currentWeekTickets")
+        let documentLoc:String = {
+            if timeFrame == "weekly" {
+                return "week"
+            } else {
+                return "day"
+            }
+        }()
+        
+        let collectionLoc:String = {
+            if timeFrame == "weekly" {
+                return "currentWeekTickets"
+            } else {
+                return "currentDayTickets"
+            }
+        }()
+        
+        db.collection("users").document(uid).collection("tickets").document(documentLoc).collection(collectionLoc)
             .whereField("groupID", isEqualTo: groupID)
             .getDocuments { (querySnapshot, err) in
                 if let err = err {
@@ -138,6 +154,8 @@ class ticketViewModel: ObservableObject {
     
     func fetchPastFriendTicket(uid: String, with groupID: String, completion: @escaping (Result<Ticket, Error>) -> Void) { // Ticket99
         let db = Firestore.firestore()
+        
+ 
         
         db.collection("users").document(uid).collection("tickets").document("week").collection("pastWeekTickets")
             .whereField("groupID", isEqualTo: groupID)
