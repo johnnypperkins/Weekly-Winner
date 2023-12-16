@@ -39,15 +39,15 @@ struct UserProfileView: View {
     
     
     var body: some View {
-        VStack(spacing: 15) {
+        VStack(spacing: 12) {
             //Spacer()
 
             ProfileHeaderView(timeFrame: $timeFrame, authVM: authenticationVM)
                 .padding(.top, 10)
                 .padding(.horizontal)
            
-            countDown()
-                .padding(.top, 5)
+            countDown(timeFrame: $timeFrame)
+               // .padding(.top, 5)
             //Spacer()
             VStack {
                 yourGroups(groupsVM: groupsVM, tab: $tab)
@@ -101,6 +101,8 @@ struct UserProfileView: View {
         //Spacer()
     }
 }
+
+
 
 struct weeklyGlobalLeaders: View {
     @StateObject var viewModel: groupsViewModel
@@ -271,72 +273,128 @@ struct rulesView: View {
 struct countDown: View {
     @StateObject var countdownTimer = CountdownTimer()
     @StateObject var prizesVM = prizesViewModel()
+    @Binding var timeFrame: String
     var body: some View {
         ZStack() {
             VStack(alignment: .center) {
-//                HStack{
-                    //              Text("WagerPool")
-                    //                  .font(.custom(K.customFonts.lexendDecaSB, size: 24))
-                    //                  .foregroundColor(K.finalColor.titleBlue)
-                    //Spacer()
-                    //          }.frame(minWidth: 0, maxWidth: .infinity)
-                    //              .padding(.horizontal)
-                    VStack(spacing: 0) {
-                        Text(countdownTimer.timeRemaining)
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 25))
-                            .foregroundColor(.white)
-                            .padding(.vertical)
-                    }
-                    .frame(height: 25)
+                
+                VStack (spacing: 3){
+                    HStack (spacing: 0){
+                        Button(action: {
+                            //viewModel.canGetHistoricalData = false
+                            if timeFrame != "daily" {
+                                withAnimation {
+                                    timeFrame = "daily"
+//                                    viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {
+//                                    }
+//                                    showingChat = false
+                                }
+                            }
+                            
+                        }) {
+                            //Text(viewModel.userTickets[self.selectedGroup-1].groupName)
+                            Text("Daily")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                .foregroundColor(.white)
+                                .frame(width: 100, height: 20, alignment: .center)
+                                //.background(timeFrame == "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                .cornerRadius(5)
+                        }.scaleEffect(timeFrame == "daily" ? 1.0 : 1.0)
+                        
+                        Button(action: {
+                            //viewModel.canGetHistoricalData = false
+                            if timeFrame == "daily" {
+                                
+                                withAnimation {
+                                    timeFrame = "weekly"
+//                                    viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {
+//                                    }
+                                }
+                            }
+                            
+                        }) {
+                            Text("Weekly")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                .foregroundColor(.white)
+                                .frame(width: 100, height: 20, alignment: .center)
+                                //.background(timeFrame == "weekly" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                .cornerRadius(5)
+                        }.scaleEffect(timeFrame == "weekly" ? 1.0 : 1.0)
+                    }.padding(.top, 2)
+                    Rectangle()
+                        .fill(Color.white) // Sets the rectangle's fill color to white
+                        .frame(width: 90, height: 3)
+                        .cornerRadius(1) // Apply rounded corners
+                        .offset(x: timeFrame == "daily" ? -50 : 50, y: 0)
+                        .animation(.easeInOut(duration: 0.5))
+                }//.padding(8)
+
+                VStack(spacing: 0) {
+                    Text(countdownTimer.timeRemaining)
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 22))
+                        .foregroundColor(.white)
+                        .padding(.vertical)
+                }
+                .frame(height: 20).padding(.top,3)
                     
                 HStack{
                     
-                    Image(systemName: "trophy.fill")
-                        .foregroundColor(.yellow)
-                    
-                    Text("1st: $")
-                        .foregroundColor(.white)
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                    if prizesVM.canViewPrizes == true {
-                        Text("\(prizesVM.prizes[0])  ")
-                            .foregroundColor(.white)
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                            .padding(.leading,-8)
-                    }
-                    
-                    Image(systemName: "medal.fill")
-                        .foregroundColor(.gray)
-                    
-                    Text("2nd: $")
-                        .foregroundColor(.white)
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                    
-                    if prizesVM.canViewPrizes == true {
-                        Text("\(prizesVM.prizes[1])  ")
-                            .foregroundColor(.white)
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                            .padding(.leading,-8)
-                    }
-                    
-                    Image(systemName: "rosette")
-                        .foregroundColor(.brown)
-                    
-                    Text("3rd: $")
-                        .foregroundColor(.white)
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                    
-                        if prizesVM.canViewPrizes == true {
-                            Text("\(prizesVM.prizes[2])  ")
+                    ForEach(0..<3, id: \.self) { index in
+                        HStack {
+                            Image(systemName: "trophy.fill")
+                                .foregroundColor(.yellow)
+                            
+                            Text("1st: $")
                                 .foregroundColor(.white)
                                 .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                .padding(.leading,-8)
-                        }
+                            if prizesVM.canViewPrizes == true {
+                                Text("\(prizesVM.prizes[index])  ")
+                                    .foregroundColor(.white)
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                    .padding(.leading,-8)
+                            }
+                        }.frame(width: 100, height: 30)
+                            .padding(3)
+                        .background(K.finalColor.blueGray)
+                            .cornerRadius(5)
+                    }
+                    
+                    
+//                    
+//                    
+//                    Image(systemName: "medal.fill")
+//                        .foregroundColor(.gray)
+//                    
+//                    Text("2nd: $")
+//                        .foregroundColor(.white)
+//                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+//                    
+//                    if prizesVM.canViewPrizes == true {
+//                        Text("\(prizesVM.prizes[1])  ")
+//                            .foregroundColor(.white)
+//                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+//                            .padding(.leading,-8)
+//                    }
+//                    
+//                    Image(systemName: "rosette")
+//                        .foregroundColor(.brown)
+//                    
+//                    Text("3rd: $")
+//                        .foregroundColor(.white)
+//                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+//                    
+//                        if prizesVM.canViewPrizes == true {
+//                            Text("\(prizesVM.prizes[2])  ")
+//                                .foregroundColor(.white)
+//                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+//                                .padding(.leading,-8)
+//                        }
                 }
                 .padding(.top,5)
                 }
-                .frame(height: 60)
+                //.frame(height: 100)
             }
-            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 100, maxHeight: 100)
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 130, maxHeight: 130)
             .background(K.finalColor.cardBlue)
             .cornerRadius(10)
             .padding(.horizontal, 16)

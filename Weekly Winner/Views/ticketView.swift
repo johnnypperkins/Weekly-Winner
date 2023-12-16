@@ -259,13 +259,13 @@ struct ticketView: View {
                                             ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
                                                 if viewModel.currentTicketFormat.count > 0 && viewModel.isTFLoaded == true && viewModel.totalBetArrays.count == viewModel.currentTicketFormat.count {
                                                     if viewModel.isBetsLoaded {
-                                                        SectionTitle(title: parlayTitle(ticketFormat: viewModel.currentTicketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.currentTicketFormat[parlayIndex], uid: Auth.auth().currentUser?.uid ?? "", selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, viewModel: viewModel, BookVM: bookVM)
+                                                        SectionTitle(title: parlayTitle(ticketFormat: viewModel.currentTicketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.currentTicketFormat[parlayIndex], uid: Auth.auth().currentUser?.uid ?? "", selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, timeFrame: $timeFrame, viewModel: viewModel, BookVM: bookVM)
                                                     }
                                                 }
                                             }
                                         } else {
                                             ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
-                                                SectionTitle(title: parlayTitle(ticketFormat: ticketFormatForGroups, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: ticketFormatForGroups[parlayIndex], uid: uid, selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, viewModel: viewModel, BookVM: bookVM)
+                                                SectionTitle(title: parlayTitle(ticketFormat: ticketFormatForGroups, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: ticketFormatForGroups[parlayIndex], uid: uid, selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, timeFrame: $timeFrame, viewModel: viewModel, BookVM: bookVM)
                                             }
                                         }
                                         
@@ -350,6 +350,7 @@ struct ticketView: View {
         let selectedWeek: String
         let ownTicket: Bool
         let onTicketPage: Bool
+        @Binding var timeFrame: String
        // let totalOdds: Double
         @ObservedObject var viewModel: ticketViewModel
         @ObservedObject var BookVM: bookViewModel
@@ -402,17 +403,6 @@ struct ticketView: View {
                             .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
                             .foregroundColor(.white.opacity(0.9))
                         Spacer()
-//                        Text()
-//                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-//                            .foregroundColor(.white)
-                        //Spacer()
-//                        HStack(alignment: .top, spacing: 17) {
-////                            Text("\(percentageToML(percentage: totalOdds))")
-////                                .font(.custom(K.customFonts.lexendDecaLight, size: 12))
-////                                .foregroundColor(.white)
-//                            
-//                            
-//                        }
                     }
                     .frame(height: 5)
                     .padding(.top, 10)
@@ -428,7 +418,7 @@ struct ticketView: View {
                         ForEach(0..<totalBetsCount, id: \.self) { index in
                             VStack(alignment: .center, spacing: 0) {
                                 if index < betArray.count {
-                                    BetCard(bet: betArray[index], uid: uid, selectedWeek: selectedWeek, ownCard: ownTicket, onTicketPage: onTicketPage, bookVM: BookVM, viewModel: viewModel)
+                                    BetCard(bet: betArray[index], uid: uid, selectedWeek: selectedWeek, ownCard: ownTicket, onTicketPage: onTicketPage, bookVM: BookVM, timeFrame: $timeFrame, viewModel: viewModel)
                    
                                 } else {
                                     EmptyBetCard(betArray: betArray)
@@ -466,6 +456,7 @@ struct ticketView: View {
             @ObservedObject var bookVM: bookViewModel
             @State private var game: Game? = nil
             @State var expand = false
+            @Binding var timeFrame: String
             
             //let ownBets: Bool
             
@@ -609,7 +600,10 @@ struct ticketView: View {
                         if bet.result == .notStarted && uid == Auth.auth().currentUser?.uid && selectedWeek == "current" && ownCard && onTicketPage{ // ONLY SHOWS DELETE BUTTON IF .NOTSTARTED
                             Button(action: {
                                 if canDelete {
-                                    self.viewModel.deleteBet(bet: bet)
+                                    self.viewModel.deleteBet(bet: bet, timeFrame: timeFrame)
+//                                    self.bookVM.fetchUserTickets(timeFrame: timeFrame) {
+//                                        self.viewModel.fetchBets(uid: Auth.auth().currentUser?.uid, for: <#T##Int#>, ticketFormat: <#T##[Int]#>, timeFrame: <#T##String#>, completion: <#T##() -> Void#>)
+//                                    }
                                 }
                                 canDelete = true
                             }) {

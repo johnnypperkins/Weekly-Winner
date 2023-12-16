@@ -19,23 +19,49 @@ class groupService {
         }
     }
     
-    func getPastRankedTickets(groupID: String, week: String, completion: @escaping ([Ticket]?, Error?) -> Void) {
+    func getPastRankedTickets(groupID: String, week: String, timeFrame: String, completion: @escaping ([Ticket]?, Error?) -> Void) {
         // Define date format and convert week string to Date
-        print(week, " is week")
-        print(groupID, "is groupID")
+        
+        let documentLoc:String = {
+            if timeFrame == "weekly" {
+                return "week"
+            } else {
+                return "day"
+            }
+        }()
+        
+        let collectionGroupLoc:String = {
+            if timeFrame == "weekly" {
+                return "pastWeekTickets"
+            } else {
+                return "pastDayTickets"
+            }
+        }()
+        
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM/dd/yy" // Month, Date
-        guard let startDate = dateFormatter.date(from: week) else {
-            completion(nil, NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey : "Invalid week format"]))
-            return
+        var startDate: Date?
+        var endDate: Date?
+        
+        if timeFrame == "weekly" {
+            print(week, " is week")
+            print(groupID, "is groupID")
+            
+            guard var startDate = dateFormatter.date(from: week) else {
+                completion(nil, NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey : "Invalid week format"]))
+                return
+            }
+
+            // Calculate the end date, which is one week later
+            let endDate = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: startDate)!
+        } else if timeFrame == "daily" {
+            
         }
 
-        // Calculate the end date, which is one week later
-        let endDate = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: startDate)!
 
         print(startDate, endDate)
         // Construct the query
-        let query = db.collectionGroup("pastWeekTickets")
+        let query = db.collectionGroup(collectionGroupLoc)
             .whereField("groupID", isEqualTo: groupID)
             .whereField("dateCreated", isGreaterThanOrEqualTo: startDate)
             .whereField("dateCreated", isLessThanOrEqualTo: endDate)
@@ -72,9 +98,6 @@ class groupService {
                 return totalWon1 > totalWon2
             }
 
-
-
-            
             var tickets: [Ticket] = []
             var totalsArray: [Int] = []
             var enabledStatusArray: [Bool] = []

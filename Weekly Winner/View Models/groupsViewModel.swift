@@ -18,12 +18,14 @@ class groupsViewModel: ObservableObject {
     @Published var userGroups: [Group] = []
     @Published var canGetHistoricalData: Bool = false
     @Published var totalArrayOfDates: [[String]] = []
+//    @Published var totalArrayOfDatesDAYS: [[String]] = []
     @Published var userGroupsLoaded: Bool = false
     @Published var totalPlayers: Int = 0
     @Published var canJoinGroup: Bool = true
     @Published var groupsFetched = false
     @Published var groupAdmin = ""
     @Published var weekIndex = -99
+    @Published var dayIndex = -99
     private let grpService = groupService()
     
     private let db = Firestore.firestore()
@@ -36,7 +38,9 @@ class groupsViewModel: ObservableObject {
                 self.userGroupsLoaded = true
             }
             self.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: "daily") {}
-
+            
+            self.totalArrayOfDates.append(self.populateArrayOfDates(from: Timestamp(date: Calendar.current.date(from: DateComponents(year: 2023, month: 11, day: 22))!)))
+            self.totalArrayOfDates.append(self.populateArrayOfDays(from: Timestamp(date: Calendar.current.date(from: DateComponents(year: 2023, month: 12, day: 13))!)))
 
         }
         fetchUserTickets(timeFrame: "weekly") {}
@@ -148,8 +152,8 @@ class groupsViewModel: ObservableObject {
             }
         }
     
-    func fetchPastRankedTickets(groupID: String, week: String, completion: @escaping () -> Void) {
-        grpService.getPastRankedTickets(groupID: groupID, week: week) { [weak self] (tickets, error) in
+    func fetchPastRankedTickets(groupID: String, week: String, timeFrame: String, completion: @escaping () -> Void) {
+        grpService.getPastRankedTickets(groupID: groupID, week: week, timeFrame: timeFrame) { [weak self] (tickets, error) in
                 if let error = error {
                     // Handle error
                     print("Error fetching groups PAST: \(error)")
@@ -322,10 +326,10 @@ class groupsViewModel: ObservableObject {
 //            groupIDs.append(ticket.groupID)
 //        }
         let groupsCollection = db.collection("groups")
-        
-        if self.totalArrayOfDates.count < groupIDs.count {
-            totalArrayOfDates.removeAll()
-        }
+//        
+//        if self.totalArrayOfDates.count < groupIDs.count {
+//            totalArrayOfDates.removeAll()
+//        }
         
         // Create a serial dispatch queue
         let serialQueue = DispatchQueue(label: "com.yourapp.fetchUserGroups")
@@ -357,11 +361,11 @@ class groupsViewModel: ObservableObject {
                        let groupAdminUsername = data["groupAdminUsername"] as? String,
                        let ticketFormat = data["ticketFormat"] as? [Int] {
                         
-                        if self.totalArrayOfDates.count < groupIDs.count {
-                            self.totalArrayOfDates.append(self.populateArrayOfDates(from: dateCreated))
-                        } else {
-                            self.totalArrayOfDates[index] = self.populateArrayOfDates(from: dateCreated)
-                        }
+//                        if self.totalArrayOfDates.count < groupIDs.count {
+//                            self.totalArrayOfDates.append(self.populateArrayOfDates(from: dateCreated))
+//                        } else {
+//                            self.totalArrayOfDates[index] = self.populateArrayOfDates(from: dateCreated)
+//                        }
                         
                         let password = data["password"] as? String
                         
@@ -381,6 +385,7 @@ class groupsViewModel: ObservableObject {
                     }
                     //print("joined groups " + "\(self.joinedGroups)")
                     self.weekIndex = 0
+                    self.dayIndex = 0
                     self.canGetHistoricalData = true
                     //print("TotalArrayOfDates: ", self.totalArrayOfDates)
                     semaphore.signal()
@@ -477,6 +482,40 @@ class groupsViewModel: ObservableObject {
 
         return weeks
     }
+    
+    func populateArrayOfDays(from timestamp: Timestamp) -> [String] {
+        var days: [String] = []
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone(identifier: "CET")! // Set to Eastern Time
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMMM, d, yyyy" // Month, Date, Year
+        dateFormatter.timeZone = TimeZone(identifier: "CET")! // Set to Eastern Time
+
+        // Convert Firestore Timestamp to Date and adjust to Eastern Time
+        let utcDate = timestamp.dateValue()
+        let inputDate = calendar.date(byAdding: .second, value: TimeZone(identifier: "CET")!.secondsFromGMT(), to: utcDate)!
+
+        // Get the current date in Eastern Time
+        let currentDateInEasternTime = calendar.date(byAdding: .second, value: TimeZone(identifier: "CET")!.secondsFromGMT(), to: Date())!
+        print("CURRENT DATE UTC+2", currentDateInEasternTime)
+
+        // Initialize the current day to the inputDate
+        var currentDay = inputDate
+
+        // Keep adding days until a day in the future is added
+        while currentDay <= currentDateInEasternTime {
+            days.append(dateFormatter.string(from: currentDay))
+            currentDay = calendar.date(byAdding: .day, value: 1, to: currentDay)!
+        }
+
+        // Remove the future day and replace the last valid day with "Current"
+        days.removeLast()
+        days.append("Current")
+        days.reverse()
+
+        return days
+    }
+
 
 
 

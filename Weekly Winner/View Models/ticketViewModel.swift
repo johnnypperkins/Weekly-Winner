@@ -330,7 +330,32 @@ class ticketViewModel: ObservableObject {
         }
     }
     
-    func deleteBet(bet: Bet) {
+    func deleteBet(bet: Bet, timeFrame: String) {
+        
+        let documentLoc:String = {
+            if timeFrame == "weekly" {
+                return "week"
+            } else {
+                return "day"
+            }
+        }()
+        
+        let collectionLoc:String = {
+            if timeFrame == "weekly" {
+                return "currentWeekTickets"
+            } else {
+                return "currentDayTickets"
+            }
+        }()
+        
+        let collectionLoc2:String = {
+            if timeFrame == "weekly" {
+                return "currentWeekBets"
+            } else {
+                return "currentDayBets"
+            }
+        }()
+        
         var whichToInc = -1
         if bet.betType.rawValue == "betHomeSpread" {
             whichToInc = 0
@@ -369,47 +394,47 @@ class ticketViewModel: ObservableObject {
         
         guard let userId = Auth.auth().currentUser?.uid else { return }
         
-        db.collection("users").document(userId).collection("bets").document("week").collection("currentWeekBets").document(bet.id ?? "").delete { error in
+        db.collection("users").document(userId).collection("bets").document(documentLoc).collection(collectionLoc2).document(bet.id ?? "").delete { error in
             if let error = error {
                 print("Error removing document: \(error)")
             } else {
-//                self.fetchUserTickets(uid: userId, groupNumber: bet.groupNumber) {
-//                    self.fetchBets(uid: userId, for: bet.groupNumber, ticketFormat: self.currentTicketFormat) {print("Document successfully removed!")
-//                        self.groupServe.setPotentialToWin(potential: Int(self.totalPotentialWon), groupNumber: bet.groupNumber, completion: {_ in })
-//                    } // fetch the updated list of bets
-//                }
+                                self.fetchUserTickets(timeFrame: timeFrame) {
+                                    self.fetchBets(uid: userId, for: bet.groupNumber, ticketFormat: self.currentTicketFormat, timeFrame: timeFrame) {print("Document successfully removed!")
+                                        self.groupServe.setPotentialToWin(potential: Int(self.totalPotentialWon), groupNumber: bet.groupNumber, timeFrame: timeFrame, completion: {_ in })
+                                    } // fetch the updated list of bets
+                //                }
+                            }
             }
-        }
         
         
     }
     
     // Ok so this function deals with the other bets if there is a loss in a parlay. All .notStarted bets are removed, all empty bets are pushed to null and the betArray is filled
-    func updateBetsInResponseToLoss(betArray: inout [Bet], maxBetsPlaced: Int, groupNumber: Int, betNumber: Int) {
-        if betArray.contains(where: { $0.result == .loss }) {
-            // Create a copy of betArray to avoid modifying array while iterating
-            let betArrayCopy = betArray
-
-            for bet in betArrayCopy {
-                if bet.result == .notStarted {
-                    // Remove from the array
-                    if let index = betArray.firstIndex(where: { $0.id == bet.id }) {
-                        betArray.remove(at: index)
-                    }
-                    // Delete from the database
-                    deleteBet(bet: bet)
-                }
-            }
-
-            let remainingSpots = maxBetsPlaced - betArray.count
-            print("MAX BETS PLACED", maxBetsPlaced)
-            print("BET ARRAY COUNT", betArray.count)
-            
-            for _ in 0..<remainingSpots {
-                let emptyBet = Bet(groupNumber: groupNumber, groupID: "", betNumber: betNumber, betType: .None, betLine: 0, betOdds: 1, result: .forcedLoss, gameID: "null", whichSport: "", timestamp: Timestamp(date: Date()), points_bought: 0) // create as per your requirements
-                betArray.append(emptyBet)
-            }
-        }
+//    func updateBetsInResponseToLoss(betArray: inout [Bet], maxBetsPlaced: Int, groupNumber: Int, betNumber: Int) {
+//        if betArray.contains(where: { $0.result == .loss }) {
+//            // Create a copy of betArray to avoid modifying array while iterating
+//            let betArrayCopy = betArray
+//
+//            for bet in betArrayCopy {
+//                if bet.result == .notStarted {
+//                    // Remove from the array
+//                    if let index = betArray.firstIndex(where: { $0.id == bet.id }) {
+//                        betArray.remove(at: index)
+//                    }
+//                    // Delete from the database
+//                    deleteBet(bet: bet)
+//                }
+//            }
+//
+//            let remainingSpots = maxBetsPlaced - betArray.count
+//            print("MAX BETS PLACED", maxBetsPlaced)
+//            print("BET ARRAY COUNT", betArray.count)
+//            
+//            for _ in 0..<remainingSpots {
+//                let emptyBet = Bet(groupNumber: groupNumber, groupID: "", betNumber: betNumber, betType: .None, betLine: 0, betOdds: 1, result: .forcedLoss, gameID: "null", whichSport: "", timestamp: Timestamp(date: Date()), points_bought: 0) // create as per your requirements
+//                betArray.append(emptyBet)
+//            }
+//        }
     }
 
     func calculateTotals(for groupNumber: Int, ticketFormat: [Int]) {
