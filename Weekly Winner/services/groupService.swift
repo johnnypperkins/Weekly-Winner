@@ -43,28 +43,54 @@ class groupService {
         var startDate: Date?
         var endDate: Date?
         
-        if timeFrame == "weekly" {
-            print(week, " is week")
-            print(groupID, "is groupID")
-            
-            guard var startDate = dateFormatter.date(from: week) else {
-                completion(nil, NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey : "Invalid week format"]))
-                return
-            }
-
-            // Calculate the end date, which is one week later
-            let endDate = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: startDate)!
-        } else if timeFrame == "daily" {
-            
+        guard let start = dateFormatter.date(from: week) else {
+            completion(nil, NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid week format"]))
+            return
         }
+        startDate = start
+        
+        if timeFrame == "weekly" {
+            endDate = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: startDate!)
+
+        } else if timeFrame == "daily" {
+            endDate = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: startDate!)
+
+        }
+        
+//        if timeFrame == "weekly" {
+//            print(week, " is week")
+//            print(groupID, "is groupID")
+//            
+//            // Corrected guard statement
+//            guard let start = dateFormatter.date(from: week) else {
+//                completion(nil, NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid week format"]))
+//                return
+//            }
+//            startDate = start
+//
+//            // Calculate the end date, which is one week later
+//        } else if timeFrame == "daily" {
+//            
+//            print(week, " is week")
+//            print(groupID, "is groupID")
+//            
+//            // Corrected guard statement
+//            guard let start = dateFormatter.date(from: week) else {
+//                completion(nil, NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid week format"]))
+//                return
+//            }
+//            startDate = start
+//
+//            // Calculate the end date, which is one week later
+//        }
 
 
-        print(startDate, endDate)
+        print("START AND END", startDate!, endDate!)
         // Construct the query
         let query = db.collectionGroup(collectionGroupLoc)
             .whereField("groupID", isEqualTo: groupID)
-            .whereField("dateCreated", isGreaterThanOrEqualTo: startDate)
-            .whereField("dateCreated", isLessThanOrEqualTo: endDate)
+            .whereField("dateCreated", isGreaterThanOrEqualTo: startDate!)
+            .whereField("dateCreated", isLessThanOrEqualTo: endDate!)
             .order(by: "dateCreated", descending: false) // This must be the first order-by clause due to the inequality filter
             .order(by: "isEnabled", descending: true)
             .order(by: "totalWon", descending: true)

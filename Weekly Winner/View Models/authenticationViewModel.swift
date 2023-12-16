@@ -241,7 +241,7 @@ class authenticationViewModel: ObservableObject {
                 self.currUser = user
 //                StaticUserData.shared.username = self.currUser!.username
                 //print(UserData.shared.username)
-                print(user)
+                //print(user)
             }
         }
     

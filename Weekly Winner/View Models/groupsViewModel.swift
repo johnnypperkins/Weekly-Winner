@@ -18,7 +18,6 @@ class groupsViewModel: ObservableObject {
     @Published var userGroups: [Group] = []
     @Published var canGetHistoricalData: Bool = false
     @Published var totalArrayOfDates: [[String]] = []
-//    @Published var totalArrayOfDatesDAYS: [[String]] = []
     @Published var userGroupsLoaded: Bool = false
     @Published var totalPlayers: Int = 0
     @Published var canJoinGroup: Bool = true
@@ -36,11 +35,14 @@ class groupsViewModel: ObservableObject {
             self.groupsFetched = true
             self.fetchUserGroups {
                 self.userGroupsLoaded = true
+                self.totalArrayOfDates.append(self.populateArrayOfDates(from: Timestamp(date: Calendar.current.date(from: DateComponents(year: 2023, month: 11, day: 22))!)))
+                self.totalArrayOfDates.append(self.populateArrayOfDays(from: Timestamp(date: Calendar.current.date(from: DateComponents(year: 2023, month: 12, day: 13))!)))
+                print("Arrayy \(self.totalArrayOfDates)")
             }
             self.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: "daily") {}
             
-            self.totalArrayOfDates.append(self.populateArrayOfDates(from: Timestamp(date: Calendar.current.date(from: DateComponents(year: 2023, month: 11, day: 22))!)))
-            self.totalArrayOfDates.append(self.populateArrayOfDays(from: Timestamp(date: Calendar.current.date(from: DateComponents(year: 2023, month: 12, day: 13))!)))
+            
+            
 
         }
         fetchUserTickets(timeFrame: "weekly") {}
@@ -161,7 +163,7 @@ class groupsViewModel: ObservableObject {
                 } else if let tickets = tickets {
 //                    DispatchQueue.main.async {
                         self?.pastRankedGroupTickets = tickets
-                        //print(tickets)
+                      //  print("THESE ARE TICKETS \(tickets)")
                         print("test print")
                     }
 //                }
@@ -449,24 +451,24 @@ class groupsViewModel: ObservableObject {
     func populateArrayOfDates(from timestamp: Timestamp) -> [String] {
         var weeks: [String] = []
         var calendar = Calendar.current
-        calendar.timeZone = TimeZone(identifier: "CET")! // Set to Eastern Time
+        calendar.timeZone = TimeZone(identifier: "UTC-5")! // Set to Eastern Time
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMMM, d, yyyy" // Month, Date, Year
-        dateFormatter.timeZone = TimeZone(identifier: "CET")! // Set to Eastern Time
+        dateFormatter.timeZone = TimeZone(identifier: "UTC-5")! // Set to Eastern Time
 
         // Convert Firestore Timestamp to Date and adjust to Eastern Time
         let utcDate = timestamp.dateValue()
-        let inputDate = calendar.date(byAdding: .second, value: TimeZone(identifier: "CET")!.secondsFromGMT(), to: utcDate)!
+        let inputDate = calendar.date(byAdding: .second, value: TimeZone(identifier: "UTC-5")!.secondsFromGMT(), to: utcDate)!
 
         // Find the most recent Monday (at 12:01 am) in relation to the timestamp
         var currentMonday = inputDate
         while calendar.component(.weekday, from: currentMonday) != 2 { // 2 corresponds to Monday
             currentMonday = calendar.date(byAdding: .day, value: -1, to: currentMonday)!
         }
-        currentMonday = calendar.date(bySettingHour: 6, minute: 1, second: 0, of: currentMonday)!
+        currentMonday = calendar.date(bySettingHour: 0, minute: 1, second: 0, of: currentMonday)!
 
         // Get the current date in Eastern Time
-        let currentDateInEasternTime = calendar.date(byAdding: .second, value: TimeZone(identifier: "CET")!.secondsFromGMT(), to: Date())!
+        let currentDateInEasternTime = calendar.date(byAdding: .second, value: TimeZone(identifier: "UTC-5")!.secondsFromGMT(), to: Date())!
         print("CURRENT DATE UTC+2", currentDateInEasternTime)
         
         // Keep adding Mondays one week later until a Monday in the future is added
@@ -486,24 +488,30 @@ class groupsViewModel: ObservableObject {
     func populateArrayOfDays(from timestamp: Timestamp) -> [String] {
         var days: [String] = []
         var calendar = Calendar.current
-        calendar.timeZone = TimeZone(identifier: "CET")! // Set to Eastern Time
+        calendar.timeZone = TimeZone(identifier: "UTC-5")! // Set to UTC-5
+
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MMMM, d, yyyy" // Month, Date, Year
-        dateFormatter.timeZone = TimeZone(identifier: "CET")! // Set to Eastern Time
+        dateFormatter.dateFormat = "MM/dd/yy" // Month/Day/Year Hours:Minutes in 24-hour format
+//        dateFormatter.dateFormat = "MM/dd/yy HH:mm" // to check hours
+        dateFormatter.timeZone = TimeZone(identifier: "UTC-5")! // Set to UTC-5
 
-        // Convert Firestore Timestamp to Date and adjust to Eastern Time
+        // Convert Firestore Timestamp to Date
         let utcDate = timestamp.dateValue()
-        let inputDate = calendar.date(byAdding: .second, value: TimeZone(identifier: "CET")!.secondsFromGMT(), to: utcDate)!
 
-        // Get the current date in Eastern Time
-        let currentDateInEasternTime = calendar.date(byAdding: .second, value: TimeZone(identifier: "CET")!.secondsFromGMT(), to: Date())!
-        print("CURRENT DATE UTC+2", currentDateInEasternTime)
+        // Adjust the date to UTC-5 and subtract 6 hours and 59 minutes to align with 00:01
+        var inputDate = calendar.date(byAdding: .second, value: TimeZone(identifier: "UTC-5")!.secondsFromGMT(), to: utcDate)!
+        inputDate = calendar.date(byAdding: .hour, value: 5, to: inputDate)!
+        inputDate = calendar.date(byAdding: .minute, value: 1, to: inputDate)!
+
+        // Get the current date in UTC-5
+        let currentDateInUTC5 = calendar.date(byAdding: .second, value: TimeZone(identifier: "UTC-5")!.secondsFromGMT(), to: Date())!
+        print("CURRENT DATE UTC-5", currentDateInUTC5)
 
         // Initialize the current day to the inputDate
         var currentDay = inputDate
 
         // Keep adding days until a day in the future is added
-        while currentDay <= currentDateInEasternTime {
+        while currentDay <= currentDateInUTC5 {
             days.append(dateFormatter.string(from: currentDay))
             currentDay = calendar.date(byAdding: .day, value: 1, to: currentDay)!
         }
@@ -515,6 +523,8 @@ class groupsViewModel: ObservableObject {
 
         return days
     }
+
+
 
 
 

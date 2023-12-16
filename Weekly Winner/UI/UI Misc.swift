@@ -184,6 +184,7 @@ struct formatDateEMMMDHMM {
 func formatDateMMDDYY(from timestamp: Timestamp) -> String {
     let formatter = DateFormatter()
     formatter.dateFormat = "MM/dd/yy" // Added hours and minutes to the format
+    
     return formatter.string(from: timestamp.dateValue())
 }
 

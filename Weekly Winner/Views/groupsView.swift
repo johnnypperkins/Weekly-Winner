@@ -26,16 +26,13 @@ struct groupsView: View {
     @State private var timeFrame = "daily"
     
    // @State var selectedGroupBar: Group?
-//    @State private var weekIndex: Int = -99
     //@State private var groupsFetched = false
 
     init() {
 
         viewModel.fetchCurrentRankedTickets(groupID: "GlobalDaily", timeFrame: "daily") {
         }
-        
-
-        
+ 
     }
     
     var body: some View {
@@ -61,6 +58,8 @@ struct groupsView: View {
                                         timeFrame = "daily"
                                         viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {
                                         }
+                                        viewModel.weekIndex = 0
+                                        viewModel.dayIndex = 0
                                         showingChat = false
                                     }
                                 }
@@ -83,6 +82,9 @@ struct groupsView: View {
                                         timeFrame = "weekly"
                                         viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {
                                         }
+                                        viewModel.weekIndex = 0
+                                        viewModel.dayIndex = 0
+                                        showingChat = false
                                     }
                                 }
                                 
@@ -134,7 +136,7 @@ struct groupsView: View {
                                         VStack (alignment: .leading, spacing: 0){
                                             HStack {
                                                 //Text(viewModel.userTickets[selectedGroup-1].groupName)
-                                                Text(timeFrame == "daily" ? "Dailyyy Challenge" : "Weekly Challenge")
+                                                Text(timeFrame == "daily" ? "Daily Challenge" : "Weekly Challenge")
                                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16     ))
                                                     .foregroundColor(.white)
                                                     .lineLimit(2)
@@ -223,7 +225,7 @@ struct groupsView: View {
                                             Text("Test").foregroundColor(.clear)
                                         }
                                     } else if timeFrame == "daily" {
-                                        if (viewModel.canGetHistoricalData && !showingChat && viewModel.dayIndex >= 0 && viewModel.dayIndex <= viewModel.totalArrayOfDates[0].count) {
+                                        if (viewModel.canGetHistoricalData && !showingChat && viewModel.dayIndex >= 0 && viewModel.dayIndex <= viewModel.totalArrayOfDates[1].count) {
                                             HStack {
                                                 Button(action: {
                                                     if viewModel.dayIndex < viewModel.totalArrayOfDates[1].count-1  {
@@ -250,7 +252,7 @@ struct groupsView: View {
                                                         if(viewModel.dayIndex == 0) {
                                                             viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {}
                                                         } else {
-                                                            viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, week: viewModel.totalArrayOfDates[0][viewModel.dayIndex], timeFrame: timeFrame) {}
+                                                            viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, week: viewModel.totalArrayOfDates[1][viewModel.dayIndex], timeFrame: timeFrame) {}
                                                         }
                                                     }
                                                 }, label: {
@@ -564,7 +566,7 @@ struct pastLeaderboardView: View {
                         Spacer()
                     }
                     NavigationLink(destination:
-                                    ticketView(username: viewModel.pastRankedGroupTickets[index].username, uid: viewModel.pastRankedGroupTickets[index].uid, groupID: viewModel.pastRankedGroupTickets[index].groupID, selectedWeek: selectedGroup > 0 ? "\(viewModel.totalArrayOfDates[selectedGroup-1][selectedWeek])" : "", ticketFormatForGroups: viewModel.pastRankedGroupTickets[index].ticketFormat, ownTicket: false, onTicketPage: false, passedTimeFrame: timeFrame),
+                                    ticketView(username: viewModel.pastRankedGroupTickets[index].username, uid: viewModel.pastRankedGroupTickets[index].uid, groupID: viewModel.pastRankedGroupTickets[index].groupID, selectedWeek: selectedGroup > 0 ? "\(viewModel.totalArrayOfDates[0][selectedWeek])" : "", ticketFormatForGroups: viewModel.pastRankedGroupTickets[index].ticketFormat, ownTicket: false, onTicketPage: false, passedTimeFrame: timeFrame),
                                    label: {
                         BetCard(viewModel: viewModel, ticket: viewModel.pastRankedGroupTickets[index], rank: (viewModel.pastRankedGroupTickets[index].rank), ownCard: true, currentWeek: false, homePage: false).padding(.bottom,16)
                     }).id(UUID())
