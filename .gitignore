@@ -1,1 +1,61 @@
+# Xcode
+.DS_Store
 *.xcuserstate
+xcuserdata/
+DerivedData/
+*.swp
+*.lock
+*.orig
+!default.xcworkspace
+!default.xcscmblueprint
+!default.xccheckout
+*.moved-aside
+*.xcuserstate
+!default.xcworkspace
+*.xcscmblueprint
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcworkspace
+!default.xcworkspace
+xcuserdata
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# Carthage
+Carthage/Build
+
+# Swift Package Manager
+.build/
+Package.resolved
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Others
+build/
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# macOS
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
