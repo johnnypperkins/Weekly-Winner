@@ -147,21 +147,31 @@ class authenticationViewModel: ObservableObject {
         
     }
     
-    func uploadSupplementaryData(country: String, age: Int, state: String, gender: String) {
+    func uploadSupplementaryData(country: String, birthday: Date, state: String, gender: String, username: String, instagram: String, promoCode: String) {
         guard let uid = Auth.auth().currentUser else {return }
         Firestore.firestore().collection("users").document(uid.uid).updateData(["country": country]) { _ in
             
         }
-        Firestore.firestore().collection("users").document(uid.uid).updateData(["age": age]) { _ in
+        Firestore.firestore().collection("users").document(uid.uid).updateData(["username": username]) { _ in
+            
+        }
+        let timestamp = Timestamp(date: birthday)
+        Firestore.firestore().collection("users").document(uid.uid).updateData(["birthday": timestamp]) { _ in
             
         }
         Firestore.firestore().collection("users").document(uid.uid).updateData(["gender": gender]) { _ in
             
         }
-        if state != "Choose here" {
-            Firestore.firestore().collection("users").document(uid.uid).updateData(["state": state]) { _ in
+        Firestore.firestore().collection("users").document(uid.uid).updateData(["state": state]) { _ in
             
         }
+        if state != "Choose here" {
+            Firestore.firestore().collection("users").document(uid.uid).updateData(["instagram": instagram]) { _ in
+            
+        }
+            Firestore.firestore().collection("users").document(uid.uid).updateData(["promoCode": promoCode]) { _ in
+                
+            }
     }
         
     }
@@ -175,7 +185,7 @@ class authenticationViewModel: ObservableObject {
                 //userSession = authResult!.user // added - Reid
                 let user = authResult!.user
                 
-                let newUser = User(username: username.lowercased(), firstName: firstName, lastName: lastName, profileImageUrl: "", email: email, dateJoined: Timestamp(date: Date()), instagram: instagram, promoCode: promoCode, country: "",state: "", age: -99, gender: "")
+                let newUser = User(username: "", firstName: firstName, lastName: lastName, profileImageUrl: "", email: email, dateJoined: Timestamp(date: Date()), instagram: "", promoCode: "", country: "",state: "", age: -99, gender: "")
                 await uploadUser(newUser)
                 
                 authenticationState = .authenticated

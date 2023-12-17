@@ -13,9 +13,10 @@ struct ContentView: View {
         NavigationStack{
             VStack {
                 if viewModel.userSession != nil { // changing from currUser to userSession bc immediate - Reid
-                    tabBarView()
+//                    tabBarView()
 //                    SignupIntro(viewModel: viewModel)
-//profilePhotoSelectorView(model: viewModel)
+profilePhotoSelectorView(model: viewModel)
+//                    authenticationView()
                 }
                     else{
 //                   . print("Login")

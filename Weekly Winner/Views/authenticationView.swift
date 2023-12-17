@@ -355,245 +355,245 @@ struct SignupView: View {
             
             ScrollView {
                 ScrollViewReader { scrollProxy in
-                VStack{
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("First Name")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                        HStack() {
-                            TextField("First Name", text: $viewModel.firstName)
-                                .placeholder(when: viewModel.firstName
-                                    .isEmpty, placeholder: {
-                                        Text("First Name").foregroundColor(.gray)
-                                    })
-                                .foregroundColor(.white)
-                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                                .accentColor(.white)
-                                .textInputAutocapitalization(.words)
-                                .disableAutocorrection(true)
-                                .focused($focus, equals: .firstName)
-                                .submitLabel(.next)
-                                .onSubmit {
-                                    withAnimation {
-                                        self.focus = .lastName
+                    VStack{
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("First Name")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                            HStack() {
+                                TextField("First Name", text: $viewModel.firstName)
+                                    .placeholder(when: viewModel.firstName
+                                        .isEmpty, placeholder: {
+                                            Text("First Name").foregroundColor(.gray)
+                                        })
+                                    .foregroundColor(.white)
+                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                                    .accentColor(.white)
+                                    .textInputAutocapitalization(.words)
+                                    .disableAutocorrection(true)
+                                    .focused($focus, equals: .firstName)
+                                    .submitLabel(.next)
+                                    .onSubmit {
+                                        withAnimation {
+                                            self.focus = .lastName
+                                        }
                                     }
-                                }
-                            
-                        }
-                        .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                        .cornerRadius(15)
-                    }
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-                    .id(FocusableFieldSignup.firstName)
-                    
-                    
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Last Name")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                        HStack() {
-                            TextField("Last Name", text: $viewModel.lastName)
-                                .placeholder(when: viewModel.lastName
-                                    .isEmpty, placeholder: {
-                                        Text("Last Name").foregroundColor(.gray)
-                                    })
-                                .foregroundColor(.white)
-                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                                .accentColor(.white)
-                                .textInputAutocapitalization(.words)
-                                .disableAutocorrection(true)
-                                .focused($focus, equals: .lastName)
-                                .submitLabel(.next)
-                                .onSubmit {
-                                    withAnimation {
-                                        self.focus = .username
-                                    }
-                                }
-                            
-                        }
-                        .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                        .cornerRadius(15)
-                    }
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-                    .id(FocusableFieldSignup.lastName)
-                    
-                    
-                    
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Username")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                        HStack() {
-                            TextField("Username", text: $viewModel.username)
                                 
-                                .placeholder(when: viewModel.username
-                                    .isEmpty, placeholder: {
-                                        Text("Username").foregroundColor(.gray)
-                                    })
-                                .foregroundColor(.white)
-                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                                .accentColor(.white)
-                                .textInputAutocapitalization(.words)
-                                .disableAutocorrection(true)
-                                .autocapitalization(.none)
-                                                .textCase(.lowercase)
-                                .focused($focus, equals: .username)
-                                .submitLabel(.next)
-                                .onSubmit {
-                                    withAnimation {
-                                        self.focus = .instagram
-                                    }
-                                }
-                            
+                            }
+                            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+                            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                            .cornerRadius(15)
                         }
-                        .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                        .cornerRadius(15)
-                    }
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-                    .id(FocusableFieldSignup.username)
-                    
-                    
-                    
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Email")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                        HStack() {
-                            TextField("Email", text: $viewModel.email)
-                                .placeholder(when: viewModel.email
-                                    .isEmpty, placeholder: {
-                                        Text("Email").foregroundColor(.gray)
-                                    })
-                                .foregroundColor(.white)
-                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                                .accentColor(.white)
-                                .keyboardType(.emailAddress)
-                                .textInputAutocapitalization(.words)
-                                .disableAutocorrection(true)
-                                .focused($focus, equals: .email)
-                                .submitLabel(.next)
-                                .onSubmit {
-                                    withAnimation {
-                                        self.focus = .password
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+                        .id(FocusableFieldSignup.firstName)
+                        
+                        
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("Last Name")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                            HStack() {
+                                TextField("Last Name", text: $viewModel.lastName)
+                                    .placeholder(when: viewModel.lastName
+                                        .isEmpty, placeholder: {
+                                            Text("Last Name").foregroundColor(.gray)
+                                        })
+                                    .foregroundColor(.white)
+                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                                    .accentColor(.white)
+                                    .textInputAutocapitalization(.words)
+                                    .disableAutocorrection(true)
+                                    .focused($focus, equals: .lastName)
+                                    .submitLabel(.next)
+                                    .onSubmit {
+                                        withAnimation {
+                                            self.focus = .email
+                                        }
                                     }
-                                }
-                            
-                            
+                                
+                            }
+                            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+                            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                            .cornerRadius(15)
                         }
-                        .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                        .cornerRadius(15)
-                    }
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-                    .id(FocusableFieldSignup.email)
-                    
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Password")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                        HStack() {
-                            SecureField("Password", text: $viewModel.password)
-                                .placeholder(when: viewModel.password
-                                    .isEmpty, placeholder: {
-                                        Text("Password").foregroundColor(.gray)
-                                    })
-                                .foregroundColor(.white)
-                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                                .accentColor(.white)
-                                .textInputAutocapitalization(.words)
-                                .disableAutocorrection(true)
-                                .focused($focus, equals: .password)
-                                .submitLabel(.done)
-                                .onSubmit {
-                                    withAnimation {
-                                        self.focus = nil
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+                        .id(FocusableFieldSignup.lastName)
+                        
+                        
+                        
+//                        VStack(alignment: .leading, spacing: 10) {
+//                            Text("Username")
+//                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+//                                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+//                            HStack() {
+//                                TextField("Username", text: $viewModel.username)
+//                                
+//                                    .placeholder(when: viewModel.username
+//                                        .isEmpty, placeholder: {
+//                                            Text("Username").foregroundColor(.gray)
+//                                        })
+//                                    .foregroundColor(.white)
+//                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+//                                    .accentColor(.white)
+//                                    .textInputAutocapitalization(.words)
+//                                    .disableAutocorrection(true)
+//                                    .autocapitalization(.none)
+//                                    .textCase(.lowercase)
+//                                    .focused($focus, equals: .username)
+//                                    .submitLabel(.next)
+//                                    .onSubmit {
+//                                        withAnimation {
+//                                            self.focus = .instagram
+//                                        }
+//                                    }
+//                                
+//                            }
+//                            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+//                            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+//                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+//                            .cornerRadius(15)
+//                        }
+//                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+//                        .id(FocusableFieldSignup.username)
+                        
+                        
+                        
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("Email")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                            HStack() {
+                                TextField("Email", text: $viewModel.email)
+                                    .placeholder(when: viewModel.email
+                                        .isEmpty, placeholder: {
+                                            Text("Email").foregroundColor(.gray)
+                                        })
+                                    .foregroundColor(.white)
+                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                                    .accentColor(.white)
+                                    .keyboardType(.emailAddress)
+                                    .textInputAutocapitalization(.words)
+                                    .disableAutocorrection(true)
+                                    .focused($focus, equals: .email)
+                                    .submitLabel(.next)
+                                    .onSubmit {
+                                        withAnimation {
+                                            self.focus = .password
+                                        }
                                     }
-                                }
-                            
+                                
+                                
+                            }
+                            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+                            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                            .cornerRadius(15)
                         }
-                        .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                        .cornerRadius(15)
-                    }
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-                    .id(FocusableFieldSignup.password)
-                    
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Instagram")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                        HStack() {
-                            TextField("Instagram", text: $viewModel.instagram)
-                                .placeholder(when: viewModel.instagram
-                                    .isEmpty, placeholder: {
-                                        Text("Instagram").foregroundColor(.gray)
-                                    })
-                                .foregroundColor(.white)
-                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                                .accentColor(.white)
-                                .textInputAutocapitalization(.words)
-                                .disableAutocorrection(true)
-                                .focused($focus, equals: .instagram)
-                                .submitLabel(.next)
-                                .onSubmit {
-                                    withAnimation {
-                                        self.focus = .email
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+                        .id(FocusableFieldSignup.email)
+                        
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("Password")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                            HStack() {
+                                SecureField("Password", text: $viewModel.password)
+                                    .placeholder(when: viewModel.password
+                                        .isEmpty, placeholder: {
+                                            Text("Password").foregroundColor(.gray)
+                                        })
+                                    .foregroundColor(.white)
+                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                                    .accentColor(.white)
+                                    .textInputAutocapitalization(.words)
+                                    .disableAutocorrection(true)
+                                    .focused($focus, equals: .password)
+                                    .submitLabel(.done)
+                                    .onSubmit {
+                                        withAnimation {
+                                            self.focus = nil
+                                        }
                                     }
-                                }
-                            
+                                
+                            }
+                            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+                            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                            .cornerRadius(15)
                         }
-                        .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                        .cornerRadius(15)
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+                        .id(FocusableFieldSignup.password)
+                        
+//                        VStack(alignment: .leading, spacing: 10) {
+//                            Text("Instagram")
+//                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+//                                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+//                            HStack() {
+//                                TextField("Instagram", text: $viewModel.instagram)
+//                                    .placeholder(when: viewModel.instagram
+//                                        .isEmpty, placeholder: {
+//                                            Text("Instagram").foregroundColor(.gray)
+//                                        })
+//                                    .foregroundColor(.white)
+//                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+//                                    .accentColor(.white)
+//                                    .textInputAutocapitalization(.words)
+//                                    .disableAutocorrection(true)
+//                                    .focused($focus, equals: .instagram)
+//                                    .submitLabel(.next)
+//                                    .onSubmit {
+//                                        withAnimation {
+//                                            self.focus = .email
+//                                        }
+//                                    }
+//                                
+//                            }
+//                            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+//                            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+//                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+//                            .cornerRadius(15)
+//                        }
+//                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+//                        .id(FocusableFieldSignup.instagram)
+//                        
+//                        VStack(alignment: .leading, spacing: 10) {
+//                            Text("Promo Code")
+//                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+//                                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+//                            HStack() {
+//                                TextField("Promo Code", text: $viewModel.promoCode)
+//                                    .placeholder(when: viewModel.promoCode
+//                                        .isEmpty, placeholder: {
+//                                            Text("Promo Code").foregroundColor(.gray)
+//                                        })
+//                                    .foregroundColor(.white)
+//                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+//                                    .accentColor(.white)
+//                                    .keyboardType(.emailAddress)
+//                                    .textInputAutocapitalization(.words)
+//                                    .disableAutocorrection(true)
+//                                    .focused($focus, equals: .promoCode)
+//                                    .submitLabel(.next)
+//                                    .onSubmit {
+//                                        withAnimation {
+//                                            self.focus = .promoCode
+//                                        }
+//                                    }
+//                                
+//                                
+//                            }
+//                            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+//                            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+//                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+//                            .cornerRadius(15)
+//                        }
+//                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+//                        .id(FocusableFieldSignup.promoCode)
+                        
+                        
                     }
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-                    .id(FocusableFieldSignup.instagram)
-                    
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Promo Code")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                        HStack() {
-                            TextField("Promo Code", text: $viewModel.promoCode)
-                                .placeholder(when: viewModel.promoCode
-                                    .isEmpty, placeholder: {
-                                        Text("Promo Code").foregroundColor(.gray)
-                                    })
-                                .foregroundColor(.white)
-                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                                .accentColor(.white)
-                                .keyboardType(.emailAddress)
-                                .textInputAutocapitalization(.words)
-                                .disableAutocorrection(true)
-                                .focused($focus, equals: .promoCode)
-                                .submitLabel(.next)
-                                .onSubmit {
-                                    withAnimation {
-                                        self.focus = .promoCode
-                                    }
-                                }
-                            
-                            
-                        }
-                        .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                        .cornerRadius(15)
-                    }
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-                    .id(FocusableFieldSignup.promoCode)
-                    
-                    
-                }
 //                .padding(.bottom, keyboardManager.keyboardHeight)
                 .padding(.bottom, focus == nil ? 0 : 200)
                 .onChange(of: focus) { newFocus in
