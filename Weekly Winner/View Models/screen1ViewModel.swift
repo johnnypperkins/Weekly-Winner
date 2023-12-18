@@ -6,3 +6,152 @@
 //
 
 import Foundation
+import SwiftUI
+import Firebase
+import FirebaseAuth
+
+
+class screen1ViewModel: ObservableObject {
+    
+    private let serviceUSER = userService()
+    private let serviceGROUP = groupService()
+    
+    @Published var userSession : FirebaseAuth.User? = nil
+    @Published var updateURL: String = ""
+    @Published var userGroups: [Group] = []
+    @Published var canGetHistoricalData = false
+    @Published var userGroupsLoaded = false
+    @Published var currentUser: User? = nil
+    private let currentVersion: String = "1.23"
+    
+    @Published var canFetchRankedTickets = false
+
+
+    
+    init() {
+        self.userSession = Auth.auth().currentUser
+        self.setStaticUser {}
+        self.fetchUserGroups {}
+        
+        fetchUserTickets(timeFrame: "daily") {
+            self.fetchCurrentRankedTickets(groupID: "GlobalDaily", timeFrame: "daily") {
+            }
+        }
+        
+        fetchUserTickets(timeFrame: "weekly") {
+            self.fetchCurrentRankedTickets(groupID: "Global", timeFrame: "weekly") {}
+        }
+        
+      
+        
+    }
+
+    
+    func setStaticUser(completion: @escaping () -> Void) {
+        
+        guard let uid = self.userSession?.uid else { return }
+        
+        serviceUSER.fetchUser(uid: uid) { user,success  in
+            StaticUserData.shared.currentUser = user!
+            self.currentUser = user!
+        }
+    }
+    
+    func forceUpdate(completion: @escaping () -> Void) {
+        let db = Firestore.firestore()
+        let updatesDocument = db.collection("Misc").document("updates")
+        
+        updatesDocument.getDocument { document, error in
+            if let error = error {
+                print("Error fetching document: \(error)")
+                completion()
+                return
+            }
+            
+            guard let document = document, document.exists,
+                  let version = document["version"] as? String,
+                  let updateURL2 = document["updateURL"] as? String else {
+                print("Document not found or fields missing")
+                completion()
+                return
+            }
+        print("DATABASE VERSION", version)
+        print("IOS VERSION", self.currentVersion)
+            
+        if self.currentVersion != version {
+                self.updateURL = updateURL2
+                completion()
+            } else {
+                completion()
+            }
+        }
+    }
+    
+    func fetchUserGroups(completion: @escaping () -> Void) {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        serviceGROUP.fetchUserGroups() { groups, error in
+            if let error = error {
+                print("Error fetching user groups: \(error.localizedDescription)")
+            } else {
+                self.userGroups = groups ?? []
+                self.canGetHistoricalData = true
+                self.userGroupsLoaded = true
+            }
+        }
+    }
+    
+    func fetchCurrentRankedTickets(groupID: String, timeFrame: String, completion: @escaping () -> Void){
+        serviceGROUP.getCurrentRankedTickets(groupID: groupID, timeFrame: timeFrame) { tickets, totalPlayers, error in
+                if let error = error {
+                    print("Error fetching user groups: \(error.localizedDescription)")
+                } else if let tickets = tickets {
+                    if timeFrame == "daily" {
+                        StaticUserData.shared.dailyRankedTickets = tickets
+                    } else if timeFrame == "weekly" {
+                        StaticUserData.shared.weeklyRankedTickets = tickets
+                    }
+                    self.canFetchRankedTickets = true
+                        //
+                    print("ABCD", tickets)
+                        print("test print")
+                    }
+                completion()
+            }
+        }
+    
+    func fetchUserTickets(timeFrame: String, completion: @escaping () -> Void) {
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        serviceGROUP.fetchUserTickets(userID: userId, timeFrame: timeFrame) { tickets, error in
+            if let error = error {
+                print("Error fetching user groups: \(error.localizedDescription)")
+            } else if let tickets = tickets {
+                if timeFrame == "weekly" {
+                    StaticUserData.shared.weeklyTicket = tickets[0]
+                } else if timeFrame == "daily" {
+                    StaticUserData.shared.dailyTicket = tickets[0]
+
+                }
+            }
+            completion()
+        }
+    }
+    
+
+    
+    
+}
+
+func fetchUserProfilePic(uid: String, completion: @escaping (String?, Error?) -> Void) {
+    let db = Firestore.firestore()
+    let userRef = db.collection("users").document(uid)
+
+    userRef.getDocument { (documentSnapshot, error) in
+        if let error = error {
+            print("Error checking if blocked: \(error.localizedDescription)")
+            completion(nil, error)
+        } else {
+            let profileImageUrl = documentSnapshot?.data()?["profileImageUrl"] as? String
+            completion(profileImageUrl, nil)
+        }
+    }
+}

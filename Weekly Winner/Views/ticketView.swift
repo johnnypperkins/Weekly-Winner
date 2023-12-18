@@ -5,10 +5,7 @@ import SafariServices
 
 struct ticketView: View {
     @ObservedObject var viewModel = ticketViewModel()
-    @ObservedObject var bookVM = bookViewModel()
-    //@ObservedObject var profileVM = profileViewModel(user: user)
     @State private var selectedGroup = 0 // Variable to track the selected group
-    @ObservedObject var authViewModel = authenticationViewModel()
     @State var ticketShowing: Bool = true
     @State private var timeFrame: String
     
@@ -46,6 +43,9 @@ struct ticketView: View {
         
     }
     
+
+    
+    
     init(username: String, uid: String, groupID: String, selectedWeek: String, ticketFormatForGroups: [Int], ownTicket: Bool, onTicketPage: Bool, passedTimeFrame: String) {
         self.username = username
         self.uid = uid
@@ -56,20 +56,14 @@ struct ticketView: View {
         self.onTicketPage = onTicketPage
         self._timeFrame = State(initialValue: passedTimeFrame)
 
-
         if uid != Auth.auth().currentUser?.uid{
             viewModel.fetchFriendTicket(uid: uid, with: groupID, timeFrame: timeFrame) { group in
-                
             }
-            
-        }
-        viewModel.fetchStats(uid: uid) {
-
         }
         
-        viewModel.fetchUserProfilePic(uid: uid) {
-            
-        }
+        viewModel.fetchUserInformation(uid: uid) {}
+        viewModel.fetchStats(uid: uid) {}
+        viewModel.fetchUserProfilePic(uid: uid) {}
     }
     
     var body: some View {
@@ -77,206 +71,27 @@ struct ticketView: View {
             K.finalColor.backgroundBlue.ignoresSafeArea(.all)
             VStack {
                 if uid == Auth.auth().currentUser?.uid && onTicketPage{
-                    Text("Tickets").font(.custom(K.customFonts.lexendDecaMedium, size: 20)).foregroundColor(K.finalColor.textWhite).padding(.bottom)
-                    
-                        HStack(alignment: .center, spacing: 10) {
-                            Spacer()
-                            
-                            Button(action: {
-                                //self.selectedGroup = index
-                                //viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
-                                timeFrame = "daily"
-                                viewModel.isBetsLoaded = false
-                                viewModel.isTFLoaded = false
-                                if selectedWeek == "current" {
-                                    viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: StaticUserData.shared.dailyTicket.ticketFormat, timeFrame: timeFrame, completion: {})
-                                } else {
-                                    viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
-                                }
-                            }) {
-                                Text("Daily")
-                                    .padding()
-                                    .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-                                    .foregroundColor(.white)
-                                    .frame(width: 115, height: 35, alignment: .center)
-                                    .background(timeFrame == "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                                    .cornerRadius(5)
-                            }
-
-                            Button(action: {
-                                //self.selectedGroup = index
-                                //viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
-                                timeFrame = "weekly"
-                                viewModel.isBetsLoaded = false
-                                viewModel.isTFLoaded = false
-                                if selectedWeek == "current" {
-                                    viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: StaticUserData.shared.weeklyTicket.ticketFormat, timeFrame: timeFrame, completion: {})
-                                } else {
-                                    viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
-                                }
-                            }) {
-                                Text("Weekly")
-                                    .padding()
-                                    .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-                                    .foregroundColor(.white)
-                                    .frame(width: 115, height: 35, alignment: .center)
-                                    .background(timeFrame == "weekly" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                                    .cornerRadius(5)
-                            }
-                            
-//                            ForEach(0..<viewModel.userTickets.count, id: \.self) { index in
-//                                Button(action: {
-//                                    self.selectedGroup = index
-//                                    //viewModel.fetchUserTickets(uid: uid, groupNumber: selectedGroup) {
-//                                    viewModel.isBetsLoaded = false
-//                                    viewModel.isTFLoaded = false
-//                                    if selectedWeek == "current" {
-//                                        viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: viewModel.userTickets[selectedGroup].ticketFormat, timeFrame: timeFrame, completion: {})
-//                                    } else {
-//                                        viewModel.fetchPastBets(uid: uid, for: selectedGroup, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
-//                                    }
-//                                }) {
-//                                    Text(viewModel.userTickets[index].groupName)
-//                                        .padding()
-//                                        .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-//                                        .foregroundColor(.white)
-//                                        .frame(width: 115, height: 35, alignment: .center)
-//                                        .background(selectedGroup == index ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-//                                        .cornerRadius(5)
-//                                }
-//                            }
-                            Spacer()
-                        }
-                    
-                    
+                    onTicketHeader(viewModel: viewModel, 
+                                   timeFrame: $timeFrame,
+                                   uid: uid)
                 } else {
                     if viewModel.isBetsLoaded {
-                        VStack {
-                            HStack {
-                                Spacer()
-                                if viewModel.profilePicUrl != "" {
-                                    KFImage(URL(string: viewModel.userInfo?.profileImageUrl ?? ""))
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .clipShape(Circle())
-                                        .frame(width: 80, height: 80)
-                                    
-                                } else {
-                                    Image(systemName: "photo.circle.fill")
-                                        .resizable()
-                                        .cornerRadius(7.5)
-                                        .foregroundColor(K.finalColor.titleBlue)
-                                        .scaledToFit()
-                                        .frame(height: 80)
-                                }
-                                //Text(viewModel.userTickets[0].groupName).font(.custom(K.customFonts.lexendDecaMedium, size: 20)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
-                                VStack (alignment: .leading, spacing: 0){
-                                    Text(viewModel.userInfo?.username ?? "").font(.custom(K.customFonts.lexendDecaMedium, size: 28)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
-                                    Text("Joined: " + formatDateMMDDYY(from: viewModel.userInfo!.dateJoined))
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.medium))
-                                        .foregroundColor(.white.opacity(0.75))
-                                        .padding(.leading, 1)
-                                }
-                                Spacer()
-                            }.padding(.top, 6)
-                            
-                            HStack (spacing: 5){
-                                Button(action: {
-                                    ticketShowing = true
-                                }, label: {
-                                    HStack {
-                                        Text("Ticket")
-                                            .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
-                                            .foregroundColor(.white)
-                                            .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
-                                    }.frame(width: 100, height: 30)
-                                        .background(ticketShowing ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                                        .cornerRadius(5)
-                                    
-                                })
-                                
-                                Button(action: {
-                                    ticketShowing = false
-                                }, label: {
-                                    HStack {
-                                        Text("Stats")
-                                            .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
-                                            .foregroundColor(.white)
-                                            .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
-                                    }.frame(width: 100, height: 30)
-                                        .background(!ticketShowing ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                                        .cornerRadius(5)
-                                    
-                                })
-                                
-                            }.padding(.bottom,6)
-                        }.background(K.finalColor.cardBlue)
-                            .cornerRadius(7.5)
-                            .padding(.horizontal, 22.5)
-                        //
-                        
+                        offTicketHeader(viewModel: viewModel, 
+                                        ticketShowing: $ticketShowing)
                     }
-                    
                 }
                 
                 if ticketShowing {
                     if (viewModel.isBetsLoaded) {
                         if (ticketIsEnabled) {
-                            //                        if uid == Auth.auth().currentUser?.uid {
-                            HStack (alignment: .center, spacing: 23){
-                                HStack (spacing: 0) {
-                                    Text("Pending").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
-                                    Spacer()
-                                    Text("\(String(format: "%.0f", viewModel.totalPotentialWon))")
-                                        .font(.custom("Futura", size: 20))
-                                        .foregroundColor(K.finalColor.potentialOrange)
-                                }.padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-                                    .frame(width: 160, height: 55, alignment: .center)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 7.5)
-                                            .fill(K.finalColor.cardBlue) // Change the opacity as needed
-                                    ).cornerRadius(7.5)
-                                HStack (spacing: 0){
-                                    Text("Balance").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
-                                    Spacer()
-                                    Text("\(String(format: "%.0f", viewModel.totalWon))")
-                                        .font(.custom("Futura", size: 20))
-                                        .foregroundColor(viewModel.totalWon >= 0 ? K.finalColor.winningGreen : K.finalColor.deleteRed)
-                                }
-                                .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-                                .frame(width: 160, height: 55, alignment: .center)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 7.5)
-                                        .fill(K.finalColor.cardBlue) // Change the opacity as needed
-                                )
-                                .cornerRadius(7.5)
-                            }.padding([.horizontal,.top])
                             
-                            ScrollView {
-                                VStack {
-                                    VStack {
-                                        if selectedWeek == "current" {
-                                            ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
-                                                if viewModel.currentTicketFormat.count > 0 && viewModel.isTFLoaded == true && viewModel.totalBetArrays.count == viewModel.currentTicketFormat.count {
-                                                    if viewModel.isBetsLoaded {
-                                                        SectionTitle(title: parlayTitle(ticketFormat: viewModel.currentTicketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.currentTicketFormat[parlayIndex], uid: Auth.auth().currentUser?.uid ?? "", selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, timeFrame: $timeFrame, viewModel: viewModel, BookVM: bookVM)
-                                                    }
-                                                }
-                                            }
-                                        } else {
-                                            ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
-                                                SectionTitle(title: parlayTitle(ticketFormat: ticketFormatForGroups, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: ticketFormatForGroups[parlayIndex], uid: uid, selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, timeFrame: $timeFrame, viewModel: viewModel, BookVM: bookVM)
-                                            }
-                                        }
-                                        
-                                    }.onAppear() {
-                                        print("TOTAL BET ARRAY COUNT", viewModel.totalBetArrays.count)
-                                        print("TICKET FORMAT FOR GROUPS", ticketFormatForGroups)
-                                    }
-                                    
-                                }.padding(.bottom,65)
-                                    .padding()
-                            }
+                            betsDisplay(uid: uid,
+                                        selectedWeek: selectedWeek,
+                                        ownTicket: ownTicket,
+                                        onTicketPage: onTicketPage,
+                                        ticketFormatForGroups: ticketFormatForGroups,
+                                        timeFrame: $timeFrame,
+                                        viewModel: viewModel)
                             
                         } else {
                             Text("Disabled, talk to admin.")
@@ -316,18 +131,18 @@ struct ticketView: View {
                             viewModel.fetchFriendTicket(uid: uid, with: groupID, timeFrame: timeFrame) {_ in
                                 viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: currentTicketFormat, timeFrame: timeFrame, completion: {}) // usertickets is set to only one ticket here
                             }
-                        }
-                        else {
-                            viewModel.fetchPastFriendTicket(uid: uid, with: groupID) {_ in
-                                viewModel.fetchPastBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, completion: {})
+                        } else {
+                            viewModel.fetchPastFriendTicket(uid: uid, with: groupID, timeFrame: timeFrame) {_ in
+                                viewModel.fetchPastBets(uid: uid, for: 0, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, timeFrame: timeFrame, completion: {})
                             }
                         }
                         
-                        viewModel.fetchUserInformation(uid: uid) {}
+                        
                         
                     } else {
                         //viewModel.fetchUserTickets(timeFrame: "weekly") { // CHANGE FROM TOP
                             viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: currentTicketFormat, timeFrame: timeFrame, completion: {}) // Fetch bets for selected group on view appear.
+                      //      viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: currentTicketFormat, timeFrame: timeFrame, completion: {}) // Fetch bets for selected group on view appear.
                             
                         //}
                     }
@@ -337,9 +152,205 @@ struct ticketView: View {
                     viewModel.stopListening() // Stop listening when view disappears
                 }
             
+            
         }
+    }
+    
+    struct onTicketHeader: View {
+        @ObservedObject var viewModel: ticketViewModel
+        @Binding var timeFrame: String
+        let uid: String
         
-           
+        var body: some View {
+            VStack (spacing: 4){
+                HStack (spacing: 0){
+                    Button(action: {
+                        //viewModel.canGetHistoricalData = false
+                        if timeFrame != "daily" {
+                            timeFrame = "daily"
+                            viewModel.isBetsLoaded = false
+                            viewModel.isTFLoaded = false
+
+                            viewModel.fetchBets(uid: uid, for: 0, ticketFormat: StaticUserData.shared.dailyTicket.ticketFormat, timeFrame: timeFrame, completion: {})
+                        }
+                        
+                    }) {
+                        //Text(viewModel.userTickets[self.selectedGroup-1].groupName)
+                        Text("Daily")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
+                            .foregroundColor(.white)
+                            .frame(width: 150, height: 35, alignment: .center)
+                            //.background(timeFrame == "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                            .cornerRadius(5)
+                    }
+                    
+                    Button(action: {
+                        //viewModel.canGetHistoricalData = false
+                        if timeFrame == "daily" {
+                            
+                            timeFrame = "weekly"
+                            viewModel.isBetsLoaded = false
+                            viewModel.isTFLoaded = false
+
+                            viewModel.fetchBets(uid: uid, for: 0, ticketFormat: StaticUserData.shared.weeklyTicket.ticketFormat, timeFrame: timeFrame, completion: {})
+
+                        }
+                        
+                    }) {
+                        Text("Weekly")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
+                            .foregroundColor(.white)
+                            .frame(width: 150, height: 35, alignment: .center)
+                            .cornerRadius(5)
+                    }
+                }
+                Rectangle()
+                    .fill(Color.white) // Sets the rectangle's fill color to white
+                    .frame(width: 120, height: 3)
+                    .cornerRadius(1) // Apply rounded corners
+                    .offset(x: timeFrame == "daily" ? -75 : 75, y: 0)
+                    .animation(.easeInOut(duration: 0.35))
+            }.padding(.top, 27)
+        }
+    }
+    
+    struct offTicketHeader: View {
+        
+        @ObservedObject var viewModel: ticketViewModel
+        @Binding var ticketShowing: Bool
+        
+        var body: some View {
+            VStack {
+                HStack {
+                    Spacer()
+                    if viewModel.profilePicUrl != "" {
+                        KFImage(URL(string: viewModel.userInfo?.profileImageUrl ?? ""))
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .clipShape(Circle())
+                            .frame(width: 80, height: 80)
+                        
+                    } else {
+                        Image(systemName: "photo.circle.fill")
+                            .resizable()
+                            .cornerRadius(7.5)
+                            .foregroundColor(K.finalColor.titleBlue)
+                            .scaledToFit()
+                            .frame(height: 80)
+                    }
+                    //Text(viewModel.userTickets[0].groupName).font(.custom(K.customFonts.lexendDecaMedium, size: 20)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
+                    VStack (alignment: .leading, spacing: 0){
+                        Text(viewModel.userInfo?.username ?? "").font(.custom(K.customFonts.lexendDecaMedium, size: 28)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
+                        Text("Joined: " + formatDateMMDDYY(from: viewModel.userInfo?.dateJoined ?? Timestamp(date: Date())))
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.medium))
+                            .foregroundColor(.white.opacity(0.75))
+                            .padding(.leading, 1)
+                    }
+                    Spacer()
+                }.padding(.top, 6)
+                
+                HStack (spacing: 5){
+                    Button(action: {
+                        ticketShowing = true
+                    }, label: {
+                        HStack {
+                            Text("Ticket")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                .foregroundColor(.white)
+                                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                        }.frame(width: 100, height: 30)
+                            .background(ticketShowing ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                            .cornerRadius(5)
+                        
+                    })
+                    
+                    Button(action: {
+                        ticketShowing = false
+                    }, label: {
+                        HStack {
+                            Text("Stats")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                .foregroundColor(.white)
+                                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                        }.frame(width: 100, height: 30)
+                            .background(!ticketShowing ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                            .cornerRadius(5)
+                        
+                    })
+                    
+                }.padding(.bottom,6)
+            }.background(K.finalColor.cardBlue)
+                .cornerRadius(7.5)
+                .padding(.horizontal, 22.5)
+        }
+    }
+    
+    struct betsDisplay: View {
+        let uid: String
+        let selectedWeek: String
+        let ownTicket: Bool
+        let onTicketPage: Bool
+        let ticketFormatForGroups: [Int]
+        @Binding var timeFrame: String
+        @ObservedObject var viewModel: ticketViewModel
+
+        
+        var body: some View {
+            HStack (alignment: .center, spacing: 23){
+                HStack (spacing: 0) {
+                    Text("Pending").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
+                    Spacer()
+                    Text("\(String(format: "%.0f", viewModel.totalPotentialWon))")
+                        .font(.custom("Futura", size: 20))
+                        .foregroundColor(K.finalColor.potentialOrange)
+                }.padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
+                    .frame(width: 160, height: 55, alignment: .center)
+                    .background(
+                        RoundedRectangle(cornerRadius: 7.5)
+                            .fill(K.finalColor.cardBlue) // Change the opacity as needed
+                    ).cornerRadius(7.5)
+                HStack (spacing: 0){
+                    Text("Balance").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
+                    Spacer()
+                    Text("\(String(format: "%.0f", viewModel.totalWon))")
+                        .font(.custom("Futura", size: 20))
+                        .foregroundColor(viewModel.totalWon >= 0 ? K.finalColor.winningGreen : K.finalColor.deleteRed)
+                }
+                .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
+                .frame(width: 160, height: 55, alignment: .center)
+                .background(
+                    RoundedRectangle(cornerRadius: 7.5)
+                        .fill(K.finalColor.cardBlue) // Change the opacity as needed
+                )
+                .cornerRadius(7.5)
+            }.padding([.horizontal,.top])
+            
+            ScrollView {
+                VStack {
+                    VStack {
+                        if selectedWeek == "current" {
+                            ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
+                                if viewModel.currentTicketFormat.count > 0 && viewModel.isTFLoaded == true && viewModel.totalBetArrays.count == viewModel.currentTicketFormat.count {
+                                    if viewModel.isBetsLoaded {
+                                        SectionTitle(title: parlayTitle(ticketFormat: viewModel.currentTicketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.currentTicketFormat[parlayIndex], uid: Auth.auth().currentUser?.uid ?? "", selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, timeFrame: $timeFrame, viewModel: viewModel)
+                                    }
+                                }
+                            }
+                        } else {
+                            ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
+                                SectionTitle(title: parlayTitle(ticketFormat: ticketFormatForGroups, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: ticketFormatForGroups[parlayIndex], uid: uid, selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, timeFrame: $timeFrame, viewModel: viewModel)
+                            }
+                        }
+                        
+                    }.onAppear() {
+                        print("TOTAL BET ARRAY COUNT", viewModel.totalBetArrays.count)
+                        print("TICKET FORMAT FOR GROUPS", ticketFormatForGroups)
+                    }
+                    
+                }.padding(.bottom,65)
+                    .padding()
+            }
+        }
     }
     
     struct SectionTitle: View {
@@ -353,7 +364,6 @@ struct ticketView: View {
         @Binding var timeFrame: String
        // let totalOdds: Double
         @ObservedObject var viewModel: ticketViewModel
-        @ObservedObject var BookVM: bookViewModel
         @State var expand = false
         
         
@@ -418,7 +428,7 @@ struct ticketView: View {
                         ForEach(0..<totalBetsCount, id: \.self) { index in
                             VStack(alignment: .center, spacing: 0) {
                                 if index < betArray.count {
-                                    BetCard(bet: betArray[index], uid: uid, selectedWeek: selectedWeek, ownCard: ownTicket, onTicketPage: onTicketPage, bookVM: BookVM, timeFrame: $timeFrame, viewModel: viewModel)
+                                    BetCard(bet: betArray[index], uid: uid, selectedWeek: selectedWeek, ownCard: ownTicket, onTicketPage: onTicketPage, ticketVM: viewModel, timeFrame: $timeFrame, viewModel: viewModel)
                    
                                 } else {
                                     EmptyBetCard(betArray: betArray)
@@ -453,7 +463,7 @@ struct ticketView: View {
             let onTicketPage: Bool
             @State private var canDelete: Bool = false
             @State var moreInfoClicked = false
-            @ObservedObject var bookVM: bookViewModel
+            @ObservedObject var ticketVM: ticketViewModel
             @State private var game: Game? = nil
             @State var expand = false
             @Binding var timeFrame: String
@@ -559,9 +569,6 @@ struct ticketView: View {
                                                 Text("\(game?.awayTeam ?? "")")
                                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
                                                     .foregroundColor(.white)
-//                                                Text(" @")
-//                                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 8))
-//                                                    .foregroundColor(.white)
                                                 Spacer()
                                             }
                                         }.frame(width: 220)
@@ -620,7 +627,7 @@ struct ticketView: View {
                     .onAppear() {
                         canDelete = false
                         
-                        bookVM.fetchGameDocument(byID: bet.gameID) { fetchedGame in
+                        ticketVM.fetchGameDocument(byID: bet.gameID) { fetchedGame in
                             if let fetchedGame = fetchedGame {
                                 print("Fetched game: \(fetchedGame)")
                                 self.game = fetchedGame

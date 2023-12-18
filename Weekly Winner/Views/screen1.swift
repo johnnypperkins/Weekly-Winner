@@ -12,51 +12,30 @@ import SafariServices
 
 
 struct UserProfileView: View {
-    @ObservedObject private var authenticationVM = authenticationViewModel()
-    @ObservedObject private var bookVM = bookViewModel()
-    @ObservedObject private var ticketVM = ticketViewModel()
-    @ObservedObject private var groupsVM = groupsViewModel()
+    @ObservedObject private var screen1VM = screen1ViewModel()
     @StateObject var countdownTimer = CountdownTimer()
     @State private var showWebpage = false
     @Binding var tab: Tab
-    @State var timeFrame = "weekly"
+    @State var timeFrame = "daily"
     
-//    @State private var selectedButton: ButtonType = .A
-//
-//    enum ButtonType {
-//        case A, B
-//    }
 
-    
-    
-    
-   // @State private var showRulesPage = false
-    
-//    init() {
-//        groupsVM.fetchUserTickets(timeFrame: "weekly") {}
-//        groupsVM.fetchUserTickets(timeFrame: "daily") {}
-//    }
-    
     
     var body: some View {
         VStack(spacing: 12) {
-            //Spacer()
 
-            ProfileHeaderView(timeFrame: $timeFrame, authVM: authenticationVM)
+            ProfileHeaderView(screen1VM: screen1VM, timeFrame: $timeFrame)
                 .padding(.top, 10)
                 .padding(.horizontal)
            
             countDown(timeFrame: $timeFrame)
-               // .padding(.top, 5)
-            //Spacer()
+            
+        //    testView()
+
             VStack {
-                yourGroups(groupsVM: groupsVM, tab: $tab)
+                yourGroups(screen1VM: screen1VM, tab: $tab)
                     .padding(.horizontal)
-                
-//                MostPopularBetsView(bookVM: bookVM)
-//                    .padding(.horizontal)
-                
-                weeklyGlobalLeaders(viewModel: groupsVM)
+
+                weeklyGlobalLeaders(screen1VM: screen1VM, timeFrame: $timeFrame)
                     .padding(.horizontal)
                 
                 
@@ -65,21 +44,14 @@ struct UserProfileView: View {
 
         }
         .sheet(isPresented: $showWebpage) {
-            SafariView(url: URL(string: authenticationVM.updateURL)!)
-                                    }
+            SafariView(url: URL(string: screen1VM.updateURL)!)
+        }
        
         
         .background(K.finalColor.backgroundBlue)
         .onAppear() {
-//            groupsVM.fetchUserTickets(timeFrame: "weekly") {
-//                groupsVM.groupsFetched = true
-//                groupsVM.fetchUserGroups {
-//                    groupsVM.userGroupsLoaded = true
-//                }
-//            }
-//            groupsVM.fetchUserTickets(timeFrame: "daily") {}
-            authenticationVM.forceUpdate () {
-                if authenticationVM.updateURL != ""{
+            screen1VM.forceUpdate () {
+                if screen1VM.updateURL != ""{
                     AppUtility.shared.showCustomAlert(alertType: .none, message: "There is a new, necessary update. Sorry we know this is annoying...", actionButtonTitle: K.appButtonTitle.ok, cancelButtonTitle: nil) { action in
                         if action == AlertButtonAction.okButton{
                             showWebpage.toggle()
@@ -88,56 +60,135 @@ struct UserProfileView: View {
                     }
                 }
             }
-            authenticationVM.fetchUser() {
-                
-                print("\(StaticUserData.shared.username) is username")
-            }
-            
-            groupsVM.fetchUserGroups {
-
-            }
-            //bookVM.fetchMostPopularBets()
         }.padding(.top, 35)
-        //Spacer()
     }
 }
 
 
 
-struct weeklyGlobalLeaders: View {
-    @StateObject var viewModel: groupsViewModel
-  var body: some View {
-    ZStack() {
-        VStack(alignment: .center) {
-            Text("Weekly Leaders")
-                .font(.custom(K.customFonts.lexendDecaMedium, size: 24).weight(.medium))
-                .foregroundColor(.white)
+struct ScreenA: View {
+    var body: some View {
+        Text("helloA")
+    }
+}
 
-            ForEach(0..<min(3, viewModel.currentRankedGroupTickets.count), id: \.self) { index in
-                let ticket = viewModel.currentRankedGroupTickets[index]
+struct ScreenB: View {
+    var body: some View {
+        Text("helloB")
+    }
+}
 
-                BetCard(
-                    viewModel: viewModel,
-                    ticket: ticket,
-                    rank: ticket.rank,
-                    ownCard: ticket.uid == Auth.auth().currentUser?.uid,
-                    currentWeek: true,
-                    homePage: true
+struct testView: View {
+    @State private var currentScreen: Int = 0 // 0 for Screen A, 1 for Screen B
+    @State private var dragTranslation: CGFloat = 0
+
+
+    var body: some View {
+        VStack {
+            // Title and Button views
+            HStack {
+                Button("Screen A") {
+                    withAnimation {
+                        currentScreen = 0
+                    }
+                }
+                Button("Screen B") {
+                    withAnimation {
+                        currentScreen = 1
+                    }
+                }
+            }.overlay(
+                Rectangle()
+                    .frame(width: 50, height: 10)
+                    .offset(x: (currentScreen == 0 ? 0 : 50) + dragTranslation / 2, y: 0)
+                    .animation(.linear, value: dragTranslation)
+                    .animation(.linear, value: currentScreen)
+            , alignment: .bottom)
+
+            // Screen sliding view
+            GeometryReader { geometry in
+                HStack(spacing: 0) {
+                    ScreenA()
+                        .frame(width: geometry.size.width)
+                    ScreenB()
+                        .frame(width: geometry.size.width)
+                }
+                .offset(x: -CGFloat(currentScreen) * geometry.size.width, y: 0)
+                .animation(.easeInOut, value: currentScreen)
+                .gesture(
+                    DragGesture()
+                        .onChanged { gesture in
+                            dragTranslation = gesture.translation.width
+                        }
+                        .onEnded { gesture in
+                            dragTranslation = 0
+                            if gesture.translation.width > 50 {
+                                // Swiped to the right
+                                withAnimation {
+                                    currentScreen = max(0, currentScreen - 1)
+                                }
+                            } else if gesture.translation.width < -50 {
+                                // Swiped to the left
+                                withAnimation {
+                                    currentScreen = min(1, currentScreen + 1)
+                                }
+                            }
+                        }
                 )
-                
-                .padding(EdgeInsets(top: 0, leading: 8, bottom: 5, trailing: 8))
-                
+
             }
         }
-      .frame(height: 210)
     }
+}
+
+
+
+
+
+struct weeklyGlobalLeaders: View {
+    @StateObject var screen1VM: screen1ViewModel
+    @Binding var timeFrame: String
+    
+    var body: some View {
+        ZStack() {
+            VStack(alignment: .center) {
+                if screen1VM.canFetchRankedTickets {
+                    Text("\(timeFrame == "daily" ? "Daily" : "Weekly") Leaders")
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 24).weight(.medium))
+                        .foregroundColor(.white)
+                    if timeFrame == "daily" {
+                        ForEach(0..<min(3, StaticUserData.shared.dailyRankedTickets.count), id: \.self) { index in
+                            let ticket = StaticUserData.shared.dailyRankedTickets[index]
+                            
+                            BetCard(
+                                ticket: ticket,
+                                rank: ticket.rank,
+                                ownCard: ticket.uid == Auth.auth().currentUser?.uid,
+                                currentWeek: true,
+                                homePage: true
+                            ).padding(EdgeInsets(top: 0, leading: 8, bottom: 5, trailing: 8))
+                        }
+                    } else if timeFrame == "weekly" {
+                        ForEach(0..<min(3, StaticUserData.shared.weeklyRankedTickets.count), id: \.self) { index in
+                            let ticket = StaticUserData.shared.weeklyRankedTickets[index]
+                            
+                            BetCard(
+                                ticket: ticket,
+                                rank: ticket.rank,
+                                ownCard: ticket.uid == Auth.auth().currentUser?.uid,
+                                currentWeek: true,
+                                homePage: true
+                            ).padding(EdgeInsets(top: 0, leading: 8, bottom: 5, trailing: 8))
+                        }
+                    }
+                }
+                
+            }.frame(height: 210)
+        }
     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 230, maxHeight: 230)
     .background(.clear)
     .cornerRadius(10)
-//    .padding(.horizontal, 10)
     .padding(.top,15)
-    
-        
 
     }
 }
@@ -158,13 +209,13 @@ struct SafariView: UIViewControllerRepresentable {
 struct ProfileHeaderView: View {
     @State private var showWebpage = false
     @State private var showRulesPage = false
+    @ObservedObject var screen1VM: screen1ViewModel
     @Binding var timeFrame: String
-    @StateObject var authVM: authenticationViewModel
-//    @StateObject var authVM: authenticationViewModel
+
     var body: some View {
         HStack() {
-            if authVM.currUser?.profileImageUrl != nil {
-                KFImage(URL(string: authVM.currUser?.profileImageUrl ?? "sampleImage"))
+            if screen1VM.currentUser?.profileImageUrl != nil {
+                KFImage(URL(string: StaticUserData.shared.currentUser.profileImageUrl))
                     .resizable()
                     .clipShape(Circle())
                     .foregroundColor(.clear)
@@ -175,73 +226,25 @@ struct ProfileHeaderView: View {
                     .foregroundColor(.clear)
                     .frame(width: 30, height: 30)
             }
-            Text("\(authVM.currUser?.username ?? "")")
+            Text("\(screen1VM.currentUser?.username ?? "")")
                 .font(.custom(K.customFonts.lexendDecaSB, size: 18))
                 .foregroundColor(.white)
-                //.frame(width: 180, height: 50)
-               // .background(K.accentRed)
             
             Spacer()
-            
-            
+
             Link("@WagerPool", destination: URL(string: "https://www.instagram.com/wagerpool/")!)
                 .font(.custom(K.customFonts.lexendDecaSB, size: 18))
                 .foregroundColor(.white)
                 .frame(height: 50)
-               // .background(K.accentRed)
-            
-
-//            Button(action: {
-//                showRulesPage.toggle()
-//            }, label: {
-//                VStack {
-//                    Text("How to play?")
-//                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-//                        .foregroundColor(.white)
-//                    //Spacer()
-//                }//.padding(.top, 20)
-//                    .frame(width: 100, height: 50)
-//                //.background(.brown) // Use the desired background color
-//                //.cornerRadius(8)
-//                // Adjust the padding as needed
-//            })
-            
-            
-//            Link("@WagerPool", destination: URL(string: "https://www.instagram.com/wagerpool/")!)
-//                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
-//                .foregroundColor(.white)
-//                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 10))
-//                .frame(width: 150, height: 50)// Adds padding around the link
-//            .background(Color.blue) // Use any color you prefer for the background
-            
-//            Button(action: {
-//                if timeFrame == "weekly" {
-//                    timeFrame = "daily"
-//                } else if timeFrame == "daily" {
-//                    timeFrame = "weekly"
-//                }
-//            }) {
-//                Text("\(timeFrame == "weekly" ? "Weekly" : "Daily")")
-//                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 24))
-//                    .foregroundColor(.white)
-//                    //.padding([.leading,.bottom])
-//                    .frame(width: 150, height: 50)
-//                    .background(K.accentRed)
-//            }
-//            .sheet(isPresented: $showWebpage) {
-//                SafariView(url: URL(string: "https://www.instagram.com/wagerpool/")!)
-//            }
-            
             
         }
         .padding(.top,15)
         .sheet(isPresented: $showRulesPage) {
             rulesView()
-            //.padding(.horizontal)
                 .presentationDetents([.fraction(0.65)])
                 .presentationDragIndicator(.hidden)
                 .background(K.finalColor.backgroundBlue)
-        }//.edgesIgnoringSafeArea(.top)
+        }
     }
 }
 
@@ -307,8 +310,6 @@ struct countDown: View {
                                 
                                 withAnimation {
                                     timeFrame = "weekly"
-//                                    viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {
-//                                    }
                                 }
                             }
                             
@@ -327,7 +328,7 @@ struct countDown: View {
                         .cornerRadius(1) // Apply rounded corners
                         .offset(x: timeFrame == "daily" ? -50 : 50, y: 0)
                         .animation(.easeInOut(duration: 0.5))
-                }//.padding(8)
+                }
 
                 VStack(spacing: 0) {
                     Text(countdownTimer.timeRemaining)
@@ -358,41 +359,10 @@ struct countDown: View {
                         .background(K.finalColor.blueGray)
                             .cornerRadius(5)
                     }
-                    
-                    
-//                    
-//                    
-//                    Image(systemName: "medal.fill")
-//                        .foregroundColor(.gray)
-//                    
-//                    Text("2nd: $")
-//                        .foregroundColor(.white)
-//                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-//                    
-//                    if prizesVM.canViewPrizes == true {
-//                        Text("\(prizesVM.prizes[1])  ")
-//                            .foregroundColor(.white)
-//                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-//                            .padding(.leading,-8)
-//                    }
-//                    
-//                    Image(systemName: "rosette")
-//                        .foregroundColor(.brown)
-//                    
-//                    Text("3rd: $")
-//                        .foregroundColor(.white)
-//                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-//                    
-//                        if prizesVM.canViewPrizes == true {
-//                            Text("\(prizesVM.prizes[2])  ")
-//                                .foregroundColor(.white)
-//                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-//                                .padding(.leading,-8)
-//                        }
                 }
                 .padding(.top,5)
                 }
-                //.frame(height: 100)
+                
             }
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 130, maxHeight: 130)
             .background(K.finalColor.cardBlue)
@@ -403,7 +373,7 @@ struct countDown: View {
 
 
 struct yourGroups: View {
-    @StateObject var groupsVM: groupsViewModel
+    @StateObject var screen1VM: screen1ViewModel
     @Binding var tab: Tab
     @State private var showRulesPage = false
 
@@ -421,11 +391,11 @@ struct yourGroups: View {
                         VStack(alignment: .leading, spacing: 8) {
                             VStack(alignment: .leading, spacing: 3) {
                                 
-                                if groupsVM.userGroupsLoaded {
-                                    if groupsVM.userGroups[0].groupImageURL != "" {
+                                if screen1VM.userGroupsLoaded {
+                                    if screen1VM.userGroups[0].groupImageURL != "" {
                                         HStack {
                                             Spacer()
-                                            KFImage(URL(string: groupsVM.userGroups[0].groupImageURL))
+                                            KFImage(URL(string: screen1VM.userGroups[0].groupImageURL))
                                                 .resizable()
                                                 .cornerRadius(7.5)
                                                 .foregroundColor(.clear)

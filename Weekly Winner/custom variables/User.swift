@@ -45,19 +45,28 @@ extension String { // Lmao what is this johnny
 
 class StaticUserData: ObservableObject {
     @Published var username: String
+    @Published var currentUser: User
     @Published var dailyTicket: Ticket
     @Published var weeklyTicket: Ticket
+    @Published var dailyRankedTickets: [Ticket]
+    @Published var weeklyRankedTickets: [Ticket]
 
-    init(username: String, dailyTicket: Ticket, weeklyTicket: Ticket) {
+    init(username: String, currentUser: User, dailyTicket: Ticket, weeklyTicket: Ticket, dailyRankedTickets: [Ticket], weeklyRankedTickets: [Ticket]) {
         self.username = username
+        self.currentUser = currentUser
         self.dailyTicket = dailyTicket
         self.weeklyTicket = weeklyTicket
+        self.dailyRankedTickets = dailyRankedTickets
+        self.weeklyRankedTickets = weeklyRankedTickets
     }
 
     // Singleton instance
     static let shared = StaticUserData(
         username: "",
+        currentUser: User(id: "", username: "", firstName: "", lastName: "", profileImageUrl: "", email: "", dateJoined: Timestamp(date:Date()), instagram: "", promoCode: "", country: "", state: "", birthday: Timestamp(date:Date()), gender: ""),
         dailyTicket: Ticket(id: "", username: "", uid: "", groupID: "", groupNumber: -99, dateCreated: Timestamp(date:Date()), totalWon: 0, totalPotentialWon: 0, groupName: "", rank: "", isEnabled: false, groupAdmin: "", ticketFormat: [0]),
-        weeklyTicket: Ticket(id: "", username: "", uid: "", groupID: "", groupNumber: -99, dateCreated: Timestamp(date:Date()), totalWon: 0, totalPotentialWon: 0, groupName: "", rank: "", isEnabled: false, groupAdmin: "", ticketFormat: [0]))
+        weeklyTicket: Ticket(id: "", username: "", uid: "", groupID: "", groupNumber: -99, dateCreated: Timestamp(date:Date()), totalWon: 0, totalPotentialWon: 0, groupName: "", rank: "", isEnabled: false, groupAdmin: "", ticketFormat: [0]),
+        dailyRankedTickets: [Ticket(id: "", username: "", uid: "", groupID: "", groupNumber: -99, dateCreated: Timestamp(date:Date()), totalWon: 0, totalPotentialWon: 0, groupName: "", rank: "", isEnabled: false, groupAdmin: "", ticketFormat: [0])],
+        weeklyRankedTickets: [Ticket(id: "", username: "", uid: "", groupID: "", groupNumber: -99, dateCreated: Timestamp(date:Date()), totalWon: 0, totalPotentialWon: 0, groupName: "", rank: "", isEnabled: false, groupAdmin: "", ticketFormat: [0])])
+    
 }
-

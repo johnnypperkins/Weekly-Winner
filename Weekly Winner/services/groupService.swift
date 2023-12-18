@@ -11,13 +11,7 @@ import FirebaseFirestore
 
 class groupService {
     private let db = Firestore.firestore()
-    var authData: authenticationViewModel?
-    init() {
-        authData = nil
-        Task{
-            authData = await authenticationViewModel()
-        }
-    }
+
     
     func getPastRankedTickets(groupID: String, week: String, timeFrame: String, completion: @escaping ([Ticket]?, Error?) -> Void) {
         // Define date format and convert week string to Date
@@ -53,36 +47,9 @@ class groupService {
             endDate = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: startDate!)
 
         } else if timeFrame == "daily" {
-            endDate = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: startDate!)
+            endDate = Calendar.current.date(byAdding: .day, value: 1, to: startDate!)
 
         }
-        
-//        if timeFrame == "weekly" {
-//            print(week, " is week")
-//            print(groupID, "is groupID")
-//            
-//            // Corrected guard statement
-//            guard let start = dateFormatter.date(from: week) else {
-//                completion(nil, NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid week format"]))
-//                return
-//            }
-//            startDate = start
-//
-//            // Calculate the end date, which is one week later
-//        } else if timeFrame == "daily" {
-//            
-//            print(week, " is week")
-//            print(groupID, "is groupID")
-//            
-//            // Corrected guard statement
-//            guard let start = dateFormatter.date(from: week) else {
-//                completion(nil, NSError(domain: "", code: 400, userInfo: [NSLocalizedDescriptionKey: "Invalid week format"]))
-//                return
-//            }
-//            startDate = start
-//
-//            // Calculate the end date, which is one week later
-//        }
 
 
         print("START AND END", startDate!, endDate!)
@@ -217,13 +184,13 @@ class groupService {
     
     func getCurrentRankedTickets(groupID: String, timeFrame: String, completion: @escaping ([Ticket]?, Int, Error?) -> Void) {
         
-        let documentLoc:String = {
-            if timeFrame == "weekly" {
-                return "week"
-            } else {
-                return "day"
-            }
-        }()
+//        let documentLoc:String = {
+//            if timeFrame == "weekly" {
+//                return "week"
+//            } else {
+//                return "day"
+//            }
+//        }()
         
         let collectionGroupLoc:String = {
             if timeFrame == "weekly" {
@@ -249,7 +216,7 @@ class groupService {
             }
 
             guard let documents = querySnapshot?.documents else {
-                completion([],0, nil) // Empty array if no documents found
+                completion([],0, error) // Empty array if no documents found
                 print("ERROR 222")
                 return
             }
@@ -341,7 +308,77 @@ class groupService {
         }
     }
 
+    func fetchUserGroups(completion: @escaping ([Group]?, Error?) -> Void) {
+        
+//        let tempArray = self.userTickets.sorted { $0.groupNumber < $1.groupNumber }
+        var groupIDs: [String] = ["Global", "GlobalDaily"]
+        var tempGroups: [Group] = []
 
+        let groupsCollection = db.collection("groups")
+
+        // Create a serial dispatch queue
+        let serialQueue = DispatchQueue(label: "com.yourapp.fetchUserGroups")
+        
+        for (index, groupID) in groupIDs.enumerated() {
+            serialQueue.async {
+                
+                let semaphore = DispatchSemaphore(value: 0)
+                print(groupID, "IS GROUP ID")
+                
+                groupsCollection.document(groupID).getDocument { groupSnapshot, groupError in
+                    if let groupError = groupError {
+                        print("Error fetching group: \(groupError.localizedDescription)")
+                        semaphore.signal()
+                        return
+                    }
+                    
+                    guard let groupSnapshot = groupSnapshot, let data = groupSnapshot.data() else {
+                        print("Snapshot does not exist or is nil")
+                        semaphore.signal()
+                        return
+                    }
+
+                    if let groupName = data["groupName"] as? String,
+                       let dateCreated = Timestamp(date: Calendar.current.date(from: DateComponents(year: 2023, month: 11, day: 22))!) as? Timestamp,
+                       let groupImageURL = data["groupImageURL"] as? String,
+                       let groupSlogan = data["groupSlogan"] as? String,
+                       let groupAdmin = data["groupAdmin"] as? String,
+                       let groupAdminUsername = data["groupAdminUsername"] as? String,
+                       let ticketFormat = data["ticketFormat"] as? [Int] {
+                    
+                        let password = data["password"] as? String
+                        
+                        let group = Group(id: groupSnapshot.documentID,
+                                          groupName: groupName,
+                                          dateCreated: dateCreated,
+                                          groupImageURL: groupImageURL,
+                                          groupSlogan: groupSlogan,
+                                          groupAdmin: groupAdmin,
+                                          groupAdminUsername: groupAdminUsername,
+                                          password: password,
+                                          ticketFormat: ticketFormat)
+                        
+                        tempGroups.append(group)
+                    } else {
+                        print("Failed to extract data for groupID: \(groupID)")
+                    }
+                    //print("joined groups " + "\(self.joinedGroups)")
+//                    self.weekIndex = 0
+//                    self.dayIndex = 0
+                    //print("TotalArrayOfDates: ", self.totalArrayOfDates)
+                    semaphore.signal()
+                }
+                
+                semaphore.wait()
+            }
+        }
+        
+        serialQueue.async {
+            DispatchQueue.main.async {
+                completion(tempGroups, nil)
+            }
+        }
+    }
 
 
 
@@ -412,9 +449,7 @@ class groupService {
         }
     }
     
-    func getUsername() async -> String {
-        return await authData?.username ?? ""
-        }
+
     
 //    func joinGroup(userID: String, group: Group, completion: @escaping (Error?) -> Void) {
 //        Task {
@@ -558,10 +593,6 @@ class groupService {
                 tickets.sort { $0.groupNumber < $1.groupNumber }
                 print("HEREEEE")
                 print(tickets)
-                
-//                else {
-//                    StaticUserData.shared.dailyTicket = tickets[0]
-//                }
                 
                 completion(tickets, nil)
             }

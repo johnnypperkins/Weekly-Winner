@@ -38,8 +38,8 @@ class authenticationViewModel: ObservableObject {
     @Published var errorMessage: String? = ""
     @Published var instagram: String = ""
     @Published var promoCode: String = ""
-    let currentVersion: String = "1.23"
-    @Published var updateURL: String = ""
+//    let currentVersion: String = "1.23"
+//    @Published var updateURL: String = ""
 
     
     init() {
@@ -112,36 +112,6 @@ class authenticationViewModel: ObservableObject {
             return
           }
       }
-    
-    func forceUpdate(completion: @escaping () -> Void) {
-        let db = Firestore.firestore()
-        let updatesDocument = db.collection("Misc").document("updates")
-        
-        updatesDocument.getDocument { document, error in
-                if let error = error {
-                    print("Error fetching document: \(error)")
-                    completion()
-                    return
-                }
-                
-                guard let document = document, document.exists,
-                      let version = document["version"] as? String,
-                      let updateURL2 = document["updateURL"] as? String else {
-                    print("Document not found or fields missing")
-                    completion()
-                    return
-                }
-            print("DATABASE VERSION", version)
-            print("IOS VERSION", self.currentVersion)
-                
-            if self.currentVersion != version {
-                    self.updateURL = updateURL2
-                    completion()
-                } else {
-                    completion()
-                }
-            }
-    }
     
     func showMainScreen() {
         userSession = authResult!.user

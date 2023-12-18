@@ -91,7 +91,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 }
 
 @main
-struct Weekly_WinnerApp: App {
+ struct Weekly_WinnerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     var body: some Scene {
         WindowGroup {

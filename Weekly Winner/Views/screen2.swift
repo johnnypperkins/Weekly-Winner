@@ -62,7 +62,7 @@ struct BettingAppView: View {
                                     .padding(.leading) // Add padding to the left side of the button
                             }
                             .padding() // Add padding around the button
-                            .background(K.finalColor.backgroundBlue) // Set the background color
+                            .background(K.finalColor.cardBlue) // Set the background color
                             .cornerRadius(10) // Optional: Add a corner radius if you want rounded corners
                         })
 
@@ -145,7 +145,7 @@ struct BettingAppView: View {
                             ForEach(gamesToDisplay, id: \.idd) { game in
                                 if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
                                     if game.commenceTime.dateValue() > Date() {
-                                        gameRowView(game: game, isDisabled: false)
+                                        gameRowView(game: game, isDisabled: false, viewModel: viewModel)
                                     }
 //                                    else {
 //                                        gameRowView(game: game, isDisabled: true).opacity(0.5)
@@ -169,7 +169,7 @@ struct BettingAppView: View {
                 .offset(x:isShowing ? 300 : 0, y: isShowing ? 100 : 0)
                 .scaleEffect(isShowing ? 0.8 : 1)
         }.background(K.finalColor.backgroundBlue)
-            .padding(EdgeInsets(top: 65, leading: 0, bottom: 55, trailing: 0))
+            .padding(EdgeInsets(top: 80, leading: 0, bottom: 55, trailing: 0))
             .navigationBarHidden(false)
             .onAppear() {
                 rankedCommence = true
@@ -235,6 +235,8 @@ struct gameRowView: View {
     @State private var betType: BetType = .None
     @State var titleStringH: String = ""
     @State var titleStringA: String = ""
+    @ObservedObject var viewModel: bookViewModel
+
     
     var maxHeight = 100
     var maxWidth = 100
@@ -304,7 +306,7 @@ struct gameRowView: View {
         .padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
         .sheet(isPresented: $showingSheet) {
-            BetDetailsView(game: game, betType: $betType)
+            BetDetailsView(game: game, betType: $betType, viewModel: viewModel)
                 //.padding(.horizontal)
             .presentationDetents([.medium])
             .presentationDragIndicator(.hidden)
@@ -326,9 +328,8 @@ struct BetDetailsView: View {
     @Environment(\.dismiss) var dismiss
     @State private var chosenSpread: Double = -99
     @State private var originalSpread: Double = -99
-    @ObservedObject var viewModel = bookViewModel()
+    @ObservedObject var viewModel: bookViewModel
     @StateObject var ticketVM = ticketViewModel()
-    @StateObject var groupsVM = groupsViewModel()
     
     @State private var groupNumber = 0
     @State private var betNumber = -99
@@ -344,23 +345,48 @@ struct BetDetailsView: View {
     
     
     func checkTeamTaken() {
-        if betNumber < 0 {
-            uploadText = "Ticket Complete"
-            placeBetOpacity = 0.6
-            placeBetColor = K.finalColor.titleBlue.opacity(0.6)
-        } else {
-            if ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) {
-                uploadText = "Place Bet"
-                placeBetOpacity = 1
-                placeBetColor = K.finalColor.winningGreen
+        
+        if timeFrame == "daily" {
+            let midnight = Calendar.current.startOfDay(for: Date())
+            let midnightTimestamp = Timestamp(date: midnight)
 
-            } else {
-                uploadText = "Team Taken"
+            if game.commenceTime.seconds > (midnightTimestamp.seconds + 86400) {
+                uploadText = "Not Today"
                 placeBetOpacity = 0.6
                 placeBetColor = K.finalColor.titleBlue.opacity(0.6)
-
+            } else {
+                if ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) {
+                    uploadText = "Place Bet"
+                    placeBetOpacity = 1
+                    placeBetColor = K.finalColor.winningGreen
+                    
+                } else {
+                    uploadText = "Team Taken"
+                    placeBetOpacity = 0.6
+                    placeBetColor = K.finalColor.titleBlue.opacity(0.6)
+                    
+                }
+            }
+        } else {
+            if betNumber < 0 {
+                uploadText = "Ticket Complete"
+                placeBetOpacity = 0.6
+                placeBetColor = K.finalColor.titleBlue.opacity(0.6)
+            } else {
+                if ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) {
+                    uploadText = "Place Bet"
+                    placeBetOpacity = 1
+                    placeBetColor = K.finalColor.winningGreen
+                    
+                } else {
+                    uploadText = "Team Taken"
+                    placeBetOpacity = 0.6
+                    placeBetColor = K.finalColor.titleBlue.opacity(0.6)
+                    
+                }
             }
         }
+        
     }
     
     var body: some View {
@@ -463,35 +489,6 @@ struct BetDetailsView: View {
                                         //.scaleEffect(x: 2)
                                     })
                                     
-                                    
-//                                    ScrollView {
-//                                        ForEach(0..<viewModel.userTickets.count, id: \.self) { index in
-//                                            Button(action: {
-//                                                groupNumber = index
-//                                                ticketVM.fetchUserTickets(uid: Auth.auth().currentUser!.uid, groupNumber: groupNumber) {
-//                                                    ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat) {
-//                                                        if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
-//                                                            betNumber = firstNumberGreaterThanZero
-//                                                        } else {
-//                                                            betNumber = -99
-//                                                        }
-//                                                        checkTeamTaken()
-//                                                    }
-//                                                }
-//                                            }, label: {
-//                                                HStack {
-//                                                    Text(viewModel.userTickets[index].groupName).tag(index)
-//                                                        .foregroundColor(K.finalColor.textWhite)
-//                                                        .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-//                                                }.frame(width: 100, alignment: .center)
-//                                                    .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
-//                                                    .background(groupNumber == index ? K.finalColor.titleBlue : K.veryLightGray.opacity(0.4))
-//                                                    .cornerRadius(5)
-//                                                //.scaleEffect(x: 2)
-//                                            })
-//                                            
-//                                        }
-//                                    }.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
                                     
                                     
                                 }.frame(width: 120, height: 120)
@@ -667,6 +664,8 @@ struct BetDetailsView: View {
                         ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat, timeFrame: timeFrame) {
                             let groupServe = groupService()
                             groupServe.setPotentialToWin(potential: Int(ticketVM.totalPotentialWon), groupNumber: groupNumber, timeFrame: timeFrame, completion: {_ in })
+                            ticketVM.fetchUserTickets(timeFrame: timeFrame) {}
+                            
                         }
                     }
                     withAnimation {
@@ -685,7 +684,7 @@ struct BetDetailsView: View {
                         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
                         //f.padding(.horizontal, 25)
                 })
-                .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType))
+                .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) )
                 .padding(.horizontal)
                 .background(K.finalColor.backgroundBlue)
             }.padding(.horizontal)

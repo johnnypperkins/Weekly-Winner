@@ -127,7 +127,7 @@ struct groupSettingsView: View {
                             }.padding(.horizontal)
                             if customizeTicketFormat(oneLegNum,twoLegNum,threeLegNum,fourLegNum,fiveLegNum) != ticketFormat {
                                 Button(action: {
-                                    viewModel.resetTicketFormat(newTicketFormat: customizeTicketFormat(oneLegNum,twoLegNum,threeLegNum,fourLegNum,fiveLegNum), groupID: viewModel.userTickets[selectedGroup-1].groupID, timeFrame: timeFrame) {
+                                    viewModel.resetTicketFormat(newTicketFormat: customizeTicketFormat(oneLegNum,twoLegNum,threeLegNum,fourLegNum,fiveLegNum), groupID: timeFrame == "daily" ? "GlobalDaily" : "Global", timeFrame: timeFrame) {
                                         
                                     }
                                     if selectedImage != nil {

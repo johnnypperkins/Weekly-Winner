@@ -34,7 +34,7 @@ class bookViewModel: ObservableObject {
     
 
     private let betService = BetService()
-    private let groupServe = groupService()
+//    private let groupServe = groupService()
     private let db = Firestore.firestore()
         
     init() {
@@ -120,17 +120,17 @@ class bookViewModel: ObservableObject {
     
     
     
-    func fetchUserTickets(timeFrame: String) {
-        guard let userId = Auth.auth().currentUser?.uid else { return }
-        groupServe.fetchUserTickets(userID: userId, timeFrame: timeFrame) { tickets, error in
-            if let error = error {
-                print("Error fetching user groups: \(error.localizedDescription)")
-            } else if let tickets = tickets {
-                self.userTickets = tickets
-                self.isTicketsLoaded = true  // Set this to true when data is loaded
-            }
-        }
-    }
+//    func fetchUserTickets(timeFrame: String) {
+//        guard let userId = Auth.auth().currentUser?.uid else { return }
+//        groupServe.fetchUserTickets(userID: userId, timeFrame: timeFrame) { tickets, error in
+//            if let error = error {
+//                print("Error fetching user groups: \(error.localizedDescription)")
+//            } else if let tickets = tickets {
+//                self.userTickets = tickets
+//                self.isTicketsLoaded = true  // Set this to true when data is loaded
+//            }
+//        }
+//    }
     
     func fetchMostPopularBets() {
         betService.fetchPopularBets() { popularBets, error in
@@ -244,49 +244,7 @@ class bookViewModel: ObservableObject {
     }
 
     
-    func fetchGameDocument(byID documentID: String, completion: @escaping (Game?) -> Void) {
-            let db = Firestore.firestore()
-            
-        db.collectionGroup("games").whereField("id", isEqualTo: documentID).getDocuments { (querySnapshot, error) in
-                if let error = error {
-                    print("Error getting game document: \(error)")
-                    return
-                }
-                
-           if let document = querySnapshot?.documents.first {
-                        do {
-                            var data = document.data()
-                                 if let idd = data["id"] as? String,
-                                    let commenceTime = data["commenceTime"] as? Timestamp,
-                                    let totalOver = data["totalOver"] as? Double,
-                                    let totalUnder = data["totalUnder"] as? Double,
-                                    let homeTeam = data["homeTeam"] as? String,
-                                    let awayTeam = data["awayTeam"] as? String,
-                                    let homeSpread = data["homeSpread"] as? Double,
-                                    let awaySpread = data["awaySpread"] as? Double,
-                                    let homeTeamScore = data["homeTeamScore"] as? Int,
-                                    let awayTeamScore = data["awayTeamScore"] as? Int,
-                                    let whichSport = data["whichSport"] as? String? ?? "",
-                                    let bet_statistics = data["bet_statistics"] as? [Int],
-                                    let total_plays = data["total_plays"] as? Int
- {
-                                     
-                                        let game = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays)
-                                        
-                                        completion(game) // Call completion with the game object
 
-                                }
-                            } catch let error {
-                                print("Error decoding game document: \(error)")
-                                completion(nil)
-                        }
-                    }
-            else {
-                print("johnny")
-                completion(nil)
-            }
-        }
-    }
     
     
 }

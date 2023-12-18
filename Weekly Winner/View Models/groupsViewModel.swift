@@ -35,17 +35,16 @@ class groupsViewModel: ObservableObject {
             self.groupsFetched = true
             self.fetchUserGroups {
                 self.userGroupsLoaded = true
-                self.totalArrayOfDates.append(self.populateArrayOfDates(from: Timestamp(date: Calendar.current.date(from: DateComponents(year: 2023, month: 11, day: 22))!)))
-                self.totalArrayOfDates.append(self.populateArrayOfDays(from: Timestamp(date: Calendar.current.date(from: DateComponents(year: 2023, month: 12, day: 13))!)))
+                self.totalArrayOfDates.append(self.populateArrayOfDates(from: Timestamp(date: Calendar.current.date(from: DateComponents(year: 2023, month: 11, day: 22))!))) //weekly
+                self.totalArrayOfDates.append(self.populateArrayOfDays(from: Timestamp(date: Calendar.current.date(from: DateComponents(year: 2023, month: 12, day: 13))!))) // daily
                 print("Arrayy \(self.totalArrayOfDates)")
             }
             self.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: "daily") {}
             
-            
-            
-
         }
-        fetchUserTickets(timeFrame: "weekly") {}
+        fetchUserTickets(timeFrame: "weekly") {
+            self.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: "weekly") {}
+        }
     }
     
     func uploadGroupImage(_ image: UIImage, group: Group, completion: @escaping (String) -> Void) {
@@ -108,23 +107,7 @@ class groupsViewModel: ObservableObject {
         }
     }
     
-    func getGroupAdmin(groupID: String) {
-            let db = Firestore.firestore()
-            let docRef = db.collection("groups").document(groupID)
 
-            docRef.getDocument { (document, error) in
-                if let document = document, document.exists {
-                    let dataDescription = document.data().flatMap(String.init(describing:)) ?? "nil"
-                    print("Document data: \(dataDescription)")
-                    if let groupAdmin = document.get("groupAdmin") as? String {
-                        self.groupAdmin = groupAdmin
-                    }
-                } else {
-                    print("Document does not exist")
-                }
-            }
-        }
-    
     func fetchGroup(from keyword: String) {
         db.collection("groups").whereField("keywordsForLookup", arrayContains: keyword).getDocuments { querySnapshot, error in
             guard let documents = querySnapshot?.documents, error == nil else {return}
@@ -144,9 +127,13 @@ class groupsViewModel: ObservableObject {
                 } else if let tickets = tickets {
 //                    DispatchQueue.main.async {
                         self?.currentRankedGroupTickets = tickets
-                        self?.totalPlayers = totalPlayers
+                        //self?.totalPlayers = totalPlayers
                         //self?.weekIndex = totalArrayOfDates[0].count
-                    
+                    if timeFrame == "daily" {
+                        StaticUserData.shared.dailyRankedTickets = tickets
+                    } else if timeFrame == "weekly" {
+                        StaticUserData.shared.weeklyRankedTickets = tickets
+                    }
                         //print(tickets)
                         print("test print")
                     }
@@ -235,12 +222,12 @@ class groupsViewModel: ObservableObject {
                 print("Error fetching user groups: \(error.localizedDescription)")
             } else if let tickets = tickets {
                 self.userTickets = tickets
-                if timeFrame == "weekly" {
-                    StaticUserData.shared.weeklyTicket = tickets[0]
-                } else if timeFrame == "daily" {
-                    StaticUserData.shared.dailyTicket = tickets[0]
-
-                }
+//                if timeFrame == "weekly" {
+//                    StaticUserData.shared.weeklyTicket = tickets[0]
+//                } else if timeFrame == "daily" {
+//                    StaticUserData.shared.dailyTicket = tickets[0]
+//
+//                }
                 //self.currentTicketFormat = tickets[groupNumber].ticketFormat
                
                 //self.isTFLoaded = true
@@ -253,7 +240,7 @@ class groupsViewModel: ObservableObject {
     }//test
   
     func fetchGroups(array1: [Ticket], completion: @escaping () -> Void) {
-        
+       
         let array = array1.sorted { $0.groupNumber < $1.groupNumber }
         
         // Firestore reference to the "groups" collection
@@ -324,15 +311,9 @@ class groupsViewModel: ObservableObject {
         
 //        let tempArray = self.userTickets.sorted { $0.groupNumber < $1.groupNumber }
         var groupIDs: [String] = ["Global", "GlobalDaily"]
-//        for ticket in tempArray {
-//            groupIDs.append(ticket.groupID)
-//        }
+
         let groupsCollection = db.collection("groups")
-//        
-//        if self.totalArrayOfDates.count < groupIDs.count {
-//            totalArrayOfDates.removeAll()
-//        }
-        
+
         // Create a serial dispatch queue
         let serialQueue = DispatchQueue(label: "com.yourapp.fetchUserGroups")
         
@@ -362,13 +343,7 @@ class groupsViewModel: ObservableObject {
                        let groupAdmin = data["groupAdmin"] as? String,
                        let groupAdminUsername = data["groupAdminUsername"] as? String,
                        let ticketFormat = data["ticketFormat"] as? [Int] {
-                        
-//                        if self.totalArrayOfDates.count < groupIDs.count {
-//                            self.totalArrayOfDates.append(self.populateArrayOfDates(from: dateCreated))
-//                        } else {
-//                            self.totalArrayOfDates[index] = self.populateArrayOfDates(from: dateCreated)
-//                        }
-                        
+                    
                         let password = data["password"] as? String
                         
                         let group = Group(id: groupSnapshot.documentID,

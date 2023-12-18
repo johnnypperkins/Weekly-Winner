@@ -16,7 +16,7 @@ struct createGroupsView: View {
     @State private var password: String = ""
     @State private var takenTextShown: Bool = false
     @StateObject private var viewModel = createGroupsViewModel()
-    @ObservedObject private var authViewModel = authenticationViewModel()
+   // @ObservedObject private var authViewModel = authenticationViewModel()
     
     @State private var showImagePicker = false
     @State private var selectedImage: UIImage?

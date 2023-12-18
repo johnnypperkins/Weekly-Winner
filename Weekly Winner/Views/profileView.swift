@@ -11,8 +11,6 @@ import Kingfisher
 struct profileView: View {
     
     @ObservedObject var viewModel: profileViewModel
-    @ObservedObject var viewModel2 = authenticationViewModel()
-    @StateObject var groupsVM = groupsViewModel()
     @State var scrollViewOffset: CGFloat = 0
     //@State private var isShowingEditProfile: Bool = false
     @State private var isProfileEditing = false
@@ -123,22 +121,22 @@ struct profileView: View {
                                     }.padding(.bottom, 120)
                                 }
                                 // Dropdown outside of VStack
-                                if showDropdown {
-                                    HStack{
-                                        Spacer()
-                                        
-                                        Dropdown(options: groupsVM.userTickets, onOptionSelected: { option in
-                                            withAnimation(){
-                                                showDropdown = false
-                                                selectedGroup = option.groupName
-                                            }
-                                            self.onOptionSelected?(option)
-                                        })
-                                        .frame(maxWidth: 113, alignment: .trailing)
-                                        .padding(.top,30 /*desired dropdown menu position from the top*/)
-                                        .padding(.trailing,16 /*desired dropdown menu position from the trailing edge*/)
-                                    }.frame(minWidth: 0, maxWidth: .infinity)
-                                }
+//                                if showDropdown {
+//                                    HStack{
+//                                        Spacer()
+//                                        
+//                                        Dropdown(options: groupsVM.userTickets, onOptionSelected: { option in
+//                                            withAnimation(){
+//                                                showDropdown = false
+//                                                selectedGroup = option.groupName
+//                                            }
+//                                            self.onOptionSelected?(option)
+//                                        })
+//                                        .frame(maxWidth: 113, alignment: .trailing)
+//                                        .padding(.top,30 /*desired dropdown menu position from the top*/)
+//                                        .padding(.trailing,16 /*desired dropdown menu position from the trailing edge*/)
+//                                    }.frame(minWidth: 0, maxWidth: .infinity)
+//                                }
                             }
                             
                         }

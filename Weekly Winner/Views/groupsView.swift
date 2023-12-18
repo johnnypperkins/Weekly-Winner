@@ -25,13 +25,16 @@ struct groupsView: View {
     @State private var currentWeekSelected: Bool = true
     @State private var timeFrame = "daily"
     
+    @State private var currentScreen: Int = 0 // 0 for Screen A, 1 for Screen B
+    @State private var dragTranslation: CGFloat = 0
+    
    // @State var selectedGroupBar: Group?
     //@State private var groupsFetched = false
 
     init() {
 
-        viewModel.fetchCurrentRankedTickets(groupID: "GlobalDaily", timeFrame: "daily") {
-        }
+//        viewModel.fetchCurrentRankedTickets(groupID: "GlobalDaily", timeFrame: "daily") {
+//        }
  
     }
     
@@ -49,19 +52,18 @@ struct groupsView: View {
             if (StaticUserData.shared.weeklyTicket.groupID == "Global") {
                 VStack {
                     Spacer()
-                    VStack (spacing: 5){
+                    VStack (spacing: 4){
                         HStack (spacing: 0){
                             Button(action: {
                                 //viewModel.canGetHistoricalData = false
                                 if timeFrame != "daily" {
-                                    withAnimation {
+//                                    withAnimation {
                                         timeFrame = "daily"
-                                        viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {
-                                        }
                                         viewModel.weekIndex = 0
                                         viewModel.dayIndex = 0
-                                        showingChat = false
-                                    }
+//                                        showingChat = false
+                                        currentScreen = 0
+//                                    }
                                 }
                                 
                             }) {
@@ -72,20 +74,19 @@ struct groupsView: View {
                                     .frame(width: 150, height: 35, alignment: .center)
                                     //.background(timeFrame == "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
                                     .cornerRadius(5)
-                            }.scaleEffect(timeFrame == "daily" ? 1.0 : 1.0)
+                            }
                             
                             Button(action: {
                                 //viewModel.canGetHistoricalData = false
                                 if timeFrame == "daily" {
                                     
-                                    withAnimation {
+//                                    withAnimation {
                                         timeFrame = "weekly"
-                                        viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {
-                                        }
                                         viewModel.weekIndex = 0
                                         viewModel.dayIndex = 0
-                                        showingChat = false
-                                    }
+//                                        showingChat = false
+                                        currentScreen = 1
+//                                    }
                                 }
                                 
                             }) {
@@ -93,28 +94,22 @@ struct groupsView: View {
                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
                                     .foregroundColor(.white)
                                     .frame(width: 150, height: 35, alignment: .center)
-                                    //.background(timeFrame == "weekly" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
                                     .cornerRadius(5)
-                            }.scaleEffect(timeFrame == "weekly" ? 1.0 : 1.0)
+                            }
                         }
                         Rectangle()
                             .fill(Color.white) // Sets the rectangle's fill color to white
-                            .frame(width: 140, height: 3)
+                            .frame(width: 120, height: 3)
                             .cornerRadius(1) // Apply rounded corners
                             .offset(x: timeFrame == "daily" ? -75 : 75, y: 0)
-                            .animation(.easeInOut(duration: 0.5))
-                    }.padding(8)
-                       // .background(K.finalColor.cardBlue)
+                            .animation(.easeInOut(duration: 0.35))
+                    }.padding(.top, 40)
                         .cornerRadius(7.5)
-                    
-                    
-
                     if selectedGroup == 0 {
                         
                         
                     } else { // not looking for group
                         VStack {
-                           // Spacer()
                             HStack {
                                 VStack(alignment: .leading) {
                                     HStack {
@@ -157,12 +152,8 @@ struct groupsView: View {
                                                     }
                                                 }
                                             }
-//                                            Text("\(viewModel.totalPlayers) Members")
-//                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.medium))
-//                                                .foregroundColor(.white.opacity(0.75))
-//                                                .padding(.leading, 3)
                                             if selectedGroup == 1 {
-                                                Text("\(viewModel.currentRankedGroupTickets.count) Active")
+                                                Text("\(timeFrame == "daily" ? StaticUserData.shared.dailyRankedTickets.count : StaticUserData.shared.weeklyRankedTickets.count) Active")
                                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.medium))
                                                     .foregroundColor(.white.opacity(0.75))
                                                     .padding(.leading, 3)
@@ -252,7 +243,7 @@ struct groupsView: View {
                                                         if(viewModel.dayIndex == 0) {
                                                             viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {}
                                                         } else {
-                                                            viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, week: viewModel.totalArrayOfDates[1][viewModel.dayIndex], timeFrame: timeFrame) {}
+                                                            viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, week: viewModel.totalArrayOfDates[1][viewModel.dayIndex], timeFrame: timeFrame) {}
                                                         }
                                                     }
                                                 }, label: {
@@ -280,14 +271,14 @@ struct groupsView: View {
                                         
                                 }
                                 
-                                Button(action: {
-                                    showingChat = true
-                                }) {
-                                    Image(showingChat ? "chatSelected" : "chatUnselected") // Assuming "message" and "message.fill" are your symbols
-                                        .resizable()
-                                        .frame(width: 20, height: 20)
-                                        .foregroundColor(showingChat ? .blue : .gray)
-                                }
+//                                Button(action: {
+//                                    showingChat = true
+//                                }) {
+//                                    Image(showingChat ? "chatSelected" : "chatUnselected") // Assuming "message" and "message.fill" are your symbols
+//                                        .resizable()
+//                                        .frame(width: 20, height: 20)
+//                                        .foregroundColor(showingChat ? .blue : .gray)
+//                                }
                                 
                                 Button(action: {
                                     isStatsViewPresented = true
@@ -327,28 +318,27 @@ struct groupsView: View {
                         Divider().background(.white).padding(EdgeInsets(top: 10, leading: 18, bottom: 4.5, trailing: 18))
                         VStack(alignment: .leading, spacing: 0) {
                             if !showingChat {
-                                if timeFrame == "weekly" {
-                                    if viewModel.weekIndex == 0 {
-                                        currentLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup, timeFrame: $timeFrame)
-                                        //Spacer()
-                                    } else {
-                                        pastLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup, selectedWeek: $viewModel.weekIndex, timeFrame: $timeFrame)
+                                if viewModel.dayIndex == 0 && viewModel.weekIndex == 0 {
+                                    GeometryReader { geometry in
+                                        HStack(spacing: 32) {
+                                            currentLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup, timeFrame: "daily")
+                                                .frame(width: geometry.size.width)
+                                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 40, trailing: 00))
+                                            //                                            .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+                                            currentLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup, timeFrame: "weekly")
+                                                .frame(width: geometry.size.width)
+                                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 40, trailing: 00))
+                                        }
+                                        .offset(x: currentScreen == 0 ? -CGFloat(currentScreen) * geometry.size.width : -CGFloat(currentScreen) * geometry.size.width - 32, y: 0)
+                                        .animation(.easeInOut, value: currentScreen)
                                     }
-                                } else if timeFrame == "daily" {
-                                    if viewModel.dayIndex == 0 {
-                                        currentLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup, timeFrame: $timeFrame)
-                                        //Spacer()
-                                    } else {
-                                        pastLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup, selectedWeek: $viewModel.dayIndex, timeFrame: $timeFrame)
-                                    }
+                                } else {
+                                    pastLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup, selectedWeek: timeFrame == "daily" ? $viewModel.dayIndex : $viewModel.weekIndex, timeFrame: $timeFrame)
                                 }
-                        
-                                
-                                
+
                             } else {
                                 chatView(viewModel: chatVM, selectedGroup: $selectedGroup, groupsViewModel: viewModel, timeFrame: $timeFrame)
                             }
-                            // .clipShape(RoundedRectangle(cornerRadius: 10)) // Apply corner radius to the ScrollView
                             
                             
                         }
@@ -482,7 +472,7 @@ struct groupBarView: View {
 struct currentLeaderboardView: View {
     @ObservedObject var viewModel: groupsViewModel
     @Binding var selectedGroup: Int
-    @Binding var timeFrame: String
+    var timeFrame: String
 
     var body: some View {
         VStack (spacing: 0) {
@@ -498,9 +488,18 @@ struct currentLeaderboardView: View {
                                 ticketView(username: StaticUserData.shared.username, uid: StaticUserData.shared.dailyTicket.uid, groupID: timeFrame == "weekly" ? "Global" : "GlobalDaily", selectedWeek: "current", ticketFormatForGroups: [], ownTicket: true, onTicketPage: false, passedTimeFrame: timeFrame),
                                label: {
                     if timeFrame == "weekly" {
-                        BetCard(viewModel: viewModel, ticket: StaticUserData.shared.weeklyTicket, rank: StaticUserData.shared.weeklyTicket.rank, ownCard: true, currentWeek: true, homePage: false).padding(.bottom,16)
+                        ForEach(0..<StaticUserData.shared.dailyRankedTickets.count, id: \.self) { index in
+                            if StaticUserData.shared.weeklyRankedTickets[index].uid == StaticUserData.shared.currentUser.id {
+                                BetCard(ticket: StaticUserData.shared.weeklyRankedTickets[index], rank: (StaticUserData.shared.weeklyRankedTickets[index].rank), ownCard: StaticUserData.shared.weeklyRankedTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, currentWeek: true, homePage: false).padding(.bottom,16)
+                            }
+                        }
                     } else {
-                        BetCard(viewModel: viewModel, ticket: StaticUserData.shared.dailyTicket, rank: StaticUserData.shared.dailyTicket.rank, ownCard: true, currentWeek: true, homePage: false).padding(.bottom,16)
+                        ForEach(0..<StaticUserData.shared.dailyRankedTickets.count, id: \.self) { index in
+                            if StaticUserData.shared.dailyRankedTickets[index].uid == StaticUserData.shared.currentUser.id {
+                                
+                                BetCard(ticket: StaticUserData.shared.dailyRankedTickets[index], rank: (StaticUserData.shared.dailyRankedTickets[index].rank), ownCard: StaticUserData.shared.dailyRankedTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, currentWeek: true, homePage: false).padding(.bottom,16)
+                            }
+                        }
                     }
                 }).id(UUID())
             }
@@ -513,26 +512,25 @@ struct currentLeaderboardView: View {
             }
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    ForEach(0..<viewModel.currentRankedGroupTickets.count, id: \.self) { index in
-                        //if (viewModel.currentRankedGroupTickets[index].uid != Auth.auth().currentUser?.uid) {
+                    if timeFrame == "daily" {
+                        ForEach(0..<StaticUserData.shared.dailyRankedTickets.count, id: \.self) { index in
                             NavigationLink(destination:
-                                            ticketView(username: viewModel.currentRankedGroupTickets[index].username, uid: viewModel.currentRankedGroupTickets[index].uid, groupID: viewModel.currentRankedGroupTickets[index].groupID, selectedWeek: "current", ticketFormatForGroups: [], ownTicket: viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, onTicketPage: false, passedTimeFrame: timeFrame), // FIX LATER ?
+                                            ticketView(username: StaticUserData.shared.dailyRankedTickets[index].username, uid: StaticUserData.shared.dailyRankedTickets[index].uid, groupID: StaticUserData.shared.dailyRankedTickets[index].groupID, selectedWeek: "current", ticketFormatForGroups: [], ownTicket: StaticUserData.shared.dailyRankedTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, onTicketPage: false, passedTimeFrame: timeFrame), // FIX LATER ?
                                            label: {
-                                BetCard(viewModel: viewModel, ticket: viewModel.currentRankedGroupTickets[index], rank: (viewModel.currentRankedGroupTickets[index].rank), ownCard: viewModel.currentRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, currentWeek: true, homePage: false).padding(.bottom,16)
+                                BetCard(ticket: StaticUserData.shared.dailyRankedTickets[index], rank: (StaticUserData.shared.dailyRankedTickets[index].rank), ownCard: StaticUserData.shared.dailyRankedTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, currentWeek: true, homePage: false).padding(.bottom,16)
                             }).id(UUID())
-//                        } else {
-//                            // doesnt click if its yourself
-//                            BetCard(viewModel: viewModel, ticket: viewModel.currentRankedGroupTickets[index], rank: (viewModel.currentRankedGroupTickets[index].rank), ownCard: true, currentWeek: true).padding(.bottom,16)
-//
-//                        }
+                        }
+                    } else if timeFrame == "weekly" {
+                        ForEach(0..<StaticUserData.shared.weeklyRankedTickets.count, id: \.self) { index in
+                            NavigationLink(destination:
+                                            ticketView(username: StaticUserData.shared.weeklyRankedTickets[index].username, uid: StaticUserData.shared.weeklyRankedTickets[index].uid, groupID: StaticUserData.shared.weeklyRankedTickets[index].groupID, selectedWeek: "current", ticketFormatForGroups: [], ownTicket: StaticUserData.shared.weeklyRankedTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, onTicketPage: false, passedTimeFrame: timeFrame), // FIX LATER ?
+                                           label: {
+                                BetCard(ticket: StaticUserData.shared.weeklyRankedTickets[index], rank: (StaticUserData.shared.weeklyRankedTickets[index].rank), ownCard: StaticUserData.shared.weeklyRankedTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, currentWeek: true, homePage: false).padding(.bottom,16)
+                            }).id(UUID())
+                        }
                     }
-                }
-                .onAppear(){
-                    //viewModel.printTickets(ticket: viewModel.currentRankedGroupTickets)
-                    
-                }
-            }.padding(.bottom,40)
-            .refreshable {
+                }.padding(.bottom,40)
+            }.refreshable {
                 await viewModel.fetchUserTickets(timeFrame: timeFrame) {}
                 if selectedGroup != 0 {
                     //print("refresh ranked")
@@ -566,9 +564,16 @@ struct pastLeaderboardView: View {
                         Spacer()
                     }
                     NavigationLink(destination:
-                                    ticketView(username: viewModel.pastRankedGroupTickets[index].username, uid: viewModel.pastRankedGroupTickets[index].uid, groupID: viewModel.pastRankedGroupTickets[index].groupID, selectedWeek: selectedGroup > 0 ? "\(viewModel.totalArrayOfDates[0][selectedWeek])" : "", ticketFormatForGroups: viewModel.pastRankedGroupTickets[index].ticketFormat, ownTicket: false, onTicketPage: false, passedTimeFrame: timeFrame),
+                                    ticketView(username: viewModel.pastRankedGroupTickets[index].username, 
+                                               uid: viewModel.pastRankedGroupTickets[index].uid,
+                                               groupID: viewModel.pastRankedGroupTickets[index].groupID,
+                                               selectedWeek: timeFrame == "weekly" ? viewModel.totalArrayOfDates[0][selectedWeek] : viewModel.totalArrayOfDates[1][selectedWeek],
+                                               ticketFormatForGroups: viewModel.pastRankedGroupTickets[index].ticketFormat,
+                                               ownTicket: true,
+                                               onTicketPage: false,
+                                               passedTimeFrame: timeFrame),
                                    label: {
-                        BetCard(viewModel: viewModel, ticket: viewModel.pastRankedGroupTickets[index], rank: (viewModel.pastRankedGroupTickets[index].rank), ownCard: true, currentWeek: false, homePage: false).padding(.bottom,16)
+                        BetCard(ticket: viewModel.pastRankedGroupTickets[index], rank: (viewModel.pastRankedGroupTickets[index].rank), ownCard: true, currentWeek: false, homePage: false).padding(.bottom,16)
                     }).id(UUID())
                 }
             }
@@ -583,9 +588,16 @@ struct pastLeaderboardView: View {
                 VStack(alignment: .leading, spacing: 0) {
                         ForEach(0..<viewModel.pastRankedGroupTickets.count, id: \.self) { index in
                             NavigationLink(destination:
-                                            ticketView(username: viewModel.pastRankedGroupTickets[index].username, uid: viewModel.pastRankedGroupTickets[index].uid, groupID: viewModel.pastRankedGroupTickets[index].groupID, selectedWeek: selectedGroup > 0 ? "\(viewModel.totalArrayOfDates[selectedGroup-1][selectedWeek])" : "", ticketFormatForGroups: viewModel.pastRankedGroupTickets[index].ticketFormat, ownTicket: false, onTicketPage: false, passedTimeFrame: timeFrame),
-                                           label: {
-                                BetCard(viewModel: viewModel, ticket: viewModel.pastRankedGroupTickets[index], rank: (viewModel.pastRankedGroupTickets[index].rank), ownCard: viewModel.pastRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, currentWeek: false, homePage: false).padding(.bottom,16)
+                                    ticketView(username: viewModel.pastRankedGroupTickets[index].username,
+                                               uid: viewModel.pastRankedGroupTickets[index].uid,
+                                               groupID: viewModel.pastRankedGroupTickets[index].groupID,
+                                               selectedWeek: timeFrame == "weekly" ? viewModel.totalArrayOfDates[0][selectedWeek] : viewModel.totalArrayOfDates[1][selectedWeek],
+                                               ticketFormatForGroups: viewModel.pastRankedGroupTickets[index].ticketFormat,
+                                               ownTicket: false,
+                                               onTicketPage: false,
+                                               passedTimeFrame: timeFrame),
+                                   label: {
+                                BetCard(ticket: viewModel.pastRankedGroupTickets[index], rank: (viewModel.pastRankedGroupTickets[index].rank), ownCard: viewModel.pastRankedGroupTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, currentWeek: false, homePage: false).padding(.bottom,16)
                             }).id(UUID())
                         }
 
@@ -602,8 +614,6 @@ struct pastLeaderboardView: View {
 }
 
 struct BetCard: View {
-    @ObservedObject var viewModel: groupsViewModel
-//    @ObservedObject var profileViewModel: profileViewModel
     let ticket: Ticket
     let rank: String
     let ownCard: Bool
@@ -727,9 +737,7 @@ struct BetCard: View {
                     Spacer()
                     if(!ownCard && ticket.groupAdmin == Auth.auth().currentUser?.uid && currentWeek) {
                         Button(ticket.isEnabled ? "Enabled" : "Disabled", action: {
-//                            viewModel.updateIsEnabled(ticket: self.ticket, isEnabled: ticket.isEnabled ? false : true) {_ in
-//                                viewModel.fetchCurrentRankedTickets(groupID: ticket.groupID) {}
-//                            }
+
                         }).foregroundColor(.white)
                             .font(.custom(K.customFonts.lexendDecaLight, size: 12))
 //                        .foregroundColor(!ticket.isEnabled ? Color.red : K.darkGreen)
@@ -752,8 +760,7 @@ struct BetCard: View {
         
         .onAppear {
             isEnabled = ticket.isEnabled
-            //print(ticket.uid)
-            viewModel.fetchUserProfilePic(uid: ticket.uid) { (profileImageUrl, error) in
+            fetchUserProfilePic(uid: ticket.uid) { (profileImageUrl, error) in
                 if let error = error {
                     print("Error fetching profile image URL: \(error)")
                    
@@ -800,185 +807,185 @@ struct SearchBar: View {
 
 
 
-struct GroupJoinSheet: View {
-    let group: Group // Groups99
-    let viewModel: groupsViewModel
-    @Binding var isPresented: Bool
-    @State var canJoin = true
-    @State var adminUsername = ""
-    @State var enteredPassword = ""
-    @ObservedObject private var authVM = authenticationViewModel()
-    @Environment(\.dismiss) private var dismiss
-    
-
-    var body: some View {
-        
-        VStack {
-            ZStack(){
-                VStack {
-                    if (canJoin) {
-                        Text("Join Group")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
-                            .foregroundColor(.white)
-                    }
-                }
-                HStack(){
-                    Spacer()
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.white)
-                            
-                    }.padding(.trailing,16)
-                    
-                }.frame (minWidth: 0, maxWidth: .infinity)
-            }.frame (minWidth: 0, maxWidth: .infinity)
-            
-            VStack(alignment: .leading){
-                HStack{
-                    if group.groupImageURL != ""{
-                        KFImage(URL(string: group.groupImageURL))
-                            .resizable()
-                            .cornerRadius(20)
-                            .frame(width: 40, height: 40, alignment: .leading)
-                    }
-                    else {
-                        Image(systemName: "person.3.fill")
-                            .resizable()
-                            .cornerRadius(25)
-                            .frame(width: 40, height: 40, alignment: .leading)
-                    }
-                    
-                    VStack(alignment: .leading) {
-                        
-                        HStack {
-                            Text("\(group.groupName)")
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                .foregroundColor(.white)
-                            
-                            Spacer()
-                            if group.password != "" {
-                                Text("Private Group")
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
-                                    .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
-                                    .frame(alignment: .top)
-                            }
-                            else{
-                                Text("Public Group")
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
-                                    .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
-                                    .frame(alignment: .top)
-                            }
-                        }.frame(minWidth: 0, maxWidth: .infinity)
-                        
-                        Text("\(group.groupSlogan)")
-                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
-                              .foregroundColor(.white)
-                    }
-                    Spacer()
-                    
-                }
-                HStack {
-                    Text("Group Admin")
-                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
-                      .foregroundColor(.white)
-                    Spacer()
-                    Text(group.groupAdminUsername)
-                      .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
-                      .foregroundColor(.white)
-                }
-                .padding(.top,10)
-                
-                if !group.password!.isEmpty {
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Password")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                        HStack() {
-                            TextField("Password", text: $enteredPassword)
-                                .foregroundColor(.white)
-                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
-                                .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                            
-                        }
-                        .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                        .cornerRadius(10)
-                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                    }
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-                }
-            }.frame(minWidth: 0, maxWidth: .infinity)
-                .padding(.horizontal,15)
-                .padding(.vertical,20)
-            
-            if (canJoin) {
-                Button(action: {
-                    if enteredPassword != group.password {
-                        AppUtility.shared.showCustomAlert(alertType: .none, message: "The password that you entered is invalid. Please check with the admin and rejoin.", actionButtonTitle: nil, cancelButtonTitle: K.appButtonTitle.ok) { action in
-                            
-                        }
-                    }
-                    else{
-                        AppUtility.shared.showCustomAlert(alertType: .none, message: "Congratulations, you have joined \(group.groupName)", actionButtonTitle: nil, cancelButtonTitle: K.appButtonTitle.ok) { action in
-                               // viewModel.joinGroup(group: group)
-                                isPresented = false
-                        }
-                    }
-                }, label: {
-                    HStack{
-                        Spacer()
-                        
-                        Text("Join")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-                            .foregroundColor(.white)
-                                        //shadow
-                        
-                        Spacer()
-                    }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                        .background(Color(red: 0.31, green: 0.57, blue: 1))
-                        .cornerRadius(10)
-                        .padding(.top,10)
-                })
-                .padding()
-            } else {
-                HStack{
-                    Spacer()
-                    
-                    Text("Join")
-                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-                        .foregroundColor(.white)
-                                    //shadow
-                    
-                    Spacer()
-                }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 40 , maxHeight: 40)
-                    .background(Color(red: 0.31, green: 0.57, blue: 1))
-                    .cornerRadius(10)
-                    .padding(.top,10)
-            }
-            
-        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-        .padding()
-        .onAppear() {
-//            viewModel.checkIfGroupAlreadyJoined(group: group) { (alreadyJoined) in
-//                if !alreadyJoined {
-//                    canJoin = true
+//struct GroupJoinSheet: View {
+//    let group: Group // Groups99
+//    let viewModel: groupsViewModel
+//    @Binding var isPresented: Bool
+//    @State var canJoin = true
+//    @State var adminUsername = ""
+//    @State var enteredPassword = ""
+//    @ObservedObject private var authVM = authenticationViewModel()
+//    @Environment(\.dismiss) private var dismiss
+//    
+//
+//    var body: some View {
+//        
+//        VStack {
+//            ZStack(){
+//                VStack {
+//                    if (canJoin) {
+//                        Text("Join Group")
+//                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
+//                            .foregroundColor(.white)
+//                    }
+//                }
+//                HStack(){
+//                    Spacer()
+//                    Button {
+//                        dismiss()
+//                    } label: {
+//                        Image(systemName: "xmark.circle.fill")
+//                            .foregroundColor(.white)
+//                            
+//                    }.padding(.trailing,16)
+//                    
+//                }.frame (minWidth: 0, maxWidth: .infinity)
+//            }.frame (minWidth: 0, maxWidth: .infinity)
+//            
+//            VStack(alignment: .leading){
+//                HStack{
+//                    if group.groupImageURL != ""{
+//                        KFImage(URL(string: group.groupImageURL))
+//                            .resizable()
+//                            .cornerRadius(20)
+//                            .frame(width: 40, height: 40, alignment: .leading)
+//                    }
+//                    else {
+//                        Image(systemName: "person.3.fill")
+//                            .resizable()
+//                            .cornerRadius(25)
+//                            .frame(width: 40, height: 40, alignment: .leading)
+//                    }
+//                    
+//                    VStack(alignment: .leading) {
+//                        
+//                        HStack {
+//                            Text("\(group.groupName)")
+//                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+//                                .foregroundColor(.white)
+//                            
+//                            Spacer()
+//                            if group.password != "" {
+//                                Text("Private Group")
+//                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
+//                                    .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+//                                    .frame(alignment: .top)
+//                            }
+//                            else{
+//                                Text("Public Group")
+//                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
+//                                    .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+//                                    .frame(alignment: .top)
+//                            }
+//                        }.frame(minWidth: 0, maxWidth: .infinity)
+//                        
+//                        Text("\(group.groupSlogan)")
+//                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+//                              .foregroundColor(.white)
+//                    }
+//                    Spacer()
+//                    
+//                }
+//                HStack {
+//                    Text("Group Admin")
+//                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
+//                      .foregroundColor(.white)
+//                    Spacer()
+//                    Text(group.groupAdminUsername)
+//                      .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+//                      .foregroundColor(.white)
+//                }
+//                .padding(.top,10)
+//                
+//                if !group.password!.isEmpty {
+//                    VStack(alignment: .leading, spacing: 10) {
+//                        Text("Password")
+//                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+//                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+//                        HStack() {
+//                            TextField("Password", text: $enteredPassword)
+//                                .foregroundColor(.white)
+//                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+//                                .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+//                            
+//                        }
+//                        .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+//                        .cornerRadius(10)
+//                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+//                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+//                    }
+//                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+//                }
+//            }.frame(minWidth: 0, maxWidth: .infinity)
+//                .padding(.horizontal,15)
+//                .padding(.vertical,20)
+//            
+//            if (canJoin) {
+//                Button(action: {
+//                    if enteredPassword != group.password {
+//                        AppUtility.shared.showCustomAlert(alertType: .none, message: "The password that you entered is invalid. Please check with the admin and rejoin.", actionButtonTitle: nil, cancelButtonTitle: K.appButtonTitle.ok) { action in
+//                            
+//                        }
+//                    }
+//                    else{
+//                        AppUtility.shared.showCustomAlert(alertType: .none, message: "Congratulations, you have joined \(group.groupName)", actionButtonTitle: nil, cancelButtonTitle: K.appButtonTitle.ok) { action in
+//                               // viewModel.joinGroup(group: group)
+//                                isPresented = false
+//                        }
+//                    }
+//                }, label: {
+//                    HStack{
+//                        Spacer()
+//                        
+//                        Text("Join")
+//                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+//                            .foregroundColor(.white)
+//                                        //shadow
+//                        
+//                        Spacer()
+//                    }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+//                        .background(Color(red: 0.31, green: 0.57, blue: 1))
+//                        .cornerRadius(10)
+//                        .padding(.top,10)
+//                })
+//                .padding()
+//            } else {
+//                HStack{
+//                    Spacer()
+//                    
+//                    Text("Join")
+//                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+//                        .foregroundColor(.white)
+//                                    //shadow
+//                    
+//                    Spacer()
+//                }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 40 , maxHeight: 40)
+//                    .background(Color(red: 0.31, green: 0.57, blue: 1))
+//                    .cornerRadius(10)
+//                    .padding(.top,10)
+//            }
+//            
+//        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+//        .padding()
+//        .onAppear() {
+////            viewModel.checkIfGroupAlreadyJoined(group: group) { (alreadyJoined) in
+////                if !alreadyJoined {
+////                    canJoin = true
+////                } else {
+////                    canJoin = false
+////                }
+////            }
+//            authVM.fetchUserInformation(uid: group.groupAdmin) { (user) in
+//                if let user = user {
+//                    adminUsername = user.username
 //                } else {
-//                    canJoin = false
+//                    adminUsername = group.groupAdmin
 //                }
 //            }
-            authVM.fetchUserInformation(uid: group.groupAdmin) { (user) in
-                if let user = user {
-                    adminUsername = user.username
-                } else {
-                    adminUsername = group.groupAdmin
-                }
-            }
-        }
-        .background(Color(red: 0.02, green: 0.05, blue: 0.26))
-    }
-}
+//        }
+//        .background(Color(red: 0.02, green: 0.05, blue: 0.26))
+//    }
+//}
 
 struct chatView: View {
     @ObservedObject var viewModel: chatViewModel
@@ -1043,10 +1050,10 @@ struct chatView: View {
             
         }.padding([.horizontal, .top])
         .onAppear() {
-            viewModel.getChats(groupID: timeFrame == "weekly" ? StaticUserData.shared.weeklyTicket.groupID : StaticUserData.shared.dailyTicket.groupID) {_ in
-            }
-            let formatter = DateFormatter()
-            formatter.dateFormat = "MMM d, h:mma"
+//            viewModel.getChats(groupID: timeFrame == "weekly" ? StaticUserData.shared.weeklyTicket.groupID : StaticUserData.shared.dailyTicket.groupID) {_ in
+//            }
+//            let formatter = DateFormatter()
+//            formatter.dateFormat = "MMM d, h:mma"
         }
     }
 

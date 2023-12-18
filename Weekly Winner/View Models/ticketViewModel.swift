@@ -33,6 +33,10 @@ class ticketViewModel: ObservableObject {
     @Published var profilePicUrl: String = ""
     @Published var userInfo: User? = nil
     
+    init() {
+        
+    }
+    
     func fetchUserProfilePic(uid: String, completion: @escaping () -> Void) {
         //let db = Firestore.firestore()
         let userRef = db.collection("users").document(uid)
@@ -152,12 +156,26 @@ class ticketViewModel: ObservableObject {
             }
     }
     
-    func fetchPastFriendTicket(uid: String, with groupID: String, completion: @escaping (Result<Ticket, Error>) -> Void) { // Ticket99
+    func fetchPastFriendTicket(uid: String, with groupID: String, timeFrame: String, completion: @escaping (Result<Ticket, Error>) -> Void) { // Ticket99
         let db = Firestore.firestore()
         
- 
+        let documentLoc:String = {
+            if timeFrame == "weekly" {
+                return "week"
+            } else {
+                return "day"
+            }
+        }()
         
-        db.collection("users").document(uid).collection("tickets").document("week").collection("pastWeekTickets")
+        let collectionLoc:String = {
+            if timeFrame == "weekly" {
+                return "pastWeekTickets"
+            } else {
+                return "pastDayTickets"
+            }
+        }()
+        
+        db.collection("users").document(uid).collection("tickets").document(documentLoc).collection(collectionLoc)
             .whereField("groupID", isEqualTo: groupID)
             .getDocuments { (querySnapshot, err) in
                 if let err = err {
@@ -186,7 +204,12 @@ class ticketViewModel: ObservableObject {
             } else if let tickets = tickets {
                 self.userTickets = tickets
                 self.currentTicketFormat = tickets[0].ticketFormat
-               
+                if timeFrame == "weekly" {
+                    StaticUserData.shared.weeklyTicket = tickets[0]
+                } else if timeFrame == "daily" {
+                    StaticUserData.shared.dailyTicket = tickets[0]
+
+                }
                 self.isTFLoaded = true
                 //self.isGroupsLoaded = true  // Set this to true when data is loaded
             }
@@ -195,7 +218,23 @@ class ticketViewModel: ObservableObject {
         }
     }
     
-    func fetchPastBets(uid: String, for groupNumber: Int, ticketFormat: [Int], selectedWeek: String, completion: @escaping () -> Void) {
+    func fetchPastBets(uid: String, for groupNumber: Int, ticketFormat: [Int], selectedWeek: String, timeFrame: String, completion: @escaping () -> Void) {
+        
+        let documentLoc:String = {
+            if timeFrame == "weekly" {
+                return "week"
+            } else {
+                return "day"
+            }
+        }()
+        
+        let collectionLoc:String = {
+            if timeFrame == "weekly" {
+                return "pastWeekBets"
+            } else {
+                return "pastDayBets"
+            }
+        }()
         
         print("PAST BETS ARE FETCHED")
         let dateFormatter = DateFormatter()
@@ -206,18 +245,29 @@ class ticketViewModel: ObservableObject {
         print("Start date:", startDate)
 
         // Calculate the end date, which is one week later
-        let endDate = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: startDate)!
-        print("End date:", endDate)
+        //let endDate = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: startDate)!
         
-            let query = self.db.collection("users").document(uid).collection("bets").document("week").collection("pastWeekBets")
+        var endDate: Date?
+        
+        
+        if timeFrame == "weekly" {
+            endDate = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: startDate)
+
+        } else if timeFrame == "daily" {
+            endDate = Calendar.current.date(byAdding: .day, value: 1, to: startDate)
+
+        }
+        print("End date:", endDate!)
+        
+        let query = self.db.collection("users").document(uid).collection("bets").document(documentLoc).collection(collectionLoc)
                 .whereField("groupNumber", isEqualTo: groupNumber)
                 .whereField("timestamp", isGreaterThanOrEqualTo: startDate)
-                .whereField("timestamp", isLessThanOrEqualTo: endDate)
+                .whereField("timestamp", isLessThanOrEqualTo: endDate!)
         
         query.getDocuments { (querySnapshot, error) in
             DispatchQueue.main.async {
                 guard let documents = querySnapshot?.documents else {
-                    print("No documents")
+                    print("Error getting documents: \(error!)")
                     self.isBetsLoaded = true
                     return
                 }
@@ -225,16 +275,10 @@ class ticketViewModel: ObservableObject {
                 for (index, parlayMax) in ticketFormat.enumerated() {
                     let betTempArr = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
                         return try? queryDocumentSnapshot.data(as: Bet.self)
-                    }.filter { $0.betNumber == index+1 }.prefix(parlayMax))
+                    }
+                        .filter { $0.betNumber == index+1 }.prefix(parlayMax))
                     self.totalBetArrays.append(betTempArr)
                 }
-
-//                for index in self.totalBetArrays.indices {
-//                    let bet = self.totalBetArrays[index]
-//                    if bet.count > 1 {
-//                        self.updateBetsInResponseToLoss(betArray: &self.totalBetArrays[index], maxBetsPlaced: self.currentTicketFormat[index], groupNumber: groupNumber, betNumber: index + 1)
-//                    }
-//                }
                 
                 self.calculateTotals(for: groupNumber, ticketFormat: ticketFormat)
 
@@ -407,34 +451,52 @@ class ticketViewModel: ObservableObject {
             }
         
         
+        }
+        
     }
     
-    // Ok so this function deals with the other bets if there is a loss in a parlay. All .notStarted bets are removed, all empty bets are pushed to null and the betArray is filled
-//    func updateBetsInResponseToLoss(betArray: inout [Bet], maxBetsPlaced: Int, groupNumber: Int, betNumber: Int) {
-//        if betArray.contains(where: { $0.result == .loss }) {
-//            // Create a copy of betArray to avoid modifying array while iterating
-//            let betArrayCopy = betArray
-//
-//            for bet in betArrayCopy {
-//                if bet.result == .notStarted {
-//                    // Remove from the array
-//                    if let index = betArray.firstIndex(where: { $0.id == bet.id }) {
-//                        betArray.remove(at: index)
-//                    }
-//                    // Delete from the database
-//                    deleteBet(bet: bet)
-//                }
-//            }
-//
-//            let remainingSpots = maxBetsPlaced - betArray.count
-//            print("MAX BETS PLACED", maxBetsPlaced)
-//            print("BET ARRAY COUNT", betArray.count)
-//            
-//            for _ in 0..<remainingSpots {
-//                let emptyBet = Bet(groupNumber: groupNumber, groupID: "", betNumber: betNumber, betType: .None, betLine: 0, betOdds: 1, result: .forcedLoss, gameID: "null", whichSport: "", timestamp: Timestamp(date: Date()), points_bought: 0) // create as per your requirements
-//                betArray.append(emptyBet)
-//            }
-//        }
+    func fetchGameDocument(byID documentID: String, completion: @escaping (Game?) -> Void) {
+            let db = Firestore.firestore()
+            
+        db.collectionGroup("games").whereField("id", isEqualTo: documentID).getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    print("Error getting game document: \(error)")
+                    return
+                }
+                
+           if let document = querySnapshot?.documents.first {
+                        do {
+                            var data = document.data()
+                                 if let idd = data["id"] as? String,
+                                    let commenceTime = data["commenceTime"] as? Timestamp,
+                                    let totalOver = data["totalOver"] as? Double,
+                                    let totalUnder = data["totalUnder"] as? Double,
+                                    let homeTeam = data["homeTeam"] as? String,
+                                    let awayTeam = data["awayTeam"] as? String,
+                                    let homeSpread = data["homeSpread"] as? Double,
+                                    let awaySpread = data["awaySpread"] as? Double,
+                                    let homeTeamScore = data["homeTeamScore"] as? Int,
+                                    let awayTeamScore = data["awayTeamScore"] as? Int,
+                                    let whichSport = data["whichSport"] as? String? ?? "",
+                                    let bet_statistics = data["bet_statistics"] as? [Int],
+                                    let total_plays = data["total_plays"] as? Int
+ {
+                                     
+                                        let game = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays)
+                                        
+                                        completion(game) // Call completion with the game object
+
+                                }
+                            } catch let error {
+                                print("Error decoding game document: \(error)")
+                                completion(nil)
+                        }
+                    }
+            else {
+                print("johnny")
+                completion(nil)
+            }
+        }
     }
 
     func calculateTotals(for groupNumber: Int, ticketFormat: [Int]) {
