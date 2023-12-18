@@ -32,7 +32,9 @@ struct profilePhotoSelectorView: View {
     @State var username = ""
     @State var instagram = ""
     @State var promoCode = ""
-    @State var selectedDate = Date()
+    @State var selectedDay = 0
+    @State var selectedMonth = 0
+    @State var selectedYear = 0
     @State private var isPickerPresented = false
     
     let states = [
@@ -273,14 +275,14 @@ struct profilePhotoSelectorView: View {
                                     
                                     
                                     if isPickerPresented {
-                                        CustomDatePicker(selectedDate: $selectedDate)
+                                        CustomDatePicker(day: $selectedDay, month: $selectedMonth, year: $selectedYear)
                                     }else{
                                         Button(action: {
                                             withAnimation{
                                                 self.isPickerPresented.toggle()
                                             }
                                         }) {
-                                            Text("\(formattedDate(selectedDate))")
+                                            Text("\(formattedDate(Date()))")
                                                 .foregroundColor(.white)
                                                 .padding(8)
                                         }.background(K.finalColor.cardBlue)
@@ -412,7 +414,7 @@ struct profilePhotoSelectorView: View {
                         })
                     .simultaneousGesture(TapGesture().onEnded{
                         viewModel.uploadProfileImage(selectedImage)
-                        viewModel.uploadSupplementaryData(country: country, birthday: selectedDate, state: selectedState, gender: selectedGender, username: username, instagram: instagram, promoCode: promoCode)
+                        viewModel.uploadSupplementaryData(country: country, birthday: Date(), state: selectedState, gender: selectedGender, username: username, instagram: instagram, promoCode: promoCode)
                         Task{
                             await wait()
                         }
@@ -448,55 +450,53 @@ struct profilePhotoSelectorView: View {
 
 
 struct CustomDatePicker: View {
-    @Binding var selectedDate: Date
+    @Binding var day: Int
+    @Binding var month: Int
+    @Binding var year: Int
 
     private var years: [Int] { (1900...2100).map { $0 } }
     private var months: [String] { Calendar.current.monthSymbols }
     private var days: [Int] { (1...31).map { $0 } }
+    
 
     var body: some View {
         HStack {
-            Picker(selection: $selectedDate.day, label: Text("Day")) {
+            Picker(selection: $day, label: Text("Day")) {
                 ForEach(days, id: \.self) {
                     Text("\($0)").foregroundColor(.white)
                 }
             }
             .pickerStyle(WheelPickerStyle())
 
-            Picker(selection: $selectedDate.month, label: Text("Month")) {
+            Picker(selection: $month, label: Text("Month")) {
                 ForEach(1..<months.count + 1, id: \.self) {
                     Text(months[$0 - 1]).foregroundColor(.white)
                 }
             }
             .pickerStyle(WheelPickerStyle())
 
-            Picker(selection: $selectedDate.year, label: Text("Year")) {
-                ForEach(years, id: \.self) {
-                    Text("\($0)").foregroundColor(.white)
+            Picker(selection: $year, label: Text("Year")) {
+                ForEach(years, id: \.self) { number in
+                    Text("\(number)").foregroundColor(.white)
                 }
             }
             .pickerStyle(WheelPickerStyle())
-        }.onChange(of: selectedDate.year) { _ in
-            adjustDayAndMonthIfNeeded()
-        }
-        .onChange(of: selectedDate.month) { _ in
-            adjustDayIfNeeded()
         }
     }
-    private func adjustDayIfNeeded() {
-        let closedRange: ClosedRange<Int> = 1...28
+//    private func adjustDayIfNeeded() {
+//        let closedRange: ClosedRange<Int> = 1...28
+//
+//        // Convert to Range<Int>
+//        let range: Range<Int> = (closedRange.lowerBound)..<((closedRange.upperBound) + 1)
+//        if !range.contains(selectedDate.day) {
+//            selectedDate.day = range.upperBound
+//        }
+//    }
 
-        // Convert to Range<Int>
-        let range: Range<Int> = (closedRange.lowerBound)..<((closedRange.upperBound) + 1)
-        if !range.contains(selectedDate.day) {
-            selectedDate.day = range.upperBound
-        }
-    }
-
-    private func adjustDayAndMonthIfNeeded() {
-        adjustDayIfNeeded()
-        // Add any additional logic for adjusting month if needed
-    }
+//    private func adjustDayAndMonthIfNeeded() {
+//        adjustDayIfNeeded()
+//        // Add any additional logic for adjusting month if needed
+//    }
 }
 
 private extension Date {

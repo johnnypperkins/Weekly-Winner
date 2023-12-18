@@ -73,6 +73,8 @@ class authenticationViewModel: ObservableObject {
             let user = userAuthentication.user
             guard let idToken = user.idToken else { throw AuthenticationError.tokenError(message: "ID token missing") }
             let accessToken = user.accessToken
+              firstName = user.profile?.givenName ?? ""
+              lastName = user.profile?.familyName ?? ""
 
             let credential = GoogleAuthProvider.credential(withIDToken: idToken.tokenString,
                                                            accessToken: accessToken.tokenString)
@@ -85,7 +87,7 @@ class authenticationViewModel: ObservableObject {
               
               service.fetchUser(uid: firebaseUser.uid) { user,success  in
                   if success == false {
-                      let newUser = User(username: "", firstName: "", lastName: "", profileImageUrl: "", email: firebaseUser.email ?? "", dateJoined: Timestamp(date: Date()), instagram: "", promoCode: "", country: "",state: "", age: -99, gender: "")
+                      let newUser = User(username: "", firstName: "", lastName: "", profileImageUrl: "", email: firebaseUser.email ?? "", dateJoined: Timestamp(date: Date()), instagram: "", promoCode: "", country: "",state: "", birthday: Timestamp(date: Date()), gender: "")
                       self.currUser = newUser
                       Task{
                           await self.uploadUser(newUser)
@@ -185,7 +187,7 @@ class authenticationViewModel: ObservableObject {
                 //userSession = authResult!.user // added - Reid
                 let user = authResult!.user
                 
-                let newUser = User(username: "", firstName: firstName, lastName: lastName, profileImageUrl: "", email: email, dateJoined: Timestamp(date: Date()), instagram: "", promoCode: "", country: "",state: "", age: -99, gender: "")
+                let newUser = User(username: "", firstName: firstName, lastName: lastName, profileImageUrl: "", email: email, dateJoined: Timestamp(date: Date()), instagram: "", promoCode: "", country: "",state: "", birthday: Timestamp(date: Date()), gender: "")
                 await uploadUser(newUser)
                 
                 authenticationState = .authenticated
