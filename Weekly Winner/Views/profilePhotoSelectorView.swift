@@ -414,7 +414,9 @@ struct profilePhotoSelectorView: View {
                         })
                     .simultaneousGesture(TapGesture().onEnded{
                         viewModel.uploadProfileImage(selectedImage)
-                        viewModel.uploadSupplementaryData(country: country, birthday: Date(), state: selectedState, gender: selectedGender, username: username, instagram: instagram, promoCode: promoCode)
+                        if let date = createDate(day: selectedDay, month: selectedMonth, year: selectedYear) {
+                            viewModel.uploadSupplementaryData(country: country, birthday: date, state: selectedState, gender: selectedGender, username: username, instagram: instagram, promoCode: promoCode)
+                        }
                         Task{
                             await wait()
                         }
@@ -449,6 +451,17 @@ struct profilePhotoSelectorView: View {
 }
 
 
+func createDate(day: Int, month: Int, year: Int) -> Date? {
+    var dateComponents = DateComponents()
+    dateComponents.day = day
+    dateComponents.month = month
+    dateComponents.year = year
+
+    // Use the current calendar or specify a calendar
+    let calendar = Calendar.current
+    return calendar.date(from: dateComponents)
+}
+
 struct CustomDatePicker: View {
     @Binding var day: Int
     @Binding var month: Int
@@ -478,6 +491,7 @@ struct CustomDatePicker: View {
             Picker(selection: $year, label: Text("Year")) {
                 ForEach(years, id: \.self) { number in
                     Text("\(number)").foregroundColor(.white)
+                        .tag(number)
                 }
             }
             .pickerStyle(WheelPickerStyle())

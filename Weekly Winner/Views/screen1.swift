@@ -16,7 +16,9 @@ struct UserProfileView: View {
     @StateObject var countdownTimer = CountdownTimer()
     @State private var showWebpage = false
     @Binding var tab: Tab
-    @State var timeFrame = "daily"
+    @State var timeFrame = "weekly"
+    @StateObject private var prizesVM = prizesViewModel()
+
     
 
     
@@ -27,7 +29,7 @@ struct UserProfileView: View {
                 .padding(.top, 10)
                 .padding(.horizontal)
            
-            countDown(timeFrame: $timeFrame)
+            countDown(prizesVM: prizesVM, timeFrame: $timeFrame)
             
         //    testView()
 
@@ -275,8 +277,13 @@ struct rulesView: View {
 
 struct countDown: View {
     @StateObject var countdownTimer = CountdownTimer()
-    @StateObject var prizesVM = prizesViewModel()
+    @ObservedObject var prizesVM: prizesViewModel
     @Binding var timeFrame: String
+    
+    init(prizesVM: prizesViewModel, timeFrame: Binding<String>) {
+        self.prizesVM = prizesVM
+        self._timeFrame = timeFrame
+    }
     var body: some View {
         ZStack() {
             VStack(alignment: .center) {
@@ -348,11 +355,19 @@ struct countDown: View {
                             Text("1st: $")
                                 .foregroundColor(.white)
                                 .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                            if prizesVM.canViewPrizes == true {
-                                Text("\(prizesVM.prizes[index])  ")
-                                    .foregroundColor(.white)
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                    .padding(.leading,-8)
+                            if prizesVM.canViewPrizes == true && prizesVM.canViewDailyPrizes == true{
+                                if timeFrame != "daily" {
+                                    Text("\(prizesVM.prizes[index])  ")
+                                        .foregroundColor(.white)
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                        .padding(.leading,-8)
+                                }
+                                else {
+                                    Text("\(prizesVM.dailyPrizes[index])  ")
+                                        .foregroundColor(.white)
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                        .padding(.leading,-8)
+                                }
                             }
                         }.frame(width: 100, height: 30)
                             .padding(3)

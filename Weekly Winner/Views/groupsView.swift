@@ -135,19 +135,22 @@ struct groupsView: View {
                                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16     ))
                                                     .foregroundColor(.white)
                                                     .lineLimit(2)
+                                                Spacer()
                                                 if StaticUserData.shared.weeklyTicket.groupID == "Global" {
                                                     Button(action: {
-                                                        isGlobalPrizesShowing = true
-                                                    }) {
-                                                        Image("dollarSign")
-                                                            .resizable()
-                                                            .frame(width: 25, height: 25)
-                                                        //.padding()
-                                                            .foregroundColor(K.finalColor.winningGreen)
-                                                            .padding(.leading, -5)
-                                                    }
+                                                        isGlobalPrizesShowing.toggle()
+                                                    }, label: {
+                                                        HStack {
+                                                            Text("Prizes")
+                                                                .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
+                                                                .foregroundStyle(.white)
+                                                                .padding(5)
+                                                        }
+                                                            .background(K.finalColor.titleBlue)
+                                                            .cornerRadius(7.5)
+                                                    })
                                                     .sheet(isPresented: $isGlobalPrizesShowing) {
-                                                        globalPrizesView()
+                                                        globalPrizesView(time: timeFrame, viewModel: prizesViewModel())
                                                             .presentationDetents([.fraction(0.5)])
                                                     }
                                                 }

@@ -11,15 +11,45 @@ import FirebaseFirestore
 
 class prizesViewModel: ObservableObject {
     @Published var prizes:[String] = []
+    @Published var dailyPrizes:[String] = []
     @Published var canViewPrizes = false
+    @Published var canViewDailyPrizes = false
     
     init() {
         self.getPrizes() {
-            self.canViewPrizes = true
+            self.getDailyPrizes {
+                self.canViewPrizes = true
+                self.canViewDailyPrizes = true
+            }
+        }
+        
+    }
+    func getDailyPrizes(completion: @escaping () -> Void) {
+        let db = Firestore.firestore()
+        let docRef = db.collection("Misc").document("dailyPrizes")
+
+        docRef.getDocument { (document, error) in
+            if let document = document, document.exists {
+                let data = document.data()
+                if let firstPrize = data?["1st"] as? String,
+                   let secondPrize = data?["2nd"] as? String,
+                   let thirdPrize = data?["3rd"] as? String,
+                   let fourthPrize = data?["4th"] as? String,
+                   let fifthPrize = data?["5th"] as? String {
+                    print("1st prize is: \(firstPrize)")
+                    print("2nd prize is: \(secondPrize)")
+                    print("3rd prize is: \(thirdPrize)")
+                    print("4th prize is: \(fourthPrize)")
+                    print("5th prize is: \(fifthPrize)")
+                    self.dailyPrizes = [firstPrize, secondPrize, thirdPrize, fourthPrize, fifthPrize]
+                    completion()
+                }
+            } else {
+                print("Document does not exist or there was an error: \(error?.localizedDescription ?? "Unknown error")")
+            }
         }
     }
-    
-    func getPrizes( completion: @escaping () -> Void) {
+    func getPrizes(completion: @escaping () -> Void) {
         let db = Firestore.firestore()
         let docRef = db.collection("Misc").document("globalPrizes")
 

@@ -13,7 +13,14 @@ import Kingfisher
 import SafariServices
 
 struct globalPrizesView: View {
-    @StateObject private var viewModel = prizesViewModel()
+    @State var time: String
+    
+    @ObservedObject private var viewModel: prizesViewModel
+    
+    init(time: String, viewModel: prizesViewModel) {
+        self.time = time
+        self.viewModel = viewModel
+    }
     
     let prizeSize: CGFloat = 25
     
@@ -24,7 +31,8 @@ struct globalPrizesView: View {
                 VStack {
                     HStack {
                         Spacer()
-                        Text("WEEKLY GLOBAL PRIZES")
+                       
+                        Text(time == "daily" ? "DAILY GLOBAL PRIZES" : "WEEKLY GLOBAL PRIZES")
                             .foregroundColor(.white)
                             .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
                             .padding(.bottom)
@@ -49,24 +57,46 @@ struct globalPrizesView: View {
                                 .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
                         }
                         if viewModel.canViewPrizes {
-                            VStack(alignment: .leading, spacing: 10) {
-                                Text("$\(viewModel.prizes[0])")
-                                    .foregroundColor(.white)
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
-                                Text("$\(viewModel.prizes[1])")
-                                    .foregroundColor(.white)
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
-                                Text("$\(viewModel.prizes[2])")
-                                    .foregroundColor(.white)
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
-                                Text("$\(viewModel.prizes[3])")
-                                    .foregroundColor(.white)
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
-                                Text("$\(viewModel.prizes[4])")
-                                    .foregroundColor(.white)
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                            if time != "daily"{
+                                VStack(alignment: .leading, spacing: 10) {
+                                    Text("$\(viewModel.prizes[0])")
+                                        .foregroundColor(.white)
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                    Text("$\(viewModel.prizes[1])")
+                                        .foregroundColor(.white)
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                    Text("$\(viewModel.prizes[2])")
+                                        .foregroundColor(.white)
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                    Text("$\(viewModel.prizes[3])")
+                                        .foregroundColor(.white)
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                    Text("$\(viewModel.prizes[4])")
+                                        .foregroundColor(.white)
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                }
+                            }
+                            else {
+                                VStack(alignment: .leading, spacing: 10) {
+                                    Text("$\(viewModel.dailyPrizes[0])")
+                                        .foregroundColor(.white)
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                    Text("$\(viewModel.dailyPrizes[1])")
+                                        .foregroundColor(.white)
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                    Text("$\(viewModel.dailyPrizes[2])")
+                                        .foregroundColor(.white)
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                    Text("$\(viewModel.dailyPrizes[3])")
+                                        .foregroundColor(.white)
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                    Text("$\(viewModel.dailyPrizes[4])")
+                                        .foregroundColor(.white)
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                }
                             }
                         }
+                        
                     }
                 }
             }
