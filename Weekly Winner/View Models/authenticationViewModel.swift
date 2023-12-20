@@ -345,10 +345,6 @@ class authenticationViewModel: ObservableObject {
                 }
             }
             
-            
-            
-            
-            
         }
     }
 

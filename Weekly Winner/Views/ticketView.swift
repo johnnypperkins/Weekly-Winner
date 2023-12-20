@@ -210,7 +210,7 @@ struct ticketView: View {
                     .cornerRadius(1) // Apply rounded corners
                     .offset(x: timeFrame == "daily" ? -75 : 75, y: 0)
                     .animation(.easeInOut(duration: 0.35))
-            }.padding(.top, 27)
+            }.padding(.top, 23)
         }
     }
     

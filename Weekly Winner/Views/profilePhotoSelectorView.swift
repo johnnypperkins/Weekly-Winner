@@ -101,15 +101,28 @@ struct profilePhotoSelectorView: View {
                                         }
                                 }
                                 else {
-                                    Image(systemName: "person.circle")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 100, height: 100)
-                                        .clipShape(Circle())
-                                        .foregroundColor(.white)
-                                        .onTapGesture {
-                                            showImagePicker.toggle()
+                                    ZStack {
+                                  
+                                        
+                                        Image(systemName: "person.circle")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 100, height: 100)
+                                            .clipShape(Circle())
+                                            .foregroundColor(.white)
+                                            .onTapGesture {
+                                                showImagePicker.toggle()
+                                            }
+                                        
+                                        HStack {
+                                            Text("Profile Picture")
+                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                                .foregroundColor(.black)
                                         }
+                                            .frame(width: 150)
+                                            .background(.white.opacity(0.75))
+                                            .cornerRadius(5)
+                                    }
                                 }
                             }.padding()
                                 .sheet(isPresented: $showImagePicker,
@@ -155,9 +168,14 @@ struct profilePhotoSelectorView: View {
                             //                .padding(.horizontal,16)
                             //                .id(FocusableFieldSignup.username)
                             VStack(alignment: .leading, spacing: 10) {
-                                Text("Username")
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                                    .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                                HStack {
+                                    Text("Username")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                        .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                                    Text("*")
+                                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                                        .foregroundColor(.red)
+                                }
                                 HStack() {
                                     TextField("Username", text: $username)
                                     
@@ -192,7 +210,9 @@ struct profilePhotoSelectorView: View {
                                 Text("Country")
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
                                     .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                                
+                                Text("*")
+                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                                    .foregroundColor(.red)
                                 
                                 Spacer()
                                 Picker("Select a Country", selection: $country) {
@@ -216,7 +236,9 @@ struct profilePhotoSelectorView: View {
                                 //                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 12).weight(.light))
                                 //                        .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
                                 //                        .padding(.trailing,10)
-                                
+                                Text("*")
+                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                                    .foregroundColor(.red)
                                 Spacer()
                                 Picker("Select a state", selection: $selectedState) {
                                     ForEach(states, id: \.self) { state in
@@ -269,7 +291,9 @@ struct profilePhotoSelectorView: View {
                                 Text("Birthday")
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
                                     .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                                
+                                Text("*")
+                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                                    .foregroundColor(.red)
                                 Spacer()
                                 ZStack{
                                     
@@ -297,7 +321,9 @@ struct profilePhotoSelectorView: View {
                                 Text("Sex:")
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
                                     .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                                
+                                Text("*")
+                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                                    .foregroundColor(.red)
                                 Spacer()
                                 
                                 Picker("Sex", selection: $selectedGender) {
@@ -393,7 +419,7 @@ struct profilePhotoSelectorView: View {
                 
                 Spacer()
             }
-            if let selectedImage = selectedImage  {
+            if let selectedImage = selectedImage {
                 if country != "Choose here" && String(age ?? -99) != "0" && selectedState != "Choose here"{
                     NavigationLink(destination: {
                         TermsAndConditionsView(viewModel: viewModel) },label: {
@@ -421,13 +447,46 @@ struct profilePhotoSelectorView: View {
                             await wait()
                         }
                     })
+                } else {
+                    HStack{
+                        Spacer()
+                        
+                        Text("Fill All Fields")
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                            .foregroundColor(.white)
+                        //shadow
+                        
+                        Spacer()
+                    }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+                        .background(Color(red: 0.31, green: 0.57, blue: 1))
+                        .cornerRadius(10)
+                        .padding(.horizontal,16)
+                        .padding(.bottom,30)
+                        .opacity(0.66)
                 }
+            } else {
+                HStack{
+                    Spacer()
+                    
+                    Text("Fill All Fields")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                        .foregroundColor(.white)
+                    //shadow
+                    
+                    Spacer()
+                }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+                    .background(Color(red: 0.31, green: 0.57, blue: 1))
+                    .cornerRadius(10)
+                    .padding(.horizontal,16)
+                    .padding(.bottom,30)
+                    .opacity(0.66)
             }
             }.navigationBarBackButtonHidden(true)
         .frame(minWidth: 0,maxWidth: .infinity,minHeight: 0,maxHeight: .infinity)
             .background(Color(red: 0.02, green: 0.05, blue: 0.26))
             .ignoresSafeArea()
             .navigationBarBackButtonHidden(true)
+            .padding(.top,50)
     }
     
     func loadImage() {

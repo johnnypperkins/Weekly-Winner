@@ -13,10 +13,10 @@ import SafariServices
 
 struct UserProfileView: View {
     @ObservedObject private var screen1VM = screen1ViewModel()
-   // @StateObject var countdownTimer = CountdownTimer()
+    @StateObject var countdownTimer = CountdownTimer()
     @State private var showWebpage = false
     @Binding var tab: Tab
-    @State var timeFrame = "daily"
+    @State var timeFrame = "weekly"
     @StateObject private var prizesVM = prizesViewModel()
 
     
@@ -34,7 +34,7 @@ struct UserProfileView: View {
         //    testView()
 
             VStack {
-             yourGroups(screen1VM: screen1VM, tab: $tab)
+                yourGroups(screen1VM: screen1VM, tab: $tab)
                     .padding(.horizontal)
 
                 weeklyGlobalLeaders(screen1VM: screen1VM, timeFrame: $timeFrame)
@@ -165,7 +165,7 @@ struct weeklyGlobalLeaders: View {
                             BetCard(
                                 ticket: ticket,
                                 rank: ticket.rank,
-                                ownCard: false,
+                                ownCard: ticket.uid == Auth.auth().currentUser?.uid,
                                 currentWeek: true,
                                 homePage: true
                             ).padding(EdgeInsets(top: 0, leading: 8, bottom: 5, trailing: 8))
@@ -177,7 +177,7 @@ struct weeklyGlobalLeaders: View {
                             BetCard(
                                 ticket: ticket,
                                 rank: ticket.rank,
-                                ownCard: false,
+                                ownCard: ticket.uid == Auth.auth().currentUser?.uid,
                                 currentWeek: true,
                                 homePage: true
                             ).padding(EdgeInsets(top: 0, leading: 8, bottom: 5, trailing: 8))
@@ -252,117 +252,24 @@ struct ProfileHeaderView: View {
 
 struct rulesView: View {
     var body: some View {
-        ZStack {
-            K.finalColor.backgroundBlue
-            ScrollView {
-                K.finalColor.backgroundBlue
-                VStack (spacing: 5) {
-                    Text("How To Play WagerPool?")
-                        .font(.custom(K.customFonts.lexendDecaSB, size: 20))
-                        .foregroundColor(K.finalColor.titleBlue)
-                        .padding(.vertical)
-                    
-                    Text("     WagerPool is a FREE TO PLAY social sportsbook where players can place risk free bets in an attempt to win real prizes. ")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
-                        .foregroundColor(K.finalColor.textWhite)
-                        .padding(.bottom)
-                    
-                    //                Text("     Players can automatically participate in both daily and weekly challenges. The objective is to make the most fictional money. Players are then ranked based on how well their bets have done, and top players of each challenge win real prizes. ")
-                    //                    .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
-                    //                    .foregroundColor(K.finalColor.textWhite)
-                    //                    .padding(.bottom)
-                    
-                    Text("To start, go to the Bets page.")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
-                        .foregroundColor(K.finalColor.textWhite)
-                        .padding(.bottom)
-                    
-                    Image("howTo1")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 320)
-                        .cornerRadius(5)
-                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                    
-                    Text("Then, pick a game.")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
-                        .foregroundColor(K.finalColor.textWhite)
-                        .padding()
-                    
-                    Image("howTo2")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 320)
-                        .cornerRadius(5)
-                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                    
-                    Text("Choose a spread or total.")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
-                        .foregroundColor(K.finalColor.textWhite)
-                        .padding()
-                    
-                    Image("howTo3")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 320)
-                        .cornerRadius(5)
-                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                    
-                    Text("Choose the daily or weekly challenge + the corresponding bet you would like to fill.")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
-                        .foregroundColor(K.finalColor.textWhite)
-                        .padding()
-                    
-                    Image("howTo4")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 320)
-                        .cornerRadius(5)
-                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                    
-                    Text("Choose your odds and place your bet.")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
-                        .foregroundColor(K.finalColor.textWhite)
-                        .padding()
-                    
-                    Image("howTo5")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 320)
-                        .cornerRadius(5)
-                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                    
-                    Text("You can then see your bets on the ticket page.")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
-                        .foregroundColor(K.finalColor.textWhite)
-                        .padding()
-                    
-                    Image("howTo6")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 320)
-                        .cornerRadius(5)
-                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                    
-                    Text("You are ranked against other players for both the daily and weekly challenges. Orange = Pending, Green = Won.")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
-                        .foregroundColor(K.finalColor.textWhite)
-                        .padding()
-                    
-                    Image("howTo7")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 320)
-                        .cornerRadius(5)
-                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                    
-                    Text("When the day/week ends, winning players can receive their prizes by dming @WagerPool on instagram!")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
-                        .foregroundColor(K.finalColor.textWhite)
-                        .padding()
-                    
-                }.padding(.horizontal)
-            }
+        ScrollView {
+            VStack (spacing: 5) {
+                Text("How Does WagerPool Work?")
+                    .font(.custom(K.customFonts.lexendDecaSB, size: 20))
+                    .foregroundColor(K.finalColor.titleBlue)
+                    .padding(.vertical)
+                Text("     WagerPool is a completely free social gambling app where the user's objective is to earn as much “fictional money” as possible over the course of the week. Users will fill out the 'Global' ticket, which will contain the number of bets available to place for the user for that week (Sun-Sun). In an effort to create an engaging and competitive experience, the number of bets available for users to place will change week to week. Spreads and lines are conveniently located on the app’s 'Bets' tab. After looking at the various spreads and lines, users will return to their 'Global' ticket with their picks for the week. The user automatically joins and competes in the global group upon creating an account.")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                    .foregroundColor(K.finalColor.textWhite)
+                
+                Text("     As each user's bets hit or miss, the user will be ranked among other players in their group(s) based on how much 'money' they have made over the course of the week. It is important to note that users can only win money and any losses will not be deducted from the user’s total (it can be thought of as all free play). Also, pushes count as a win. As the week comes to a close, the user who has made the most fictional money in the GLOBAL GROUP will win ACTUAL MONEY that will be paid out through a payment service of their choice: venmo, cashapp, paypal, etc. The current prizes offered can be found by clicking on the green dollar sign on the global group page.")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                    .foregroundColor(K.finalColor.textWhite)
+                
+                Text("     Users also have the option of creating their own personal groups. Players will be able to join and bet on the week on their own terms (such as club sports, intramural teams, or philanthropic events) outside of the app. WagerPool would serve as your group’s coordinator. If you would like to have a personal group sponsored, you can send a direct message to @wagerpool on instagram.")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                    .foregroundColor(K.finalColor.textWhite)
+            }.padding(.horizontal)
         }
     }
 }
@@ -431,17 +338,10 @@ struct countDown: View {
                 }
 
                 VStack(spacing: 0) {
-                    if timeFrame == "daily" {
-                        Text(countdownTimer.dayTimeRemaining)
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 22))
-                            .foregroundColor(.white)
-                            .padding(.vertical)
-                    } else if timeFrame == "weekly" {
-                        Text(countdownTimer.weekTimeRemaining)
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 22))
-                            .foregroundColor(.white)
-                            .padding(.vertical)
-                    }
+                    Text(countdownTimer.timeRemaining)
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 22))
+                        .foregroundColor(.white)
+                        .padding(.vertical)
                 }
                 .frame(height: 20).padding(.top,3)
                     
@@ -449,20 +349,10 @@ struct countDown: View {
                     
                     ForEach(0..<3, id: \.self) { index in
                         HStack {
-                            if index == 0 {
-                                Image(systemName: "trophy.fill")
+                            Image(systemName: "trophy.fill")
                                 .foregroundColor(.yellow)
-                            } else if index == 1 {
-                                Image(systemName: "trophy.fill")
-                                .foregroundColor(Color(hex: "C0C0C0"))
-                            } else if index == 2 {
-                                Image(systemName: "trophy.fill")
-                                .foregroundColor(Color(hex: "9F7A34"))
-                            }
                             
-
-
-                            Text("$")
+                            Text("1st: $")
                                 .foregroundColor(.white)
                                 .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                             if prizesVM.canViewPrizes == true && prizesVM.canViewDailyPrizes == true{
@@ -481,7 +371,7 @@ struct countDown: View {
                             }
                         }.frame(width: 100, height: 30)
                             .padding(3)
-                            .background(K.finalColor.titleBlue.opacity(0.5))
+                        .background(K.finalColor.blueGray)
                             .cornerRadius(5)
                     }
                 }
@@ -590,40 +480,64 @@ struct yourGroups: View {
                         .cornerRadius(12)
                         .overlay(self.overlayShape(for: index))
                     }
-                    
-                    Button {
-                    
-                        showRulesPage.toggle()
-                        
-                    } label: {
-                        VStack(alignment: .leading, spacing: 8) {
-                            VStack(alignment: .leading, spacing: 3) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 3) {
                                 
-                                HStack {
-                                    Spacer()
-                                    Image(systemName: "questionmark.circle")
-                                        .resizable()
-                                        .cornerRadius(7.5)
-                                        .foregroundColor(.white)
-                                        .scaledToFit()
-                                        .frame(height: 80)
-                                    Spacer()
-                                }
-                                HStack(alignment: .top) {
-                                    Spacer()
-                                    Text("How To Play?")
-                                        .font(.custom(K.customFonts.poppinsMedium, size: 20))
-                                        .foregroundColor(.white)
-                                    Spacer()
-                                }
+                                    HStack {
+                                        Spacer()
+                                        Image(systemName: "person.3.fill")
+                                            .resizable()
+                                            .cornerRadius(7.5)
+                                            .foregroundColor(.white)
+                                            .scaledToFit()
+                                            .frame(height: 95)
+                                        Spacer()
+                                    }
+                            HStack(alignment: .top) {
+                                Spacer()
+                                Text("How to play?")
+                                    .font(.custom(K.customFonts.poppinsMedium, size: 16))
+                                    .foregroundColor(.white)
+                                
+                                Spacer()
+                                
+                       
                             }
+                           
+                            
                         }
-                        .padding(10)
-                        .frame(width: 140, height: 205)
-                        .background(K.finalColor.backgroundBlue)
-                        .cornerRadius(12)
-                        .overlay(self.overlayShape(for: 1))
+                        VStack(alignment: .leading, spacing: 0) {
+                            Button {
+                                
+//                                withAnimation {
+//                                    tab = .groups
+//                                }
+                                showRulesPage.toggle()
+                                
+                            } label: {
+                                HStack{
+                                    Spacer()
+                                    
+                                    Image(systemName: "arrow.right")
+                                        .resizable()
+                                        .frame(width: 17, height: 10)
+                                        .foregroundColor(.white)
+                                    //shadow
+                                    
+                                    Spacer()
+                                }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 30 , maxHeight: 30)
+                                    .background(Color(red: 0.31, green: 0.57, blue: 1))
+                                    .cornerRadius(10)
+                                    .padding(.horizontal,16)
+                            }
+                               
+                        }
                     }
+                    .padding(10)
+                    .frame(width: 140, height: 205)
+                    .background(K.finalColor.backgroundBlue)
+                    .cornerRadius(12)
+                    .overlay(self.overlayShape(for: 1))
                 }
             }
         }.sheet(isPresented: $showRulesPage) {

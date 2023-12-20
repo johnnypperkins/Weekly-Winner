@@ -98,6 +98,18 @@ struct globalPrizesView: View {
                         }
                         
                     }
+                    
+                    HStack {
+                        Spacer()
+                        Text("DM @WagerPool to collect!")
+                            .foregroundColor(.white)
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                            .padding(.bottom)
+                        Spacer()
+                    }.padding(5)
+//                        .background(K.finalColor.cardBlue)
+                        .cornerRadius(3)
+                        .padding(.top)
                 }
             }
         }

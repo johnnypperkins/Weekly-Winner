@@ -136,24 +136,6 @@ struct groupsView: View {
                                                     .foregroundColor(.white)
                                                     .lineLimit(2)
                                                 Spacer()
-                                                if StaticUserData.shared.weeklyTicket.groupID == "Global" {
-                                                    Button(action: {
-                                                        isGlobalPrizesShowing.toggle()
-                                                    }, label: {
-                                                        HStack {
-                                                            Text("Prizes")
-                                                                .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
-                                                                .foregroundStyle(.white)
-                                                                .padding(5)
-                                                        }
-                                                            .background(K.finalColor.titleBlue)
-                                                            .cornerRadius(7.5)
-                                                    })
-                                                    .sheet(isPresented: $isGlobalPrizesShowing) {
-                                                        globalPrizesView(time: timeFrame, viewModel: prizesViewModel())
-                                                            .presentationDetents([.fraction(0.5)])
-                                                    }
-                                                }
                                             }
                                             if selectedGroup == 1 {
                                                 Text("\(timeFrame == "daily" ? StaticUserData.shared.dailyRankedTickets.count : StaticUserData.shared.weeklyRankedTickets.count) Active")
@@ -265,14 +247,14 @@ struct groupsView: View {
                                     }
                                 }.frame(height: 25)
                                 Spacer()
-                                Button(action: {
-                                    showingChat = false
-                                }) {
-                                    Image(showingChat ? "podiumUnselected" : "podiumSelected") // Assuming "ticket" and "ticket.fill" are your symbols
-                                        .resizable()
-                                        .frame(width: 25, height: 28)
-                                        
-                                }
+//                                Button(action: {
+//                                    showingChat = false
+//                                }) {
+//                                    Image(showingChat ? "podiumUnselected" : "podiumSelected") // Assuming "ticket" and "ticket.fill" are your symbols
+//                                        .resizable()
+//                                        .frame(width: 25, height: 28)
+//                                        
+//                                }
                                 
 //                                Button(action: {
 //                                    showingChat = true
@@ -283,17 +265,36 @@ struct groupsView: View {
 //                                        .foregroundColor(showingChat ? .blue : .gray)
 //                                }
                                 
-                                Button(action: {
-                                    isStatsViewPresented = true
-                                }) {
-                                    Image("StatsUnselected")
-                                        .resizable()
-                                        .frame(width: 20, height: 20)
-                                        .foregroundColor(.white)
-                                }
-                                .sheet(isPresented: $isStatsViewPresented) {
-                                    statsView()
-                                        .presentationDetents([.fraction(0.75)])
+//                                Button(action: {
+//                                    isStatsViewPresented = true
+//                                }) {
+//                                    Image("StatsUnselected")
+//                                        .resizable()
+//                                        .frame(width: 20, height: 20)
+//                                        .foregroundColor(.white)
+//                                }
+//                                .sheet(isPresented: $isStatsViewPresented) {
+//                                    statsView()
+//                                        .presentationDetents([.fraction(0.75)])
+//                                }
+                                
+                                if StaticUserData.shared.weeklyTicket.groupID == "Global" {
+                                    Button(action: {
+                                        isGlobalPrizesShowing.toggle()
+                                    }, label: {
+                                        HStack {
+                                            Text("Prizes")
+                                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                                .foregroundStyle(.white)
+                                                .padding(5)
+                                        }
+                                            .background(K.finalColor.winningGreen)
+                                            .cornerRadius(7.5)
+                                    })
+                                    .sheet(isPresented: $isGlobalPrizesShowing) {
+                                        globalPrizesView(time: timeFrame, viewModel: prizesViewModel())
+                                            .presentationDetents([.fraction(0.5)])
+                                    }
                                 }
                                 
                                 if Auth.auth().currentUser?.uid == "fg57TZhmLmWH9TT3WCA3WuXT7dy2" { // reidbrown1 id
@@ -491,7 +492,7 @@ struct currentLeaderboardView: View {
                                 ticketView(username: StaticUserData.shared.username, uid: StaticUserData.shared.dailyTicket.uid, groupID: timeFrame == "weekly" ? "Global" : "GlobalDaily", selectedWeek: "current", ticketFormatForGroups: [], ownTicket: true, onTicketPage: false, passedTimeFrame: timeFrame),
                                label: {
                     if timeFrame == "weekly" {
-                        ForEach(0..<StaticUserData.shared.dailyRankedTickets.count, id: \.self) { index in
+                        ForEach(0..<StaticUserData.shared.weeklyRankedTickets.count, id: \.self) { index in
                             if StaticUserData.shared.weeklyRankedTickets[index].uid == StaticUserData.shared.currentUser.id {
                                 BetCard(ticket: StaticUserData.shared.weeklyRankedTickets[index], rank: (StaticUserData.shared.weeklyRankedTickets[index].rank), ownCard: StaticUserData.shared.weeklyRankedTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, currentWeek: true, homePage: false).padding(.bottom,16)
                             }
