@@ -687,6 +687,7 @@ struct BetCard: View {
                                         .resizable()
                                         .frame(width: 15, height: 15)
                                         .foregroundColor(Color(hex: "9F7A34"))
+                                    
                                 }
                             }
                             .frame(maxHeight: .infinity)

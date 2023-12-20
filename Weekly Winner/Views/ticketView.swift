@@ -578,11 +578,11 @@ struct ticketView: View {
                                             Text((game?.homeTeamScore ?? -1) >= 0 ? "\(game?.homeTeamScore ?? -1)" : "")
                                                 .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                                                 .foregroundColor(.white)
-                                                .frame(width: 20)
+                                                .frame(width: 30)
                                             Text((game?.awayTeamScore ?? -1) >= 0 ? "\(game?.awayTeamScore ?? -1)" : "")
                                                 .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                                                 .foregroundColor(.white)
-                                                .frame(width: 20)
+                                                .frame(width: 30)
                                         }.padding(.trailing)
                                         
                                     }

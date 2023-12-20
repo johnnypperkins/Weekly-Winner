@@ -193,35 +193,75 @@ import Foundation
 import Combine
 
 class CountdownTimer: ObservableObject {
-    @Published var timeRemaining: String = ""
-    private var timer: AnyCancellable?
+    @Published var weekTimeRemaining: String = ""
+    @Published var dayTimeRemaining: String = ""
+    private var weekTimer: AnyCancellable?
+    private var dayTimer: AnyCancellable?
 
     init() {
-        startTimer()
+        startDayTimer()
+       startWeekTimer()
     }
 
-    private func startTimer() {
-        timer = Timer.publish(every: 1, on: .main, in: .common)
+    private func startDayTimer() {
+        weekTimer = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
-                self?.updateTimeRemaining()
+                self?.updateDayTimeRemaining()
             }
     }
+    private func startWeekTimer() {
+        dayTimer = Timer.publish(every: 1, on: .main, in: .common)
+            .autoconnect()
+            .sink { [weak self] _ in
+                self?.updateWeekTimeRemaining()
+            }
+    }
+    
+//    var calendar = Calendar.current
+//       calendar.timeZone = TimeZone(identifier: "America/New_York")!
+//       let now = Date()
 
-    private func updateTimeRemaining() {
+      
+
+    private func updateWeekTimeRemaining() {
         var calendar = Calendar.current
         calendar.timeZone = TimeZone(identifier: "America/New_York")!
         let now = Date()
-        let nextSunday = calendar.nextDate(after: now, matching: DateComponents(hour: 0, weekday: 2), matchingPolicy: .nextTime)!
-        let components = calendar.dateComponents([.day, .hour, .minute, .second], from: now, to: nextSunday)
 
-        // Adjusted string formatting to include d, h, m, s
-        timeRemaining = String(format: "%dd : %02dh : %02dm : %02ds",
-                               components.day ?? 0,
-                               components.hour ?? 0,
-                               components.minute ?? 0,
-                               components.second ?? 0)
+            let nextSunday = calendar.nextDate(after: now, matching: DateComponents(hour: 0, weekday: 2), matchingPolicy: .nextTime)!
+            let components = calendar.dateComponents([.day, .hour, .minute, .second], from: now, to: nextSunday)
+
+            // Adjusted string formatting to include d, h, m, s
+            weekTimeRemaining = String(format: "%dd : %02dh : %02dm : %02ds",
+                                   components.day ?? 0,
+                                   components.hour ?? 0,
+                                   components.minute ?? 0,
+                                   components.second ?? 0)
+
     }
+    
+    private func updateDayTimeRemaining() {
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone(identifier: "America/New_York")!
+        let now = Date()
+
+            // Calculate the start of the next day (midnight)
+            guard let nextMidnight = calendar.nextDate(after: now, matching: DateComponents(hour: 0), matchingPolicy: .nextTime) else {
+                return
+            }
+
+            let components = calendar.dateComponents([.hour, .minute, .second], from: now, to: nextMidnight)
+
+            // Adjusted string formatting to include h, m, s
+            dayTimeRemaining = String(format: "%02dh : %02dm : %02ds",
+                                   components.hour ?? 0,
+                                   components.minute ?? 0,
+                                   components.second ?? 0)
+
+
+    }
+    
 }
 
 

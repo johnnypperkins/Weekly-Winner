@@ -59,12 +59,11 @@ struct BettingAppView: View {
                                 Image(systemName: "line.horizontal.3")
                                     .imageScale(.large)
                                     .foregroundColor(.white)
-                                    .padding(.leading) // Add padding to the left side of the button
                             }
-                            .padding() // Add padding around the button
+                            .padding(10) // Add padding around the button
                             .background(K.finalColor.cardBlue) // Set the background color
-                            .cornerRadius(10) // Optional: Add a corner radius if you want rounded corners
-                        })
+                            .cornerRadius(5) // Optional: Add a corner radius if you want rounded corners
+                        }).padding(.leading)
 
                         Spacer()
                     }
@@ -72,7 +71,7 @@ struct BettingAppView: View {
                         .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
                         .fontWeight(.bold)
                         .foregroundColor(K.finalColor.textWhite)
-                }
+                }.padding(.top, 3)
                 HStack {
                     HStack {
                         TextField("Search", text: $searchTerm)
@@ -684,7 +683,7 @@ struct BetDetailsView: View {
                         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
                         //f.padding(.horizontal, 25)
                 })
-                .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) )
+                .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) || game.commenceTime.seconds > (Timestamp(date: Calendar.current.startOfDay(for: Date())).seconds + 86400))
                 .padding(.horizontal)
                 .background(K.finalColor.backgroundBlue)
             }.padding(.horizontal)
