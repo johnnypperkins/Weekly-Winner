@@ -311,6 +311,11 @@ struct profilePhotoSelectorView: View {
                                                 .padding(8)
                                         }.background(K.finalColor.cardBlue)
                                             .clipShape(RoundedRectangle(cornerRadius: 10))
+                                            .onTapGesture {
+                                                withAnimation {
+                                                    self.focus = nil
+                                                }
+                                            }
                                     }
                                 }
                                     
@@ -388,7 +393,7 @@ struct profilePhotoSelectorView: View {
                                         .submitLabel(.next)
                                         .onSubmit {
                                             withAnimation {
-                                                self.focus = .promoCode
+                                                self.focus = nil
                                             }
                                         }
                                     
@@ -406,7 +411,7 @@ struct profilePhotoSelectorView: View {
                             
                             Spacer()
                         }
-                    } .padding(.bottom, focus == nil ? 0 : 200)
+                    } .padding(.bottom, focus == nil ? 0 : 300)
                         .onChange(of: focus) { newFocus in
                             //                    if newFocus == .password {
                             withAnimation {
