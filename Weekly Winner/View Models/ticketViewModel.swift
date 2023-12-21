@@ -303,7 +303,8 @@ class ticketViewModel: ObservableObject {
     }
     
     func fetchBets(uid: String, for groupNumber: Int, ticketFormat: [Int], timeFrame: String, completion: @escaping () -> Void) {
-        
+        // totalBetArrats
+        // availableBetsArray
         let documentLoc:String = {
             if timeFrame == "weekly" {
                 return "week"
@@ -350,13 +351,6 @@ class ticketViewModel: ObservableObject {
                         }
                     }
                 }
-//                for index in self.totalBetArrays.indices {
-//                    let bet = self.totalBetArrays[index]
-//                    if bet.count > 1 {
-//                        self.updateBetsInResponseToLoss(betArray: &self.totalBetArrays[index], maxBetsPlaced: self.currentTicketFormat[index], groupNumber: groupNumber, betNumber: index + 1)
-//                        print("BET UPDATED BLAH BLAH")
-//                    }
-//                }
                 
                 self.calculateTotals(for: groupNumber, ticketFormat: ticketFormat)
 

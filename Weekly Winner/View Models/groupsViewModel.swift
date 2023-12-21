@@ -31,7 +31,7 @@ class groupsViewModel: ObservableObject {
 
     
     init() {
-        fetchUserTickets(timeFrame: "daily") {
+//        fetchUserTickets(timeFrame: "daily") {
             self.groupsFetched = true
             self.fetchUserGroups {
                 self.userGroupsLoaded = true
@@ -39,12 +39,12 @@ class groupsViewModel: ObservableObject {
                 self.totalArrayOfDates.append(self.populateArrayOfDays(from: Timestamp(date: Calendar.current.date(from: DateComponents(year: 2023, month: 12, day: 13))!))) // daily
                 print("Arrayy \(self.totalArrayOfDates)")
             }
-            self.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: "daily") {}
+//            self.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: "daily") {}
             
-        }
-        fetchUserTickets(timeFrame: "weekly") {
-            self.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: "weekly") {}
-        }
+//        }
+//        fetchUserTickets(timeFrame: "weekly") {
+//            self.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: "weekly") {}
+//        }
     }
     
     func uploadGroupImage(_ image: UIImage, group: Group, completion: @escaping (String) -> Void) {

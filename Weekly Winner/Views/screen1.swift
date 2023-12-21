@@ -154,11 +154,12 @@ struct weeklyGlobalLeaders: View {
     var body: some View {
         ZStack() {
             VStack(alignment: .center) {
-                if screen1VM.canFetchRankedTickets {
-                    Text("\(timeFrame == "daily" ? "Daily" : "Weekly") Leaders")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 24).weight(.medium))
-                        .foregroundColor(.white)
-                    if timeFrame == "daily" {
+            
+                Text("\(timeFrame == "daily" ? "Daily" : "Weekly") Leaders")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24).weight(.medium))
+                    .foregroundColor(.white)
+                if timeFrame == "daily" {
+                    if screen1VM.canFetchDailyRankedTickets {
                         ForEach(0..<min(3, StaticUserData.shared.dailyRankedTickets.count), id: \.self) { index in
                             let ticket = StaticUserData.shared.dailyRankedTickets[index]
                             
@@ -170,7 +171,10 @@ struct weeklyGlobalLeaders: View {
                                 homePage: true
                             ).padding(EdgeInsets(top: 0, leading: 8, bottom: 5, trailing: 8))
                         }
-                    } else if timeFrame == "weekly" {
+                    }
+                } else if timeFrame == "weekly" {
+                    if screen1VM.canFetchWeeklyRankedTickets {
+                        
                         ForEach(0..<min(3, StaticUserData.shared.weeklyRankedTickets.count), id: \.self) { index in
                             let ticket = StaticUserData.shared.weeklyRankedTickets[index]
                             
@@ -266,11 +270,6 @@ struct rulesView: View {
                         .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
                         .foregroundColor(K.finalColor.textWhite)
                         .padding(.bottom)
-                    
-                    //                Text("     Players can automatically participate in both daily and weekly challenges. The objective is to make the most fictional money. Players are then ranked based on how well their bets have done, and top players of each challenge win real prizes. ")
-                    //                    .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
-                    //                    .foregroundColor(K.finalColor.textWhite)
-                    //                    .padding(.bottom)
                     
                     Text("To start, go to the Bets page.")
                         .font(.custom(K.customFonts.lexendDecaMedium, size: 15))

@@ -24,7 +24,8 @@ class screen1ViewModel: ObservableObject {
     @Published var currentUser: User? = nil
     private let currentVersion: String = "1.23"
     
-    @Published var canFetchRankedTickets = false
+    @Published var canFetchDailyRankedTickets = false
+    @Published var canFetchWeeklyRankedTickets = false
 
 
     
@@ -41,9 +42,7 @@ class screen1ViewModel: ObservableObject {
         fetchUserTickets(timeFrame: "weekly") {
             self.fetchCurrentRankedTickets(groupID: "Global", timeFrame: "weekly") {}
         }
-        
-      
-        
+
     }
 
     
@@ -107,11 +106,11 @@ class screen1ViewModel: ObservableObject {
                 } else if let tickets = tickets {
                     if timeFrame == "daily" {
                         StaticUserData.shared.dailyRankedTickets = tickets
+                        self.canFetchDailyRankedTickets = true
                     } else if timeFrame == "weekly" {
                         StaticUserData.shared.weeklyRankedTickets = tickets
+                        self.canFetchWeeklyRankedTickets = true
                     }
-                    self.canFetchRankedTickets = true
-                        //
                     print("ABCD", tickets)
                         print("test print")
                     }

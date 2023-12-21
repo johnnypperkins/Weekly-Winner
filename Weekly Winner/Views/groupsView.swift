@@ -72,7 +72,6 @@ struct groupsView: View {
                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
                                     .foregroundColor(.white)
                                     .frame(width: 150, height: 35, alignment: .center)
-                                    //.background(timeFrame == "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
                                     .cornerRadius(5)
                             }
                             

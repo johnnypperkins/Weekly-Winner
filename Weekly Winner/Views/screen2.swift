@@ -389,9 +389,7 @@ struct BetDetailsView: View {
     }
     
     var body: some View {
-        
-        // if bet starts before midnight EST
-        
+            
         ZStack {
             K.finalColor.backgroundBlue.ignoresSafeArea(.all)
             VStack {
@@ -429,17 +427,6 @@ struct BetDetailsView: View {
                                         //groupNumber = index
                                         timeFrame = "daily"
                                         
-//                                        ticketVM.fetchUserTickets(timeFrame: "daily") {
-//                                            ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: 0, ticketFormat: ticketVM.currentTicketFormat) {
-//                                                if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
-//                                                    betNumber = firstNumberGreaterThanZero
-//                                                } else {
-//                                                    betNumber = -99
-//                                                }
-//                                                checkTeamTaken()
-//                                            }
-//                                        }
-                                        
                                         ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: 0, ticketFormat: StaticUserData.shared.dailyTicket.ticketFormat, timeFrame: timeFrame) {
                                                 if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
                                                     betNumber = firstNumberGreaterThanZero
@@ -450,22 +437,31 @@ struct BetDetailsView: View {
                                             }
                                         
                                     }, label: {
-                                        HStack {
-                                            Text("Daily")
-                                                .foregroundColor(K.finalColor.textWhite)
-                                                .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-                                        }.frame(width: 100, alignment: .center)
-                                            .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
-                                            .background(timeFrame == "daily" ? K.finalColor.titleBlue : K.veryLightGray.opacity(0.4))
+                                        VStack (spacing: 0){
+                                            HStack {
+                                                Text("Daily")
+                                                    .foregroundColor(K.finalColor.textWhite)
+                                                    .font(.custom(K.customFonts.lexendDecaLight, size: 24))
+                                            }.frame(width: 100, alignment: .center)
+                                                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                            //.background(timeFrame == "daily" ? K.finalColor.titleBlue : K.veryLightGray.opacity(0.4))
                                             //.background(K.finalColor.titleBlue) // will fix this later
-                                            .cornerRadius(5)
+                                                .cornerRadius(5)
+//                                            GeometryReader { geometry in
+//                                                       Rectangle()
+//                                                    .fill(timeFrame == "daily" ? .white : K.veryLightGray.opacity(0.4))
+//                                                    .frame(width: timeFrame == "daily" ? 100 : 0 , height: 2)
+//                                                                        .offset(x: (geometry.size.width - (timeFrame == "daily" ? 100 : 0)) / 2)
+//                                                
+//                                                
+//                                                   }
+                                        }
+                                        
                                         //.scaleEffect(x: 2)
                                     })
                                     
                                     Button(action: {
-                                        //groupNumber = index
                                         timeFrame = "weekly"
-                                        //ticketVM.fetchUserTickets(timeFrame: "weekly") {
                                         ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: 0, ticketFormat: StaticUserData.shared.weeklyTicket.ticketFormat, timeFrame: timeFrame) {
                                                 if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
                                                     betNumber = firstNumberGreaterThanZero
@@ -474,17 +470,24 @@ struct BetDetailsView: View {
                                                 }
                                                 checkTeamTaken()
                                             }
-                                       // }
                                     }, label: {
-                                        HStack {
-                                            Text("Weekly")
-                                                .foregroundColor(K.finalColor.textWhite)
-                                                .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-                                        }.frame(width: 100, alignment: .center)
-                                            .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
-                                            .background(timeFrame == "weekly" ? K.finalColor.titleBlue : K.veryLightGray.opacity(0.4))
-                                           // .background(K.finalColor.titleBlue) // will fix this later
-                                            .cornerRadius(5)
+                                        VStack (spacing: 0) {
+                                            HStack {
+                                                Text("Weekly")
+                                                    .foregroundColor(K.finalColor.textWhite)
+                                                    .font(.custom(K.customFonts.lexendDecaLight, size: 24))
+                                            }.frame(width: 100, alignment: .center)
+                                                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                                .cornerRadius(5)
+//                                            GeometryReader { geometry in
+//                                                       Rectangle()
+//                                                    .fill(timeFrame == "weekly" ? .white : K.veryLightGray.opacity(0.4))
+//                                                    .frame(width: timeFrame == "weekly" ? 100 : 0 , height: 2)
+//                                                                        .offset(x: (geometry.size.width - (timeFrame == "weekly" ? 100 : 0)) / 2)
+//                                                
+//                                                
+//                                                   }
+                                        }
                                         //.scaleEffect(x: 2)
                                     })
                                     
@@ -520,15 +523,12 @@ struct BetDetailsView: View {
                                 VStack {
                                     
                                         ScrollView {
-                                            //ForEach(0..<viewModel.userTickets.count, id: \.self) { index in
                                                 if betNumber >= 0 {
                                                     ForEach(0..<1, id: \.self) { _ in
                                                         //var parlayIndex = 1
                                                         let availableBets = ticketVM.availableBetsArray
                                                         let ticketFormat = ticketVM.currentTicketFormat
                                                         ForEach(0..<availableBets.count, id: \.self) { index in
-                                                            //let index = bet - 1
-                                                            //let parlayType = ticketVM.currentTicketFormat[index]
                                                             if availableBets[index] > 0 {
                                                                 Button(action: {
                                                                     betNumber = index + 1
@@ -572,14 +572,11 @@ struct BetDetailsView: View {
                                                                         .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
                                                                         .background(betNumber == index+1 ? K.finalColor.titleBlue : K.veryLightGray.opacity(0.4))
                                                                         .cornerRadius(5)
-                                                                        //.padding(.top, availableBets[index] - 1 == index ? 8 : 0)
                                                                 })
                                                             }
                                                         }
                                                     }
-                                                    
-                                                //}
-                                                
+                   
                                                 } else {
                                                     VStack {
                                                         Spacer()
@@ -642,8 +639,10 @@ struct BetDetailsView: View {
                     }
                 }
                 .onAppear {
-                    ticketVM.fetchUserTickets(timeFrame: timeFrame) {
-                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat, timeFrame: timeFrame) {
+                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid,
+                                           for: groupNumber,
+                                           ticketFormat: timeFrame == "daily" ? StaticUserData.shared.dailyTicket.ticketFormat : StaticUserData.shared.dailyTicket.ticketFormat,
+                                           timeFrame: timeFrame) {
                             if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
                                 betNumber = firstNumberGreaterThanZero
                             } else {
@@ -651,7 +650,6 @@ struct BetDetailsView: View {
                             }
                             checkTeamTaken()
                         }
-                    }
                     print("Group Number: \(groupNumber), Bet Number: \(betNumber)")
                 }.padding(.horizontal)
                 .background(K.finalColor.backgroundBlue)
