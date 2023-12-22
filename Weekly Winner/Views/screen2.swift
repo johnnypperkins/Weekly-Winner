@@ -346,26 +346,35 @@ struct BetDetailsView: View {
     func checkTeamTaken() {
         
         if timeFrame == "daily" {
-            let midnight = Calendar.current.startOfDay(for: Date())
-            let midnightTimestamp = Timestamp(date: midnight)
-
-            if game.commenceTime.seconds > (midnightTimestamp.seconds + 86400) {
-                uploadText = "Not Today"
+            
+            if betNumber < 0 {
+                uploadText = "Ticket Complete"
                 placeBetOpacity = 0.6
                 placeBetColor = K.finalColor.titleBlue.opacity(0.6)
             } else {
-                if ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) {
-                    uploadText = "Place Bet"
-                    placeBetOpacity = 1
-                    placeBetColor = K.finalColor.winningGreen
-                    
-                } else {
-                    uploadText = "Team Taken"
+                
+                let midnight = Calendar.current.startOfDay(for: Date())
+                let midnightTimestamp = Timestamp(date: midnight)
+                
+                if game.commenceTime.seconds > (midnightTimestamp.seconds + 86400) {
+                    uploadText = "Game Not Today"
                     placeBetOpacity = 0.6
                     placeBetColor = K.finalColor.titleBlue.opacity(0.6)
-                    
+                } else {
+                    if ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) {
+                        uploadText = "Place Bet"
+                        placeBetOpacity = 1
+                        placeBetColor = K.finalColor.winningGreen
+                        
+                    } else {
+                        uploadText = "Team Taken"
+                        placeBetOpacity = 0.6
+                        placeBetColor = K.finalColor.titleBlue.opacity(0.6)
+                        
+                    }
                 }
             }
+            
         } else {
             if betNumber < 0 {
                 uploadText = "Ticket Complete"
@@ -437,7 +446,7 @@ struct BetDetailsView: View {
                                         VStack (alignment: .center, spacing: 0){
                                             HStack {
                                                 Text("Daily")
-                                                    .foregroundColor(K.finalColor.textWhite)
+                                                    .foregroundColor(timeFrame == "daily" ? K.finalColor.textWhite : K.finalColor.textWhite.opacity(0.8))
                                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
                                                     .scaleEffect(timeFrame != "weekly" ? 1.15 : 1.0)
 
@@ -460,7 +469,7 @@ struct BetDetailsView: View {
                                         VStack (spacing: 0) {
                                             HStack {
                                                 Text("Weekly")
-                                                    .foregroundColor(K.finalColor.textWhite)
+                                                    .foregroundColor(timeFrame != "daily" ? K.finalColor.textWhite : K.finalColor.textWhite.opacity(0.8))
                                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
                                                     .scaleEffect(timeFrame == "weekly" ? 1.15 : 1.0)
 
@@ -643,7 +652,10 @@ struct BetDetailsView: View {
                         ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat, timeFrame: timeFrame) {
                             let groupServe = groupService()
                             groupServe.setPotentialToWin(potential: Int(ticketVM.totalPotentialWon), groupNumber: groupNumber, timeFrame: timeFrame, completion: {_ in })
-                            ticketVM.fetchUserTickets(timeFrame: timeFrame) {}
+                            ticketVM.fetchUserTickets(timeFrame: timeFrame) {
+//                                ticketVM.fetchCurrentRankedTickets(groupID: timeFrame == "daily" ? "GlobalDaily" : "Global", timeFrame: timeFrame) {}
+                                
+                            }
                             
                         }
                     }
@@ -663,7 +675,7 @@ struct BetDetailsView: View {
                         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
                         //f.padding(.horizontal, 25)
                 })
-                .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) || game.commenceTime.seconds > (Timestamp(date: Calendar.current.startOfDay(for: Date())).seconds + 86400))
+                .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) || (game.commenceTime.seconds > (Timestamp(date: Calendar.current.startOfDay(for: Date())).seconds + 86400) && timeFrame == "daily"))
                 .padding(.horizontal)
                 .background(K.finalColor.backgroundBlue)
             }.padding(.horizontal)

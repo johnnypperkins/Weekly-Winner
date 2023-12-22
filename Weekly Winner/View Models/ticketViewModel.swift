@@ -115,6 +115,23 @@ class ticketViewModel: ObservableObject {
                 }
             }
     }
+    
+    func fetchCurrentRankedTickets(groupID: String, timeFrame: String, completion: @escaping () -> Void){
+        groupServe.getCurrentRankedTickets(groupID: groupID, timeFrame: timeFrame) { [weak self] (tickets, totalPlayers, error) in
+                if let error = error {
+                   print(error)
+            } else if let tickets = tickets {
+                if timeFrame == "daily" {
+                    StaticUserData.shared.dailyRankedTickets = tickets
+                } else if timeFrame == "weekly" {
+                    StaticUserData.shared.weeklyRankedTickets = tickets
+                }
+                    //print(tickets)
+                    print("test print")
+                }
+
+            }
+        }
 
     func fetchFriendTicket(uid: String, with groupID: String, timeFrame: String, completion: @escaping (Result<Ticket, Error>) -> Void) { // Ticket99
         let db = Firestore.firestore()
