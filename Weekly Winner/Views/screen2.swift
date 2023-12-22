@@ -421,10 +421,8 @@ struct BetDetailsView: View {
                                         //.padding(EdgeInsets(top: 70, leading: 15, bottom: 2.5, trailing: 0))
                                         .background(K.finalColor.backgroundBlue)
                                 }
-                                VStack {
-                                    
+                                VStack(spacing: 0) {
                                     Button(action: {
-                                        //groupNumber = index
                                         timeFrame = "daily"
                                         
                                         ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: 0, ticketFormat: StaticUserData.shared.dailyTicket.ticketFormat, timeFrame: timeFrame) {
@@ -435,29 +433,17 @@ struct BetDetailsView: View {
                                                 }
                                                 checkTeamTaken()
                                             }
-                                        
                                     }, label: {
-                                        VStack (spacing: 0){
+                                        VStack (alignment: .center, spacing: 0){
                                             HStack {
                                                 Text("Daily")
                                                     .foregroundColor(K.finalColor.textWhite)
-                                                    .font(.custom(K.customFonts.lexendDecaLight, size: 24))
-                                            }.frame(width: 100, alignment: .center)
-                                                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
-                                            //.background(timeFrame == "daily" ? K.finalColor.titleBlue : K.veryLightGray.opacity(0.4))
-                                            //.background(K.finalColor.titleBlue) // will fix this later
-                                                .cornerRadius(5)
-//                                            GeometryReader { geometry in
-//                                                       Rectangle()
-//                                                    .fill(timeFrame == "daily" ? .white : K.veryLightGray.opacity(0.4))
-//                                                    .frame(width: timeFrame == "daily" ? 100 : 0 , height: 2)
-//                                                                        .offset(x: (geometry.size.width - (timeFrame == "daily" ? 100 : 0)) / 2)
-//                                                
-//                                                
-//                                                   }
+                                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                                    .scaleEffect(timeFrame != "weekly" ? 1.15 : 1.0)
+
+                                            }.frame(width: 150, height: 60, alignment: .center)
+                                            .background(timeFrame == "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
                                         }
-                                        
-                                        //.scaleEffect(x: 2)
                                     })
                                     
                                     Button(action: {
@@ -475,26 +461,22 @@ struct BetDetailsView: View {
                                             HStack {
                                                 Text("Weekly")
                                                     .foregroundColor(K.finalColor.textWhite)
-                                                    .font(.custom(K.customFonts.lexendDecaLight, size: 24))
-                                            }.frame(width: 100, alignment: .center)
-                                                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
-                                                .cornerRadius(5)
-//                                            GeometryReader { geometry in
-//                                                       Rectangle()
-//                                                    .fill(timeFrame == "weekly" ? .white : K.veryLightGray.opacity(0.4))
-//                                                    .frame(width: timeFrame == "weekly" ? 100 : 0 , height: 2)
-//                                                                        .offset(x: (geometry.size.width - (timeFrame == "weekly" ? 100 : 0)) / 2)
-//                                                
-//                                                
-//                                                   }
+                                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                                    .scaleEffect(timeFrame == "weekly" ? 1.15 : 1.0)
+
+                                            }.frame(width: 150, height: 60, alignment: .center)
+                                                .background(timeFrame != "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+//                                                .cornerRadius(5)
                                         }
                                         //.scaleEffect(x: 2)
                                     })
                                     
                                     
                                     
-                                }.frame(width: 120, height: 120)
-                                .padding(.horizontal)
+                                }
+                                //.padding(.horizontal)
+                                .frame(width: 150, height: 120)
+                                //.padding(.horizontal)
                                 .onAppear {
                                     if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
                                         betNumber = firstNumberGreaterThanZero
@@ -503,7 +485,7 @@ struct BetDetailsView: View {
                                     }
                                     checkTeamTaken()
                                 }
-                                .background(K.finalColor.cardBlue)
+                                //.background(K.finalColor.cardBlue)
                                 .cornerRadius(7.5)
                             }
                         }
