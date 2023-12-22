@@ -51,9 +51,9 @@ struct SignupIntro: View {
                     }
                 }.padding(.leading,15)
                 TabView(selection: $pageIndex){
-                    Intro1(pageIndex: $pageIndex)
-                        .tag(0)
                     Intro2(pageIndex: $pageIndex)
+                        .tag(0)
+                    Intro1(pageIndex: $pageIndex)
                         .tag(1)
                     Intro3(pageIndex: $pageIndex)
                         .tag(2)
@@ -141,32 +141,32 @@ struct Intro1: View {
         VStack{
             Image("groupsImage")
                 .resizable()
-                .frame(width: 400,height: 300)
-                .overlay(
-                                    Circle()
-                                        .stroke(Color.blue, lineWidth: 3) // Customize the color and width of the outline
-                                        .frame(width: 30, height: 30) // Adjust the size of the circle as needed
-                                        .offset(x: 2, y: 0) // Adjust the offset to position the circle in the top-left corner
-                                        .blur(radius:isGlowing ? 2.0 : 0)
-                                        .opacity(isGlowing ? 1.0 : 0.3)
-                                    ,alignment: .topLeading
-                                    // Opacity for the glow effect
-                                        
-                                )
-                .onAppear() {
-                    withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                                        self.isGlowing.toggle()
-                                    }
-                                }
+                .frame(width: 400,height: 400)
+//                .overlay(
+//                                    Circle()
+//                                        .stroke(Color.blue, lineWidth: 3) // Customize the color and width of the outline
+//                                        .frame(width: 30, height: 30) // Adjust the size of the circle as needed
+//                                        .offset(x: 2, y: 0) // Adjust the offset to position the circle in the top-left corner
+//                                        .blur(radius:isGlowing ? 2.0 : 0)
+//                                        .opacity(isGlowing ? 1.0 : 0.3)
+//                                    ,alignment: .topLeading
+//                                    // Opacity for the glow effect
+//                                        
+//                                )
+//                .onAppear() {
+//                    withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+//                                        self.isGlowing.toggle()
+//                                    }
+//                                }
             HStack{
-                Text("Create and Join Groups")
+                Text("Compete Daily and Weekly")
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 25))
                     .foregroundColor(K.finalColor.textWhite)
                     .padding(.top,15)
                 
             }.padding(.horizontal,15)
             
-            Text("Grab a group of friends and bet against each other to see who is the ultimate sports wizard. There is only one thing more valuable than money: bragging rights. Only the best will win!")
+            Text("There is only one thing more valuable than money: bragging rights. Compete against other sports enthusiasts in your daily and weekly cards to see who is the best at sports betting. Only the best will win!")
                 .font(.custom(K.customFonts.lexendDecaLight, size: 15))
                 .foregroundColor(K.finalColor.textWhite)
                 .padding(.top,20)
@@ -198,7 +198,7 @@ struct Intro2: View {
                 
             }.padding(.horizontal,15)
             
-            Text("Complete your weekly tickets with customized bets from the book page. Bet on your favorite teams across many different sports! Tailor your bet odds using the slider to fit your risk tolerance. ")
+            Text("Complete your daily and weekly tickets with customized bets from the book page. Bet on your favorite teams across many different sports! Tailor your bet odds using the slider to fit your risk tolerance. ")
                 .font(.custom(K.customFonts.lexendDecaLight, size: 15))
                 .foregroundColor(K.finalColor.textWhite)
                 .padding(.top,20)
