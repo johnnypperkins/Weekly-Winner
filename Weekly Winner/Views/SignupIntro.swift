@@ -51,9 +51,9 @@ struct SignupIntro: View {
                     }
                 }.padding(.leading,15)
                 TabView(selection: $pageIndex){
-                    Intro2(pageIndex: $pageIndex)
-                        .tag(0)
                     Intro1(pageIndex: $pageIndex)
+                        .tag(0)
+                    Intro2(pageIndex: $pageIndex)
                         .tag(1)
                     Intro3(pageIndex: $pageIndex)
                         .tag(2)
@@ -133,7 +133,7 @@ struct SignupIntro: View {
     
 }
 
-struct Intro1: View {
+struct Intro2: View {
     @Binding var pageIndex: Int
     @State private var isGlowing = false
     var body: some View {
@@ -141,7 +141,8 @@ struct Intro1: View {
         VStack{
             Image("groupsImage")
                 .resizable()
-                .frame(width: 400,height: 400)
+                .scaledToFit()
+                .frame(width: 330)
 //                .overlay(
 //                                    Circle()
 //                                        .stroke(Color.blue, lineWidth: 3) // Customize the color and width of the outline
@@ -180,7 +181,7 @@ struct Intro1: View {
     }
 }
 
-struct Intro2: View {
+struct Intro1: View {
     @Binding var pageIndex: Int
     var body: some View {
         
@@ -198,7 +199,7 @@ struct Intro2: View {
                 
             }.padding(.horizontal,15)
             
-            Text("Complete your daily and weekly tickets with customized bets from the book page. Bet on your favorite teams across many different sports! Tailor your bet odds using the slider to fit your risk tolerance. ")
+            Text("Complete your daily and weekly tickets with customized FREE TO PLACE bets from the book page. Bet on your favorite teams across many different sports! Tailor your bet odds using the slider to fit your risk tolerance. ")
                 .font(.custom(K.customFonts.lexendDecaLight, size: 15))
                 .foregroundColor(K.finalColor.textWhite)
                 .padding(.top,20)
