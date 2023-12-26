@@ -172,28 +172,31 @@ class authenticationViewModel: ObservableObject {
             }
         }
     
-    func signIn() {
-            authenticationState = .authenticating
+    func signIn() async{
+        authenticationState = .authenticating
+        do {
+            authResult = try await Auth.auth().signIn(withEmail: email, password: password)
+//            guard let self = self else { return }
             
-            Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
-                guard let self = self else { return }
-                
-                if let error = error {
-                    // Handle sign-in error
-                    print("Sign-in error: \(error.localizedDescription)")
-                    self.authenticationState = .unauthenticated
-                } else {
-                    // Sign-in successful
-                    self.userSession = authResult!.user  // Set placeholder user session
-
-                    self.fetchUser() { } // sets user to user instead of nil
-
-                    self.authenticationState = .authenticated
-                    print("sign in successful")
-
-                }
-            }
+            
+            // Handle sign-in error
+            
+            // Sign-in successful
+            self.userSession = authResult!.user  // Set placeholder user session
+            
+            self.fetchUser() { } // sets user to user instead of nil
+            
+            self.authenticationState = .authenticated
+            print("sign in successful")
+            
         }
+        catch let error {
+            errorMessage = error.localizedDescription
+            print("Signup error: \(error.localizedDescription)")
+            authenticationState = .unauthenticated
+        }
+    }
+
     
     func forgotPassButton_Tapped(email: String, completion: @escaping () -> Void) {
             Auth.auth().sendPasswordReset(withEmail: email) { error in

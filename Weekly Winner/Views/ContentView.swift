@@ -8,15 +8,15 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject var viewModel = authenticationViewModel()
+    @ObservedObject var viewModel = authenticationViewModel()
     var body: some View {
         NavigationStack{
             VStack {
                 if viewModel.userSession != nil { // changing from currUser to userSession bc immediate - Reid
-                    //tabBarView()
+//                    tabBarView()
                    //SignupIntro(viewModel: viewModel)
-profilePhotoSelectorView(model: viewModel)
-//                    authenticationView()
+//profilePhotoSelectorView(model: viewModel)
+                    authenticationView()
                 }
                     else{
 //                   . print("Login")

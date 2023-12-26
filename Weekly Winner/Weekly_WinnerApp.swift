@@ -5,7 +5,7 @@ import FirebaseFirestore
 import FirebaseAuth
 import FirebaseMessaging
 import UserNotifications
-//import FirebaseAnalytics
+import FirebaseAnalytics
 
 // Log a test event
 

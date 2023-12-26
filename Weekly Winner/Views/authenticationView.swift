@@ -163,13 +163,16 @@ struct LoginView: View {
                     
                     ZStack{
                         Button(action: {
-                            viewModel.signIn()
-                            
-                            if viewModel.errorMessage != "" && viewModel.authenticationState == .unauthenticated {
-                                AppUtility.shared.showCustomAlert(alertType: .none, message: viewModel.errorMessage ?? "", actionButtonTitle: nil, cancelButtonTitle: K.appButtonTitle.ok) { action in
-                                    
+                            Task{
+                                await viewModel.signIn()
+                                if viewModel.errorMessage != "" && viewModel.authenticationState == .unauthenticated {
+                                    AppUtility.shared.showCustomAlert(alertType: .none, message: viewModel.errorMessage ?? "", actionButtonTitle: nil, cancelButtonTitle: K.appButtonTitle.cancel) { action in
+                                        
+                                    }
                                 }
                             }
+                          
+                                
                             
                         }) {
                             HStack{
@@ -194,7 +197,7 @@ struct LoginView: View {
                                     .font(.headline)
                                     .foregroundColor(.white)
                                     .padding()
-                                    .frame(maxWidth: .infinity)
+                                    .frame(maxWidth: .infinity, minHeight: 55 , maxHeight: 55)
                                     .background(Color.green)
                                     .cornerRadius(10)
                                 
@@ -222,9 +225,10 @@ struct LoginView: View {
                                     await viewModel.signInWithGoogle()
                                 }
                             } label: {
-                                Image("googleLogo")
+                                Image("googleSignIn")
                                     .resizable()
-                                    .frame(width: 50, height: 50)
+                                    .scaledToFit()
+                                    .frame(height: 50)
                             }
 //                            Button {
 //
