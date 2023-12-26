@@ -352,12 +352,21 @@ struct BetDetailsView: View {
                 placeBetOpacity = 0.6
                 placeBetColor = K.finalColor.titleBlue.opacity(0.6)
             } else {
-                
-                let midnight = Calendar.current.startOfDay(for: Date())
+                let dateMinusFiveHours = Calendar.current.date(byAdding: .hour, value: -5, to: Date())
+                let midnight = Calendar.current.startOfDay(for: dateMinusFiveHours!)
+//                let dateMinusFiveHours = Calendar.current.date(byAdding: .hour, value: -5, to: midnight)
+              
                 let midnightTimestamp = Timestamp(date: midnight)
                 
+//                let calendar = Calendar.current
+//                let midnight = calendar.startOfDay(for: Date())
+//                if let dateMinusFiveHours = calendar.date(byAdding: .hour, value: -5, to: midnight) {
+//                    // use dateMinusFiveHours as needed
+//                }
+
+                
                 if game.commenceTime.seconds > (midnightTimestamp.seconds + 86400) {
-                    uploadText = "Game Not Today"
+                    uploadText = "Not Available for Daily"
                     placeBetOpacity = 0.6
                     placeBetColor = K.finalColor.titleBlue.opacity(0.6)
                 } else {
@@ -502,15 +511,15 @@ struct BetDetailsView: View {
                         //Spacer()
                             //.background(K.veryLightBlue)
                         VStack {
-                            VStack {
-                                Text("Bet")
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                    .foregroundColor(K.finalColor.textWhite)
-                                    .frame(width: 150, alignment: .leading)
-                                    //.padding(EdgeInsets(top: 70, leading: 15, bottom: 0, trailing: 0))
-                                    .background(K.finalColor.backgroundBlue)
-                            }
                             if ticketVM.isBetsLoaded {
+                                VStack {
+                                    Text("Bet")
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                        .foregroundColor(K.finalColor.textWhite)
+                                        .frame(width: 150, alignment: .leading)
+                                        //.padding(EdgeInsets(top: 70, leading: 15, bottom: 0, trailing: 0))
+                                        .background(K.finalColor.backgroundBlue)
+                                }
                                 VStack {
                                     
                                         ScrollView {
@@ -558,8 +567,8 @@ struct BetDetailsView: View {
                                                                     HStack {
                                                                         Text(parlayTitle(ticketFormat: ticketFormat, index: index)).tag(index+1)
                                                                             .foregroundColor(K.finalColor.textWhite)
-                                                                            .font(.custom(K.customFonts.lexendDecaLight, size: 16))
-                                                                    }.frame(width: 100, alignment: .center)
+                                                                            .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                                                    }.frame(width: 120, height: 30, alignment: .center)
                                                                         .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
                                                                         .background(betNumber == index+1 ? K.finalColor.titleBlue : K.veryLightGray.opacity(0.4))
                                                                         .cornerRadius(5)
@@ -759,16 +768,16 @@ struct BetSliderView: View {
         VStack (spacing: 0){
             HStack (spacing: 10) {
                 Text("Team")
-                    .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                     .foregroundColor(.white)
                     .frame(width: 100, alignment: .leading)
                 Spacer()
                 Text(betType == .over || betType == .under ? "Total" : "Spread")
-                    .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                     .foregroundColor(.white)
-                    .frame(width: 55, alignment: .leading)
+                    .frame(width: 60, alignment: .leading)
                 Text("Odds")
-                    .font(.custom(K.customFonts.lexendDecaLight, size: 16))
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                     .foregroundColor(.white)
                     .frame(width: 65, alignment: .trailing)
             }.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
@@ -777,18 +786,18 @@ struct BetSliderView: View {
             HStack (spacing: 10){
                 Text("\(teamName)")
                     //.font(.custom(K.customFonts.lexendDecaMedium, size: 15))
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: teamName.count < 25 ? 16 : 10))
+                    .font(.custom(K.customFonts.lexendDecaLight, size: teamName.count < 25 ? 16 : 10))
                     .foregroundColor(.white)
                     .lineLimit(3)
                     .frame(width: 150, height: 40, alignment: .leading)
                     //.background(.white)
                 Spacer()
                 Text(chosenSpread == 0 ? "ML" : "\(internalExtra)\(String(format: "%.0f", chosenSpread))")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                    .font(.custom(K.customFonts.lexendDecaLight, size: 18))
                     .foregroundColor(.white)
-                    .frame(width: 55, alignment: .leading)
+                    .frame(width: 60, alignment: .leading)
                 Text("\(percentageToML(percentage: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread), whichSport: whichSport)))")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                    .font(.custom(K.customFonts.lexendDecaLight, size: 18))
                     .foregroundColor(.white)
                     .frame(width: 65, alignment: .trailing)
             }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
