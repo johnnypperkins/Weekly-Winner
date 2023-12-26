@@ -61,10 +61,12 @@ struct profilePhotoSelectorView: View {
     var body: some View {
 //        NavigationStack{
         VStack{
-        Text("Complete Your Profile!")
-            .font(Font.custom(K.customFonts.lexendDecaSB, size: 24).weight(.semibold))
-            .foregroundColor(.white)
-            .padding(.top)
+            K.finalColor.backgroundBlue
+            
+            Text("Complete Your Profile!")
+                .font(Font.custom(K.customFonts.lexendDecaSB, size: 24).weight(.semibold))
+                .foregroundColor(.white)
+                .padding(.top)
             HStack{
                 Text("Everything with a ")
                     .font(Font.custom(K.customFonts.lexendDecaLight, size: 12).weight(.light))
@@ -85,10 +87,6 @@ struct profilePhotoSelectorView: View {
                     VStack{
                         VStack {
                             
-                            //                        Text("Complete Your Profile!")
-                            //                            .font(Font.custom(K.customFonts.lexendDecaSB, size: 24).weight(.semibold))
-                            //                            .foregroundColor(.white)
-                            //                            .padding(.top)
                             VStack(alignment: .center){
                                 if let profileImage = profileImage {
                                     profileImage
@@ -115,9 +113,15 @@ struct profilePhotoSelectorView: View {
                                             }
                                         
                                         HStack {
+                                            Text("*")
+                                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                                                .foregroundColor(.red)
                                             Text("Profile Picture")
                                                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
                                                 .foregroundColor(.black)
+                                            Text("*")
+                                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                                                .foregroundColor(.red)
                                         }
                                             .frame(width: 150)
                                             .background(.white.opacity(0.75))
@@ -463,7 +467,7 @@ struct profilePhotoSelectorView: View {
                         
                         Spacer()
                     }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                        .background(Color(red: 0.31, green: 0.57, blue: 1))
+                        .background(K.finalColor.deleteRed)
                         .cornerRadius(10)
                         .padding(.horizontal,16)
                         .padding(.bottom,30)
@@ -480,7 +484,7 @@ struct profilePhotoSelectorView: View {
                     
                     Spacer()
                 }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                    .background(Color(red: 0.31, green: 0.57, blue: 1))
+                    .background(K.finalColor.deleteRed)
                     .cornerRadius(10)
                     .padding(.horizontal,16)
                     .padding(.bottom,30)

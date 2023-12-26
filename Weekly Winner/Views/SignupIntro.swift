@@ -26,7 +26,7 @@ struct SignupIntro: View {
                         .font(.custom(K.customFonts.lexendDecaSB, size: 35))
                         .foregroundColor(K.finalColor.titleBlue)
                     Spacer()
-                    if pageIndex < 2 {
+//                    if pageIndex < 2 {
                         NavigationLink (destination:{
                             tabBarView()
                                 .environmentObject(viewModel)
@@ -37,18 +37,18 @@ struct SignupIntro: View {
                                 
                                 Text("Skip")
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
-                                    .foregroundColor(.white)
+                                    .foregroundColor(pageIndex == 2 ? .clear : .white)
                                 //shadow
                                 
                                 Spacer()
                             }.frame(minWidth: 0, maxWidth: 60, minHeight: 30 , maxHeight: 30)
-                                .background(Color(red: 0.31, green: 0.57, blue: 1))
+                                .background(pageIndex == 2 ? .clear : Color(red: 0.31, green: 0.57, blue: 1))
                                 .cornerRadius(10)
                                 .padding(16)
                         }).onSubmit {
                             viewModel.showMainScreen()
                         }
-                    }
+//                    }
                 }.padding(.leading,15)
                 TabView(selection: $pageIndex){
                     Intro1(pageIndex: $pageIndex)
@@ -75,8 +75,8 @@ struct SignupIntro: View {
                         } label: {
                             Image(systemName: "arrow.forward")
                                 .resizable()
-                                .frame(width: 35, height: 30)
-                                .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+                                .frame(width: 35, height: 35)
+                                .foregroundColor(.clear)
                         }
                     } else {
                         NavigationLink (destination: {
@@ -92,9 +92,10 @@ struct SignupIntro: View {
                         }).onSubmit {
                             viewModel.showMainScreen()
                         }
-                        .frame(minWidth: 0, maxWidth: 80, minHeight: 40 , maxHeight: 40)
+                        .frame(minWidth: 0, maxWidth: 80, minHeight: 35 , maxHeight: 35)
                         .background(Color(red: 0.31, green: 0.57, blue: 1))
                         .cornerRadius(10)
+                        
                         
                     }
                 }.padding(.horizontal, 25)
@@ -142,7 +143,8 @@ struct Intro2: View {
             Image("groupsImage")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 330)
+                .frame(width: 300)
+                .padding(.top, 10)
 //                .overlay(
 //                                    Circle()
 //                                        .stroke(Color.blue, lineWidth: 3) // Customize the color and width of the outline
@@ -167,7 +169,7 @@ struct Intro2: View {
                 
             }.padding(.horizontal,15)
             
-            Text("There is only one thing more valuable than money: bragging rights. Compete against other sports enthusiasts in your daily and weekly cards to see who is the best at sports betting. Only the best will win!")
+            Text("There is only one thing more valuable than money: bragging rights (but money is nice too). Compete against other sports enthusiasts in your daily and weekly cards to see who is the best at sports betting. The top players win REAL PRIZES!")
                 .font(.custom(K.customFonts.lexendDecaLight, size: 15))
                 .foregroundColor(K.finalColor.textWhite)
                 .padding(.top,20)
