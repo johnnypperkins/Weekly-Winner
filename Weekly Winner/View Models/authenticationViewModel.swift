@@ -86,6 +86,8 @@ class authenticationViewModel: ObservableObject {
               self.userSession = firebaseUser
               
               service.fetchUser(uid: firebaseUser.uid) { user,success  in
+                  print(user)
+                  print(success)
                   if success == false {
                       let newUser = User(username: "", firstName: "", lastName: "", profileImageUrl: "", email: firebaseUser.email ?? "", dateJoined: Timestamp(date: Date()), instagram: "", promoCode: "", country: "",state: "", birthday: Timestamp(date: Date()), gender: "")
                       self.currUser = newUser
@@ -98,7 +100,7 @@ class authenticationViewModel: ObservableObject {
                   }
                   else{
                       self.fetchUser {
-
+print("fetched user")
                       }
                   }
               }
