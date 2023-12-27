@@ -83,7 +83,7 @@ class authenticationViewModel: ObservableObject {
               let firebaseUser = authResult!.user
               authenticationState = .authenticated
             print("User \(firebaseUser.uid) signed in with email \(firebaseUser.email ?? "unknown")")
-              self.userSession = firebaseUser
+//              self.userSession = firebaseUser
               
               service.fetchUser(uid: firebaseUser.uid) { user,success  in
                   print(user)
@@ -99,6 +99,7 @@ class authenticationViewModel: ObservableObject {
                       }
                   }
                   else{
+                      self.userSession = firebaseUser
                       self.fetchUser {
 print("fetched user")
                       }
