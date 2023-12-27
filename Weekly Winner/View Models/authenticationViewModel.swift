@@ -73,8 +73,10 @@ class authenticationViewModel: ObservableObject {
             let user = userAuthentication.user
             guard let idToken = user.idToken else { throw AuthenticationError.tokenError(message: "ID token missing") }
             let accessToken = user.accessToken
-              firstName = user.profile?.givenName ?? ""
-              lastName = user.profile?.familyName ?? ""
+              firstName = userAuthentication.user.profile?.givenName ?? ""
+              lastName = userAuthentication.user.profile?.familyName ?? ""
+              print(firstName)
+              print(lastName)
 
             let credential = GoogleAuthProvider.credential(withIDToken: idToken.tokenString,
                                                            accessToken: accessToken.tokenString)
@@ -89,7 +91,7 @@ class authenticationViewModel: ObservableObject {
                   print(user)
                   print(success)
                   if success == false {
-                      let newUser = User(username: "", firstName: "", lastName: "", profileImageUrl: "", email: firebaseUser.email ?? "", dateJoined: Timestamp(date: Date()), instagram: "", promoCode: "", country: "",state: "", birthday: Timestamp(date: Date()), gender: "")
+                      let newUser = User(username: "", firstName: self.firstName, lastName: self.lastName, profileImageUrl: "", email: firebaseUser.email ?? "", dateJoined: Timestamp(date: Date()), instagram: "", promoCode: "", country: "",state: "", birthday: Timestamp(date: Date()), gender: "")
                       self.currUser = newUser
                       Task{
                           await self.uploadUser(newUser)
