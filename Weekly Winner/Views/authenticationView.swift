@@ -9,6 +9,7 @@ import SwiftUI
 import FirebaseCore
 import FirebaseAuth
 import GoogleSignIn
+import _AuthenticationServices_SwiftUI
 
 struct authenticationView: View {
     @State private var isShowingSignup = false
@@ -223,7 +224,7 @@ struct LoginView: View {
                                 .frame(height: 0.5)
                                 .foregroundColor(.white)
                         }.padding(.horizontal,16)
-                        HStack{
+                        VStack{
                             Button {
                                 Task{
                                     await viewModel.signInWithGoogle()
@@ -233,7 +234,7 @@ struct LoginView: View {
                                     .resizable()
                                     .scaledToFit()
                                     .frame(height: 50)
-                            }
+                            }.padding(.bottom,10)
 //                            Button {
 //
 //                            } label: {
@@ -247,10 +248,39 @@ struct LoginView: View {
 //                                    await viewModel.signInWithGoogle()
 //                                }
 //                            } label: {
-//                                Image("googleSignIn")
+//                                Image("googleLogo")
 //                                    .resizable()
-//                                    .frame(width:300, height: 69)
+//                                    .scaledToFit()
+//                                    .frame(height: 50)
 //                            }
+                            SignInWithAppleButton { request in
+                                viewModel.handleSignInWithAppleRequest(request)
+                            } onCompletion: { result in
+                                viewModel.handleSignInWithAppleCompletion(result)
+                            }.signInWithAppleButtonStyle(.whiteOutline)
+                                .frame(maxWidth: 220, minHeight: 50)
+                                .clipShape(RoundedRectangle(
+                                    cornerRadius: 50
+                                ))
+
+//                            Button {
+//
+//                            } label: {
+//                                Image("signInWithApple")
+//                                    .resizable()
+//                                    .frame(width: 50, height: 50)
+//                                    .cornerRadius(25)
+//                            }
+//                            Button {
+//                                Task{
+//                                    await viewModel.signInWithGoogle()
+//                                }
+//                            } label: {
+//                                Image("googleLogo")
+//                                    .resizable()
+//                                    .frame(width: 50, height: 50)
+//                                    .cornerRadius(25)
+//                            }.padding(.leading,12)
 
                             
                         }.padding(.top,5)
