@@ -191,9 +191,13 @@ struct LoginView: View {
                         if viewModel.authenticationState == .authenticated && viewModel.currUser?.email != "" {
                             
                             
-                            NavigationLink {profilePhotoSelectorView(model: viewModel)/*.environmentObject(AuthenticationViewModel())*/} label: {
+                            NavigationLink {
+                                profilePhotoSelectorView(model: viewModel)
+                                    .background(K.finalColor.backgroundBlue)
+
+                            } label: {
                                 
-                                Text("Welcome")
+                                Text("Continue")
                                     .font(.headline)
                                     .foregroundColor(.white)
                                     .padding()
@@ -626,6 +630,7 @@ struct SignupView: View {
                         }
                     }
                     profilePhotoSelectorView(model: viewModel)
+                        .background(K.finalColor.backgroundBlue)
                 }, label: {
                     if viewModel.authenticationState != .authenticating{
                         Text("Create Account")
@@ -646,9 +651,12 @@ struct SignupView: View {
                 if viewModel.authenticationState == .authenticated {
                     
                     
-                    NavigationLink {profilePhotoSelectorView(model: viewModel)/*.environmentObject(AuthenticationViewModel())*/} label: {
+                    NavigationLink {
+                        profilePhotoSelectorView(model: viewModel)
+                            .background(K.finalColor.backgroundBlue)
+                    } label: {
                         
-                        Text("Welcome")
+                        Text("Continue")
                             .font(.headline)
                             .foregroundColor(.white)
                             .padding()

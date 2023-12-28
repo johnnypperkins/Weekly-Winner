@@ -64,419 +64,370 @@ struct profilePhotoSelectorView: View {
     }
     
     var body: some View {
-        NavigationStack{
-            VStack{
+        ZStack {
+            K.finalColor.backgroundBlue
+            NavigationStack{
                 
-                Text("Complete Your Profile!")
-                    .font(Font.custom(K.customFonts.lexendDecaSB, size: 24).weight(.semibold))
-                    .foregroundColor(.white)
-                    .padding(.top)
-                HStack{
-                    Text("Everything with a ")
-                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 12).weight(.light))
+                VStack{
+                    
+                    Text("Complete Your Profile!")
+                        .font(Font.custom(K.customFonts.lexendDecaSB, size: 24).weight(.semibold))
                         .foregroundColor(.white)
-                    
-                    Text("*")
-                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
-                        .foregroundColor(.red)
-                    
-                    Text(" is mandatory.")
-                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 12).weight(.light))
-                        .foregroundColor(.white)
-                    
-                }.padding(.bottom)
-                    .padding(.horizontal,16)
-                ScrollView {
-                    ScrollViewReader { scrollProxy in
-                        VStack{
-                            VStack {
-                                
-                                VStack(alignment: .center){
-                                    if let profileImage = profileImage {
-                                        profileImage
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(width: 100, height: 100)
-                                            .clipShape(Circle())
-                                            .onTapGesture {
-                                                showImagePicker.toggle()
-                                            }
-                                    }
-                                    else {
-                                        ZStack {
-                                            
-                                            
-                                            Image(systemName: "person.circle")
+                        .padding(.top)
+                    HStack{
+                        Text("Everything with a ")
+                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 12).weight(.light))
+                            .foregroundColor(.white)
+                        
+                        Text("*")
+                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                            .foregroundColor(.red)
+                        
+                        Text(" is mandatory.")
+                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 12).weight(.light))
+                            .foregroundColor(.white)
+                        
+                    }.padding(.bottom)
+                        .padding(.horizontal,16)
+                    ScrollView {
+                        ScrollViewReader { scrollProxy in
+                            VStack{
+                                VStack {
+                                    
+                                    VStack(alignment: .center){
+                                        if let profileImage = profileImage {
+                                            profileImage
                                                 .resizable()
-                                                .aspectRatio(contentMode: .fill)
+                                                .aspectRatio(contentMode: .fit)
                                                 .frame(width: 100, height: 100)
                                                 .clipShape(Circle())
-                                                .foregroundColor(.white)
                                                 .onTapGesture {
                                                     showImagePicker.toggle()
                                                 }
-                                            
-                                            HStack {
-                                                Text("*")
-                                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
-                                                    .foregroundColor(.red)
-                                                Text("Profile Picture")
-                                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                                                    .foregroundColor(.black)
-                                                Text("*")
-                                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
-                                                    .foregroundColor(.red)
-                                            }
-                                            .frame(width: 150)
-                                            .background(.white.opacity(0.75))
-                                            .cornerRadius(5)
                                         }
+                                        else {
+                                            ZStack {
+                                                
+                                                
+                                                Image(systemName: "person.circle")
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fill)
+                                                    .frame(width: 100, height: 100)
+                                                    .clipShape(Circle())
+                                                    .foregroundColor(.white)
+                                                    .opacity(0.66)
+                                                    .onTapGesture {
+                                                        showImagePicker.toggle()
+                                                    }
+                                                
+                                                HStack {
+                                                    Text("*")
+                                                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                                                        .foregroundColor(.red)
+                                                    Text("Profile Picture")
+                                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                                        .foregroundColor(.black)
+                                                    Text("*")
+                                                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                                                        .foregroundColor(.red)
+                                                }
+                                                .frame(width: 150)
+                                                .background(.white.opacity(0.75))
+                                                .cornerRadius(5)
+                                            }
+                                        }
+                                    }.padding()
+                                        .sheet(isPresented: $showImagePicker,
+                                               onDismiss: loadImage) {
+                                            imagePicker(image: $selectedImage)
+                                        }
+                                               .padding(.top)
+                                               .padding(.bottom)
+                                    VStack(alignment: .leading, spacing: 10) {
+                                        HStack {
+                                            Text("Username")
+                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                                            Text("*")
+                                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                                                .foregroundColor(.red)
+                                        }
+                                        HStack() {
+                                            TextField("Username", text: $username)
+                                            
+                                                .placeholder(when: username
+                                                    .isEmpty, placeholder: {
+                                                        Text("Username").foregroundColor(.gray)
+                                                    })
+                                                .foregroundColor(.white)
+                                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                                                .accentColor(.white)
+                                                .textInputAutocapitalization(.words)
+                                                .disableAutocorrection(true)
+                                                .focused($focus, equals: .username)
+                                                .submitLabel(.next)
+                                                .onSubmit {
+                                                    withAnimation {
+                                                        self.focus = .instagram
+                                                    }
+                                                }
+                                            
+                                        }
+                                        .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+                                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                                        .cornerRadius(15)
                                     }
-                                }.padding()
-                                    .sheet(isPresented: $showImagePicker,
-                                           onDismiss: loadImage) {
-                                        imagePicker(image: $selectedImage)
-                                    }
-                                           .padding(.top)
-                                           .padding(.bottom)
-                                
-                                //                VStack(alignment: .leading, spacing: 10) {
-                                //                    Text("Country")
-                                //                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                                //                        .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                                //                    HStack() {
-                                //                        TextField("Country", text: $country)
-                                //
-                                //                            .placeholder(when: country
-                                //                                .isEmpty, placeholder: {
-                                //                                    Text("Country").foregroundColor(.gray)
-                                //                                })
-                                //                            .foregroundColor(.white)
-                                //                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                                //                            .accentColor(.white)
-                                //                            .textInputAutocapitalization(.words)
-                                //                            .disableAutocorrection(true)
-                                //                            .autocapitalization(.none)
-                                ////                                            .textCase(.lowercase)
-                                ////                            .focused($focus, equals: .username)
-                                //                            .submitLabel(.next)
-                                //                            .onSubmit {
-                                ////                                withAnimation {
-                                ////                                    self.focus = .instagram
-                                ////                                }
-                                //                            }
-                                //
-                                //                    }
-                                //                    .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                                //                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                //                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                                //                    .cornerRadius(15)
-                                //                }
-                                //                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-                                //                .padding(.horizontal,16)
-                                //                .id(FocusableFieldSignup.username)
-                                VStack(alignment: .leading, spacing: 10) {
+                                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+                                    .id(FocusableFieldProfileData.username)
+                                    .padding(.horizontal,16)
+                                    
                                     HStack {
-                                        Text("Username")
+                                        Text("Country")
                                             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
                                             .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
                                         Text("*")
                                             .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
                                             .foregroundColor(.red)
-                                    }
-                                    HStack() {
-                                        TextField("Username", text: $username)
                                         
-                                            .placeholder(when: username
-                                                .isEmpty, placeholder: {
-                                                    Text("Username").foregroundColor(.gray)
-                                                })
-                                            .foregroundColor(.white)
-                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                                            .accentColor(.white)
-                                            .textInputAutocapitalization(.words)
-                                            .disableAutocorrection(true)
-                                            .focused($focus, equals: .username)
-                                            .submitLabel(.next)
-                                            .onSubmit {
-                                                withAnimation {
-                                                    self.focus = .instagram
-                                                }
+                                        Spacer()
+                                        Picker("Select a Country", selection: $country) {
+                                            ForEach(countries, id: \.self) { country in
+                                                Text(country)
                                             }
-                                        
-                                    }
-                                    .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                                    .cornerRadius(15)
-                                }
-                                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-                                .id(FocusableFieldProfileData.username)
-                                .padding(.horizontal,16)
-                                
-                                HStack {
-                                    Text("Country")
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                                        .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                                    Text("*")
-                                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
-                                        .foregroundColor(.red)
-                                    
-                                    Spacer()
-                                    Picker("Select a Country", selection: $country) {
-                                        ForEach(countries, id: \.self) { country in
-                                            Text(country)
                                         }
-                                    }
-                                    .pickerStyle(DefaultPickerStyle())
-                                    
-                                    
-                                }
-                                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 40, maxHeight: 40)
-                                .padding(.horizontal,16)
-                                
-                                HStack {
-                                    Text("State")
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                                        .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                                    
-                                    //                    Text("(if residing in the USA):")
-                                    //                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 12).weight(.light))
-                                    //                        .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                                    //                        .padding(.trailing,10)
-                                    Text("*")
-                                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
-                                        .foregroundColor(.red)
-                                    Spacer()
-                                    Picker("Select a state", selection: $selectedState) {
-                                        ForEach(states, id: \.self) { state in
-                                            Text(state)
-                                        }
-                                    }.onTapGesture {
-                                        withAnimation {
-                                            self.focus = nil
-                                            self.isPickerPresented = false
-                                        }
-                                    }
-                                    .pickerStyle(DefaultPickerStyle())
-                                    
-                                    
-                                }
-                                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 40, maxHeight: 40)
-                                .padding(.horizontal,16)
-                                //                .id(FocusableFieldSignup.username)
-                                
-                                //                            VStack(alignment: .leading, spacing: 10) {
-                                //                                Text("Age")
-                                //                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                                //                                    .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                                //                                HStack() {
-                                //                                    TextField("Age", text: Binding(
-                                //                                        get: { String(self.age ?? -99) },
-                                //                                        set: { if let newValue = Int($0) { self.age = newValue } }
-                                //                                    ))
-                                //
-                                //
-                                //                                    .foregroundColor(.white)
-                                //                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                                //                                    .accentColor(.white)
-                                //                                    .textInputAutocapitalization(.words)
-                                //                                    .disableAutocorrection(true)
-                                //                                    .autocapitalization(.none)
-                                //                                    //                                            .textCase(.lowercase)
-                                //                                    //                            .focused($focus, equals: .username)
-                                //                                    .submitLabel(.next)
-                                //                                    .onSubmit {
-                                //                                        //                                withAnimation {
-                                //                                        //                                    self.focus = .instagram
-                                //                                        //                                }
-                                //                                    }
-                                //
-                                //                                }
-                                //                                .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                                //                                .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                //                                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                                //                                .cornerRadius(15)
-                                //                            }
-                                //                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-                                //                            .padding(.horizontal,16)
-                                HStack{
-                                    Text("Birthday")
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                                        .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                                    Text("*")
-                                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
-                                        .foregroundColor(.red)
-                                    Spacer()
-                                    ZStack{
+                                        .pickerStyle(DefaultPickerStyle())
                                         
                                         
-                                        if isPickerPresented {
-                                            CustomDatePicker(day: $selectedDay, month: $selectedMonth, year: $selectedYear)
-                                                .id(FocusableFieldProfileData.birthday)
-                                                .focused($focus, equals: .birthday)
-                                        }else{
-                                            Button(action: {
-                                                withAnimation{
-                                                    self.isPickerPresented.toggle()
-                                                    self.focus = .birthday
-                                                }
-                                            }) {if selectedYear == "" {
-                                                Text("\(formattedDate(Date()))")
-                                                    .foregroundColor(.white)
-                                                    .padding(8)
+                                    }
+                                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 40, maxHeight: 40)
+                                    .padding(.horizontal,16)
+                                    
+                                    HStack {
+                                        Text("State")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                                        
+                                        //                    Text("(if residing in the USA):")
+                                        //                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 12).weight(.light))
+                                        //                        .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                                        //                        .padding(.trailing,10)
+                                        Text("*")
+                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                                            .foregroundColor(.red)
+                                        Spacer()
+                                        Picker("Select a state", selection: $selectedState) {
+                                            ForEach(states, id: \.self) { state in
+                                                Text(state)
                                             }
-                                                else{
-                                                    Text("\(selectedMonth)/\(selectedDay)/\(selectedYear)")
+                                        }.onTapGesture {
+                                            withAnimation {
+                                                self.focus = nil
+                                                self.isPickerPresented = false
+                                            }
+                                        }
+                                        .pickerStyle(DefaultPickerStyle())
+                                        
+                                        
+                                    }
+                                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 40, maxHeight: 40)
+                                    .padding(.horizontal,16)
+                                    
+                                    HStack{
+                                        Text("Birthday")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                                        Text("*")
+                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                                            .foregroundColor(.red)
+                                        Spacer()
+                                        ZStack{
+                                            
+                                            
+                                            if isPickerPresented {
+                                                CustomDatePicker(day: $selectedDay, month: $selectedMonth, year: $selectedYear)
+                                                    .id(FocusableFieldProfileData.birthday)
+                                                    .focused($focus, equals: .birthday)
+                                            }else{
+                                                Button(action: {
+                                                    withAnimation{
+                                                        self.isPickerPresented.toggle()
+                                                        self.focus = .birthday
+                                                    }
+                                                }) {if selectedYear == "" {
+                                                    Text("\(formattedDate(Date()))")
                                                         .foregroundColor(.white)
                                                         .padding(8)
                                                 }
-                                            }.background(K.finalColor.cardBlue)
-                                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                                    else{
+                                                        Text("\(selectedMonth)/\(selectedDay)/\(selectedYear)")
+                                                            .foregroundColor(.white)
+                                                            .padding(8)
+                                                    }
+                                                }.background(K.finalColor.cardBlue)
+                                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                                
+                                                
+                                            }
+                                        }
+                                        
+                                    }.padding(.horizontal,16)
+                                    
+                                    //                .id(FocusableFieldSignup.username)
+                                    HStack{
+                                        Text("Sex:")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                                        Text("*")
+                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+                                            .foregroundColor(.red)
+                                        Spacer()
+                                        
+                                        Picker("Sex", selection: $selectedGender) {
+                                            Text("Choose here").tag("Choose here")
+                                            Text("Male").tag("Male")
+                                            Text("Female").tag("Female")
+                                        }.onTapGesture {
+                                            withAnimation {
+                                                self.focus = nil
+                                                self.isPickerPresented = false
+                                            }
+                                        }
+                                        
+                                    }.padding(.horizontal,16)
+                                        .padding(.top,5)
+                                    
+                                    VStack(alignment: .leading, spacing: 10) {
+                                        Text("Instagram")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                                        HStack() {
+                                            TextField("Instagram", text: $instagram)
+                                                .placeholder(when: instagram
+                                                    .isEmpty, placeholder: {
+                                                        Text("Instagram").foregroundColor(.gray)
+                                                    })
+                                                .foregroundColor(.white)
+                                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                                                .accentColor(.white)
+                                                .textInputAutocapitalization(.words)
+                                                .disableAutocorrection(true)
+                                                .focused($focus, equals: .instagram)
+                                                .submitLabel(.next)
+                                                .onSubmit {
+                                                    withAnimation {
+                                                        self.focus = .promoCode
+                                                    }
+                                                }
+                                            
+                                        }
+                                        .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+                                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                                        .cornerRadius(15)
+                                    }
+                                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+                                    .id(FocusableFieldProfileData.instagram)
+                                    .padding(.horizontal,16)
+                                    
+                                    VStack(alignment: .leading, spacing: 10) {
+                                        Text("Promo Code")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+                                        HStack() {
+                                            TextField("Promo Code", text: $promoCode)
+                                                .placeholder(when: promoCode
+                                                    .isEmpty, placeholder: {
+                                                        Text("Promo Code").foregroundColor(.gray)
+                                                    })
+                                                .foregroundColor(.white)
+                                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                                                .accentColor(.white)
+                                                .keyboardType(.emailAddress)
+                                                .textInputAutocapitalization(.words)
+                                                .disableAutocorrection(true)
+                                                .focused($focus, equals: .promoCode)
+                                                .submitLabel(.next)
+                                                .onSubmit {
+                                                    withAnimation {
+                                                        self.focus = nil
+                                                    }
+                                                }
                                             
                                             
                                         }
+                                        .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+                                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                                        .cornerRadius(15)
                                     }
+                                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+                                    .id(FocusableFieldProfileData.promoCode)
+                                    .padding(.horizontal,16)
                                     
-                                }.padding(.horizontal,16)
-                                
-                                //                .id(FocusableFieldSignup.username)
-                                HStack{
-                                    Text("Sex:")
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                                        .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                                    Text("*")
-                                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
-                                        .foregroundColor(.red)
+                                    
                                     Spacer()
-                                    
-                                    Picker("Sex", selection: $selectedGender) {
-                                        Text("Choose here").tag("Choose here")
-                                        Text("Male").tag("Male")
-                                        Text("Female").tag("Female")
-                                    }.onTapGesture {
-                                        withAnimation {
-                                            self.focus = nil
-                                            self.isPickerPresented = false
-                                        }
-                                    }
-                                    
-                                }.padding(.horizontal,16)
-                                    .padding(.top,5)
-                                
-                                VStack(alignment: .leading, spacing: 10) {
-                                    Text("Instagram")
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                                        .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                                    HStack() {
-                                        TextField("Instagram", text: $instagram)
-                                            .placeholder(when: instagram
-                                                .isEmpty, placeholder: {
-                                                    Text("Instagram").foregroundColor(.gray)
-                                                })
-                                            .foregroundColor(.white)
-                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                                            .accentColor(.white)
-                                            .textInputAutocapitalization(.words)
-                                            .disableAutocorrection(true)
-                                            .focused($focus, equals: .instagram)
-                                            .submitLabel(.next)
-                                            .onSubmit {
-                                                withAnimation {
-                                                    self.focus = .promoCode
-                                                }
-                                            }
-                                        
-                                    }
-                                    .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                                    .cornerRadius(15)
                                 }
-                                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-                                .id(FocusableFieldProfileData.instagram)
-                                .padding(.horizontal,16)
-                                
-                                VStack(alignment: .leading, spacing: 10) {
-                                    Text("Promo Code")
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                                        .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                                    HStack() {
-                                        TextField("Promo Code", text: $promoCode)
-                                            .placeholder(when: promoCode
-                                                .isEmpty, placeholder: {
-                                                    Text("Promo Code").foregroundColor(.gray)
-                                                })
-                                            .foregroundColor(.white)
-                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                                            .accentColor(.white)
-                                            .keyboardType(.emailAddress)
-                                            .textInputAutocapitalization(.words)
-                                            .disableAutocorrection(true)
-                                            .focused($focus, equals: .promoCode)
-                                            .submitLabel(.next)
-                                            .onSubmit {
-                                                withAnimation {
-                                                    self.focus = nil
-                                                }
-                                            }
-                                        
-                                        
+                            } .padding(.bottom, focus == nil ? 0 : 300)
+                                .onChange(of: focus) { newFocus in
+                                    //                    if newFocus == .password {
+                                    withAnimation {
+                                        scrollProxy.scrollTo(newFocus, anchor: .top)
                                     }
-                                    .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                                    .cornerRadius(15)
+                                    //                    }
                                 }
-                                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-                                .id(FocusableFieldProfileData.promoCode)
-                                .padding(.horizontal,16)
+                        }
+                        
+                        
+                        Spacer()
+                    }.frame(height: 550)
+                    
+                    if let selectedImage = selectedImage {
+                        if country != "Choose here" && selectedYear != "" && selectedState != "Choose here" && selectedGender != "Choose here"{
+                            NavigationLink(destination: {
+                                TermsAndConditionsView(viewModel: viewModel) },label: {
+                                    HStack{
+                                        Spacer()
+                                        
+                                        Text("Continue")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                            .foregroundColor(.white)
+                                        //shadow
+                                        
+                                        Spacer()
+                                    }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+                                        .background(Color(red: 0.31, green: 0.57, blue: 1))
+                                        .cornerRadius(10)
+                                        .padding(.horizontal,16)
+                                        .padding(.bottom,30)
+                                })
+                            .simultaneousGesture(TapGesture().onEnded{
+                                viewModel.uploadProfileImage(selectedImage)
+                                if let date = createDate(day: selectedDay, month: selectedMonth, year: Int(selectedYear) ?? 0) {
+                                    viewModel.uploadSupplementaryData(country: country, birthday: date, state: selectedState, gender: selectedGender, username: username, instagram: instagram, promoCode: promoCode)
+                                    print(date)
+                                }
+                                Task{
+                                    await wait()
+                                }
+                            })
+                        } else {
+                            HStack{
+                                Spacer()
                                 
+                                Text("Fill All Fields")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .foregroundColor(.white)
+                                //shadow
                                 
                                 Spacer()
-                            }
-                        } .padding(.bottom, focus == nil ? 0 : 300)
-                            .onChange(of: focus) { newFocus in
-                                //                    if newFocus == .password {
-                                withAnimation {
-                                    scrollProxy.scrollTo(newFocus, anchor: .top)
-                                }
-                                //                    }
-                            }
-                    }
-                    
-                    
-                    Spacer()
-                }
-                if let selectedImage = selectedImage {
-                    if country != "Choose here" && selectedYear != "" && selectedState != "Choose here" && selectedGender != "Choose here"{
-                        NavigationLink(destination: {
-                            TermsAndConditionsView(viewModel: viewModel) },label: {
-                                HStack{
-                                    Spacer()
-                                    
-                                    Text("Continue")
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
-                                        .foregroundColor(.white)
-                                    //shadow
-                                    
-                                    Spacer()
-                                }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                                    .background(Color(red: 0.31, green: 0.57, blue: 1))
-                                    .cornerRadius(10)
-                                    .padding(.horizontal,16)
-                                    .padding(.bottom,30)
-                            })
-                        .simultaneousGesture(TapGesture().onEnded{
-                            viewModel.uploadProfileImage(selectedImage)
-                            if let date = createDate(day: selectedDay, month: selectedMonth, year: Int(selectedYear) ?? 0) {
-                                viewModel.uploadSupplementaryData(country: country, birthday: date, state: selectedState, gender: selectedGender, username: username, instagram: instagram, promoCode: promoCode)
-                                print(date)
-                            }
-                            Task{
-                                await wait()
-                            }
-                        })
+                            }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+                                .background(K.finalColor.deleteRed)
+                                .cornerRadius(10)
+                                .padding(.horizontal,16)
+                                .padding(.bottom,30)
+                                .opacity(0.66)
+                        }
                     } else {
                         HStack{
                             Spacer()
@@ -494,32 +445,15 @@ struct profilePhotoSelectorView: View {
                             .padding(.bottom,30)
                             .opacity(0.66)
                     }
-                } else {
-                    HStack{
-                        Spacer()
-                        
-                        Text("Fill All Fields")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
-                            .foregroundColor(.white)
-                        //shadow
-                        
-                        Spacer()
-                    }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                        .background(K.finalColor.deleteRed)
-                        .cornerRadius(10)
-                        .padding(.horizontal,16)
-                        .padding(.bottom,30)
-                        .opacity(0.66)
                 }
-            }
-
-        
-        }.navigationBarBackButtonHidden(true)
-            .frame(minWidth: 0,maxWidth: .infinity,minHeight: 0,maxHeight: .infinity)
-            .background(Color(red: 0.02, green: 0.05, blue: 0.26))
-            .ignoresSafeArea()
-            .padding(.top, 50)
-      
+                
+                
+            }.navigationBarBackButtonHidden(true)
+                .frame(minWidth: 0,maxWidth: .infinity,minHeight: 0,maxHeight: .infinity)
+                .background(Color(red: 0.02, green: 0.05, blue: 0.26))
+                .ignoresSafeArea()
+                .padding(.top, 50)
+        }
     }
     
     func loadImage() {

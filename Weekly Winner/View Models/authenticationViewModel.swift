@@ -146,9 +146,60 @@ print("fetched user")
             Firestore.firestore().collection("users").document(uid.uid).updateData(["instagram": instagram]) { _ in
             
         }
-            Firestore.firestore().collection("users").document(uid.uid).updateData(["promoCode": promoCode]) { _ in
-                
+        Firestore.firestore().collection("users").document(uid.uid).updateData(["promoCode": promoCode]) { _ in
+            
+        }
+            
+
+            
+            let userTicketsCollection = Firestore.firestore()
+                .collection("users")
+                .document(uid.uid)
+                .collection("tickets")
+                .document("day")
+                .collection("currentDayTickets")
+            
+            let userTicketsCollection2 = Firestore.firestore()
+                .collection("users")
+                .document(uid.uid)
+                .collection("tickets")
+                .document("week")
+                .collection("currentWeekTickets")
+
+            userTicketsCollection.getDocuments { (querySnapshot, err) in
+                if let err = err {
+                    print("Error getting documents: \(err)")
+                } else {
+                    // Assuming there is only one document in this collection
+                    if let document = querySnapshot?.documents.first {
+                        document.reference.updateData(["username": username]) { error in
+                            if let error = error {
+                                print("Error updating document: \(error)")
+                            } else {
+                                print("Document successfully updated")
+                            }
+                        }
+                    }
+                }
             }
+            
+            userTicketsCollection2.getDocuments { (querySnapshot, err) in
+                if let err = err {
+                    print("Error getting documents: \(err)")
+                } else {
+                    // Assuming there is only one document in this collection
+                    if let document = querySnapshot?.documents.first {
+                        document.reference.updateData(["username": username]) { error in
+                            if let error = error {
+                                print("Error updating document: \(error)")
+                            } else {
+                                print("Document successfully updated")
+                            }
+                        }
+                    }
+                }
+            }
+
     }
         
     }

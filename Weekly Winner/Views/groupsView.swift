@@ -505,6 +505,7 @@ struct currentLeaderboardView: View {
                         }
                     }
                 }).id(UUID())
+    
             }
             HStack {
                 Text("Leaderboard")
