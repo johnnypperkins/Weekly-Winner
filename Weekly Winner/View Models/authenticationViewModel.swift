@@ -11,6 +11,8 @@ import FirebaseFirestore
 import FirebaseCore
 import FirebaseAuth
 import GoogleSignIn
+import AuthenticationServices
+import CryptoKit
 
 enum AuthenticationState {
   case unauthenticated
@@ -38,6 +40,8 @@ class authenticationViewModel: ObservableObject {
     @Published var errorMessage: String? = ""
     @Published var instagram: String = ""
     @Published var promoCode: String = ""
+    
+    fileprivate var currentNonce: String?
 //    let currentVersion: String = "1.23"
 //    @Published var updateURL: String = ""
 
@@ -50,6 +54,75 @@ class authenticationViewModel: ObservableObject {
     
     enum AuthenticationError: Error {
       case tokenError(message: String)
+    }
+    
+    private func randomNonceString(length: Int = 32) -> String {
+      precondition(length > 0)
+      var randomBytes = [UInt8](repeating: 0, count: length)
+      let errorCode = SecRandomCopyBytes(kSecRandomDefault, randomBytes.count, &randomBytes)
+      if errorCode != errSecSuccess {
+        fatalError(
+          "Unable to generate nonce. SecRandomCopyBytes failed with OSStatus \(errorCode)"
+        )
+      }
+
+      let charset: [Character] =
+        Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+
+      let nonce = randomBytes.map { byte in
+        // Pick a random character from the set, wrapping around if needed.
+        charset[Int(byte) % charset.count]
+      }
+
+      return String(nonce)
+    }
+    
+    @available(iOS 13, *)
+    private func sha256(_ input: String) -> String {
+      let inputData = Data(input.utf8)
+      let hashedData = SHA256.hash(data: inputData)
+      let hashString = hashedData.compactMap {
+        String(format: "%02x", $0)
+      }.joined()
+
+      return hashString
+    }
+    
+    func handleSignInWithAppleRequest(_ request: ASAuthorizationAppleIDRequest) {
+        request.requestedScopes = [.fullName,.email]
+        let nonce = randomNonceString()
+        currentNonce = nonce
+        request.nonce = sha256(nonce)
+    }
+    
+    func handleSignInWithAppleCompletion(_ result: Result<ASAuthorization, Error>) {
+        if case .failure(let failure) = result {
+            errorMessage = failure.localizedDescription
+        }
+        else if case .success(let success) = result {
+            if let appleIDCredential = success.credential as? ASAuthorizationAppleIDCredential {
+                guard let nonce = currentNonce else{
+                    fatalError("Invalid state: a login callback was received, but no login request was sent")
+                }
+                guard let appleIDToken = appleIDCredential.identityToken else {
+                    print("Unable to fetch identity token")
+                    return
+            }
+                guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else{
+                    print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
+                    return
+                }
+                let credential = OAuthProvider.credential(withProviderID: "apple.com", idToken: idTokenString, rawNonce: nonce)
+                Task{
+                    do{
+                        let result = try await Auth.auth().signIn(with: credential)
+                    }
+                    catch{
+                        print("Error authenticating: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
     }
     
     func signInWithGoogle() async  {
