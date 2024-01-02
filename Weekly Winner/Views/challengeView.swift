@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Kingfisher
 
 struct challengeView: View {
     @State var tabSelected = 0
@@ -93,10 +94,28 @@ struct challengePage1: View {
     @State var currencyChosen = "PoolBucks"
     @State var wagerAmount = 0
     @State var opponentUsername = ""
+    @State private var selectedUserID: String?
+    @State private var dollarAmount: Double = 0
+    let maxDollarAmount: Double = 200
+    
+    @State private var oneLegNum: Int = 0
+    @State private var twoLegNum: Int = 0
+    @State private var threeLegNum: Int = 0
+    @State private var fourLegNum: Int = 0
+    @State private var fiveLegNum: Int = 0
     
     @ObservedObject var viewModel: challengeViewModel
     
     var body: some View {
+        let keywordBinding = Binding<String> (
+            get: {
+                opponentUsername
+            },
+            set: {
+                opponentUsername = $0
+                viewModel.fetchUser(from: opponentUsername)
+            }
+        )
         NavigationStack {
             ZStack {
                 K.finalColor.backgroundBlue
@@ -131,24 +150,201 @@ struct challengePage1: View {
                             .background(currencyChosen == "PoolCoins" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
                             .cornerRadius(5)
                         }
-                    }.padding(.top, 50)
-                    
-                    HStack (spacing: 10){
-                        TextField("Search Username", text: $opponentUsername)
-                            .frame(width: 150)
+                    }.padding(.top, 40)
+                    VStack {
+                        HStack{
+                            Text("Enter Bet Amount")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
+                                .foregroundColor(.white)
+                            Spacer()
+                            Text(String(format: "%.1f", dollarAmount))
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
+                                .foregroundColor(.white)
+                        }
+                        Slider(value: $dollarAmount, in: 0...maxDollarAmount, step: 1) { editing in
                             
-                        Text((viewModel.opponentUsernameExists && opponentUsername != "") ? "Available" : "Unavailable")
-                            .foregroundColor((viewModel.opponentUsernameExists && opponentUsername != "") ? K.finalColor.winningGreen : K.finalColor.deleteRed)
-                            .padding(4)
-                            .background((viewModel.opponentUsernameExists && opponentUsername != "") ? K.finalColor.winningGreen.opacity(0.6) : K.finalColor.deleteRed.opacity(0.6))
-                    }.padding(.top, 10)
-                    .onChange(of: opponentUsername) { newValue in
-                            viewModel.checkUsernameAvailable(username: newValue) {}
-                    }
+                        }
+                        .accentColor(.white)
+                        .background(Color(red: 0.77, green: 0.85, blue: 0.98).blur(radius: 15).opacity(0.60))
+                        
+                        
+                    }.padding(.horizontal,20)
+                        .padding(.vertical,10)
                     
+                            searchBarView(keyword: keywordBinding)
+                            
+                            
+//                        Text((viewModel.opponentUsernameExists && opponentUsername != "") ? "Available" : "Unavailable")
+//                            .foregroundColor((viewModel.opponentUsernameExists && opponentUsername != "") ? K.finalColor.winningGreen : K.finalColor.deleteRed)
+//                            .padding(4)
+//                            .background((viewModel.opponentUsernameExists && opponentUsername != "") ? K.finalColor.winningGreen.opacity(0.6) : K.finalColor.deleteRed.opacity(0.6))
+                        
+//                    .onChange(of: opponentUsername) { newValue in
+//                        viewModel.checkUsernameAvailable(username: newValue) {_,_ in
+//                        }
+//                    }
+                    ScrollView {
+                        ForEach(viewModel.queriedUsers, id: \.id) { user in
+                            
+                            userBio(user: user, selectedUserID: $selectedUserID)
+                                .padding(.vertical,3)
+                                .padding(.horizontal,14)
+                        }
+                    }
                     Spacer()
+                    VStack {
+                        CustomStepper(value: $oneLegNum, range: 0...8, title: "1 Legs")
+                            .padding(.horizontal,14)
+                        CustomStepper(value: $twoLegNum, range: 0...5, title: "2 Legs")
+                            .padding(.horizontal,14)
+                        CustomStepper(value: $threeLegNum, range: 0...4, title: "3 Legs")
+                            .padding(.horizontal,14)
+                        CustomStepper(value: $fourLegNum, range: 0...3, title: "4 Legs")
+                            .padding(.horizontal,14)
+                        CustomStepper(value: $fiveLegNum, range: 0...2, title: "5 Legs")
+                            .padding(.horizontal,14)
+                    }
+                    Button {
+                        
+                    } label: {
+                        HStack{
+                            Spacer()
+                            Text("Place Bet")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                .foregroundColor(.white)
+                            Spacer()
+                        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+                            .background(Color(red: 0.31, green: 0.57, blue: 1))
+                            .cornerRadius(10)
+                            .padding(.horizontal,16)
+                            .padding(.bottom,20)
+                    }
+
+                    
                 }
             }
         }.background(K.finalColor.backgroundBlue)
     }
 }
+
+struct searchBarView: View {
+    @Binding var keyword: String
+    
+    var body: some View {
+        HStack {
+            TextField("Search", text: withAnimation{$keyword})
+                .placeholder(when: keyword == "", placeholder: {
+                    Text("Search Users").foregroundColor(.gray)
+                        .padding(.leading, 2)
+                })
+                .foregroundColor(.white)
+                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                .accentColor(.white)
+                .textInputAutocapitalization(.words)
+                .disableAutocorrection(true)
+            //.padding(.vertical, 5)
+           
+            
+        }
+        .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 15))
+        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 40, maxHeight: 40)
+        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+        .cornerRadius(7.5)
+        .padding(EdgeInsets(top: 0, leading: 14, bottom: 0, trailing: 14))
+    }
+}
+
+struct userBio: View {
+    var user: User
+//    @State private var profileImageURL = ""
+    
+    @State var checked = false
+    @Binding var selectedUserID: String?
+    
+    var body: some View {
+        Button {
+            withAnimation {
+                if selectedUserID == user.id {
+                    selectedUserID = nil // Deselect if already selected
+                } else {
+                    selectedUserID = user.id // Select the user
+                }
+            }
+        } label: {
+            ZStack {
+                VStack (spacing: 10) {
+                    HStack {
+                        HStack(spacing: 11) {
+                            HStack(spacing: 0) {
+                                
+                                
+                                HStack(spacing: 5) {
+                                    if user.profileImageUrl != "" {
+                                        KFImage(URL(string: user.profileImageUrl))
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .clipShape(Circle())
+                                            .frame(width: 24, height: 24)
+                                    } else {
+                                        Image(systemName: "photo.circle.fill")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 24, height: 24)
+                                            .background(K.finalColor.tabSelectedBlue)
+                                            .clipShape(Circle())
+                                        
+                                    }
+                                    HStack(spacing: 0){
+                                        Text("\(user.username) ")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                                            .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+                                        
+                                    }
+                                }
+                                .frame(maxHeight: .infinity)
+                            }
+                            .frame(height: 24)
+                            
+                            Spacer()
+                            
+                            
+                            
+                            // Arrow
+                            
+                                Image(systemName: selectedUserID == user.id ? "checkmark.square" : "square")
+                                    .resizable()
+                                    .frame(width: 15, height: 15)
+                                    .foregroundColor(.white)
+                                
+                                
+                            }.padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
+                            //.padding(.bottom,10)
+                            
+                        }
+                    }
+                    //        .opacity(ticket.isEnabled || ticket.groupAdmin == Auth.auth().currentUser?.uid ? 1 : 0.66)
+                    .padding(.vertical, 10)
+                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 44, maxHeight: 44)
+                    .background(selectedUserID == user.id ? K.finalColor.otherPurple.opacity(0.35) : K.finalColor.cardBlue)
+                    .cornerRadius(10)
+                    //.overlay(ownCard ? RoundedRectangle(cornerRadius: 10).stroke(Color.white, lineWidth: 1) : RoundedRectangle(cornerRadius: 10).stroke(Color.clear, lineWidth: 0))
+                    //.shadow(color: ownCard ? Color.white : Color.clear, radius: ownCard ? 2.5 : 0, x: 0, y: 0)
+                    
+                    
+                    
+                    //        .onAppear {
+                    //            isEnabled = ticket.isEnabled
+                    //            fetchUserProfilePic(uid: ticket.uid) { (profileImageUrl, error) in
+                    //                if let error = error {
+                    //                    print("Error fetching profile image URL: \(error)")
+                    //
+                    //                } else if let profileImageUrl = profileImageUrl {
+                    //                   //print("Profile image URL: \(profileImageUrl)")
+                    //                    self.profileImageURL = profileImageUrl
+                    //                }
+                    //            }
+                    //        }
+                }
+            }
+        }
+    }

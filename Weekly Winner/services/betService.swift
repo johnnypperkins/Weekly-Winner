@@ -12,6 +12,49 @@ import FirebaseFirestore
 class BetService {
     private let db = Firestore.firestore()
     
+    
+    
+//        func createHeadToHead(groupAdminUsername: String, groupName: String, groupSlogan: String, password: String?, ticketFormat: [Int], groupUrl: String, completion: @escaping (Result<String, Error>) -> Void) {
+//    
+//            guard let currentUser = Auth.auth().currentUser else {
+//                        completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No user is currently logged in"])))
+//                        return
+//                    }
+//            let time = Timestamp()
+//                var ref: DocumentReference? = nil
+//                ref = db.collection("groups").addDocument(data: [
+//                    "groupName": groupName,
+//                    "dateCreated": time,
+//                    "groupImageURL": groupUrl,
+//                    "groupSlogan": groupSlogan,
+//                    "groupAdmin": currentUser.uid,
+//                    "groupAdminUsername": groupAdminUsername,
+//                    "password": password ?? NSNull(),
+//                    "ticketFormat": ticketFormat
+//                ]) { err in
+//                    if let err = err {
+//                                    completion(.failure(err))
+//                    } else {
+//                        guard let groupID = ref?.documentID else {
+//                            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to retrieve group ID"])))
+//                            return
+//                        }
+//                        self.db.collection("groups").document(groupID).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": currentUser.uid])
+//                        let group = Group(id: groupID, groupName: groupName, dateCreated: time, groupImageURL: groupUrl, groupSlogan: groupSlogan, groupAdmin: currentUser.uid, groupAdminUsername: groupAdminUsername, ticketFormat: ticketFormat)
+//                        self.joinGroup(userID: currentUser.uid, group: group){error in
+//    
+//                        }
+//    
+//    
+//                        do {
+//                            Firestore.firestore().collection("groups").document(groupID).updateData(["keywordsForLookup": group.keywordsForLookup])
+//                        } catch let error {
+//                            print("Error updating data: \(error)")
+//                        }
+//                    }
+//                }
+//            }
+    
     func uploadBet(_ bet: Bet, timeFrame: String, completion: @escaping (Error?) -> Void) {
         guard let userID = Auth.auth().currentUser?.uid else {
             completion(AuthError.userNotFound)
