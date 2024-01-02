@@ -61,7 +61,9 @@ struct tabBarView: View {
                                 }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
                                                 .tag(Tab.groups)
                             
-                            profileView(user: authViewModel.currUser!)
+                            //profileView(user: authViewModel.currUser!)
+                            challengeView()
+                                .background(K.finalColor.cardBlue )
                                 .ignoresSafeArea(.all)
                                 .tabItem {
                                     CustomTabBarItem(index: 4, selectedTab: $selectedTab, item: TabItem(title: "Profile", icon: Image(systemName: "person.crop.circle.fill"), color: .orange))

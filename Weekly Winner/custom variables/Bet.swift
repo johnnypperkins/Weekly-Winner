@@ -37,6 +37,19 @@ struct Bet: Identifiable, Codable {
     // Daily/Weekly
 }
 
+struct Challenge {
+    var challengeID: String
+    var challengeType: String
+    var team1IDs:[String]
+    var team2IDs:[String]
+    var team1BetIDs: [String]
+    var team2BetIDs: [String]
+    var ticketFormat: [Int]
+    
+}
+
+
+
 
 enum BetType: String, Codable {
     case betHomeSpread
