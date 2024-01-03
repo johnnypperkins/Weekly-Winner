@@ -14,6 +14,11 @@ class challengeViewModel: ObservableObject {
     @Published var queriedUsers: [User] = []
     @Published var opponentUsernameExists: Bool = false
     @Published var service = BetService()
+    @Published var allGames: [Game] = []
+
+    init() {
+        self.fetchAllGames() {}
+    }
     
 //    func createGroup(groupImageURL: UIImage?, groupAdminUsername: String, groupName: String, groupSlogan: String, password: String, ticketFormat: [Int]) {
 //        
@@ -88,6 +93,60 @@ class challengeViewModel: ObservableObject {
             }
         }
     }
+    
+    
+    
+    func fetchAllGames(completion: @escaping () -> Void) {
+        self.allGames.removeAll()
+        var tempGames: [Game] = []
+        let sportsArr = ["NFL", "NCAAF", "NBA", "NCAAB"]
+        let group = DispatchGroup()
+
+        for sport in sportsArr {
+            group.enter() // Enter the group for each sport
+
+            Firestore.firestore().collection("Book").document(sport).collection("games")
+                .order(by: "commenceTime").getDocuments { querySnapshot, error in
+
+                    if let error = error {
+                        print("Error fetching documents: \(error.localizedDescription)")
+                        group.leave() // Leave the group in case of an error
+                        return
+                    }
+
+                    var games: [Game] = []
+
+                    for document in querySnapshot!.documents {
+                        let data = document.data()
+                        if let idd = data["id"] as? String,
+                           let commenceTime = data["commenceTime"] as? Timestamp,
+                           let totalOver = data["totalOver"] as? Double,
+                           let totalUnder = data["totalUnder"] as? Double,
+                           let homeTeam = data["homeTeam"] as? String,
+                           let awayTeam = data["awayTeam"] as? String,
+                           let homeSpread = data["homeSpread"] as? Double,
+                           let awaySpread = data["awaySpread"] as? Double,
+                           let homeTeamScore = data["homeTeamScore"] as? Int,
+                           let awayTeamScore = data["awayTeamScore"] as? Int,
+                           let whichSport = data["whichSport"] as? String? ?? "",
+                           let bet_statistics = data["bet_statistics"] as? [Int],
+                           let total_plays = data["total_plays"] as? Int {
+                            let newGame = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays)
+                            games.append(newGame)
+                        }
+                    }
+
+                    tempGames.append(contentsOf: games)
+                    group.leave() // Leave the group when done processing this sport
+                }
+        }
+
+        group.notify(queue: .main) {
+            self.allGames = tempGames.sorted { $0.commenceTime.dateValue() < $1.commenceTime.dateValue() }
+            completion() // Call the completion handler once all sports are processed
+        }
+    }
+
 
 
     
