@@ -15,10 +15,30 @@ class challengeViewModel: ObservableObject {
     @Published var opponentUsernameExists: Bool = false
     @Published var service = BetService()
     @Published var allGames: [Game] = []
+    @Published var timeGames: [Game] = []
+    @Published var selectedGameIDs = [String]()
 
     init() {
-        self.fetchAllGames() {}
+        self.fetchAllGames() {
+            self.fetchTimeGames(amountTime: 1) {
+                
+            }
+        }
     }
+    func submitSelectedGames() {
+            // Handle submission logic here
+            print("Selected Games: \(selectedGameIDs)")
+        }
+    
+    func toggleGameSelection(_ gameID: String) {
+            if selectedGameIDs.contains(gameID) {
+                selectedGameIDs.removeAll { $0 == gameID }
+                print(gameID)
+            } else {
+                selectedGameIDs.append(gameID)
+                print(gameID + "ffff")
+            }
+        }
     
 //    func createGroup(groupImageURL: UIImage?, groupAdminUsername: String, groupName: String, groupSlogan: String, password: String, ticketFormat: [Int]) {
 //        
@@ -94,7 +114,21 @@ class challengeViewModel: ObservableObject {
         }
     }
     
-    
+    func fetchTimeGames(amountTime: Int, completion: @escaping () -> Void) {
+        self.timeGames.removeAll()
+
+        let now = Date()
+        let calendar = Calendar.current
+        let endDate = calendar.date(byAdding: .day, value: amountTime, to: now)!
+
+        self.timeGames = allGames.filter { game in
+            let commenceTime = game.commenceTime.dateValue()
+            return commenceTime >= now && commenceTime <= endDate
+        }
+
+        completion()
+    }
+
     
     func fetchAllGames(completion: @escaping () -> Void) {
         self.allGames.removeAll()

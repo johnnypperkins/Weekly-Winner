@@ -13,12 +13,13 @@ struct ChallengeTicket: Identifiable, Codable {
     @DocumentID var id: String?
     var username: String
     var uid: String
-    var challengeID: String
+    var groupID: String
     var dateCreated: Timestamp // will fix later
-    var amountBet: Int
-    var totalPotentialWon: Int
     var totalWon: Int
-    var status: String
-    var creator: String
+    var totalPotentialWon: Int
+    var groupName: String
+    var rank: String
+    var isEnabled: Bool
+    var groupAdmin: String
     var ticketFormat: [Int]
 }

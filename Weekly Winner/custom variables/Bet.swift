@@ -44,8 +44,7 @@ struct Challenge {
     var team2IDs:[String]
     var team1BetIDs: [String]
     var team2BetIDs: [String]
-    var ticketFormat: [Int]
-    
+    var ticketFormat: [Int] 
 }
 
 

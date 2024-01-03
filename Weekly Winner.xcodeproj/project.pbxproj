@@ -84,7 +84,7 @@
 		867801862A213F9A006FE479 /* groupsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801852A213F99006FE479 /* groupsView.swift */; };
 		867801882A213FA5006FE479 /* ticketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801872A213FA5006FE479 /* ticketView.swift */; };
 		8678018A2A213FB1006FE479 /* profileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867801892A213FB1006FE479 /* profileView.swift */; };
-		867C14B52B4494900095DBCC /* HeadToHeadBet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867C14B42B4494900095DBCC /* HeadToHeadBet.swift */; };
+		867C14B52B4494900095DBCC /* ChallengeTicket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867C14B42B4494900095DBCC /* ChallengeTicket.swift */; };
 		8688C5902AFFDCBD007EED78 /* GifImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8688C58F2AFFDCBD007EED78 /* GifImage.swift */; };
 		8688C5922AFFDE28007EED78 /* out-_1_.gif in Resources */ = {isa = PBXBuildFile; fileRef = 8688C5912AFFDE28007EED78 /* out-_1_.gif */; };
 		8688C5942AFFDFCB007EED78 /* Iphone.gif in Resources */ = {isa = PBXBuildFile; fileRef = 8688C5932AFFDFCB007EED78 /* Iphone.gif */; };
@@ -180,7 +180,7 @@
 		867801852A213F99006FE479 /* groupsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = groupsView.swift; sourceTree = "<group>"; };
 		867801872A213FA5006FE479 /* ticketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ticketView.swift; sourceTree = "<group>"; };
 		867801892A213FB1006FE479 /* profileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = profileView.swift; sourceTree = "<group>"; };
-		867C14B42B4494900095DBCC /* HeadToHeadBet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadToHeadBet.swift; sourceTree = "<group>"; };
+		867C14B42B4494900095DBCC /* ChallengeTicket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeTicket.swift; sourceTree = "<group>"; };
 		8688C58F2AFFDCBD007EED78 /* GifImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifImage.swift; sourceTree = "<group>"; };
 		8688C5912AFFDE28007EED78 /* out-_1_.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "out-_1_.gif"; sourceTree = "<group>"; };
 		8688C5932AFFDFCB007EED78 /* Iphone.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Iphone.gif; sourceTree = "<group>"; };
@@ -320,7 +320,7 @@
 				8668B30E2A2EE62700A1B343 /* Game.swift */,
 				865C4A7B2A32893100C3C626 /* User.swift */,
 				8662510F2A3E862400708495 /* Ticket.swift */,
-				867C14B42B4494900095DBCC /* HeadToHeadBet.swift */,
+				867C14B42B4494900095DBCC /* ChallengeTicket.swift */,
 				3CB1AC8A2A61602700C931CA /* Group.swift */,
 				866251112A3E892E00708495 /* Bet.swift */,
 				3C3DB73B2A7C6129000F6898 /* Chat.swift */,
@@ -626,7 +626,7 @@
 				867801802A213CB9006FE479 /* tabBarView.swift in Sources */,
 				867713EE2AC3284A00B2B036 /* Stats.swift in Sources */,
 				3C065BAA2AC714C40040D6CE /* statsViewModel.swift in Sources */,
-				867C14B52B4494900095DBCC /* HeadToHeadBet.swift in Sources */,
+				867C14B52B4494900095DBCC /* ChallengeTicket.swift in Sources */,
 				8688C5902AFFDCBD007EED78 /* GifImage.swift in Sources */,
 				3CD023D02A84655E0033D761 /* groupSettingsView.swift in Sources */,
 				865C4A762A327CA600C3C626 /* authenticationView.swift in Sources */,

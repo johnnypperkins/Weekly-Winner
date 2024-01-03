@@ -215,7 +215,7 @@ struct challengePage1: View {
                                                     wagerAmount: wagerAmount).background(K.finalColor.backgroundBlue)}, label: {
                         HStack{
                             Spacer()
-                            Text("Place Bet")
+                            Text("Choose Games")
                                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
                                 .foregroundColor(.white)
                             Spacer()
@@ -240,16 +240,19 @@ struct challengePage2: View {
     let wagerAmount: Double
     
     @State var challengeFormat = "timeBased"
+    @State var amountTime = 1
     
     var body: some View {
         
         NavigationStack {
             ZStack {
-                K.finalColor.backgroundBlue
+                
                 VStack (spacing: 4) {
                     HStack (spacing: 0) {
                         Button(action: {
-                            challengeFormat = "timeBased"
+                            withAnimation {
+                                challengeFormat = "timeBased"
+                            }
                         }) {
                             Text("Time Based")
                                 .font(.custom(K.customFonts.lexendDecaMedium, size: 17))
@@ -259,7 +262,10 @@ struct challengePage2: View {
                         }
                         
                         Button(action: {
-                            challengeFormat = "gameBased"
+                            withAnimation {
+                                challengeFormat = "gameBased"
+                            }
+                            
                         }) {
                             Text("Game Based")
                                 .font(.custom(K.customFonts.lexendDecaMedium, size: 17))
@@ -274,19 +280,45 @@ struct challengePage2: View {
                         .frame(width: 120, height: 3)
                         .cornerRadius(1)
                         .offset(x: challengeFormat == "timeBased" ? -75 : 75, y: 0)
-                        .animation(.easeInOut(duration: 0.35))
+                        
                     
                     if challengeFormat == "timeBased" {
-                        timeBasedView()
+                        CustomStepper(value: $amountTime, range: 1...7, title: "Duration of Bet (Days)")
+                            .padding(.horizontal,14)
+                            .onChange(of: amountTime) { newValue in
+                                viewModel.fetchTimeGames(amountTime: newValue) {
+                                    
+                                }
+                                        }
+                        timeBasedView(challengeFormat: challengeFormat, viewModel: viewModel)
                     } else if challengeFormat == "gameBased" {
-                        gameBasedView(viewModel: viewModel)
+                        gameBasedView(challengeFormat: challengeFormat, viewModel: viewModel)
                             .padding(.top, 7.5)
                     }
                     
                     Spacer()
-                }.padding(.top, 40)
+                    Button {
+                        viewModel.submitSelectedGames()
+                    } label: {
+                        HStack{
+                            Spacer()
+                            Text("Place Bet")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                .foregroundColor(.white)
+                            Spacer()
+                        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+                            .background(Color(red: 0.31, green: 0.57, blue: 1))
+                            .cornerRadius(10)
+                            .padding(.horizontal,16)
+                            .padding(.bottom,20)
+                    }
+
+                        
+                    
+                }.padding(.top, 20)
                  .cornerRadius(7.5)
-            }
+            }.background(K.finalColor.backgroundBlue)
+                .navigationBarBackButtonHidden()
         }
     }
 }
@@ -319,14 +351,58 @@ struct searchBarView: View {
 }
 
 struct timeBasedView: View {
+    @State var searchTerm = ""
+     var challengeFormat: String
+    
+    @ObservedObject var viewModel: challengeViewModel
+    
+    func shouldAppear(search: String, input: String) -> Bool {
+        return input.lowercased().contains(search.lowercased())
+    }
+    
     var body: some View {
-        Text("hello")
+        VStack {
+            HStack {
+                TextField("Search", text: $searchTerm)
+                    .placeholder(when: searchTerm == "", placeholder: {
+                        Text("Search for games...").foregroundColor(.gray)
+                            .padding(.leading, 2)
+                    })
+                    .foregroundColor(.white)
+                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                    .accentColor(.white)
+                    .textInputAutocapitalization(.words)
+                    .disableAutocorrection(true)
+                //.padding(.vertical, 5)
+               
+                
+            }
+            .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 15))
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 40, maxHeight: 40)
+            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+            .cornerRadius(7.5)
+            .padding(EdgeInsets(top: 0, leading: 14, bottom: 0, trailing: 10))
+            
+            ScrollView {
+                VStack(spacing: 5) {
+                    ForEach(viewModel.timeGames, id: \.idd) { game in
+                                    if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
+                        if game.commenceTime.dateValue() > Date() {
+                            gameRowImages(game: game, challengeFormat: challengeFormat, viewModel: viewModel)
+                        }
+                        
+                                    }
+                    }.padding(.horizontal)
+                }
+            }
+        }
     }
 }
 
 struct gameBasedView: View {
     
     @State var searchTerm = ""
+     var challengeFormat: String
     
     @ObservedObject var viewModel: challengeViewModel
     
@@ -362,7 +438,15 @@ struct gameBasedView: View {
                     ForEach(viewModel.allGames, id: \.idd) { game in
                                     if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
                         if game.commenceTime.dateValue() > Date() {
-                            gameRowImages(game: game)
+                            Button {
+                                viewModel.toggleGameSelection(game.idd)
+                            } label: {
+                                gameRowImages(game: game, challengeFormat: challengeFormat, viewModel: viewModel)
+//                                    .background(viewModel.selectedGameIDs.contains(game.idd) ? Color.gray : Color.clear)
+
+                            }
+
+                            
                         }
                         
                                     }
@@ -376,8 +460,13 @@ struct gameBasedView: View {
 struct gameRowImages: View {
     
     let game: Game
+     var challengeFormat: String
+    @ObservedObject var viewModel: challengeViewModel
+    
     @State var titleStringH: String = ""
     @State var titleStringA: String = ""
+    @State private var isSelected: Bool = false
+    
     
     
     var maxHeight = 100
@@ -428,10 +517,16 @@ struct gameRowImages: View {
             
         }.padding(.horizontal)
             .padding(EdgeInsets(top: 7.5, leading: 0, bottom: 4, trailing: 0))
-            .background(K.finalColor.cardBlue)
+            .background(isSelected && challengeFormat == "gameBased" ? K.finalColor.blueGray : K.finalColor.cardBlue)
             .cornerRadius(10)
         .padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
+        .onTapGesture { if challengeFormat == "gameBased" {
+            isSelected.toggle()
+            viewModel.toggleGameSelection(game.idd)
+        }
+            // Toggle the selection state when the view is tapped
+                }
     }
     
     struct PlaceBetImage: View {
