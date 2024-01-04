@@ -26,8 +26,8 @@ struct challengeView: View {
     }
 
     private func offsetForSelectedTab() -> CGFloat {
-        let baseOffset: CGFloat = -212.5
-        let tabWidth: CGFloat = 85
+        let baseOffset: CGFloat = -150
+        let tabWidth: CGFloat = 100
         let offset = baseOffset + CGFloat(tabSelected + 1) * tabWidth
         return offset
     }
@@ -38,14 +38,14 @@ struct challengeView: View {
             VStack {
                 VStack (spacing: 4) {
                     HStack (spacing: 0) {
-                        ForEach(0..<4, id: \.self) { index in
+                        ForEach(0..<3, id: \.self) { index in
                             Button(action: {
                                 tabSelected = index
                             }) {
                                 Text(tabTitle(for: index))
                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 17))
                                     .foregroundColor(.white)
-                                    .frame(width: 85, height: 35, alignment: .center)
+                                    .frame(width: 100, height: 35, alignment: .center)
                                     .cornerRadius(5)
                             }
                         }
@@ -53,7 +53,7 @@ struct challengeView: View {
 
                     Rectangle()
                         .fill(Color.white)
-                        .frame(width: 75, height: 3)
+                        .frame(width: 80, height: 3)
                         .cornerRadius(1)
                         .offset(x: offsetForSelectedTab(), y: 0)
                         .animation(.easeInOut(duration: 0.35))
@@ -97,7 +97,7 @@ struct challengePage1: View {
     @State var opponentUsername = ""
     @State private var selectedUserID: String?
     @State private var wagerAmount: Double = 0
-    let maxWagerAmount: Double = 200
+    let maxWagerAmount: Double = 100
     
     @State private var oneLegNum: Int = 0
     @State private var twoLegNum: Int = 0
@@ -121,7 +121,11 @@ struct challengePage1: View {
             ZStack {
                 K.finalColor.backgroundBlue
                 VStack {
-                    
+                    HStack {
+                        Text(String(format: "$%.2f", wagerAmount))
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 50))
+                            .foregroundColor(.white)
+                    }.padding(.top, 30)
                     HStack (spacing: 20){
                         Button(action: {
                             if currencyChosen != "PoolBucks" {
@@ -151,22 +155,23 @@ struct challengePage1: View {
                             .background(currencyChosen == "PoolCoins" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
                             .cornerRadius(5)
                         }
-                    }.padding(.top, 40)
+                    }
+                    
                     VStack {
                         HStack{
-                            Text("Enter Bet Amount")
+                            Text("Adjust Bet Amount")
                                 .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
                                 .foregroundColor(.white)
                             Spacer()
-                            Text(String(format: "%.1f", wagerAmount))
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
-                                .foregroundColor(.white)
+//                            Text(String(format: "%.1f", wagerAmount))
+//                                .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
+//                                .foregroundColor(.white)
                         }
                         Slider(value: $wagerAmount, in: 0...maxWagerAmount, step: 1) { editing in
                             
                         }
                         .accentColor(.white)
-                        .background(Color(red: 0.77, green: 0.85, blue: 0.98).blur(radius: 15).opacity(0.60))
+                        //.background(Color(red: 0.77, green: 0.85, blue: 0.98).blur(radius: 15).opacity(0.60))
                         
                         
                     }.padding(.horizontal,20)
@@ -186,45 +191,63 @@ struct challengePage1: View {
 //                    }
                     ScrollView {
                         ForEach(viewModel.queriedUsers, id: \.id) { user in
-                            
                             userBio(user: user, selectedUserID: $selectedUserID)
                                 .padding(.vertical,3)
                                 .padding(.horizontal,14)
                         }
-                    }
-                    Spacer()
+                    }.frame(height: 150)
                     VStack {
                         CustomStepper(value: $oneLegNum, range: 0...8, title: "1 Legs")
                             .padding(.horizontal,14)
-                        CustomStepper(value: $twoLegNum, range: 0...5, title: "2 Legs")
-                            .padding(.horizontal,14)
-                        CustomStepper(value: $threeLegNum, range: 0...4, title: "3 Legs")
-                            .padding(.horizontal,14)
-                        CustomStepper(value: $fourLegNum, range: 0...3, title: "4 Legs")
-                            .padding(.horizontal,14)
-                        CustomStepper(value: $fiveLegNum, range: 0...2, title: "5 Legs")
-                            .padding(.horizontal,14)
+//                        CustomStepper(value: $twoLegNum, range: 0...5, title: "2 Legs")
+//                            .padding(.horizontal,14)
+//                        CustomStepper(value: $threeLegNum, range: 0...4, title: "3 Legs")
+//                            .padding(.horizontal,14)
+//                        CustomStepper(value: $fourLegNum, range: 0...3, title: "4 Legs")
+//                            .padding(.horizontal,14)
+//                        CustomStepper(value: $fiveLegNum, range: 0...2, title: "5 Legs")
+//                            .padding(.horizontal,14)
                     }
-                    
+                    Spacer()
+
       
-                    
-                    NavigationLink(destination: {challengePage2(
-                        viewModel: viewModel, currencyChosen: currencyChosen,
-                                                    opponentUsername: opponentUsername,
-                                                    selectedUserID: selectedUserID,
-                                                    wagerAmount: wagerAmount).background(K.finalColor.backgroundBlue)}, label: {
+                    // user, amount, ticketformat
+                    if wagerAmount > 0 && !viewModel.queriedUsers.isEmpty && oneLegNum > 0 {
+                        NavigationLink(destination: {challengePage2(
+                                                        viewModel: viewModel,
+                                                        currencyChosen: currencyChosen,
+                                                        opponentUsername: opponentUsername,
+                                                        selectedUserID: selectedUserID,
+                                                        wagerAmount: wagerAmount,
+                                                        ticketFormat: customizeTicketFormat(oneLegNum, 0, 0, 0, 0)
+                                                    ).background(K.finalColor.backgroundBlue)}, label: {
+                            HStack{
+                                Spacer()
+                                Text("Choose Games")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .foregroundColor(.white)
+                                Spacer()
+                            }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+                                .background(Color(red: 0.31, green: 0.57, blue: 1))
+                                .cornerRadius(10)
+                                .padding(.horizontal,16)
+                                .padding(.bottom,20)
+                        })
+                    } else {
                         HStack{
                             Spacer()
-                            Text("Choose Games")
+                            Text("Fill Challenge Fields")
                                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
                                 .foregroundColor(.white)
                             Spacer()
                         }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                            .background(Color(red: 0.31, green: 0.57, blue: 1))
+                            .background(K.finalColor.titleBlue.opacity(0.6))
                             .cornerRadius(10)
                             .padding(.horizontal,16)
                             .padding(.bottom,20)
-                    })
+                    }
+                    
+                    
                 }
             }
         }.background(K.finalColor.backgroundBlue)
@@ -238,6 +261,7 @@ struct challengePage2: View {
     let opponentUsername: String
     let selectedUserID: String?
     let wagerAmount: Double
+    let ticketFormat: [Int]
     
     @State var challengeFormat = "timeBased"
     @State var amountTime = 1
@@ -297,24 +321,35 @@ struct challengePage2: View {
                     }
                     
                     Spacer()
-                    Button {
-                        viewModel.submitSelectedGames()
-                    } label: {
+                    if !viewModel.selectedGames.isEmpty {
+                        NavigationLink(destination: {challengePage3(viewModel: viewModel)}, label: {
+                            HStack{
+                                Spacer()
+                                Text("Continue To Bets")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .foregroundColor(.white)
+                                Spacer()
+                            }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+                                .background(Color(red: 0.31, green: 0.57, blue: 1))
+                                .cornerRadius(10)
+                                .padding(.horizontal,16)
+                                .padding(.bottom,20)
+                        })
+                    } else {
                         HStack{
                             Spacer()
-                            Text("Place Bet")
+                            Text("Select a Game")
                                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
                                 .foregroundColor(.white)
                             Spacer()
                         }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                            .background(Color(red: 0.31, green: 0.57, blue: 1))
+                            .background(K.finalColor.titleBlue.opacity(0.6))
                             .cornerRadius(10)
                             .padding(.horizontal,16)
                             .padding(.bottom,20)
                     }
-
-                        
                     
+   
                 }.padding(.top, 20)
                  .cornerRadius(7.5)
             }.background(K.finalColor.backgroundBlue)
@@ -322,6 +357,7 @@ struct challengePage2: View {
         }
     }
 }
+
 
 struct searchBarView: View {
     @Binding var keyword: String
@@ -439,7 +475,7 @@ struct gameBasedView: View {
                                     if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
                         if game.commenceTime.dateValue() > Date() {
                             Button {
-                                viewModel.toggleGameSelection(game.idd)
+                                viewModel.toggleGameSelection(game)
                             } label: {
                                 gameRowImages(game: game, challengeFormat: challengeFormat, viewModel: viewModel)
 //                                    .background(viewModel.selectedGameIDs.contains(game.idd) ? Color.gray : Color.clear)
@@ -517,13 +553,13 @@ struct gameRowImages: View {
             
         }.padding(.horizontal)
             .padding(EdgeInsets(top: 7.5, leading: 0, bottom: 4, trailing: 0))
-            .background(isSelected && challengeFormat == "gameBased" ? K.finalColor.blueGray : K.finalColor.cardBlue)
+            .background(isSelected && challengeFormat == "gameBased" ? K.finalColor.winningGreen.opacity(0.7) : K.finalColor.cardBlue)
             .cornerRadius(10)
         .padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
         .onTapGesture { if challengeFormat == "gameBased" {
             isSelected.toggle()
-            viewModel.toggleGameSelection(game.idd)
+            viewModel.toggleGameSelection(game)
         }
             // Toggle the selection state when the view is tapped
                 }

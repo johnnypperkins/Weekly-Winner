@@ -17,6 +17,11 @@ class challengeViewModel: ObservableObject {
     @Published var allGames: [Game] = []
     @Published var timeGames: [Game] = []
     @Published var selectedGameIDs = [String]()
+    @Published var selectedGames: [Game] = []
+    @Published var totalBetArrays: [[Bet]] = []
+    @Published var availableBetsArray: [Int] = []
+    @Published var ticketFormat: [Int] = []
+
 
     init() {
         self.fetchAllGames() {
@@ -30,15 +35,51 @@ class challengeViewModel: ObservableObject {
             print("Selected Games: \(selectedGameIDs)")
         }
     
-    func toggleGameSelection(_ gameID: String) {
-            if selectedGameIDs.contains(gameID) {
-                selectedGameIDs.removeAll { $0 == gameID }
-                print(gameID)
-            } else {
-                selectedGameIDs.append(gameID)
-                print(gameID + "ffff")
+    func toggleGameSelection(_ game: Game) {
+        // Assuming 'gameID' is a property of 'Game'
+        let gameID = game.idd
+
+        // Check if 'selectedGames' contains a game with the same 'gameID'
+        if let index = selectedGames.firstIndex(where: { $0.idd == gameID }) {
+            selectedGames.remove(at: index)
+            print("\(game) removed")
+        } else {
+            selectedGames.append(game)
+            print("\(game) added")
+        }
+        
+        print("ALL GAMES IN ARRAY: \(selectedGames)")
+        
+    }
+    
+    func isTeamAvailable(_ team: String,_ groupNumber: Int, _ betType: BetType) -> Bool {
+        for betArray in totalBetArrays {
+            for bet in betArray {
+                if bet.teamBetOn == team && bet.groupNumber == groupNumber && bet.betType == betType  {
+                    return false
+                }
             }
         }
+        return true
+    }
+    
+    func setAvailability() {
+        self.availableBetsArray.removeAll()
+        for (index, parlayMax) in ticketFormat.enumerated() {
+            let betArray = self.totalBetArrays[index]
+            if betArray.count >= parlayMax {
+                //print("Appending betNumber:", parlayIndex + 1) // Debug print
+                self.availableBetsArray.append(-1)
+            } else {
+                if betArray.contains(where: { $0.result == .loss }) {
+                    self.availableBetsArray.append(-1)
+                } else {
+                    self.availableBetsArray.append(index+1)
+                }
+            }
+        }
+    }
+
     
 //    func createGroup(groupImageURL: UIImage?, groupAdminUsername: String, groupName: String, groupSlogan: String, password: String, ticketFormat: [Int]) {
 //        
