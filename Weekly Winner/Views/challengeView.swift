@@ -199,28 +199,28 @@ struct challengePage1: View {
                     VStack {
                         CustomStepper(value: $oneLegNum, range: 0...8, title: "1 Legs")
                             .padding(.horizontal,14)
-//                        CustomStepper(value: $twoLegNum, range: 0...5, title: "2 Legs")
-//                            .padding(.horizontal,14)
-//                        CustomStepper(value: $threeLegNum, range: 0...4, title: "3 Legs")
-//                            .padding(.horizontal,14)
-//                        CustomStepper(value: $fourLegNum, range: 0...3, title: "4 Legs")
-//                            .padding(.horizontal,14)
-//                        CustomStepper(value: $fiveLegNum, range: 0...2, title: "5 Legs")
-//                            .padding(.horizontal,14)
                     }
                     Spacer()
 
       
                     // user, amount, ticketformat
                     if wagerAmount > 0 && !viewModel.queriedUsers.isEmpty && oneLegNum > 0 {
-                        NavigationLink(destination: {challengePage2(
-                                                        viewModel: viewModel,
-                                                        currencyChosen: currencyChosen,
-                                                        opponentUsername: opponentUsername,
-                                                        selectedUserID: selectedUserID,
-                                                        wagerAmount: wagerAmount,
-                                                        ticketFormat: customizeTicketFormat(oneLegNum, 0, 0, 0, 0)
-                                                    ).background(K.finalColor.backgroundBlue)}, label: {
+                        NavigationLink(destination: {
+                            challengePage2(
+                                viewModel: viewModel,
+                                currencyChosen: currencyChosen,
+                                opponentUsername: opponentUsername,
+                                selectedUserID: selectedUserID,
+                                wagerAmount: wagerAmount,
+                                ticketFormat: customizeTicketFormat(oneLegNum, 0, 0, 0, 0)
+                            ).background(K.finalColor.backgroundBlue)
+                                .onAppear {
+                                    viewModel.setTicketFormat(ticketFormat: customizeTicketFormat(oneLegNum, 0, 0, 0, 0))
+                                    viewModel.setEmptyTotalBetArray(ticketFormat: customizeTicketFormat(oneLegNum, 0, 0, 0, 0))
+                                    viewModel.setBetAvailability(ticketFormat: customizeTicketFormat(oneLegNum, 0, 0, 0, 0))
+                                }
+                            
+                        }, label: {
                             HStack{
                                 Spacer()
                                 Text("Choose Games")
@@ -473,7 +473,7 @@ struct gameBasedView: View {
                 VStack(spacing: 5) {
                     ForEach(viewModel.allGames, id: \.idd) { game in
                                     if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
-                        if game.commenceTime.dateValue() > Date() {
+//                        if game.commenceTime.dateValue() > Date() {
                             Button {
                                 viewModel.toggleGameSelection(game)
                             } label: {
@@ -483,7 +483,7 @@ struct gameBasedView: View {
                             }
 
                             
-                        }
+//                        }
                         
                                     }
                     }.padding(.horizontal)

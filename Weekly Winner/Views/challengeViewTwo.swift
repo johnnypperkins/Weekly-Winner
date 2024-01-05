@@ -20,60 +20,62 @@ struct challengePage3: View {
 
 
     var body: some View {
-        ZStack{
-            VStack {
-  
-                HStack{
-                    Text("Team Name") // team name
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                        .foregroundColor(K.finalColor.textWhite)
-                        .padding(.leading)
-                    Spacer()
-                    HStack(spacing: 15) {
-                        Text("Spr")
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                            .foregroundColor(K.finalColor.textWhite)
-                            .frame(width: 50, alignment: .center)
-                        Text("Tot")
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                            .foregroundColor(K.finalColor.textWhite)
-                            .frame(width: 50, alignment: .center)
-                            .padding(.trailing, 9)
-                    }
+        NavigationStack {
+            ZStack{
+                VStack {
                     
-                    Divider()
-                }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 30, alignment: .center)
-                .padding(.horizontal)
-                .overlay(
-                        Rectangle()
-                            .frame(height: 1)
-                            //.padding(.top, 100)
-                            .padding(.horizontal)
-                            .foregroundColor(.white), alignment: .bottom)
-
-                ScrollView {
-                    VStack(spacing: 5) {
-                        // Displaying games
-                        if !viewModel.selectedGames.isEmpty {
-                            ForEach(viewModel.selectedGames, id: \.idd) { game in
-                                    if game.commenceTime.dateValue() > Date() {
-                                        gameRowViewCHALLENGE(game: game, isDisabled: false, viewModel: viewModel)
-                                    }
-                            }.padding(.horizontal)
+                    HStack{
+                        Text("Team Name") // team name
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                            .foregroundColor(K.finalColor.textWhite)
+                            .padding(.leading)
+                        Spacer()
+                        HStack(spacing: 15) {
+                            Text("Spr")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                .foregroundColor(K.finalColor.textWhite)
+                                .frame(width: 50, alignment: .center)
+                            Text("Tot")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                .foregroundColor(K.finalColor.textWhite)
+                                .frame(width: 50, alignment: .center)
+                                .padding(.trailing, 9)
                         }
-                    }.padding(.bottom,40)
-                }.padding(EdgeInsets(top: 10, leading: 0, bottom: 30, trailing: 0))
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(K.finalColor.backgroundBlue)
-            .cornerRadius(isShowing ? 50 : 30)
+                        
+                        Divider()
+                    }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 30, alignment: .center)
+                        .padding(.horizontal)
+                        .overlay(
+                            Rectangle()
+                                .frame(height: 1)
+                            //.padding(.top, 100)
+                                .padding(.horizontal)
+                                .foregroundColor(.white), alignment: .bottom)
+                    
+                    ScrollView {
+                        VStack(spacing: 5) {
+                            // Displaying games
+                            if !viewModel.selectedGames.isEmpty {
+                                ForEach(viewModel.selectedGames, id: \.idd) { game in
+                                    //                                    if game.commenceTime.dateValue() > Date() {
+                                    gameRowViewCHALLENGE(game: game, isDisabled: false, viewModel: viewModel)
+                                    //                                    }
+                                }.padding(.horizontal)
+                            }
+                        }.padding(.bottom,40)
+                    }.padding(EdgeInsets(top: 10, leading: 0, bottom: 30, trailing: 0))
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(K.finalColor.backgroundBlue)
+                .cornerRadius(isShowing ? 50 : 30)
                 .blur(radius: isShowing ? 8 : 0)
                 .offset(x:isShowing ? 300 : 0, y: isShowing ? 100 : 0)
                 .scaleEffect(isShowing ? 0.8 : 1)
-        }.background(K.finalColor.backgroundBlue)
-            .padding(EdgeInsets(top: 80, leading: 0, bottom: 55, trailing: 0))
-            .navigationBarHidden(false)
-
+            }.background(K.finalColor.backgroundBlue)
+                .padding(EdgeInsets(top: 80, leading: 0, bottom: 55, trailing: 0))
+                .navigationBarHidden(false)
+        }
     }
 }
 
@@ -232,7 +234,7 @@ struct BetDetailsViewCHALLENGE: View {
         
 
             if betNumber < 0 {
-                uploadText = "Ticket Complete"
+                uploadText = "Ticket Full"
                 placeBetOpacity = 0.6
                 placeBetColor = K.finalColor.titleBlue.opacity(0.6)
             } else {
@@ -300,10 +302,10 @@ struct BetDetailsViewCHALLENGE: View {
 //                            }
                         VStack {
                                 VStack {
-                                    Text("Bet")
+                                    Text("Challenge Ticket")
                                         .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                                         .foregroundColor(K.finalColor.textWhite)
-                                        .frame(width: 150, alignment: .leading)
+                                        .frame(width: 240, alignment: .leading)
                                         //.padding(EdgeInsets(top: 70, leading: 15, bottom: 0, trailing: 0))
                                         .background(K.finalColor.backgroundBlue)
                                 }
@@ -312,16 +314,15 @@ struct BetDetailsViewCHALLENGE: View {
                                         ScrollView {
                                                 if betNumber >= 0 {
                                                     ForEach(0..<1, id: \.self) { _ in
-                                                        //var parlayIndex = 1
                                                         let availableBets = viewModel.availableBetsArray
-                                                        let ticketFormat = viewModel.currentTicketFormat
+                                                        let ticketFormat = viewModel.ticketFormat
                                                         ForEach(0..<availableBets.count, id: \.self) { index in
                                                             if availableBets[index] > 0 {
                                                                 Button(action: {
                                                                     betNumber = index + 1
                                                                     print("Selection changed to: \(index+1)")
                                                                     checkTeamTaken()
-                                                                    if betNumber <= viewModel.currentTicketFormat.count && betNumber > 0 {
+                                                                    if betNumber <= viewModel.ticketFormat.count && betNumber > 0 {
                                                                         if ticketFormat[index] == 5 {
                                                                             if betType == .betAwaySpread {
                                                                                 chosenSpread = game.awaySpread + 1
@@ -355,7 +356,7 @@ struct BetDetailsViewCHALLENGE: View {
                                                                         Text(parlayTitle(ticketFormat: ticketFormat, index: index)).tag(index+1)
                                                                             .foregroundColor(K.finalColor.textWhite)
                                                                             .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
-                                                                    }.frame(width: 120, height: 30, alignment: .center)
+                                                                    }.frame(width: 240, height: 30, alignment: .center)
                                                                         .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
                                                                         .background(betNumber == index+1 ? K.finalColor.titleBlue : K.veryLightGray.opacity(0.4))
                                                                         .cornerRadius(5)
@@ -369,7 +370,7 @@ struct BetDetailsViewCHALLENGE: View {
                                                         Spacer()
                                                         VStack (alignment: .center){
                                                             
-                                                            Text("Ticket")
+                                                            Text("Challenge")
                                                                 .foregroundColor(K.finalColor.textWhite)
                                                                 .font(.custom(K.customFonts.lexendDecaLight, size: 16))
                                                             Text("Complete")
@@ -388,16 +389,16 @@ struct BetDetailsViewCHALLENGE: View {
                                                 }
                                         }.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
                                     
-                                }.frame(width: 120, height: 120)
+                                }.frame(width: 240, height: 100)
                                     .padding(.horizontal)
-//                                    .onAppear {
-//                                        if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
-//                                            betNumber = firstNumberGreaterThanZero
-//                                        } else {
-//                                            betNumber = -99
-//                                        }
-//                                        checkTeamTaken()
-//                                    }
+                                    .onAppear {
+                                        if let firstNumberGreaterThanZero = viewModel.availableBetsArray.first(where: { $0 > 0 }) {
+                                            betNumber = firstNumberGreaterThanZero
+                                        } else {
+                                            betNumber = -99
+                                        }
+                                        checkTeamTaken()
+                                    }
                                     .background(K.finalColor.cardBlue)
                                     .cornerRadius(7.5)
                             
@@ -443,18 +444,23 @@ struct BetDetailsViewCHALLENGE: View {
                     
                 Button(action: {
                     print("groupNumber: \(groupNumber), betNumber: \(betNumber)")
-                    viewModel.uploadBet(groupNumber: groupNumber, groupID: timeFrame == "daily" ? StaticUserData.shared.dailyTicket.groupID : StaticUserData.shared.weeklyTicket.groupID
-                                        , betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread), whichSport: game.whichSport), betType: betType, gameID: game.idd, whichSport: game.whichSport, points_bought: Int(chosenSpread-originalSpread), timeFrame: timeFrame) {_ in
-                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketFormat, timeFrame: timeFrame) {
-                            let groupServe = groupService()
-                            groupServe.setChallengePotentialToWin(potential: 0, groupNumber: groupNumber, timeFrame: timeFrame, completion: {_ in })
-//                            ticketVM.fetchUserTickets(timeFrame: timeFrame) {
-//                                ticketVM.fetchCurrentRankedTickets(groupID: timeFrame == "daily" ? "GlobalDaily" : "Global", timeFrame: timeFrame) {}
-                                
-//                            }
-                            
-                        }
-                    }
+                    
+                    viewModel.uploadChallengeBet(bet: 
+                                                    Bet(id: "" /*WILL ADD*/,
+                                                        groupNumber: 0, groupID: "",
+                                                        betNumber: betNumber,
+                                                        weekNumber: 0,
+                                                        betType: betType,
+                                                        teamBetOn: whichTeam, 
+                                                        betLine: Float(chosenSpread),
+                                                        betOdds: Float(returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread), whichSport: game.whichSport)),
+                                                        result: .notStarted,
+                                                        gameID: game.idd,
+                                                        whichSport: game.whichSport,
+                                                        timestamp: Timestamp(date: Date()),
+                                                        points_bought: Int(chosenSpread-originalSpread))
+                    )
+                    
                     withAnimation {
                         dismiss()
                         betType = .None
@@ -471,7 +477,7 @@ struct BetDetailsViewCHALLENGE: View {
                         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
                         //f.padding(.horizontal, 25)
                 })
-                .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) || (game.commenceTime.seconds > (Timestamp(date: Calendar.current.startOfDay(for: Date())).seconds + 86400) && timeFrame == "daily"))
+                .disabled(betNumber < 0 || !viewModel.isTeamAvailable(whichTeam, groupNumber, betType) || (game.commenceTime.seconds > (Timestamp(date: Calendar.current.startOfDay(for: Date())).seconds + 86400) && timeFrame == "daily"))
                 .padding(.horizontal)
                 .background(K.finalColor.backgroundBlue)
             }.padding(.horizontal)
@@ -500,103 +506,3 @@ struct BetDetailsViewCHALLENGE: View {
         }
     }
 }
-
-/*
-struct BetSliderViewCHALLENGE: View {
-    var whichSport: String
-    var teamName: String
-    var originalSpread: Double
-    var parlaySize: Int
-    //var extra: String
-    var internalExtra: String {
-        if chosenSpread < 0 {
-                return ""
-            } else {
-                switch betType {
-                case .betHomeSpread:
-                    return "+"
-                case .betAwaySpread:
-                    return "+"
-                case .over:
-                    return "o"
-                case .under:
-                    return "u"
-                default:
-                    return ""
-                }
-            }
-    }
-    
-    var spreadExtension: Double {
-        print("Parlay size: ", parlaySize)
-        if parlaySize == 1 {
-            return 15
-        } else if parlaySize == 2 {
-            return 4
-        } else if parlaySize == 3 {
-            return 1
-        } else if parlaySize == 4 || parlaySize == 5 {
-            return -1
-        }
-        
-        return 10
-    }
-    var step: Int {
-        if betType == .over {
-            return -1
-        } else {
-            return 1
-        }
-    }
-    var betType: BetType
-    @Binding var chosenSpread: Double
-    
-    var body: some View {
-        VStack (spacing: 0){
-            HStack (spacing: 10) {
-                Text("Team")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                    .foregroundColor(.white)
-                    .frame(width: 100, alignment: .leading)
-                Spacer()
-                Text(betType == .over || betType == .under ? "Total" : "Spread")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                    .foregroundColor(.white)
-                    .frame(width: 60, alignment: .leading)
-                Text("Odds")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                    .foregroundColor(.white)
-                    .frame(width: 65, alignment: .trailing)
-            }.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
-                .padding(.horizontal)
-                .background(K.finalColor.backgroundBlue)
-            HStack (spacing: 10){
-                Text("\(teamName)")
-                    //.font(.custom(K.customFonts.lexendDecaMedium, size: 15))
-                    .font(.custom(K.customFonts.lexendDecaLight, size: teamName.count < 25 ? 16 : 10))
-                    .foregroundColor(.white)
-                    .lineLimit(3)
-                    .frame(width: 150, height: 40, alignment: .leading)
-                    //.background(.white)
-                Spacer()
-                Text(chosenSpread == 0 ? "ML" : "\(internalExtra)\(String(format: "%.0f", chosenSpread))")
-                    .font(.custom(K.customFonts.lexendDecaLight, size: 18))
-                    .foregroundColor(.white)
-                    .frame(width: 60, alignment: .leading)
-                Text("\(percentageToML(percentage: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread), whichSport: whichSport)))")
-                    .font(.custom(K.customFonts.lexendDecaLight, size: 18))
-                    .foregroundColor(.white)
-                    .frame(width: 65, alignment: .trailing)
-            }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
-                .padding(.horizontal)
-                .background(K.finalColor.backgroundBlue)
-            HStack {
-                Slider(value: $chosenSpread, in: betType == .over ? Double(originalSpread - 15)...Double(originalSpread + spreadExtension) : Double(originalSpread - spreadExtension)...Double(originalSpread + 15), step: 1)
-                    .accentColor(K.finalColor.titleBlue)
-            }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
-                .padding(.horizontal)
-        }.cornerRadius(10)
-    }
-}
-
-*/

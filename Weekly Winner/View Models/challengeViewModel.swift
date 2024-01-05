@@ -17,7 +17,6 @@ class challengeViewModel: ObservableObject {
     @Published var allGames: [Game] = []
     @Published var timeGames: [Game] = []
     @Published var selectedGameIDs = [String]()
-//    @Published var timeGameIDs = [String]()
     @Published var selectedGames: [Game] = []
     @Published var totalBetArrays: [[Bet]] = []
     @Published var availableBetsArray: [Int] = []
@@ -35,6 +34,20 @@ class challengeViewModel: ObservableObject {
             // Handle submission logic here
             print("Selected Games: \(selectedGameIDs)")
         }
+    
+    func setTicketFormat(ticketFormat: [Int]) {
+        self.ticketFormat = ticketFormat
+    }
+    
+    func setEmptyTotalBetArray(ticketFormat: [Int]) {
+        self.totalBetArrays.removeAll() // Clear previous data
+        for _ in ticketFormat {
+            var tempArr: [Bet] = []
+            self.totalBetArrays.append(tempArr)
+        }
+//        print("TOTAL BET ARRAYS \(self.totalBetArrays)")
+    }
+    
     
 //    func submitTimeGames() {
 //            // Handle submission logic here
@@ -70,73 +83,7 @@ class challengeViewModel: ObservableObject {
         return true
     }
     
-    func fetchChallengeBets(uid: String, challengeID: String, ticketFormat: [Int],/* timeFrame: String,*/ completion: @escaping () -> Void) {
-        // totalBetArrats
-        // availableBetsArray
-        let documentLoc:String = {
-            if timeFrame == "weekly" {
-                return "week"
-            } else {
-                return "day"
-            }
-        }()
-        
-        let collectionLoc:String = {
-            if timeFrame == "weekly" {
-                return "currentWeekBets"
-            } else {
-                return "currentDayBets"
-            }
-        }()
-        
-            let query = self.db.collection("users").document(uid).collection("bets").document(documentLoc).collection(collectionLoc)
-                .whereField("groupNumber", isEqualTo: groupNumber)
-        query.getDocuments { (querySnapshot, error) in
-            DispatchQueue.main.async {
-                guard let documents = querySnapshot?.documents else {
-                    print("No documents")
-                    return
-                }
-                self.totalBetArrays.removeAll() // Clear previous data
-                for (index, parlayMax) in ticketFormat.enumerated() {
-                    let betTempArr = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
-                        return try? queryDocumentSnapshot.data(as: Bet.self)
-                    }.filter { $0.betNumber == index+1 }.prefix(parlayMax))
-                    self.totalBetArrays.append(betTempArr)
-                }
- 
-                self.availableBetsArray.removeAll()
-                for (index, parlayMax) in ticketFormat.enumerated() {
-                    let betArray = self.totalBetArrays[index]
-                    if betArray.filter({ $0.groupNumber == groupNumber }).count >= parlayMax {
-                        //print("Appending betNumber:", parlayIndex + 1) // Debug print
-                        self.availableBetsArray.append(-1)
-                    } else {
-                        if betArray.contains(where: { $0.result == .loss }) {
-                            self.availableBetsArray.append(-1)
-                        } else {
-                            self.availableBetsArray.append(index+1)
-                        }
-                    }
-                }
-                
-                self.calculateTotals(for: groupNumber, ticketFormat: ticketFormat)
-
-                if let error = error {
-                    print(error)
-                } else {
-                    self.currentTicketFormat = ticketFormat
-                    self.isBetsLoaded = true
-                    self.isTFLoaded = true
-                }
-
-                // Call completion handler
-                completion()
-            }
-        }
-    }
-    
-    func setAvailability() {
+    func setBetAvailability(ticketFormat: [Int]) {
         self.availableBetsArray.removeAll()
         for (index, parlayMax) in ticketFormat.enumerated() {
             let betArray = self.totalBetArrays[index]
@@ -151,7 +98,70 @@ class challengeViewModel: ObservableObject {
                 }
             }
         }
+        print("AVAILABLE BETS ARR \(self.availableBetsArray)")
+
     }
+    
+    func uploadChallengeBet(bet: Bet) {
+        // stays local
+        self.totalBetArrays[bet.betNumber-1].append(bet)
+        self.setBetAvailability(ticketFormat: self.ticketFormat)
+        
+    }
+    
+//    func fetchChallengeBets(uid: String, challengeID: String, ticketFormat: [Int],/* timeFrame: String,*/ completion: @escaping () -> Void) {
+//        // totalBetArrats
+//        // availableBetsArray
+//
+//        
+//            let query = self.db.collection("users").document(uid).collection("bets").document(documentLoc).collection(collectionLoc)
+//                .whereField("groupNumber", isEqualTo: groupNumber)
+//        query.getDocuments { (querySnapshot, error) in
+//            DispatchQueue.main.async {
+//                guard let documents = querySnapshot?.documents else {
+//                    print("No documents")
+//                    return
+//                }
+//                self.totalBetArrays.removeAll() // Clear previous data
+//                for (index, parlayMax) in ticketFormat.enumerated() {
+//                    let betTempArr = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
+//                        return try? queryDocumentSnapshot.data(as: Bet.self)
+//                    }.filter { $0.betNumber == index+1 }.prefix(parlayMax))
+//                    self.totalBetArrays.append(betTempArr)
+//                }
+// 
+//                self.availableBetsArray.removeAll()
+//                for (index, parlayMax) in ticketFormat.enumerated() {
+//                    let betArray = self.totalBetArrays[index]
+//                    if betArray.filter({ $0.groupNumber == groupNumber }).count >= parlayMax {
+//                        //print("Appending betNumber:", parlayIndex + 1) // Debug print
+//                        self.availableBetsArray.append(-1)
+//                    } else {
+//                        if betArray.contains(where: { $0.result == .loss }) {
+//                            self.availableBetsArray.append(-1)
+//                        } else {
+//                            self.availableBetsArray.append(index+1)
+//                        }
+//                    }
+//                }
+//                
+//                self.calculateTotals(for: groupNumber, ticketFormat: ticketFormat)
+//
+//                if let error = error {
+//                    print(error)
+//                } else {
+//                    self.currentTicketFormat = ticketFormat
+//                    self.isBetsLoaded = true
+//                    self.isTFLoaded = true
+//                }
+//
+//                // Call completion handler
+//                completion()
+//            }
+//        }
+//    }
+    
+
 
     
 //    func createGroup(groupImageURL: UIImage?, groupAdminUsername: String, groupName: String, groupSlogan: String, password: String, ticketFormat: [Int]) {
