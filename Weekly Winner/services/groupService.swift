@@ -651,4 +651,40 @@ class groupService {
                 }
             }
     }
+    func setChallengePotentialToWin(potential potentialToWin: Int, id: String, timeFrame: String, completion: @escaping (Error?) -> Void) {
+        
+        
+        guard let userID = Auth.auth().currentUser?.uid else {
+            completion(AuthError.userNotFound)
+            return
+        }
+        
+        let db = Firestore.firestore()
+        
+        // Query the document where the 'groupNumber' field is equal to the given groupNumber
+        db.collection("users").document(userID).collection("challengeTickets")
+            .whereField("id", isEqualTo: id)
+            .getDocuments { (querySnapshot, err) in
+                if let err = err {
+                    // Handle the error
+                    completion(err)
+                } else if let document = querySnapshot?.documents.first {
+                    // Create the data to upload
+                    let data: [String: Any] = [
+                        "totalPotentialWon": potentialToWin
+                    ]
+                    
+                    // Set the 'potentialToWin' field in the document
+                    document.reference.setData(data, merge: true) { error in
+                        if let error = error {
+                            // Handle the error
+                            completion(error)
+                        } else {
+                            // Upload successful
+                            completion(nil)
+                        }
+                    }
+                }
+            }
+    }
 }

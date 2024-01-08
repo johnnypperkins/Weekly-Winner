@@ -188,18 +188,18 @@ struct gameRowViewCHALLENGE: View {
             .cornerRadius(10)
         .padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
-//        .sheet(isPresented: $showingSheet) {
-//            //BetDetailsViewCHALLENGE(game: game, ticketFormat: [1] /*WILL FIX*/, betType: $betType, viewModel: viewModel)
-//                //.padding(.horizontal)
-//            .presentationDetents([.medium])
-//            .presentationDragIndicator(.hidden)
-//            .background(K.finalColor.backgroundBlue)
-//            .onDisappear(){
-//                withAnimation{
-//                    betType = .None
-//                }
-//            }
-//        }
+        .sheet(isPresented: $showingSheet) {
+            BetDetailsViewCHALLENGE(game: game, ticketFormat: viewModel.ticketFormat /*WILL FIX*/, betType: $betType, viewModel: viewModel)
+                .padding(.horizontal)
+            .presentationDetents([.medium])
+            .presentationDragIndicator(.hidden)
+            .background(K.finalColor.backgroundBlue)
+            .onDisappear(){
+                withAnimation{
+                    betType = .None
+                }
+            }
+        }
     }
 }
 
@@ -274,30 +274,30 @@ struct BetDetailsViewCHALLENGE: View {
                         //ZStack(alignment: .topLeading) {
                         
                         
-                            VStack (alignment: .center){
-                                VStack {
-                                    Text("Group")
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                        .foregroundColor(K.finalColor.textWhite)
-                                        .frame(width: 150, alignment: .leading)
-                                        //.padding(EdgeInsets(top: 70, leading: 15, bottom: 2.5, trailing: 0))
-                                        .background(K.finalColor.backgroundBlue)
-                                }
-             
-                                //.padding(.horizontal)
-                                .frame(width: 150, height: 120)
-                                //.padding(.horizontal)
-                                .onAppear {
-                                    if let firstNumberGreaterThanZero = viewModel.availableBetsArray.first(where: { $0 > 0 }) {
-                                        betNumber = firstNumberGreaterThanZero
-                                    } else {
-                                        betNumber = -99
-                                    }
-                                    checkTeamTaken()
-                                }
-                                //.background(K.finalColor.cardBlue)
-                                .cornerRadius(7.5)
-                            }
+//                            VStack (alignment: .center){
+//                                VStack {
+//                                    Text("Group")
+//                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+//                                        .foregroundColor(K.finalColor.textWhite)
+//                                        .frame(width: 150, alignment: .leading)
+//                                        //.padding(EdgeInsets(top: 70, leading: 15, bottom: 2.5, trailing: 0))
+//                                        .background(K.finalColor.backgroundBlue)
+//                                }
+//             
+//                                //.padding(.horizontal)
+//                                .frame(width: 150, height: 120)
+//                                //.padding(.horizontal)
+//                                .onAppear {
+//                                    if let firstNumberGreaterThanZero = viewModel.availableBetsArray.first(where: { $0 > 0 }) {
+//                                        betNumber = firstNumberGreaterThanZero
+//                                    } else {
+//                                        betNumber = -99
+//                                    }
+//                                    checkTeamTaken()
+//                                }
+//                                //.background(K.finalColor.cardBlue)
+//                                .cornerRadius(7.5)
+//                            }
                         VStack {
                                 VStack {
                                     Text("Bet")
@@ -322,7 +322,7 @@ struct BetDetailsViewCHALLENGE: View {
                                                                     print("Selection changed to: \(index+1)")
                                                                     checkTeamTaken()
                                                                     if betNumber <= viewModel.currentTicketFormat.count && betNumber > 0 {
-                                                                        if ticketVM.currentTicketFormat[index] == 5 {
+                                                                        if ticketFormat[index] == 5 {
                                                                             if betType == .betAwaySpread {
                                                                                 chosenSpread = game.awaySpread + 1
                                                                             }
@@ -390,14 +390,14 @@ struct BetDetailsViewCHALLENGE: View {
                                     
                                 }.frame(width: 120, height: 120)
                                     .padding(.horizontal)
-                                    .onAppear {
-                                        if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
-                                            betNumber = firstNumberGreaterThanZero
-                                        } else {
-                                            betNumber = -99
-                                        }
-                                        checkTeamTaken()
-                                    }
+//                                    .onAppear {
+//                                        if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
+//                                            betNumber = firstNumberGreaterThanZero
+//                                        } else {
+//                                            betNumber = -99
+//                                        }
+//                                        checkTeamTaken()
+//                                    }
                                     .background(K.finalColor.cardBlue)
                                     .cornerRadius(7.5)
                             
@@ -406,52 +406,52 @@ struct BetDetailsViewCHALLENGE: View {
                     }.cornerRadius(10)
                     
                     if betType == .betAwaySpread {
-                        BetSliderView(whichSport: game.whichSport, teamName: game.awayTeam, originalSpread: game.awaySpread, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: .betAwaySpread, chosenSpread: $chosenSpread)
+                        BetSliderView(whichSport: game.whichSport, teamName: game.awayTeam, originalSpread: game.awaySpread, parlaySize: betNumber <= ticketFormat.count && betNumber > 0 ? ticketFormat[betNumber-1] : 1, betType: .betAwaySpread, chosenSpread: $chosenSpread)
                             //.padding(.horizontal)
                     }
                     if betType == .betHomeSpread {
-                        BetSliderView(whichSport: game.whichSport, teamName: game.homeTeam, originalSpread: game.homeSpread, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: .betHomeSpread, chosenSpread: $chosenSpread)
+                        BetSliderView(whichSport: game.whichSport, teamName: game.homeTeam, originalSpread: game.homeSpread, parlaySize: betNumber <= ticketFormat.count && betNumber > 0 ? ticketFormat[betNumber-1] : 1, betType: .betHomeSpread, chosenSpread: $chosenSpread)
                             //.padding(.horizontal)
 
                     }
                     if betType == .over {
-                        BetSliderView(whichSport: game.whichSport, teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalOver, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: .over, chosenSpread: $chosenSpread)
+                        BetSliderView(whichSport: game.whichSport, teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalOver, parlaySize: betNumber <= ticketFormat.count && betNumber > 0 ? ticketFormat[betNumber-1] : 1, betType: .over, chosenSpread: $chosenSpread)
                             //.padding(.horizontal)
 
                     }
                     if betType == .under {
-                        BetSliderView(whichSport: game.whichSport, teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalUnder, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: .under, chosenSpread: $chosenSpread)
+                        BetSliderView(whichSport: game.whichSport, teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalUnder, parlaySize: betNumber <= ticketFormat.count && betNumber > 0 ? ticketFormat[betNumber-1] : 1, betType: .under, chosenSpread: $chosenSpread)
                             //.padding(.horizontal)
 
                     }
                 }
-                .onAppear {
-                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid,
-                                           for: groupNumber,
-                                           ticketFormat: timeFrame == "daily" ? StaticUserData.shared.dailyTicket.ticketFormat : StaticUserData.shared.dailyTicket.ticketFormat,
-                                           timeFrame: timeFrame) {
-                            if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
-                                betNumber = firstNumberGreaterThanZero
-                            } else {
-                                betNumber = -99
-                            }
-                            checkTeamTaken()
-                        }
-                    print("Group Number: \(groupNumber), Bet Number: \(betNumber)")
-                }.padding(.horizontal)
+//                .onAppear {
+//                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid,
+//                                           for: groupNumber,
+//                                           ticketFormat: timeFrame == "daily" ? StaticUserData.shared.dailyTicket.ticketFormat : StaticUserData.shared.dailyTicket.ticketFormat,
+//                                           timeFrame: timeFrame) {
+//                            if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
+//                                betNumber = firstNumberGreaterThanZero
+//                            } else {
+//                                betNumber = -99
+//                            }
+//                            checkTeamTaken()
+//                        }
+//                    print("Group Number: \(groupNumber), Bet Number: \(betNumber)")
+//                }.padding(.horizontal)
                 .background(K.finalColor.backgroundBlue)
                     
                 Button(action: {
                     print("groupNumber: \(groupNumber), betNumber: \(betNumber)")
                     viewModel.uploadBet(groupNumber: groupNumber, groupID: timeFrame == "daily" ? StaticUserData.shared.dailyTicket.groupID : StaticUserData.shared.weeklyTicket.groupID
                                         , betNumber: betNumber, team: whichTeam, betLine: chosenSpread, betOdds: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread), whichSport: game.whichSport), betType: betType, gameID: game.idd, whichSport: game.whichSport, points_bought: Int(chosenSpread-originalSpread), timeFrame: timeFrame) {_ in
-                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat, timeFrame: timeFrame) {
+                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketFormat, timeFrame: timeFrame) {
                             let groupServe = groupService()
-                            groupServe.setPotentialToWin(potential: Int(ticketVM.totalPotentialWon), groupNumber: groupNumber, timeFrame: timeFrame, completion: {_ in })
-                            ticketVM.fetchUserTickets(timeFrame: timeFrame) {
+                            groupServe.setChallengePotentialToWin(potential: 0, groupNumber: groupNumber, timeFrame: timeFrame, completion: {_ in })
+//                            ticketVM.fetchUserTickets(timeFrame: timeFrame) {
 //                                ticketVM.fetchCurrentRankedTickets(groupID: timeFrame == "daily" ? "GlobalDaily" : "Global", timeFrame: timeFrame) {}
                                 
-                            }
+//                            }
                             
                         }
                     }
