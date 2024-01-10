@@ -96,20 +96,156 @@ struct challengeCardView: View {
 
 struct pendingCardView: View {
     @ObservedObject var viewModel: challengeViewModel
+    @State private var selfProfileImageURL = ""
+    @State private var opponentProfileImageURL = ""
+    
     var body: some View {
         ScrollView {
             ForEach(viewModel.currentChallenges, id: \.customID) { challenge in
-                VStack {
-                    Text("Pending Challenge against \(challenge.opponentUsername)")
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 17))
-                                .foregroundColor(.white)
-                    Text("\(challenge.currencyChosen) \(challenge.wagerAmount)")
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 17))
-                                .foregroundColor(.white)
+//                VStack {
+//                    Text("Pending Challenge against \(challenge.opponentUsername)")
+//                                .font(.custom(K.customFonts.lexendDecaMedium, size: 17))
+//                                .foregroundColor(.white)
+//                    Text("\(challenge.currencyChosen) \(challenge.wagerAmount)")
+//                                .font(.custom(K.customFonts.lexendDecaMedium, size: 17))
+//                                .foregroundColor(.white)
+//                }
+                ZStack {
+                    VStack (spacing: 10) {
+                        HStack {
+                            HStack(spacing: 11) {
+                                VStack(alignment: .center, spacing: 10) {
+                             
+                                        HStack (alignment: .center) {
+                                            Text("\(Int(challenge.totalPotentialWon))")
+                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                                .foregroundColor(K.finalColor.potentialOrange)
+                                                .frame(width: 45, height: 20, alignment: .center)
+                                        }
+                                        .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                        .background(K.finalColor.potentialOrange.opacity(0.1))
+                                        .cornerRadius(5)
+                                
+                                    HStack (alignment: .center) {
+                                        Text("\(Int(challenge.totalWon))")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                            .foregroundColor(challenge.totalWon>=0 ? K.finalColor.winningGreen : K.finalColor.deleteRed)
+                                            .frame(width: 45 , height: 20, alignment: .center)
+                                    }
+                                    .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                    .background(K.finalColor.winningGreen.opacity(0.1))
+                                    .cornerRadius(5)
+                                   
+                                }
+                                HStack(spacing: 5) {
+                                    if selfProfileImageURL != "" {
+                                        KFImage(URL(string: selfProfileImageURL))
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .clipShape(Circle())
+                                            .frame(width: 35, height: 35)
+                                    } else {
+                                        Image(systemName: "photo.circle.fill")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 35, height: 35)
+                                            .background(K.finalColor.tabSelectedBlue)
+                                            .clipShape(Circle())
+
+                                    }
+                                    HStack(){
+//                                        Text("\(challenge.challengerID) ")
+                                        Text("Josephs")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                            .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+                                      
+                                        Text("VS")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                                            .foregroundColor(.white)
+                                        
+                                        Text("Josephs")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                            .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+                                        
+                                    }
+                                    
+                                    if opponentProfileImageURL != "" {
+                                        KFImage(URL(string: opponentProfileImageURL))
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .clipShape(Circle())
+                                            .frame(width: 35, height: 35)
+                                    } else {
+                                        Image(systemName: "photo.circle.fill")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 35, height: 35)
+                                            .background(K.finalColor.tabSelectedBlue)
+                                            .clipShape(Circle())
+
+                                    }
+                                    
+                                }
+                                .frame(maxHeight: .infinity)
+                            }
+                            .frame(height: 70)
+                            
+//                            Spacer()
+                            
+                            .frame(maxHeight: .infinity)
+                            
+                            
+                            
+                            // Arrow
+                            
+                                HStack {
+                                    Image(systemName: "chevron.right") // Use any image you'd like
+                                        .resizable()
+                                        .frame(width: 7.5, height: 10) // Adjust size to your liking
+                                        .foregroundColor(.white ) // Choose color
+                                    //.padding(.trailing,2.5) // Add padding to move away from the edge
+                                }
+                            
+                            
+                        }.padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))
+                   
+
+                    }
                 }
-                .frame(width: 250, height: 150)
+
+                .padding(.vertical, 10)
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 75, maxHeight: 75)
+                .background(K.finalColor.cardBlue)
+                .cornerRadius(10)
+                //.overlay(ownCard ? RoundedRectangle(cornerRadius: 10).stroke(Color.white, lineWidth: 1) : RoundedRectangle(cornerRadius: 10).stroke(Color.clear, lineWidth: 0))
+                //.shadow(color: ownCard ? Color.white : Color.clear, radius: ownCard ? 2.5 : 0, x: 0, y: 0)
+
+
+                
+                .onAppear {
+                    fetchUserProfilePic(uid: challenge.challengerID) { (profileImageUrl, error) in
+                        if let error = error {
+                            print("Error fetching profile image URL: \(error)")
+                           
+                        } else if let profileImageUrl = profileImageUrl {
+                           //print("Profile image URL: \(profileImageUrl)")
+                            self.selfProfileImageURL = profileImageUrl
+                        }
+                    }
+                    fetchUserProfilePic(uid: challenge.receiverIDs[0]) { (profileImageUrl, error) in
+                        if let error = error {
+                            print("Error fetching profile image URL: \(error)")
+                           
+                        } else if let profileImageUrl = profileImageUrl {
+                           //print("Profile image URL: \(profileImageUrl)")
+                            self.opponentProfileImageURL = profileImageUrl
+                        }
+                    }
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 90, maxHeight: 90)
                 .background(K.finalColor.cardBlue)
                 .cornerRadius(7.5)
+                .padding(.horizontal,15)
             }
         }
         .onAppear() {
@@ -117,6 +253,9 @@ struct pendingCardView: View {
         }
     }
 }
+
+
+
 
 struct challengePage1: View {
     @State var currencyChosen = "PoolBucks"

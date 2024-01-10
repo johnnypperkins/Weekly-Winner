@@ -104,6 +104,8 @@ class authenticationViewModel: ObservableObject {
         else if case .success(let success) = result {
             print("made it too")
             if let appleIDCredential = success.credential as? ASAuthorizationAppleIDCredential {
+                self.firstName = appleIDCredential.fullName?.givenName ?? ""
+                self.lastName = appleIDCredential.fullName?.familyName ?? ""
                 guard let nonce = currentNonce else{
                     fatalError("Invalid state: a login callback was received, but no login request was sent")
                 }
