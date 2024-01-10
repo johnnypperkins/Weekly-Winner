@@ -12,12 +12,13 @@ import FirebaseFirestoreSwift
 struct ChallengeTicket: Identifiable, Codable {
     @DocumentID var id: String?
     var username: String
+    var opponentUsername: String
     var uid: String
     var dateCreated: Timestamp // will fix later
-    var wagerAmount: Int
+    var wagerAmount: Double
     var currencyChosen: String
-    var totalPotentialWon: Int
-    var totalWon: Int
+    var totalPotentialWon: Double
+    var totalWon: Double
     var status: String
     var challengerID: String
     var receiverIDs: [String]
@@ -27,3 +28,11 @@ struct ChallengeTicket: Identifiable, Codable {
 
 
 
+enum challengeStatus: String, Codable {
+    case pendingAcceptance
+    case declined 
+    case inAction
+    case push
+    case win
+    case loss
+}

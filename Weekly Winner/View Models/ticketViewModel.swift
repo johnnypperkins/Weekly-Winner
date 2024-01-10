@@ -546,13 +546,6 @@ class ticketViewModel: ObservableObject {
         totalPotentialWon = totalPotentialWonLocal
     }
     
-//    
-//    func returnTotal(uid: String, groupNumber: Int, completion: @escaping (Int) -> Void) {
-//        fetchBets(uid: uid, for: groupNumber, ticketFormat: self.currentTicketFormat){
-//            let result = Int(self.totalWon)
-//            completion(result)
-//        }
-//    }
 
     func isTeamAvailable(_ team: String,_ groupNumber: Int, _ betType: BetType) -> Bool {
         for betArray in totalBetArrays {

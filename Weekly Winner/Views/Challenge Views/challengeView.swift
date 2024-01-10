@@ -26,8 +26,8 @@ struct challengeView: View {
     }
 
     private func offsetForSelectedTab() -> CGFloat {
-        let baseOffset: CGFloat = -150
-        let tabWidth: CGFloat = 100
+        let baseOffset: CGFloat = -240
+        let tabWidth: CGFloat = 120
         let offset = baseOffset + CGFloat(tabSelected + 1) * tabWidth
         return offset
     }
@@ -45,7 +45,7 @@ struct challengeView: View {
                                 Text(tabTitle(for: index))
                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 17))
                                     .foregroundColor(.white)
-                                    .frame(width: 100, height: 35, alignment: .center)
+                                    .frame(width: 120, height: 35, alignment: .center)
                                     .cornerRadius(5)
                             }
                         }
@@ -53,7 +53,7 @@ struct challengeView: View {
 
                     Rectangle()
                         .fill(Color.white)
-                        .frame(width: 80, height: 3)
+                        .frame(width: 90, height: 3)
                         .cornerRadius(1)
                         .offset(x: offsetForSelectedTab(), y: 0)
                         .animation(.easeInOut(duration: 0.35))
@@ -94,8 +94,8 @@ struct challengeCardView: View {
 
 struct challengePage1: View {
     @State var currencyChosen = "PoolBucks"
-    @State var opponentUsername = ""
-    @State private var selectedUserID: String?
+    @State private var opponentUsername: String = ""
+    @State private var selectedUserID: String = ""
     @State private var wagerAmount: Double = 0
     let maxWagerAmount: Double = 100
     
@@ -191,7 +191,7 @@ struct challengePage1: View {
 //                    }
                     ScrollView {
                         ForEach(viewModel.queriedUsers, id: \.id) { user in
-                            userBio(user: user, selectedUserID: $selectedUserID)
+                            userBio(user: user, selectedUserID: $selectedUserID, selectedUserUsername: $opponentUsername)
                                 .padding(.vertical,3)
                                 .padding(.horizontal,14)
                         }
@@ -218,6 +218,10 @@ struct challengePage1: View {
                                     viewModel.setTicketFormat(ticketFormat: customizeTicketFormat(oneLegNum, 0, 0, 0, 0))
                                     viewModel.setEmptyTotalBetArray(ticketFormat: customizeTicketFormat(oneLegNum, 0, 0, 0, 0))
                                     viewModel.setBetAvailability(ticketFormat: customizeTicketFormat(oneLegNum, 0, 0, 0, 0))
+                                    viewModel.currencyChosen = currencyChosen
+                                    viewModel.wagerAmount = wagerAmount
+                                    viewModel.opponentUsername = opponentUsername
+                                    viewModel.opponentID = selectedUserID
                                 }
                             
                         }, label: {
@@ -272,59 +276,15 @@ struct challengePage2: View {
             ZStack {
                 
                 VStack (spacing: 4) {
-                    //                    HStack (spacing: 0) {
-                    //                        Button(action: {
-                    //                            withAnimation {
-                    //                                challengeFormat = "gameBased"
-                    //                                viewModel.selectedGames = []
-                    //                            }
-                    //                        }) {
-                    Text("Game Based")
+                    Text("Choose Games")
                         .font(.custom(K.customFonts.lexendDecaMedium, size: 17))
                         .foregroundColor(.white)
                         .frame(width: 150, height: 40, alignment: .center)
                         .cornerRadius(5)
-                    //                        }
-                    
-                    //                        Button(action: {
-                    //                            withAnimation {
-                    //                                challengeFormat = "timeBased"
-                    //                                viewModel.selectedGames = viewModel.timeGames
-                    //                            }
-                    //
-                    //                        }) {
-                    //                            Text("Time Based")
-                    //                                .font(.custom(K.customFonts.lexendDecaMedium, size: 17))
-                    //                                .foregroundColor(.white)
-                    //                                .frame(width: 150, height: 40, alignment: .center)
-                    //                                .cornerRadius(5)
-                    //                        }
-                    
-                    
-                    //                    Rectangle()
-                    //                        .fill(Color.white)
-                    //                        .frame(width: 120, height: 3)
-                    //                        .cornerRadius(1)
-                    //                        .offset(x: challengeFormat == "gameBased" ? -75 : 75, y: 0)
-                    //
-                    
-                    //                    if challengeFormat == "timeBased" {
-                    //                        CustomStepper(value: $amountTime, range: 1...7, title: "Duration of Bet (Days)")
-                    //                            .padding(.horizontal,14)
-                    //                            .onChange(of: amountTime) { newValue in
-                    //                                viewModel.fetchTimeGames(amountTime: newValue) {
-                    //
-                    //                                }
-                    //                                        }
-                    //                        timeBasedView(challengeFormat: challengeFormat, viewModel: viewModel)
-                    //                    } else if challengeFormat == "gameBased" {
-                    gameBasedView(/*challengeFormat: challengeFormat, */viewModel: viewModel)
-                    //                            .padding(.top, 7.5)
-                    //                    }
-                
+                    gameBasedView(viewModel: viewModel)
                 Spacer()
                 if !viewModel.selectedGames.isEmpty {
-                    NavigationLink(destination: {challengePage3(viewModel: viewModel)}, label: {
+                    NavigationLink(destination: {challengePage3(viewModel: viewModel).background(K.finalColor.backgroundBlue)}, label: {
                         HStack{
                             Spacer()
                             Text("Continue To Bets")
@@ -353,8 +313,10 @@ struct challengePage2: View {
                 
                 }.padding(.top, 35)
             }.background(K.finalColor.backgroundBlue)
-                .navigationBarBackButtonHidden()
         }
+//        .onAppear() {
+//            viewModel.selectedGames.removeAll()
+//        }
     }
 }
 
@@ -501,7 +463,7 @@ struct gameRowImages: View {
     
     @State var titleStringH: String = ""
     @State var titleStringA: String = ""
-    @State private var isSelected: Bool = false
+    @State private var isSelected: Bool = false // FIX
     
     
     
@@ -594,15 +556,18 @@ struct userBio: View {
     var user: User
     
     @State var checked = false
-    @Binding var selectedUserID: String?
+    @Binding var selectedUserID: String
+    @Binding var selectedUserUsername: String
     
     var body: some View {
         Button {
             withAnimation {
                 if selectedUserID == user.id {
-                    selectedUserID = nil // Deselect if already selected
+                    selectedUserID = "" // Deselect if already selected
+                    selectedUserUsername = ""
                 } else {
-                    selectedUserID = user.id // Select the user
+                    selectedUserID = user.id ?? "" // Select the user
+                    selectedUserUsername = user.username
                 }
             }
         } label: {

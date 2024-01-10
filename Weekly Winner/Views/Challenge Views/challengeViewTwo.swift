@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import FirebaseAuth
 
 struct challengePage3: View {
     @ObservedObject var viewModel: challengeViewModel
@@ -43,7 +44,7 @@ struct challengePage3: View {
                                 .padding(.trailing, 9)
                         }
                         
-                        Divider()
+                        //Divider()
                     }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 30, alignment: .center)
                         .padding(.horizontal)
                         .overlay(
@@ -63,10 +64,56 @@ struct challengePage3: View {
                                     //                                    }
                                 }.padding(.horizontal)
                             }
-                        }.padding(.bottom,40)
-                    }.padding(EdgeInsets(top: 10, leading: 0, bottom: 30, trailing: 0))
-                        .frame(height: 300)
+                        }.padding(.bottom,20)
+                    }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
+                        .frame(height: 240)
+                    
+                    Rectangle()
+                        .frame(height: 1)
+                        .padding(.horizontal)
+                        .foregroundColor(.white)
+                    
+                    challengeBetsDisplay(uid: Auth.auth().currentUser!.uid, viewModel: viewModel)
+                        .onAppear() {
+                            viewModel.totalPotentialWon = 0
+                        }
+                    
                     Spacer()
+                    
+                    if viewModel.totalPotentialWon > 0 && !viewModel.totalBetArrays.contains(where: { $0.isEmpty }) {
+                        NavigationLink(destination: {
+                            challengePage4(viewModel: viewModel).background(K.finalColor.backgroundBlue)
+                                .onAppear() {
+                                    viewModel.canDeleteBets = false
+                                }
+                        }, label: {
+                            HStack{
+                                Spacer()
+                                Text("Finalize")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .foregroundColor(.white)
+                                Spacer()
+                            }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+                                .background(Color(red: 0.31, green: 0.57, blue: 1))
+                                .cornerRadius(10)
+                                .padding(.horizontal,16)
+                                .padding(.bottom,20)
+                        })
+                        
+                        
+                    } else {
+                        HStack{
+                            Spacer()
+                            Text("Fill Ticket")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                .foregroundColor(.white)
+                            Spacer()
+                        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+                            .background(K.finalColor.titleBlue.opacity(0.6))
+                            .cornerRadius(10)
+                            .padding(.horizontal,16)
+                            .padding(.bottom,20)
+                    }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(K.finalColor.backgroundBlue)
@@ -75,7 +122,7 @@ struct challengePage3: View {
                 .offset(x:isShowing ? 300 : 0, y: isShowing ? 100 : 0)
                 .scaleEffect(isShowing ? 0.8 : 1)
             }.background(K.finalColor.backgroundBlue)
-                .padding(EdgeInsets(top: 80, leading: 0, bottom: 55, trailing: 0))
+                .padding(EdgeInsets(top: 20, leading: 0, bottom: 55, trailing: 0))
                 .navigationBarHidden(false)
         }
     }
@@ -380,7 +427,7 @@ struct BetDetailsViewCHALLENGE: View {
                                                                 .font(.custom(K.customFonts.lexendDecaLight, size: 16))
                                                             
                                                         }
-                                                        .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
+                                                        .padding(EdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 20))
                                                         .background(K.finalColor.titleBlue.opacity(0.6))
                                                         .cornerRadius(5)
                                                         
@@ -465,7 +512,7 @@ struct BetDetailsViewCHALLENGE: View {
                         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
                         //f.padding(.horizontal, 25)
                 })
-                .disabled(betNumber < 0 || !viewModel.isTeamAvailable(whichTeam, groupNumber, betType) || (game.commenceTime.seconds > (Timestamp(date: Calendar.current.startOfDay(for: Date())).seconds + 86400) && timeFrame == "daily"))
+                .disabled(betNumber < 0 || !viewModel.isTeamAvailable(whichTeam, groupNumber, betType))
                 .padding(.horizontal)
                 .background(K.finalColor.backgroundBlue)
             }.padding(.horizontal)
