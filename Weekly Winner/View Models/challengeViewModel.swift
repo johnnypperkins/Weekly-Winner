@@ -21,6 +21,8 @@ class challengeViewModel: ObservableObject {
     @Published var availableBetsArray: [Int] = []
     @Published var canDeleteBets: Bool = true
     
+    @Published var currentChallenges: [ChallengeTicket] = []
+    
     @Published var ticketFormat: [Int] = []
     @Published var totalWon: Double = 0
     @Published var totalPotentialWon: Double = 0
@@ -73,12 +75,6 @@ class challengeViewModel: ObservableObject {
 //        print("TOTAL BET ARRAYS \(self.totalBetArrays)")
     }
     
-    
-//    func submitTimeGames() {
-//            // Handle submission logic here
-//        timeGameIDs = timeGames.map { $0.idd }
-//            print("Selected Games: \(timeGameIDs)")
-//        }
     
     func toggleGameSelection(_ game: Game) {
         // Assuming 'gameID' is a property of 'Game'
@@ -323,5 +319,154 @@ class challengeViewModel: ObservableObject {
         self.totalWon = totalWonLocal
         self.totalPotentialWon = totalPotentialWonLocal
     }
+    
+
+    func sendChallenge(challengeTicket: ChallengeTicket, completion: @escaping () -> Void) {
+        let db = Firestore.firestore()
+
+        // 1. Send bets to own user
+        let betsPath = db.collection("users").document(challengeTicket.challengerID).collection("challenges").document("bets").collection("currentWeekBets")
+        for betArray in self.totalBetArrays {
+            for bet in betArray {
+                
+                var betData: [String: Any] = [
+                    "groupNumber": bet.groupNumber,
+                    "betNumber": bet.betNumber,
+                    "betType": bet.betType.rawValue,
+                    "betLine": bet.betLine,
+                    "betOdds": bet.betOdds,
+                    "result": bet.result.rawValue,
+                    "gameID": bet.gameID,
+                    "groupID": challengeTicket.customID,
+                    "whichSport": bet.whichSport,
+                    "timestamp": bet.timestamp,
+                    "points_bought": bet.points_bought,
+                    "timeFrame": ""
+                    
+                ]
+                
+                
+                betsPath.addDocument(data: betData) { error in
+                    if let error = error {
+                        print("Error adding document: \(error)")
+                    }
+                }
+            }
+        }
+
+        // 2. Send challenge ticket to own user
+        let challengePath = db.collection("users").document(challengeTicket.challengerID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challengeTicket.customID)
+        let challengePath2 = db.collection("users").document(challengeTicket.receiverIDs[0]).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challengeTicket.customID)
+
+        let challengeTicketData: [String: Any] = [
+            "customID": challengeTicket.customID,
+            "username": challengeTicket.username,
+            "opponentUsername": challengeTicket.opponentUsername,
+            "dateCreated": challengeTicket.dateCreated, // Assuming `dateCreated` is a Date object
+            "wagerAmount": challengeTicket.wagerAmount,
+            "currencyChosen": challengeTicket.currencyChosen,
+            "totalPotentialWon": challengeTicket.totalPotentialWon,
+            "totalWon": challengeTicket.totalWon,
+            "status": challengeTicket.status,
+            "challengerID": challengeTicket.challengerID,
+            "receiverIDs": challengeTicket.receiverIDs,
+            "ticketFormat": challengeTicket.ticketFormat,
+            "gameIDs": challengeTicket.gameIDs
+        ]
+
+        challengePath.setData(challengeTicketData) { error in
+            if let error = error {
+                print("Error writing document: \(error)")
+            } else {
+                completion()
+            }
+        }
+        
+        challengePath2.setData(challengeTicketData) { error in
+            if let error = error {
+                print("Error writing document: \(error)")
+            } else {
+                completion()
+            }
+        }
+    }
+    
+    func fetchChallenges(completion: @escaping () -> Void) {
+        let statuses = ["pendingAcceptance", "inAction"] // Replace with your actual status values
+
+        let query = self.db.collection("users").document(StaticUserData.shared.currentUser.id ?? "").collection("challenges").document("tickets").collection("currentChallengeTickets")
+                    .whereField("status", in: statuses)
+
+        query.getDocuments { (querySnapshot, error) in
+            if let error = error {
+                print("Error getting documents: \(error)")
+                completion()
+                return
+            }
+
+            guard let documents = querySnapshot?.documents else {
+                print("No documents")
+                completion()
+                return
+            }
+            
+            self.currentChallenges.removeAll()
+            for document in documents {
+                let data = document.data()
+                if let customID = data["customID"] as? String,
+                   let username = data["username"] as? String,
+                   let opponentUsername = data["opponentUsername"] as? String,
+                   let dateCreated = data["dateCreated"] as? Timestamp, // Or convert to Date if needed
+                   let wagerAmount = data["wagerAmount"] as? Double,
+                   let currencyChosen = data["currencyChosen"] as? String,
+                   let totalPotentialWon = data["totalPotentialWon"] as? Double,
+                   let totalWon = data["totalWon"] as? Double,
+                   let status = data["status"] as? String,
+                   let challengerID = data["challengerID"] as? String,
+                   let receiverIDs = data["receiverIDs"] as? [String],
+                   let ticketFormat = data["ticketFormat"] as? [Int],
+                   let gameIDs = data["gameIDs"] as? [String] {
+                    
+                    let challengeTicket = ChallengeTicket(
+                        customID: customID,
+                        username: username,
+                        opponentUsername: opponentUsername,
+                        dateCreated: dateCreated,
+                        wagerAmount: wagerAmount,
+                        currencyChosen: currencyChosen,
+                        totalPotentialWon: totalPotentialWon,
+                        totalWon: totalWon,
+                        status: status,
+                        challengerID: challengerID,
+                        receiverIDs: receiverIDs,
+                        ticketFormat: ticketFormat,
+                        gameIDs: gameIDs
+                    )
+                    self.currentChallenges.append(challengeTicket)
+                } else {
+                    print("Document data is incomplete or of incorrect type for document: \(document.documentID)")
+                }
+            }
+            print("CHALLENGES: \(self.currentChallenges)")
+            completion()
+        }
+    }
+
+
 
 }
+
+
+
+
+func generateRandomString(length: Int) -> String {
+    let characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    let randomCharacters = (0..<length).compactMap{ _ in characters.randomElement() }
+    return String(randomCharacters)
+}
+
+
+/*
+
+
+*/

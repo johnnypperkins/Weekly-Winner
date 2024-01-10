@@ -25,16 +25,6 @@ struct Bet: Identifiable, Codable {
     var whichSport: String
     var timestamp: Timestamp
     var points_bought: Int
-//    var opposing_Team: String?
-//    var commence_Time: Timestamp
-//    var homeTeam_FinalScore: Int
-//    var awayTeam_FinalScore: Int
-    // when game starts
-    
-    
-    // Currency
-    // Bet Amount
-    // Daily/Weekly
 }
 
 struct Challenge {

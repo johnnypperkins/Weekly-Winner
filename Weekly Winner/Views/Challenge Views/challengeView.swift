@@ -59,16 +59,18 @@ struct challengeView: View {
                         .animation(.easeInOut(duration: 0.35))
                 }.padding(.top, 40)
                  .cornerRadius(7.5)
+                if tabSelected == 0 {
+                    challengeCardView(viewModel: challengeVM)
+                        .padding(.top, 20)
+                } else if tabSelected == 1 {
+                    pendingCardView(viewModel: challengeVM)
+                }
                 
-                challengeCardView(viewModel: challengeVM)
-                    .padding(.top, 20)
                 
                 Spacer()
             }.background(K.finalColor.backgroundBlue)
         }
     }
-
- 
 }
 
 
@@ -89,6 +91,30 @@ struct challengeCardView: View {
         .frame(width: 250, height: 150)
         .background(K.finalColor.cardBlue)
         .cornerRadius(7.5)
+    }
+}
+
+struct pendingCardView: View {
+    @ObservedObject var viewModel: challengeViewModel
+    var body: some View {
+        ScrollView {
+            ForEach(viewModel.currentChallenges, id: \.customID) { challenge in
+                VStack {
+                    Text("Pending Challenge against \(challenge.opponentUsername)")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 17))
+                                .foregroundColor(.white)
+                    Text("\(challenge.currencyChosen) \(challenge.wagerAmount)")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 17))
+                                .foregroundColor(.white)
+                }
+                .frame(width: 250, height: 150)
+                .background(K.finalColor.cardBlue)
+                .cornerRadius(7.5)
+            }
+        }
+        .onAppear() {
+            viewModel.fetchChallenges {}
+        }
     }
 }
 

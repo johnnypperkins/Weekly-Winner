@@ -21,7 +21,7 @@ struct tabBarView: View {
     @ObservedObject var authViewModel = authenticationViewModel()
     @State var showContentView = false
     @State private var isShowing = false
-    @State var selection: Tab = .dashboard
+    @State var selection: Tab
     
     var body: some View {
         NavigationStack{
@@ -118,6 +118,6 @@ struct CustomTabBarItem: View {
 
 struct tabBarView_Previews: PreviewProvider {
     static var previews: some View {
-        tabBarView()
+        tabBarView(selection: .dashboard)
     }
 }

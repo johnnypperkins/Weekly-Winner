@@ -28,7 +28,7 @@ struct SignupIntro: View {
                     Spacer()
 //                    if pageIndex < 2 {
                         NavigationLink (destination:{
-                            tabBarView()
+                            tabBarView(selection: .dashboard)
                                 .environmentObject(viewModel)
                         }, label: {
                             HStack{
@@ -80,7 +80,7 @@ struct SignupIntro: View {
                         }
                     } else {
                         NavigationLink (destination: {
-                            tabBarView()
+                            tabBarView(selection: .dashboard)
                                 .environmentObject(viewModel)
                         }, label: {
                             Text("Continue")

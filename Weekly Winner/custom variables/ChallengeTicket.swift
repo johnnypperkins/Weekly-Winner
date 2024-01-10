@@ -9,11 +9,10 @@ import Foundation
 import Firebase
 import FirebaseFirestoreSwift
 
-struct ChallengeTicket: Identifiable, Codable {
-    @DocumentID var id: String?
+struct ChallengeTicket {
+    var customID: String
     var username: String
     var opponentUsername: String
-    var uid: String
     var dateCreated: Timestamp // will fix later
     var wagerAmount: Double
     var currencyChosen: String
