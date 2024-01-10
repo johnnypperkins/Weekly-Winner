@@ -634,41 +634,41 @@ struct yourGroups: View {
                         .overlay(self.overlayShape(for: 1))
                     }
                     
-                    NavigationView {
-                        // Your other content...
- 
-                            NavigationLink(destination: purchaseView()) {
-                                VStack(alignment: .leading, spacing: 8) {
-                                    VStack(alignment: .leading, spacing: 3) {
-                                        HStack {
-                                            Spacer()
-                                            Image(systemName: "questionmark.circle")
-                                                .resizable()
-                                                .cornerRadius(7.5)
-                                                .foregroundColor(.white)
-                                                .scaledToFit()
-                                                .frame(height: 80)
-                                            Spacer()
-                                        }
-                                        HStack(alignment: .top) {
-                                            Spacer()
-                                            Text("Purchase PoolCoins!")
-                                                .font(.custom(K.customFonts.poppinsMedium, size: 20))
-                                                .foregroundColor(.white)
-                                            Spacer()
-                                        }
-                                    }
-                                }
-                                
-                            }
-                        
-
-                        // Your other content...
-                    }.padding(10)
-                        .frame(width: 140, height: 205)
-                        .background(K.finalColor.backgroundBlue)
-                        .cornerRadius(12)
-                        .overlay(self.overlayShape(for: 1))
+//                    NavigationView {
+//                        // Your other content...
+// 
+//                            NavigationLink(destination: purchaseView()) {
+//                                VStack(alignment: .leading, spacing: 8) {
+//                                    VStack(alignment: .leading, spacing: 3) {
+//                                        HStack {
+//                                            Spacer()
+//                                            Image(systemName: "questionmark.circle")
+//                                                .resizable()
+//                                                .cornerRadius(7.5)
+//                                                .foregroundColor(.white)
+//                                                .scaledToFit()
+//                                                .frame(height: 80)
+//                                            Spacer()
+//                                        }
+//                                        HStack(alignment: .top) {
+//                                            Spacer()
+//                                            Text("Purchase PoolCoins!")
+//                                                .font(.custom(K.customFonts.poppinsMedium, size: 20))
+//                                                .foregroundColor(.white)
+//                                            Spacer()
+//                                        }
+//                                    }
+//                                }
+//                                
+//                            }
+//                        
+//
+//                        // Your other content...
+//                    }.padding(10)
+//                        .frame(width: 140, height: 205)
+//                        .background(K.finalColor.backgroundBlue)
+//                        .cornerRadius(12)
+//                        .overlay(self.overlayShape(for: 1))
 
                     
                 }

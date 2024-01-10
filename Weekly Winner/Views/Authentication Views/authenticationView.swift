@@ -151,6 +151,7 @@ struct LoginView: View {
                             isShowingPasswordReset.toggle()
                         } label: {
                             Text("Forgot Password?")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.light))
                                 .foregroundColor(Color.white.opacity(0.6))
                         }
                         
