@@ -90,16 +90,19 @@ class authenticationViewModel: ObservableObject {
     
     func handleSignInWithAppleRequest(_ request: ASAuthorizationAppleIDRequest) {
         request.requestedScopes = [.fullName,.email]
+        print("on sign in with apple")
         let nonce = randomNonceString()
         currentNonce = nonce
         request.nonce = sha256(nonce)
     }
     
     func handleSignInWithAppleCompletion(_ result: Result<ASAuthorization, Error>) {
+        print("made it")
         if case .failure(let failure) = result {
             errorMessage = failure.localizedDescription
         }
         else if case .success(let success) = result {
+            print("made it too")
             if let appleIDCredential = success.credential as? ASAuthorizationAppleIDCredential {
                 guard let nonce = currentNonce else{
                     fatalError("Invalid state: a login callback was received, but no login request was sent")
@@ -114,11 +117,42 @@ class authenticationViewModel: ObservableObject {
                 }
                 let credential = OAuthProvider.credential(withProviderID: "apple.com", idToken: idTokenString, rawNonce: nonce)
                 Task{
+                    authenticationState = .authenticating
                     do{
-                        let result = try await Auth.auth().signIn(with: credential)
+                        authResult = try await Auth.auth().signIn(with: credential)
+                        
+                        let firebaseUser = authResult!.user
+                        authenticationState = .authenticated
+                      print("User \(firebaseUser.uid) signed in with email \(firebaseUser.email ?? "unknown")")
+          //              self.userSession = firebaseUser
+                        
+                        service.fetchUser(uid: firebaseUser.uid) { user,success  in
+                            print(user)
+                            print(success)
+                            if success == false {
+                                let newUser = User(username: "", firstName: self.firstName, lastName: self.lastName, profileImageUrl: "", email: firebaseUser.email ?? "", dateJoined: Timestamp(date: Date()), instagram: "", promoCode: "", country: "",state: "", birthday: Timestamp(date: Date()), gender: "")
+                                self.currUser = newUser
+                                Task{
+                                    await self.uploadUser(newUser)
+                                }
+                                self.joinGlobal { error in
+                                    
+                                }
+                            }
+                            else{
+                                self.userSession = firebaseUser
+                                self.fetchUser {
+          print("fetched user")
+                                }
+                            }
+                        }
                     }
                     catch{
                         print("Error authenticating: \(error.localizedDescription)")
+                          print(error.localizedDescription)
+                          self.errorMessage = error.localizedDescription
+                          return
+                        
                     }
                 }
             }

@@ -222,25 +222,30 @@ struct ProfileHeaderView: View {
     @State private var showRulesPage = false
     @ObservedObject var screen1VM: screen1ViewModel
     @Binding var timeFrame: String
+    
 
     var body: some View {
         HStack() {
-            if screen1VM.currentUser?.profileImageUrl != nil {
-                KFImage(URL(string: StaticUserData.shared.currentUser.profileImageUrl))
-                    .resizable()
-                    .clipShape(Circle())
-                    .foregroundColor(.clear)
-                    .frame(width: 30, height: 30)
-            }else {
-                Image("sampleImage")
-                    .resizable()
-                    .foregroundColor(.clear)
-                    .frame(width: 30, height: 30)
-            }
-            Text("\(screen1VM.currentUser?.username ?? "")")
-                .font(.custom(K.customFonts.lexendDecaSB, size: 18))
-                .foregroundColor(.white)
             
+            NavigationLink(destination: settingsView()) {
+                
+                
+                if screen1VM.currentUser?.profileImageUrl != nil {
+                    KFImage(URL(string: StaticUserData.shared.currentUser.profileImageUrl))
+                        .resizable()
+                        .clipShape(Circle())
+                        .foregroundColor(.clear)
+                        .frame(width: 30, height: 30)
+                }else {
+                    Image("sampleImage")
+                        .resizable()
+                        .foregroundColor(.clear)
+                        .frame(width: 30, height: 30)
+                }
+                Text("\(screen1VM.currentUser?.username ?? "")")
+                    .font(.custom(K.customFonts.lexendDecaSB, size: 18))
+                    .foregroundColor(.white)
+            }
             Spacer()
 
             Link("@WagerPool", destination: URL(string: "https://www.instagram.com/wagerpool/")!)
