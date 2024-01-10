@@ -22,6 +22,7 @@ struct challengePage3: View {
     var body: some View {
         NavigationStack {
             ZStack{
+                K.finalColor.backgroundBlue
                 VStack {
                     
                     HStack{
@@ -64,6 +65,7 @@ struct challengePage3: View {
                             }
                         }.padding(.bottom,40)
                     }.padding(EdgeInsets(top: 10, leading: 0, bottom: 30, trailing: 0))
+                        .frame(height: 300)
                     Spacer()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -426,20 +428,6 @@ struct BetDetailsViewCHALLENGE: View {
 
                     }
                 }
-//                .onAppear {
-//                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid,
-//                                           for: groupNumber,
-//                                           ticketFormat: timeFrame == "daily" ? StaticUserData.shared.dailyTicket.ticketFormat : StaticUserData.shared.dailyTicket.ticketFormat,
-//                                           timeFrame: timeFrame) {
-//                            if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
-//                                betNumber = firstNumberGreaterThanZero
-//                            } else {
-//                                betNumber = -99
-//                            }
-//                            checkTeamTaken()
-//                        }
-//                    print("Group Number: \(groupNumber), Bet Number: \(betNumber)")
-//                }.padding(.horizontal)
                 .background(K.finalColor.backgroundBlue)
                     
                 Button(action: {
@@ -506,3 +494,5 @@ struct BetDetailsViewCHALLENGE: View {
         }
     }
 }
+
+
