@@ -236,52 +236,18 @@ struct LoginView: View {
                                     .scaledToFit()
                                     .frame(height: 50)
                             }.padding(.bottom,10)
-//                            Button {
-//
-//                            } label: {
-//                                Image("appleLogo")
-//                                    .resizable()
-//                                    .frame(width: 50, height: 50)
-//                                    .cornerRadius(25)
-//                            }.padding(.leading,12)
-//                            Button {
-//                                Task{
-//                                    await viewModel.signInWithGoogle()
-//                                }
-//                            } label: {
-//                                Image("googleLogo")
-//                                    .resizable()
-//                                    .scaledToFit()
-//                                    .frame(height: 50)
-//                            }
+
                             SignInWithAppleButton { request in
                                 viewModel.handleSignInWithAppleRequest(request)
+                                print("khklhk")
                             } onCompletion: { result in
                                 viewModel.handleSignInWithAppleCompletion(result)
+                                print("pressed")
                             }.signInWithAppleButtonStyle(.whiteOutline)
                                 .frame(maxWidth: 220, minHeight: 50)
                                 .clipShape(RoundedRectangle(
                                     cornerRadius: 50
                                 ))
-
-//                            Button {
-//
-//                            } label: {
-//                                Image("signInWithApple")
-//                                    .resizable()
-//                                    .frame(width: 50, height: 50)
-//                                    .cornerRadius(25)
-//                            }
-//                            Button {
-//                                Task{
-//                                    await viewModel.signInWithGoogle()
-//                                }
-//                            } label: {
-//                                Image("googleLogo")
-//                                    .resizable()
-//                                    .frame(width: 50, height: 50)
-//                                    .cornerRadius(25)
-//                            }.padding(.leading,12)
 
                             
                         }.padding(.top,5)
@@ -320,18 +286,12 @@ struct LoginView: View {
                 
             }
         }
-        .onTapGesture {
-                // Resigning first responder when tapping anywhere outside the TextField
-                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-            }
+//        .onTapGesture {
+//                // Resigning first responder when tapping anywhere outside the TextField
+//                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+//            }
     }
-//    private func signInWithGoogle() {
-//        Task {
-//          if await viewModel.signInWithGoogle() == true {
-//            dismiss()
-//          }
-//        }
-//      }
+
 }
 extension View {
     func placeholder<Content: View>(
@@ -459,46 +419,7 @@ struct SignupView: View {
                         }
                         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
                         .id(FocusableFieldSignup.lastName)
-                        
-                        
-                        
-//                        VStack(alignment: .leading, spacing: 10) {
-//                            Text("Username")
-//                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-//                                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-//                            HStack() {
-//                                TextField("Username", text: $viewModel.username)
-//                                
-//                                    .placeholder(when: viewModel.username
-//                                        .isEmpty, placeholder: {
-//                                            Text("Username").foregroundColor(.gray)
-//                                        })
-//                                    .foregroundColor(.white)
-//                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-//                                    .accentColor(.white)
-//                                    .textInputAutocapitalization(.words)
-//                                    .disableAutocorrection(true)
-//                                    .autocapitalization(.none)
-//                                    .textCase(.lowercase)
-//                                    .focused($focus, equals: .username)
-//                                    .submitLabel(.next)
-//                                    .onSubmit {
-//                                        withAnimation {
-//                                            self.focus = .instagram
-//                                        }
-//                                    }
-//                                
-//                            }
-//                            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-//                            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-//                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-//                            .cornerRadius(15)
-//                        }
-//                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-//                        .id(FocusableFieldSignup.username)
-                        
-                        
-                        
+
                         VStack(alignment: .leading, spacing: 10) {
                             Text("Email")
                                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
@@ -564,73 +485,7 @@ struct SignupView: View {
                         }
                         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
                         .id(FocusableFieldSignup.password)
-                        
-//                        VStack(alignment: .leading, spacing: 10) {
-//                            Text("Instagram")
-//                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-//                                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-//                            HStack() {
-//                                TextField("Instagram", text: $viewModel.instagram)
-//                                    .placeholder(when: viewModel.instagram
-//                                        .isEmpty, placeholder: {
-//                                            Text("Instagram").foregroundColor(.gray)
-//                                        })
-//                                    .foregroundColor(.white)
-//                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-//                                    .accentColor(.white)
-//                                    .textInputAutocapitalization(.words)
-//                                    .disableAutocorrection(true)
-//                                    .focused($focus, equals: .instagram)
-//                                    .submitLabel(.next)
-//                                    .onSubmit {
-//                                        withAnimation {
-//                                            self.focus = .email
-//                                        }
-//                                    }
-//                                
-//                            }
-//                            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-//                            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-//                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-//                            .cornerRadius(15)
-//                        }
-//                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-//                        .id(FocusableFieldSignup.instagram)
-//                        
-//                        VStack(alignment: .leading, spacing: 10) {
-//                            Text("Promo Code")
-//                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-//                                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-//                            HStack() {
-//                                TextField("Promo Code", text: $viewModel.promoCode)
-//                                    .placeholder(when: viewModel.promoCode
-//                                        .isEmpty, placeholder: {
-//                                            Text("Promo Code").foregroundColor(.gray)
-//                                        })
-//                                    .foregroundColor(.white)
-//                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-//                                    .accentColor(.white)
-//                                    .keyboardType(.emailAddress)
-//                                    .textInputAutocapitalization(.words)
-//                                    .disableAutocorrection(true)
-//                                    .focused($focus, equals: .promoCode)
-//                                    .submitLabel(.next)
-//                                    .onSubmit {
-//                                        withAnimation {
-//                                            self.focus = .promoCode
-//                                        }
-//                                    }
-//                                
-//                                
-//                            }
-//                            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-//                            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-//                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-//                            .cornerRadius(15)
-//                        }
-//                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-//                        .id(FocusableFieldSignup.promoCode)
-                        
+ 
                         
                     }
 //                .padding(.bottom, keyboardManager.keyboardHeight)

@@ -61,8 +61,8 @@ struct tabBarView: View {
                                 }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
                                                 .tag(Tab.groups)
                             
-                            //profileView(user: authViewModel.currUser!)
-                            challengeView()
+                            profileView(user: authViewModel.currUser!)
+                            //challengeView()
                                 .background(K.finalColor.cardBlue )
                                 .ignoresSafeArea(.all)
                                 .tabItem {

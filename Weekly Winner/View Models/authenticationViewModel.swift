@@ -42,8 +42,7 @@ class authenticationViewModel: ObservableObject {
     @Published var promoCode: String = ""
     
     fileprivate var currentNonce: String?
-//    let currentVersion: String = "1.23"
-//    @Published var updateURL: String = ""
+
 
     
     init() {
