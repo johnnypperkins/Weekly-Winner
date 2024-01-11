@@ -79,18 +79,49 @@ struct challengeView: View {
 struct challengeCardView: View {
     @ObservedObject var viewModel: challengeViewModel
     var body: some View {
-        VStack {
-            HStack {
-                NavigationLink(destination: {challengePage1(viewModel: viewModel)}, label: {
-                    Text("Create a challenge +")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 17))
-                        .foregroundColor(.white)
-                })
+        ScrollView {
+            VStack (spacing: 10) {
+                VStack {
+                    HStack {
+                        NavigationLink(destination: {challengePage1(viewModel: viewModel)}, label: {
+                            Text("Create a challenge +")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                .foregroundColor(.white)
+                        })
+                    }
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 90, maxHeight: 90)
+                .background(K.finalColor.cardBlue)
+                .cornerRadius(7.5)
+                .padding(.horizontal,15)
+                
+                VStack {
+                    HStack {
+                        Text("What are challenges?")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                            .foregroundColor(.white)
+                        
+                    }
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 90, maxHeight: 90)
+                .background(K.finalColor.cardBlue)
+                .cornerRadius(7.5)
+                .padding(.horizontal,15)
+                
+                VStack {
+                    HStack {
+                        Text("Purchase PoolBucks/PoolCoins")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                            .foregroundColor(.white)
+                        
+                    }
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 90, maxHeight: 90)
+                .background(K.finalColor.cardBlue)
+                .cornerRadius(7.5)
+                .padding(.horizontal,15)
             }
         }
-        .frame(width: 250, height: 150)
-        .background(K.finalColor.cardBlue)
-        .cornerRadius(7.5)
     }
 }
 

@@ -451,6 +451,42 @@ class challengeViewModel: ObservableObject {
             completion()
         }
     }
+    
+    func respondToChallenge(acceptedChallenge: Bool, challenge: ChallengeTicket, completion: @escaping () -> Void) {
+        if acceptedChallenge {
+            // Update the status field of the challenge in the current user's collection
+            self.db.collection("users").document(StaticUserData.shared.currentUser.id ?? "").collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).updateData(["status": "inAction"]) { error in
+                if let error = error {
+                    print("Error updating challenge status: \(error)")
+                } else {
+                    // Update the status field of the challenge in the receiver's collection
+                    self.db.collection("users").document(challenge.challengerID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).updateData(["status": "inAction"]) { error in
+                        if let error = error {
+                            print("Error updating challenge status: \(error)")
+                        } else {
+                            completion() // Call completion when both updates are successful
+                        }
+                    }
+                }
+            }
+        } else {
+            self.db.collection("users").document(StaticUserData.shared.currentUser.id ?? "").collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).delete { error in
+                if let error = error {
+                    print("Error deleting challenge: \(error)")
+                } else {
+                    // Deleting the challenge from the receiver's collection
+                    self.db.collection("users").document(challenge.receiverIDs[0]).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).delete { error in
+                        if let error = error {
+                            print("Error deleting challenge: \(error)")
+                        } else {
+                            completion() // Call completion when both deletions are successful
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
 
 

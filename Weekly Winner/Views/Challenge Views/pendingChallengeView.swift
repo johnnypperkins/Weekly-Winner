@@ -72,50 +72,49 @@ struct pendingOption1: View {
                            
                         }
                         HStack(spacing: 5) {
-                            if selfProfileImageURL != "" {
-                                KFImage(URL(string: selfProfileImageURL))
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .clipShape(Circle())
-                                    .frame(width: 35, height: 35)
-                            } else {
-                                Image(systemName: "photo.circle.fill")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 35, height: 35)
-                                    .background(K.finalColor.tabSelectedBlue)
-                                    .clipShape(Circle())
-
-                            }
-                            HStack(){
-                                Text("\(challenge.opponentUsername)")
+//                            if selfProfileImageURL != "" {
+//                                KFImage(URL(string: selfProfileImageURL))
+//                                    .resizable()
+//                                    .aspectRatio(contentMode: .fill)
+//                                    .clipShape(Circle())
+//                                    .frame(width: 35, height: 35)
+//                            } else {
+//                                Image(systemName: "photo.circle.fill")
+//                                    .resizable()
+//                                    .aspectRatio(contentMode: .fill)
+//                                    .frame(width: 35, height: 35)
+//                                    .background(K.finalColor.tabSelectedBlue)
+//                                    .clipShape(Circle())
+//
+//                            }
+                            HStack {
+                                Text("\(StaticUserData.shared.currentUser.username)")
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
                                     .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
-                              
+                               
                                 Text("vs")
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
                                     .foregroundColor(.white)
                                 
-                                Text("\(StaticUserData.shared.currentUser.username)")
+                                Text("\(challenge.challengerID == StaticUserData.shared.currentUser.id ? challenge.username : challenge.opponentUsername)")
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
                                     .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
-                                
                             }
                             
-                            if opponentProfileImageURL != "" {
-                                KFImage(URL(string: opponentProfileImageURL))
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .clipShape(Circle())
-                                    .frame(width: 35, height: 35)
-                            } else {
-                                Image(systemName: "photo.circle.fill")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 35, height: 35)
-                                    .background(K.finalColor.tabSelectedBlue)
-                                    .clipShape(Circle())
-                            }
+//                            if opponentProfileImageURL != "" {
+//                                KFImage(URL(string: opponentProfileImageURL))
+//                                    .resizable()
+//                                    .aspectRatio(contentMode: .fill)
+//                                    .clipShape(Circle())
+//                                    .frame(width: 35, height: 35)
+//                            } else {
+//                                Image(systemName: "photo.circle.fill")
+//                                    .resizable()
+//                                    .aspectRatio(contentMode: .fill)
+//                                    .frame(width: 35, height: 35)
+//                                    .background(K.finalColor.tabSelectedBlue)
+//                                    .clipShape(Circle())
+//                            }
                             
                         }
                         .frame(maxHeight: .infinity)
@@ -190,15 +189,17 @@ struct pendingOption2: View {
                         .background(K.finalColor.tabSelectedBlue)
                         .clipShape(Circle())
                 }
-            
-                Text("\(challenge.opponentUsername) has challenged you")
+
+                Text("\(challenge.username) has challenged you")
                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
                     .foregroundColor(.white)
             }
             
             HStack (spacing: 7.5) {
                 Button(action: {
-                    // accept
+                    viewModel.respondToChallenge(acceptedChallenge: true, challenge: challenge) {
+                        viewModel.fetchChallenges {}
+                    }
                 }, label: {
                     HStack {
                         Text("Accept")
@@ -211,7 +212,9 @@ struct pendingOption2: View {
                 })
                 
                 Button(action: {
-                    // accept
+                    viewModel.respondToChallenge(acceptedChallenge: false, challenge: challenge) {
+                        viewModel.fetchChallenges {}
+                    }
                 }, label: {
                     HStack {
                         Text("Decline")
@@ -221,8 +224,6 @@ struct pendingOption2: View {
                     .frame(width: 80, height: 40)
                     .background(K.finalColor.deleteRed)
                     .cornerRadius(7.5)
-                        
-                    
                 })
             }
         }.padding(.vertical, 10)
