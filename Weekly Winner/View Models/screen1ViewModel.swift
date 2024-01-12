@@ -22,7 +22,7 @@ class screen1ViewModel: ObservableObject {
     @Published var canGetHistoricalData = false
     @Published var userGroupsLoaded = false
     @Published var currentUser: User? = nil
-    private let currentVersion: String = "1.32"
+    private let currentVersion: String = "1.33.1"
     
     @Published var canFetchDailyRankedTickets = false
     @Published var canFetchWeeklyRankedTickets = false
@@ -69,6 +69,7 @@ class screen1ViewModel: ObservableObject {
             
             guard let document = document, document.exists,
                   let version = document["version"] as? String,
+                  let appleInTestingStage = document["appleCanTest"] as? Bool,
                   let updateURL2 = document["updateURL"] as? String else {
                 print("Document not found or fields missing")
                 completion()
@@ -77,7 +78,7 @@ class screen1ViewModel: ObservableObject {
         print("DATABASE VERSION", version)
         print("IOS VERSION", self.currentVersion)
             
-        if self.currentVersion != version {
+        if self.currentVersion != version && appleInTestingStage == false {
                 self.updateURL = updateURL2
                 completion()
             } else {

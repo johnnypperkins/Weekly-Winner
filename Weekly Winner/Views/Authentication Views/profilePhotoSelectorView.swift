@@ -29,7 +29,7 @@ struct profilePhotoSelectorView: View {
     @State var selectedState = "Choose here"
     @State var age: Int?
     @State var country: String = "Choose here"
-    @State private var selectedGender = "Choose here"
+    @State private var selectedGender = "unavailable"
     @State var username = ""
     @State var instagram = ""
     @State var promoCode = ""
@@ -152,25 +152,28 @@ struct profilePhotoSelectorView: View {
                                                 .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
                                                 .foregroundColor(.red)
                                         }
+                                        
                                         HStack() {
-                                            TextField("Username", text: $username)
-                                            
-                                                .placeholder(when: username
-                                                    .isEmpty, placeholder: {
-                                                        Text("Username").foregroundColor(.gray)
-                                                    })
-                                                .foregroundColor(.white)
-                                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                                                .accentColor(.white)
-                                                .textInputAutocapitalization(.words)
-                                                .disableAutocorrection(true)
-                                                .focused($focus, equals: .username)
-                                                .submitLabel(.next)
-                                                .onSubmit {
-                                                    withAnimation {
-                                                        self.focus = .instagram
-                                                    }
+                                            TextField("Username", text: Binding(
+                                                get: { username },
+                                                set: { username = $0.lowercased() }
+                                            ))
+                                            .placeholder(when: username.isEmpty, placeholder: {
+                                                Text("Username").foregroundColor(.gray)
+                                            })
+                                            .foregroundColor(.white)
+                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                                            .accentColor(.white)
+                                            .textInputAutocapitalization(.none)  // Consider changing this to .none if you always want lowercase
+                                            .disableAutocorrection(true)
+                                            .focused($focus, equals: .username)
+                                            .submitLabel(.next)
+                                            .onSubmit {
+                                                withAnimation {
+                                                    self.focus = .instagram
                                                 }
+                                            }
+
                                             
                                         }
                                         .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
@@ -278,13 +281,10 @@ struct profilePhotoSelectorView: View {
                                         Text("Sex:")
                                             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
                                             .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                                        Text("*")
-                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
-                                            .foregroundColor(.red)
                                         Spacer()
                                         
                                         Picker("Sex", selection: $selectedGender) {
-                                            Text("Choose here").tag("Choose here")
+                                            Text("Choose here").tag("unavailable")
                                             Text("Male").tag("Male")
                                             Text("Female").tag("Female")
                                         }.onTapGesture {
@@ -383,7 +383,7 @@ struct profilePhotoSelectorView: View {
                     }.frame(height: 550)
                     
                     if let selectedImage = selectedImage {
-                        if country != "Choose here" && selectedYear != "" && selectedState != "Choose here" && selectedGender != "Choose here"{
+                        if country != "Choose here" && selectedYear != "" && selectedState != "Choose here" { 
                             NavigationLink(destination: {
                                 TermsAndConditionsView(viewModel: viewModel) },label: {
                                     HStack{

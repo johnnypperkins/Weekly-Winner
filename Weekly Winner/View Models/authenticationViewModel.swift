@@ -30,6 +30,8 @@ class authenticationViewModel: ObservableObject {
     @Published var userSession : FirebaseAuth.User? = nil
     @Published var currUser: User?
     
+//    @Published var usernameTaken = false
+    
     @Published var email: String = ""
     @Published var password: String = ""
     @Published var Repassword: String = ""
@@ -419,6 +421,9 @@ print("fetched user")
             }
         }
     }
+    
+    
+    
     private let db = Firestore.firestore()
     func joinGlobal(completion: @escaping (Error?) -> Void) {
         Task {

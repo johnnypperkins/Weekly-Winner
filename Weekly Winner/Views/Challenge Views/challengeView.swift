@@ -145,6 +145,7 @@ struct challengePage1: View {
     
     @ObservedObject var viewModel: challengeViewModel
     
+    
     var body: some View {
         let keywordBinding = Binding<String> (
             get: {
@@ -254,8 +255,6 @@ struct challengePage1: View {
                             ).background(K.finalColor.backgroundBlue)
                                 .onAppear {
                                     viewModel.setTicketFormat(ticketFormat: customizeTicketFormat(oneLegNum, 0, 0, 0, 0))
-                                    viewModel.setEmptyTotalBetArray(ticketFormat: customizeTicketFormat(oneLegNum, 0, 0, 0, 0))
-                                    viewModel.setBetAvailability(ticketFormat: customizeTicketFormat(oneLegNum, 0, 0, 0, 0))
                                     viewModel.currencyChosen = currencyChosen
                                     viewModel.wagerAmount = wagerAmount
                                     viewModel.opponentUsername = opponentUsername
@@ -291,6 +290,9 @@ struct challengePage1: View {
                     
                     
                 }
+            }.onAppear() {
+                viewModel.selectedGames = []
+                viewModel.selectedGameIDs = []
             }
         }.background(K.finalColor.backgroundBlue)
     }
@@ -305,8 +307,21 @@ struct challengePage2: View {
     let wagerAmount: Double
     let ticketFormat: [Int]
     
+    
 //    @State var challengeFormat = "gameBased"
     @State var amountTime = 1
+    
+//    init(viewModel: challengeViewModel, currencyChosen: String, opponentUsername: String, selectedUserID: String?, wagerAmount: Double, ticketFormat: [Int]) {
+//            self.viewModel = viewModel
+//            self.currencyChosen = currencyChosen
+//            self.opponentUsername = opponentUsername
+//            self.selectedUserID = selectedUserID
+//            self.wagerAmount = wagerAmount
+//            self.ticketFormat = ticketFormat
+//
+//            viewModel.setEmptyTotalBetArray(ticketFormat: ticketFormat)
+//            viewModel.setBetAvailability(ticketFormat: ticketFormat)
+//        }
     
     var body: some View {
         
@@ -322,7 +337,14 @@ struct challengePage2: View {
                     gameBasedView(viewModel: viewModel)
                 Spacer()
                 if !viewModel.selectedGames.isEmpty {
-                    NavigationLink(destination: {challengePage3(viewModel: viewModel).background(K.finalColor.backgroundBlue)}, label: {
+                    NavigationLink(destination: {
+                        challengePage3(
+                            viewModel: viewModel
+                        ).background(K.finalColor.backgroundBlue)
+                            .onAppear() {
+                                viewModel.canDeleteBets = true
+                            }
+                    }, label: {
                         HStack{
                             Spacer()
                             Text("Continue To Bets")

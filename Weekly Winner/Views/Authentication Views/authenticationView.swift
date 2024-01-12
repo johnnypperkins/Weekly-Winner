@@ -489,7 +489,7 @@ struct SignupView: View {
                         
                     }
 //                .padding(.bottom, keyboardManager.keyboardHeight)
-                .padding(.bottom, focus == nil ? 0 : 200)
+                .padding(.bottom, focus == nil ? 0 : 250)
                 .onChange(of: focus) { newFocus in
                     //                    if newFocus == .password {
                     withAnimation {

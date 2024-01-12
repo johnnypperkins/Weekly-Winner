@@ -74,9 +74,7 @@ struct challengePage3: View {
                         .foregroundColor(.white)
                     
                     challengeBetsDisplay(uid: Auth.auth().currentUser!.uid, viewModel: viewModel)
-                        .onAppear() {
-                            viewModel.totalPotentialWon = 0
-                        }
+                     
                     
                     Spacer()
                     

@@ -157,6 +157,8 @@ class ticketViewModel: ObservableObject {
             .getDocuments { (querySnapshot, err) in
                 if let err = err {
                     print("Error getting documents: \(err)")
+                    let ticket = Ticket(username: "error", uid: "", groupID: "", groupNumber: 0, dateCreated: Timestamp(date: Date.now), totalWon: 0, totalPotentialWon: 0, groupName: "", rank: "", isEnabled: false, groupAdmin: "", ticketFormat: [])
+                    self.userTickets.append(ticket)
                     completion(.failure(err))
                 } else {
                     for document in querySnapshot!.documents {
@@ -166,6 +168,8 @@ class ticketViewModel: ObservableObject {
                             completion(.success(ticket))
                         } catch {
                             print("Error decoding group: \(error)")
+                            let ticket = Ticket(username: "error", uid: "", groupID: "", groupNumber: 0, dateCreated: Timestamp(date: Date.now), totalWon: 0, totalPotentialWon: 0, groupName: "", rank: "", isEnabled: false, groupAdmin: "", ticketFormat: [])
+                            self.userTickets.append(ticket)
                             completion(.failure(error))
                         }
                     }

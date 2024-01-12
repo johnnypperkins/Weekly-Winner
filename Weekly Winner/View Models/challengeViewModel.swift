@@ -92,6 +92,13 @@ class challengeViewModel: ObservableObject {
             print("\(game) added")
         }
         
+        self.totalPotentialWon = 0
+        self.setEmptyTotalBetArray(ticketFormat: self.ticketFormat)
+        self.setBetAvailability(ticketFormat: self.ticketFormat)
+        self.calculateTotals(ticketFormat: self.ticketFormat)
+        
+        
+        
         print("ALL GAMES IN ARRAY: \(selectedGames)")
         
     }

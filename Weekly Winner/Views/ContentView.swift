@@ -16,7 +16,7 @@ struct ContentView: View {
                     tabBarView(selection: .dashboard)
 //                    SettingsView()
                    //SignupIntro(viewModel: viewModel)
-////profilePhotoSelectorView(model: viewModel)
+//profilePhotoSelectorView(model: viewModel)
 //                    authenticationView()
                 }
                     else{
