@@ -62,6 +62,8 @@ struct LoginView: View {
     @State private var isShowingPasswordReset = false
     @FocusState private var focus: FocusableFieldLogin?
     @ObservedObject private var keyboardManager = KeyboardManager()
+    @State private var showWebpage = false
+
     
     var body: some View {
         ScrollView{
@@ -143,6 +145,21 @@ struct LoginView: View {
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
                     .padding(.top,10)
                     .id(FocusableFieldLogin.password)
+                    .onAppear() {
+                        viewModel.forceUpdate () {
+                            if viewModel.updateURL != ""{
+                                AppUtility.shared.showCustomAlert(alertType: .none, message: "There is a new, necessary update. Sorry we know this is annoying...", actionButtonTitle: K.appButtonTitle.ok, cancelButtonTitle: nil) { action in
+                                    if action == AlertButtonAction.okButton{
+                                        showWebpage.toggle()
+                                    }
+                                    
+                                }
+                            }
+                        }
+                    }.sheet(isPresented: $showWebpage) {
+                        SafariView(url: URL(string: viewModel.updateURL)!)
+                    }
+                   
                     
                     HStack{
                         Spacer(minLength: 0)

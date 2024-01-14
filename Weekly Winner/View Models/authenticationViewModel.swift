@@ -43,9 +43,34 @@ class authenticationViewModel: ObservableObject {
     @Published var instagram: String = ""
     @Published var promoCode: String = ""
     
+    @Published var usernameTaken = false
+    @Published var updateURL: String = ""
+    
+    @Published var currentVersion = "1.33.2"
+    
     fileprivate var currentNonce: String?
 
 
+    func checkUsernameAvailability(potentialUsername: String, completion: @escaping () -> Void) {
+        let db = Firestore.firestore()
+        let normalizedUsername = potentialUsername.lowercased()
+
+        db.collection("users").whereField("username", isEqualTo: normalizedUsername)
+          .getDocuments { (querySnapshot, error) in
+            if let error = error {
+                print("Error checking username availability: \(error)")
+                completion() // or handle the error appropriately
+            } else {
+                if let snapshot = querySnapshot, snapshot.isEmpty {
+                    self.usernameTaken = false
+                    completion()
+                } else {
+                    self.usernameTaken = true
+                    completion()
+                }
+            }
+        }
+    }
     
     init() {
         self.userSession = Auth.auth().currentUser
@@ -55,6 +80,37 @@ class authenticationViewModel: ObservableObject {
     
     enum AuthenticationError: Error {
       case tokenError(message: String)
+    }
+    
+    func forceUpdate(completion: @escaping () -> Void) {
+        let db = Firestore.firestore()
+        let updatesDocument = db.collection("Misc").document("updates")
+        
+        updatesDocument.getDocument { document, error in
+            if let error = error {
+                print("Error fetching document: \(error)")
+                completion()
+                return
+            }
+            
+            guard let document = document, document.exists,
+                  let version = document["version"] as? String,
+                  let appleInTestingStage = document["appleCanTest"] as? Bool,
+                  let updateURL2 = document["updateURL"] as? String else {
+                print("Document not found or fields missing")
+                completion()
+                return
+            }
+        print("DATABASE VERSION", version)
+        print("IOS VERSION", self.currentVersion)
+            
+        if self.currentVersion != version && appleInTestingStage == false {
+                self.updateURL = updateURL2
+                completion()
+            } else {
+                completion()
+            }
+        }
     }
     
     private func randomNonceString(length: Int = 32) -> String {

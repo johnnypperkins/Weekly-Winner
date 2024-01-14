@@ -151,13 +151,23 @@ struct profilePhotoSelectorView: View {
                                             Text("*")
                                                 .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
                                                 .foregroundColor(.red)
+                                            if username != "" {
+                                                Text((username.contains(" ") || username.containsEmoji()) ? "Invalid Username" : (viewModel.usernameTaken ? "Username Taken" : "Username Available"))
+                                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14).weight(.medium))
+                                                    .foregroundColor((viewModel.usernameTaken || username.contains(" ") || username.containsEmoji()) ? K.finalColor.deleteRed : K.finalColor.winningGreen)
+                                                    .padding(.leading, 5)
+                                            }
+                                            
                                         }
                                         
                                         HStack() {
-                                            TextField("Username", text: Binding(
-                                                get: { username },
-                                                set: { username = $0.lowercased() }
-                                            ))
+                                            TextField("Username", text: $username)
+                                     
+                                            .onChange(of: username) { newUsername in
+                                                username = newUsername.lowercased()
+                                                viewModel.checkUsernameAvailability(potentialUsername: username) {}
+
+                                            }
                                             .placeholder(when: username.isEmpty, placeholder: {
                                                 Text("Username").foregroundColor(.gray)
                                             })
@@ -383,7 +393,7 @@ struct profilePhotoSelectorView: View {
                     }.frame(height: 550)
                     
                     if let selectedImage = selectedImage {
-                        if country != "Choose here" && selectedYear != "" && selectedState != "Choose here" { 
+                        if country != "Choose here" && selectedYear != "" && selectedState != "Choose here" && username != "" && !viewModel.usernameTaken && !username.contains(" ") && !username.containsEmoji(){
                             NavigationLink(destination: {
                                 TermsAndConditionsView(viewModel: viewModel) },label: {
                                     HStack{
@@ -414,10 +424,20 @@ struct profilePhotoSelectorView: View {
                         } else {
                             HStack{
                                 Spacer()
+                                if username.contains(" ") || username.containsEmoji() {
+                                    Text("Invalid Username")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                        .foregroundColor(.white)
+                                } else if viewModel.usernameTaken {
+                                    Text("Username Taken")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                        .foregroundColor(.white)
+                                } else {
+                                    Text("Fill All Fields")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                        .foregroundColor(.white)
+                                }
                                 
-                                Text("Fill All Fields")
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
-                                    .foregroundColor(.white)
                                 //shadow
                                 
                                 Spacer()
