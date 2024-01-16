@@ -31,6 +31,9 @@ class challengeViewModel: ObservableObject {
     @Published var currencyChosen: String = "PoolBucks"
     @Published var opponentUsername: String = ""
     @Published var opponentID: String = ""
+    @Published var opponentProfilePicURL: String = ""
+    
+    @Published var errorMessage: String = ""
     
 
 
@@ -133,7 +136,21 @@ class challengeViewModel: ObservableObject {
 
     }
     
-    
+    func fetchUserProfilePic(uid: String, completion: @escaping () -> Void) {
+        //let db = Firestore.firestore()
+        let userRef = db.collection("users").document(uid)
+
+        userRef.getDocument { (documentSnapshot, error) in
+            if let error = error {
+                print("Error checking if blocked: \(error.localizedDescription)")
+                completion()
+            } else {
+                let profileImageUrl = documentSnapshot?.data()?["profileImageUrl"] as? String
+                self.opponentProfilePicURL = profileImageUrl ?? ""
+                completion()
+            }
+        }
+    }
     
     
     func fetchUser(from keyword: String) {
@@ -168,7 +185,9 @@ class challengeViewModel: ObservableObject {
                         country: data["country"] as? String ?? "",
                         state: data["state"] as? String ?? "",
                         birthday: data["birthday"] as? Timestamp ?? Timestamp(),
-                        gender: data["gender"] as? String ?? ""
+                        gender: data["gender"] as? String ?? "",
+                        poolCoins: data["poolCoins"] as? Double ?? 0,
+                        poolBucks: data["poolBucks"] as? Double ?? 0
                     )
                     completion(user, true)
                 } else {
@@ -327,72 +346,175 @@ class challengeViewModel: ObservableObject {
         self.totalPotentialWon = totalPotentialWonLocal
     }
     
-
-    func sendChallenge(challengeTicket: ChallengeTicket, completion: @escaping () -> Void) {
+    func checkOpponentCurrency(challengeTicket: ChallengeTicket, completion: @escaping (Bool) -> Void) {
         let db = Firestore.firestore()
+        
+        // Assume you have a "users" collection in Firestore where user data is stored.
+        // Replace "users" with your actual Firestore collection name.
+        let opponentUserId = challengeTicket.receiverIDs[0] // Assuming only one opponent
 
-        // 1. Send bets to own user
-        let betsPath = db.collection("users").document(challengeTicket.challengerID).collection("challenges").document("bets").collection("currentWeekBets")
-        for betArray in self.totalBetArrays {
-            for bet in betArray {
-                
-                var betData: [String: Any] = [
-                    "groupNumber": bet.groupNumber,
-                    "betNumber": bet.betNumber,
-                    "betType": bet.betType.rawValue,
-                    "betLine": bet.betLine,
-                    "betOdds": bet.betOdds,
-                    "result": bet.result.rawValue,
-                    "gameID": bet.gameID,
-                    "groupID": challengeTicket.customID,
-                    "whichSport": bet.whichSport,
-                    "timestamp": bet.timestamp,
-                    "points_bought": bet.points_bought,
-                    "timeFrame": ""
-                    
-                ]
-                
-                
-                betsPath.addDocument(data: betData) { error in
-                    if let error = error {
-                        print("Error adding document: \(error)")
+        db.collection("users").document(opponentUserId).getDocument { (document, error) in
+            if let error = error {
+                print("Error fetching opponent's data: \(error)")
+                completion(false)
+            } else if let document = document, document.exists {
+                // Parse opponent's data
+                if let opponentData = document.data(),
+                   let opponentCurrency = opponentData[challengeTicket.currencyChosen] as? Double {
+                    // Compare opponent's currency with wagerAmount
+                    if opponentCurrency >= challengeTicket.wagerAmount {
+                        // Opponent has enough currency to accept the challenge
+                        completion(true)
+                    } else {
+                        // Opponent lacks enough funds
+                        completion(false)
                     }
+                } else {
+                    print("Invalid opponent data format")
+                    completion(false)
                 }
+            } else {
+                print("Opponent document does not exist")
+                completion(false)
             }
         }
+    }
+    
+    
+    func deductCurrencyFromUsers(challengeTicket: ChallengeTicket, completion: @escaping () -> Void, failure: @escaping (String) -> Void) {
+        let db = Firestore.firestore()
 
-        // 2. Send challenge ticket to own user
-        let challengePath = db.collection("users").document(challengeTicket.challengerID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challengeTicket.customID)
-        let challengePath2 = db.collection("users").document(challengeTicket.receiverIDs[0]).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challengeTicket.customID)
+        let challengerRef = db.collection("users").document(challengeTicket.challengerID)
+        let opponentRef = db.collection("users").document(challengeTicket.receiverIDs[0]) // Assuming only one opponent
 
-        let challengeTicketData: [String: Any] = [
-            "customID": challengeTicket.customID,
-            "username": challengeTicket.username,
-            "opponentUsername": challengeTicket.opponentUsername,
-            "dateCreated": challengeTicket.dateCreated, // Assuming `dateCreated` is a Date object
-            "wagerAmount": challengeTicket.wagerAmount,
-            "currencyChosen": challengeTicket.currencyChosen,
-            "totalPotentialWon": challengeTicket.totalPotentialWon,
-            "totalWon": challengeTicket.totalWon,
-            "status": challengeTicket.status,
-            "challengerID": challengeTicket.challengerID,
-            "receiverIDs": challengeTicket.receiverIDs,
-            "ticketFormat": challengeTicket.ticketFormat,
-            "gameIDs": challengeTicket.gameIDs
-        ]
+        db.runTransaction({ (transaction, errorPointer) -> Any? in
+            do {
+                // Read phase
+                let challengerDoc = try transaction.getDocument(challengerRef)
+                let opponentDoc = try transaction.getDocument(opponentRef)
 
-        challengePath.setData(challengeTicketData) { error in
+                guard let challengerCurrency = challengerDoc.data()?[challengeTicket.currencyChosen] as? Double,
+                      let opponentCurrency = opponentDoc.data()?[challengeTicket.currencyChosen] as? Double,
+                      challengerCurrency >= challengeTicket.wagerAmount,
+                      opponentCurrency >= challengeTicket.wagerAmount else {
+                    let errorMessage = "Insufficient funds"
+                    errorPointer?.pointee = NSError(domain: "AppErrorDomain", code: 0, userInfo: [NSLocalizedDescriptionKey: errorMessage])
+                    return nil
+                }
+
+                // Write phase
+                let newChallengerCurrency = challengerCurrency - challengeTicket.wagerAmount
+                let newOpponentCurrency = opponentCurrency - challengeTicket.wagerAmount
+
+                transaction.updateData([challengeTicket.currencyChosen: newChallengerCurrency], forDocument: challengerRef)
+                transaction.updateData([challengeTicket.currencyChosen: newOpponentCurrency], forDocument: opponentRef)
+
+                return nil
+            } catch let error as NSError {
+                errorPointer?.pointee = error
+                return nil
+            }
+        }, completion: { _, error in
             if let error = error {
-                print("Error writing document: \(error)")
+                failure("Currency deduction failed: \(error.localizedDescription)")
             } else {
                 completion()
             }
-        }
+        })
+    }
+
+
+
+
+
+
+    func sendChallenge(username: String, challengeTicket: ChallengeTicket, completion: @escaping () -> Void) {
+        let db = Firestore.firestore()
         
-        challengePath2.setData(challengeTicketData) { error in
-            if let error = error {
-                print("Error writing document: \(error)")
+        // 1. Send bets to own user
+        print("Checking opponent's currency")
+            checkOpponentCurrency(challengeTicket: challengeTicket) { hasEnoughCurrency in
+                print("Checked opponent's currency: \(hasEnoughCurrency)")
+                if hasEnoughCurrency {
+                    print("Deducting currency from users")
+                    self.deductCurrencyFromUsers(challengeTicket: challengeTicket) {
+                        print("Currency deducted successfully")
+                    
+                    let betsPath = db.collection("users").document(challengeTicket.challengerID).collection("challenges").document("bets").collection("currentWeekBets")
+                    for betArray in self.totalBetArrays {
+                        for bet in betArray {
+                            
+                            var betData: [String: Any] = [
+                                "groupNumber": bet.groupNumber,
+                                "betNumber": bet.betNumber,
+                                "betType": bet.betType.rawValue,
+                                "betLine": bet.betLine,
+                                "betOdds": bet.betOdds,
+                                "result": bet.result.rawValue,
+                                "gameID": bet.gameID,
+                                "groupID": challengeTicket.customID,
+                                "whichSport": bet.whichSport,
+                                "timestamp": bet.timestamp,
+                                "points_bought": bet.points_bought,
+                                "timeFrame": ""
+                                
+                            ]
+                            
+                            
+                            betsPath.addDocument(data: betData) { error in
+                                if let error = error {
+                                    print("Error adding document: \(error)")
+                                }
+                            }
+                        }
+                    }
+                    
+                    // 2. Send challenge ticket to own user
+                    let challengePath = db.collection("users").document(challengeTicket.challengerID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challengeTicket.customID)
+                    let challengePath2 = db.collection("users").document(challengeTicket.receiverIDs[0]).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challengeTicket.customID)
+                    print("\(challengeTicket) + helllooooooeeoeo     ")
+                    print("\(username) + helllooooooeeoeo     ")
+                    let challengeTicketData: [String: Any] = [
+                        "customID": challengeTicket.customID,
+                        "username": username,
+                        "opponentUsername": challengeTicket.opponentUsername,
+                        "dateCreated": challengeTicket.dateCreated, // Assuming `dateCreated` is a Date object
+                        "wagerAmount": challengeTicket.wagerAmount,
+                        "currencyChosen": challengeTicket.currencyChosen,
+                        "totalPotentialWon": challengeTicket.totalPotentialWon,
+                        "totalWon": challengeTicket.totalWon,
+                        "status": challengeTicket.status,
+                        "challengerID": challengeTicket.challengerID,
+                        "receiverIDs": challengeTicket.receiverIDs,
+                        "ticketFormat": challengeTicket.ticketFormat,
+                        "gameIDs": challengeTicket.gameIDs
+                    ]
+                    
+                    challengePath.setData(challengeTicketData) { error in
+                        if let error = error {
+                            print("Error writing document: \(error)")
+                        } else {
+                            completion()
+                        }
+                    }
+                    
+                    challengePath2.setData(challengeTicketData) { error in
+                        if let error = error {
+                            print("Error writing document: \(error)")
+                        } else {
+                            completion()
+                        }
+                    }
+                }
+            failure: { errorMessage in
+                            // Handle the case where currency deduction failed
+                print("Currency deduction failed: \(errorMessage)")
+                self.errorMessage = errorMessage
+                        }
             } else {
+                // Notify the user that the opponent lacks enough funds
+                print("Opponent lacks the funds to accept the challenge.")
+                self.errorMessage = "Opponent lacks the funds to accept the challenge."
                 completion()
             }
         }

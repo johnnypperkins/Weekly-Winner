@@ -309,13 +309,13 @@ struct SectionTitle: View {
                     canDelete = false
                     
                     viewModel.fetchGameDocument(byID: bet.gameID) { fetchedGame in
-                        if let fetchedGame = fetchedGame {
-                            print("Fetched game: \(fetchedGame)")
-                            self.game = fetchedGame
-                        } else {
-                            print("Failed to fetch game")
-                            // Handle the error or absence of the game
-                        }
+//                        if let fetchedGame = fetchedGame {
+//                            print("Fetched game: \(fetchedGame)")
+//                            self.game = fetchedGame
+//                        } else {
+//                            print("Failed to fetch game")
+//                            // Handle the error or absence of the game
+//                        }
                     }
                     
                 }

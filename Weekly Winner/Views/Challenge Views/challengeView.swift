@@ -131,11 +131,11 @@ struct challengeCardView: View {
 
 
 struct challengePage1: View {
-    @State var currencyChosen = "PoolBucks"
+    @State var currencyChosen = "poolBucks"
     @State private var opponentUsername: String = ""
     @State private var selectedUserID: String = ""
     @State private var wagerAmount: Double = 0
-    let maxWagerAmount: Double = 100
+//    let maxWagerAmount: Double = 100
     
     @State private var oneLegNum: Int = 0
     @State private var twoLegNum: Int = 0
@@ -161,14 +161,21 @@ struct challengePage1: View {
                 K.finalColor.backgroundBlue
                 VStack {
                     HStack {
-                        Text(String(format: "$%.2f", wagerAmount))
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 50))
-                            .foregroundColor(.white)
+                        if maxSliderValue == 1.69 {
+                            Text("Add More!")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 50))
+                                .foregroundColor(.white)
+                        }else{
+                            Text(String(format: "$%.2f", wagerAmount))
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 50))
+                                .foregroundColor(.white)
+                        }
                     }.padding(.top, 30)
                     HStack (spacing: 20){
                         Button(action: {
-                            if currencyChosen != "PoolBucks" {
-                                currencyChosen = "PoolBucks"
+                            if currencyChosen != "poolBucks" {
+                                currencyChosen = "poolBucks"
+                                wagerAmount = 0
                             }
                         }) {
                             HStack {
@@ -177,12 +184,13 @@ struct challengePage1: View {
                                     .foregroundColor(.white)
                             }
                             .frame(width: 150, height: 50, alignment: .center)
-                            .background(currencyChosen == "PoolBucks" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                            .background(currencyChosen == "poolBucks" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
                             .cornerRadius(5)
                         }
                         Button(action: {
-                            if currencyChosen != "PoolCoins" {
-                                currencyChosen = "PoolCoins"
+                            if currencyChosen != "poolCoins" {
+                                currencyChosen = "poolCoins"
+                                wagerAmount = 0
                             }
                         }) {
                             HStack {
@@ -191,7 +199,7 @@ struct challengePage1: View {
                                     .foregroundColor(.white)
                             }
                             .frame(width: 150, height: 50, alignment: .center)
-                            .background(currencyChosen == "PoolCoins" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                            .background(currencyChosen == "poolCoins" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
                             .cornerRadius(5)
                         }
                     }
@@ -206,9 +214,10 @@ struct challengePage1: View {
 //                                .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
 //                                .foregroundColor(.white)
                         }
-                        Slider(value: $wagerAmount, in: 0...maxWagerAmount, step: 1) { editing in
+                        Slider(value: $wagerAmount, in: 0.0...maxSliderValue, step: 1) { editing in
                             
                         }
+                        
                         .accentColor(.white)
                         //.background(Color(red: 0.77, green: 0.85, blue: 0.98).blur(radius: 15).opacity(0.60))
                         
@@ -236,7 +245,7 @@ struct challengePage1: View {
                         }
                     }.frame(height: 150)
                     VStack {
-                        CustomStepper(value: $oneLegNum, range: 0...8, title: "1 Legs")
+                        CustomStepper(value: $oneLegNum, range: 0...3, title: "1 Legs")
                             .padding(.horizontal,14)
                     }
                     Spacer()
@@ -295,6 +304,15 @@ struct challengePage1: View {
                 viewModel.selectedGameIDs = []
             }
         }.background(K.finalColor.backgroundBlue)
+    }
+    var maxSliderValue: Double {
+        let defaultValue: Double = 1.69 // Set a default or minimum value for the slider
+
+        if currencyChosen == "poolCoins" {
+            return max(StaticUserData.shared.currentUser.poolCoins, defaultValue)
+        } else {
+            return max(StaticUserData.shared.currentUser.poolBucks, defaultValue)
+        }
     }
 }
     

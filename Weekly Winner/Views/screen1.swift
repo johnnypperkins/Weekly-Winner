@@ -248,19 +248,40 @@ struct ProfileHeaderView: View {
             }
             Spacer()
 
-            Link("@WagerPool", destination: URL(string: "https://www.instagram.com/wagerpool/")!)
-                .font(.custom(K.customFonts.lexendDecaSB, size: 18))
-                .foregroundColor(.white)
-                .frame(height: 50)
+//            Link("@WagerPool", destination: URL(string: "https://www.instagram.com/wagerpool/")!)
+//                .font(.custom(K.customFonts.lexendDecaSB, size: 18))
+//                .foregroundColor(.white)
+//                .frame(height: 50)
+            VStack(alignment: .leading) {
+                HStack {
+                    Image(systemName: "bitcoinsign.circle")
+                        .resizable()
+                        .foregroundStyle(.yellow)
+                        .frame(width: 15, height: 15)
+                    Text("\(String(format: "%.0f", StaticUserData.shared.currentUser.poolCoins))")
+                        .foregroundStyle(.white)
+                        .font(.custom(K.customFonts.lexendDecaSB, size: 14))
+                }
+                HStack {
+                    Image(systemName: "dollarsign.square.fill")
+                        .resizable()
+                        .foregroundStyle(.green)
+                        .frame(width: 15, height: 15)
+                    Text("\(String(format: "%.0f", StaticUserData.shared.currentUser.poolBucks))")
+                        .foregroundStyle(.white)
+                        .font(.custom(K.customFonts.lexendDecaSB, size: 14))
+                }
+
+            }
             
         }
         .padding(.top,15)
-        .sheet(isPresented: $showRulesPage) {
-            rulesView()
-                .presentationDetents([.fraction(0.65)])
-                .presentationDragIndicator(.hidden)
-                .background(K.finalColor.backgroundBlue)
-        }
+//        .sheet(isPresented: $showRulesPage) {
+//            rulesView()
+//                .presentationDetents([.fraction(0.65)])
+//                .presentationDragIndicator(.hidden)
+//                .background(K.finalColor.backgroundBlue)
+//        }
     }
 }
 

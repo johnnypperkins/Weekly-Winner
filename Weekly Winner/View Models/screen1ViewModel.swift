@@ -112,8 +112,8 @@ class screen1ViewModel: ObservableObject {
                         StaticUserData.shared.weeklyRankedTickets = tickets
                         self.canFetchWeeklyRankedTickets = true
                     }
-                    print("ABCD", tickets)
-                        print("test print")
+//                    print("ABCD", tickets)
+//                        print("test print")
                     }
                 completion()
             }

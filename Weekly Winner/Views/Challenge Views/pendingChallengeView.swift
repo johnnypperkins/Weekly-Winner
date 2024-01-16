@@ -96,7 +96,7 @@ struct pendingOption1: View {
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
                                     .foregroundColor(.white)
                                 
-                                Text("\(challenge.challengerID == StaticUserData.shared.currentUser.id ? challenge.username : challenge.opponentUsername)")
+                                Text("\(challenge.challengerID == StaticUserData.shared.currentUser.id ? challenge.opponentUsername : challenge.username)")
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
                                     .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
                             }
