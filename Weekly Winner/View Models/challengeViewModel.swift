@@ -385,18 +385,18 @@ class challengeViewModel: ObservableObject {
         let db = Firestore.firestore()
 
         let challengerRef = db.collection("users").document(challengeTicket.challengerID)
-        let opponentRef = db.collection("users").document(challengeTicket.receiverIDs[0]) // Assuming only one opponent
+//        let opponentRef = db.collection("users").document(challengeTicket.receiverIDs[0]) // Assuming only one opponent
 
         db.runTransaction({ (transaction, errorPointer) -> Any? in
             do {
                 // Read phase
                 let challengerDoc = try transaction.getDocument(challengerRef)
-                let opponentDoc = try transaction.getDocument(opponentRef)
+                
 
                 guard let challengerCurrency = challengerDoc.data()?[challengeTicket.currencyChosen] as? Double,
-                      let opponentCurrency = opponentDoc.data()?[challengeTicket.currencyChosen] as? Double,
-                      challengerCurrency >= challengeTicket.wagerAmount,
-                      opponentCurrency >= challengeTicket.wagerAmount else {
+                      
+                      challengerCurrency >= challengeTicket.wagerAmount
+                      else {
                     let errorMessage = "Insufficient funds"
                     errorPointer?.pointee = NSError(domain: "AppErrorDomain", code: 0, userInfo: [NSLocalizedDescriptionKey: errorMessage])
                     return nil
@@ -404,10 +404,16 @@ class challengeViewModel: ObservableObject {
 
                 // Write phase
                 let newChallengerCurrency = challengerCurrency - challengeTicket.wagerAmount
-                let newOpponentCurrency = opponentCurrency - challengeTicket.wagerAmount
+                if challengeTicket.currencyChosen == "poolCoins" {
+                    StaticUserData.shared.currentUser.poolCoins = newChallengerCurrency
+                }
+                else {
+                    StaticUserData.shared.currentUser.poolBucks = newChallengerCurrency
+                }
+//                let newOpponentCurrency = opponentCurrency - challengeTicket.wagerAmount
 
                 transaction.updateData([challengeTicket.currencyChosen: newChallengerCurrency], forDocument: challengerRef)
-                transaction.updateData([challengeTicket.currencyChosen: newOpponentCurrency], forDocument: opponentRef)
+//                transaction.updateData([challengeTicket.currencyChosen: newOpponentCurrency], forDocument: opponentRef)
 
                 return nil
             } catch let error as NSError {
@@ -582,6 +588,11 @@ class challengeViewModel: ObservableObject {
     }
     
     func respondToChallenge(acceptedChallenge: Bool, challenge: ChallengeTicket, completion: @escaping () -> Void) {
+        let challengerUserId = challenge.challengerID
+            let challengerRef = db.collection("users").document(challengerUserId)
+
+            let responderUserId = challenge.receiverIDs[0] // Assuming only one opponent
+            let responderRef = db.collection("users").document(responderUserId)
         if acceptedChallenge {
             // Update the status field of the challenge in the current user's collection
             self.db.collection("users").document(StaticUserData.shared.currentUser.id ?? "").collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).updateData(["status": "inAction"]) { error in
@@ -598,6 +609,16 @@ class challengeViewModel: ObservableObject {
                     }
                 }
             }
+            if challenge.currencyChosen == "poolCoins" {
+                responderRef.updateData(["poolCoins": StaticUserData.shared.currentUser.poolCoins - challenge.wagerAmount])
+            }
+            else if challenge.currencyChosen == "poolBucks" {
+                responderRef.updateData(["poolBucks": StaticUserData.shared.currentUser.poolBucks - challenge.wagerAmount])
+            }
+            else {
+                print("Invalid Currency")
+            }
+            
         } else {
             self.db.collection("users").document(StaticUserData.shared.currentUser.id ?? "").collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).delete { error in
                 if let error = error {
@@ -613,6 +634,37 @@ class challengeViewModel: ObservableObject {
                     }
                 }
             }
+            db.runTransaction({ (transaction, errorPointer) -> Any? in
+                    do {
+                        // Read phase
+                        let challengerDoc = try transaction.getDocument(challengerRef)
+
+                        guard let challengerCurrency = challengerDoc.data()?["poolCoins"] as? Double,
+                          
+                              challengerCurrency >= challenge.wagerAmount else {
+                            let errorMessage = "Insufficient funds"
+                            errorPointer?.pointee = NSError(domain: "AppErrorDomain", code: 0, userInfo: [NSLocalizedDescriptionKey: errorMessage])
+                            return nil
+                        }
+
+                        // Write phase
+                        let newChallengerCurrency = challengerCurrency + challenge.wagerAmount
+
+                        transaction.updateData([challenge.currencyChosen: newChallengerCurrency], forDocument: challengerRef)
+                      
+
+                        return nil
+                    } catch let error as NSError {
+                        errorPointer?.pointee = error
+                        return nil
+                    }
+                }, completion: { _, error in
+                    if let error = error {
+                        print("Currency deduction failed: \(error.localizedDescription)")
+                    } else {
+                        completion()
+                    }
+                })
         }
     }
 
