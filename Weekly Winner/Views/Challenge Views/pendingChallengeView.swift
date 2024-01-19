@@ -19,7 +19,13 @@ struct pendingCardView: View {
             ForEach(viewModel.currentChallenges, id: \.customID) { challenge in
                 if challenge.status == "inAction" {
                     // accepted and started
-                    pendingOption1(challenge: challenge)
+//                    NavigationLink {
+//                        challengePage3(viewModel: viewModel)
+//                    } label: {
+                        pendingOption1(challenge: challenge)
+//                    }
+
+                    
                 } else if challenge.status == "pendingAcceptance" && challenge.challengerID != StaticUserData.shared.currentUser.id {
                     // someone sent to you
                     pendingOption2(viewModel: viewModel, challenge: challenge)
@@ -172,6 +178,7 @@ struct pendingOption2: View {
     let challenge: ChallengeTicket
     @State private var selfProfileImageURL = ""
     @State private var opponentProfileImageURL = ""
+    @State var showingSheet = false
     var body: some View {
         VStack {
             HStack(spacing: 5) {
@@ -199,6 +206,7 @@ struct pendingOption2: View {
                 Button(action: {
                     viewModel.respondToChallenge(acceptedChallenge: true, challenge: challenge) {
                         viewModel.fetchChallenges {}
+                        self.showingSheet.toggle()
                     }
                 }, label: {
                     HStack {
@@ -210,6 +218,9 @@ struct pendingOption2: View {
                     .background(K.finalColor.winningGreen)
                     .cornerRadius(7.5)
                 })
+//                .sheet(isPresented: $showingSheet, content: {
+//                    /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Content@*/Text("Sheet Content")/*@END_MENU_TOKEN@*/
+//                })
                 
                 Button(action: {
                     viewModel.respondToChallenge(acceptedChallenge: false, challenge: challenge) {

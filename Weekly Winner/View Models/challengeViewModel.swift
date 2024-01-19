@@ -480,7 +480,7 @@ class challengeViewModel: ObservableObject {
                     let challengePath2 = db.collection("users").document(challengeTicket.receiverIDs[0]).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challengeTicket.customID)
                     print("\(challengeTicket) + helllooooooeeoeo     ")
                     print("\(username) + helllooooooeeoeo     ")
-                    let challengeTicketData: [String: Any] = [
+                    let challengerTicketData: [String: Any] = [
                         "customID": challengeTicket.customID,
                         "username": username,
                         "opponentUsername": challengeTicket.opponentUsername,
@@ -495,8 +495,25 @@ class challengeViewModel: ObservableObject {
                         "ticketFormat": challengeTicket.ticketFormat,
                         "gameIDs": challengeTicket.gameIDs
                     ]
+                        
+                        let recieverTicketData: [String: Any] = [
+                            "customID": challengeTicket.customID,
+                            "username": username,
+                            "opponentUsername": challengeTicket.opponentUsername,
+                            "dateCreated": challengeTicket.dateCreated, // Assuming `dateCreated` is a Date object
+                            "wagerAmount": challengeTicket.wagerAmount,
+                            "currencyChosen": challengeTicket.currencyChosen,
+                            "totalPotentialWon": 0,
+                            "totalWon": 0,
+                            "status": challengeTicket.status,
+                            "challengerID": challengeTicket.challengerID,
+                            "receiverIDs": challengeTicket.receiverIDs,
+                            "ticketFormat": challengeTicket.ticketFormat,
+                            "gameIDs": challengeTicket.gameIDs
+                        ]
+
                     
-                    challengePath.setData(challengeTicketData) { error in
+                    challengePath.setData(challengerTicketData) { error in
                         if let error = error {
                             print("Error writing document: \(error)")
                         } else {
@@ -504,7 +521,7 @@ class challengeViewModel: ObservableObject {
                         }
                     }
                     
-                    challengePath2.setData(challengeTicketData) { error in
+                    challengePath2.setData(recieverTicketData) { error in
                         if let error = error {
                             print("Error writing document: \(error)")
                         } else {
@@ -609,15 +626,15 @@ class challengeViewModel: ObservableObject {
                     }
                 }
             }
-            if challenge.currencyChosen == "poolCoins" {
-                responderRef.updateData(["poolCoins": StaticUserData.shared.currentUser.poolCoins - challenge.wagerAmount])
-            }
-            else if challenge.currencyChosen == "poolBucks" {
-                responderRef.updateData(["poolBucks": StaticUserData.shared.currentUser.poolBucks - challenge.wagerAmount])
-            }
-            else {
-                print("Invalid Currency")
-            }
+//            if challenge.currencyChosen == "poolCoins" {
+//                responderRef.updateData(["poolCoins": StaticUserData.shared.currentUser.poolCoins - challenge.wagerAmount])
+//            }
+//            else if challenge.currencyChosen == "poolBucks" {
+//                responderRef.updateData(["poolBucks": StaticUserData.shared.currentUser.poolBucks - challenge.wagerAmount])
+//            }
+//            else {
+//                print("Invalid Currency")
+//            }
             
         } else {
             self.db.collection("users").document(StaticUserData.shared.currentUser.id ?? "").collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).delete { error in
@@ -634,37 +651,37 @@ class challengeViewModel: ObservableObject {
                     }
                 }
             }
-            db.runTransaction({ (transaction, errorPointer) -> Any? in
-                    do {
-                        // Read phase
-                        let challengerDoc = try transaction.getDocument(challengerRef)
-
-                        guard let challengerCurrency = challengerDoc.data()?["poolCoins"] as? Double,
-                          
-                              challengerCurrency >= challenge.wagerAmount else {
-                            let errorMessage = "Insufficient funds"
-                            errorPointer?.pointee = NSError(domain: "AppErrorDomain", code: 0, userInfo: [NSLocalizedDescriptionKey: errorMessage])
-                            return nil
-                        }
-
-                        // Write phase
-                        let newChallengerCurrency = challengerCurrency + challenge.wagerAmount
-
-                        transaction.updateData([challenge.currencyChosen: newChallengerCurrency], forDocument: challengerRef)
-                      
-
-                        return nil
-                    } catch let error as NSError {
-                        errorPointer?.pointee = error
-                        return nil
-                    }
-                }, completion: { _, error in
-                    if let error = error {
-                        print("Currency deduction failed: \(error.localizedDescription)")
-                    } else {
-                        completion()
-                    }
-                })
+//            db.runTransaction({ (transaction, errorPointer) -> Any? in
+//                    do {
+//                        // Read phase
+//                        let challengerDoc = try transaction.getDocument(challengerRef)
+//
+//                        guard let challengerCurrency = challengerDoc.data()?["poolCoins"] as? Double,
+//                          
+//                              challengerCurrency >= challenge.wagerAmount else {
+//                            let errorMessage = "Insufficient funds"
+//                            errorPointer?.pointee = NSError(domain: "AppErrorDomain", code: 0, userInfo: [NSLocalizedDescriptionKey: errorMessage])
+//                            return nil
+//                        }
+//
+//                        // Write phase
+//                        let newChallengerCurrency = challengerCurrency + challenge.wagerAmount
+//
+//                        transaction.updateData([challenge.currencyChosen: newChallengerCurrency], forDocument: challengerRef)
+//                      
+//
+//                        return nil
+//                    } catch let error as NSError {
+//                        errorPointer?.pointee = error
+//                        return nil
+//                    }
+//                }, completion: { _, error in
+//                    if let error = error {
+//                        print("Currency deduction failed: \(error.localizedDescription)")
+//                    } else {
+//                        completion()
+//                    }
+//                })
         }
     }
 
