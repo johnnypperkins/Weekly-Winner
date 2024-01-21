@@ -203,11 +203,11 @@ struct pendingOption2: View {
             }
             
             HStack (spacing: 7.5) {
-                Button(action: {
-                    viewModel.respondToChallenge(acceptedChallenge: true, challenge: challenge) {
-                        viewModel.fetchChallenges {}
-                        self.showingSheet.toggle()
-                    }
+                NavigationLink(destination: {acceptChallengeView(viewModel: pendingChallengeViewModel(challenge: challenge), challengeViewModel: viewModel, challenge: challenge)
+//                    viewModel.respondToChallenge(acceptedChallenge: true, challenge: challenge) {
+////                        viewModel.fetchChallenges {}
+//                        self.showingSheet.toggle()
+//                    }
                 }, label: {
                     HStack {
                         Text("Accept")
@@ -219,7 +219,7 @@ struct pendingOption2: View {
                     .cornerRadius(7.5)
                 })
 //                .sheet(isPresented: $showingSheet, content: {
-//                    /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Content@*/Text("Sheet Content")/*@END_MENU_TOKEN@*/
+//                    acceptChallengeView(viewModel: pendingChallengeViewModel(challenge: challenge), challenge: challenge)
 //                })
                 
                 Button(action: {
