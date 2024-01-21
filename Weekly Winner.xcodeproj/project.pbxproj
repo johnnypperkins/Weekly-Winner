@@ -97,6 +97,8 @@
 		868FDA8D2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868FDA8C2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift */; };
 		868FDA8F2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868FDA8E2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift */; };
 		869B67F42B5B248300F6CCDF /* finalizeAcceptChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869B67F32B5B248300F6CCDF /* finalizeAcceptChallengeView.swift */; };
+		869B67F62B5D750200F6CCDF /* inActionChallengeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869B67F52B5D750200F6CCDF /* inActionChallengeViewModel.swift */; };
+		869B67F82B5D797500F6CCDF /* inActionChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869B67F72B5D797500F6CCDF /* inActionChallengeView.swift */; };
 		86E55C302B5B1C4F003164EE /* pendingChallengeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E55C2F2B5B1C4F003164EE /* pendingChallengeViewModel.swift */; };
 		86E55C322B5B1CB3003164EE /* acceptChallengeVew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E55C312B5B1CB3003164EE /* acceptChallengeVew.swift */; };
 		86E989C32B58577E000B2DB4 /* challengeDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E989C22B58577E000B2DB4 /* challengeDetails.swift */; };
@@ -201,6 +203,8 @@
 		868FDA8C2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = profilePhotoSelectorView.swift; sourceTree = "<group>"; };
 		868FDA8E2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditionsSignupView.swift; sourceTree = "<group>"; };
 		869B67F32B5B248300F6CCDF /* finalizeAcceptChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = finalizeAcceptChallengeView.swift; sourceTree = "<group>"; };
+		869B67F52B5D750200F6CCDF /* inActionChallengeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = inActionChallengeViewModel.swift; sourceTree = "<group>"; };
+		869B67F72B5D797500F6CCDF /* inActionChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = inActionChallengeView.swift; sourceTree = "<group>"; };
 		86E55C2F2B5B1C4F003164EE /* pendingChallengeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pendingChallengeViewModel.swift; sourceTree = "<group>"; };
 		86E55C312B5B1CB3003164EE /* acceptChallengeVew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = acceptChallengeVew.swift; sourceTree = "<group>"; };
 		86E989C22B58577E000B2DB4 /* challengeDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = challengeDetails.swift; sourceTree = "<group>"; };
@@ -300,6 +304,7 @@
 				3C065BA92AC714C40040D6CE /* statsViewModel.swift */,
 				3C8E5C942B43C28C0075B300 /* challengeViewModel.swift */,
 				86E55C2F2B5B1C4F003164EE /* pendingChallengeViewModel.swift */,
+				869B67F52B5D750200F6CCDF /* inActionChallengeViewModel.swift */,
 			);
 			path = "View Models";
 			sourceTree = "<group>";
@@ -313,6 +318,7 @@
 				3CFEC4892B4E517800C11B5C /* challengeTicketView.swift */,
 				3CFEC48B2B4E716000C11B5C /* finalizeChallengeView.swift */,
 				3CADF50C2B4F091400BE850E /* pendingChallengeView.swift */,
+				869B67F72B5D797500F6CCDF /* inActionChallengeView.swift */,
 				86E55C312B5B1CB3003164EE /* acceptChallengeVew.swift */,
 				869B67F32B5B248300F6CCDF /* finalizeAcceptChallengeView.swift */,
 			);
@@ -629,6 +635,7 @@
 				868FDA8F2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift in Sources */,
 				866FFFA82AFE630E00A0CA13 /* SignupIntro.swift in Sources */,
 				864A2D662A6D8090000FBA35 /* AlertView.swift in Sources */,
+				869B67F82B5D797500F6CCDF /* inActionChallengeView.swift in Sources */,
 				865C4A7A2A32890F00C3C626 /* userService.swift in Sources */,
 				3CFEC48C2B4E716000C11B5C /* finalizeChallengeView.swift in Sources */,
 				867801882A213FA5006FE479 /* ticketView.swift in Sources */,
@@ -680,6 +687,7 @@
 				8668B3132A2EF06A00A1B343 /* gameService.swift in Sources */,
 				869B67F42B5B248300F6CCDF /* finalizeAcceptChallengeView.swift in Sources */,
 				866251142A40D3B500708495 /* betService.swift in Sources */,
+				869B67F62B5D750200F6CCDF /* inActionChallengeViewModel.swift in Sources */,
 				864A2D682A6D80C1000FBA35 /* ButtonComponent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

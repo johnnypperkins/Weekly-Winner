@@ -19,11 +19,11 @@ struct pendingCardView: View {
             ForEach(viewModel.currentChallenges, id: \.customID) { challenge in
                 if challenge.status == "inAction" {
                     // accepted and started
-//                    NavigationLink {
-//                        challengePage3(viewModel: viewModel)
-//                    } label: {
+                    NavigationLink {
+                        inActionChallengeView(challenge: challenge, viewModel: inActionChallengeViewModel(challenge: challenge))
+                    } label: {
                         pendingOption1(challenge: challenge)
-//                    }
+                    }
 
                     
                 } else if challenge.status == "pendingAcceptance" && challenge.challengerID != StaticUserData.shared.currentUser.id {
@@ -200,6 +200,26 @@ struct pendingOption2: View {
                 Text("\(challenge.username) has challenged you")
                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
                     .foregroundColor(.white)
+            }
+            
+            HStack{
+                Text("Wager: \(String(format: "%.0f", challenge.wagerAmount))")
+                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                    .foregroundColor(.white)
+                if challenge.currencyChosen == "poolBucks" {
+                    Image(systemName: "dollarsign.square.fill")
+                        .resizable()
+                        .foregroundStyle(.green)
+                        .frame(width: 18, height: 18)
+                }
+                else{
+                    Image(systemName: "dollarsign.square.fill")
+                        .resizable()
+                        .foregroundStyle(.green)
+                        .frame(width: 15, height: 15)
+                }
+                
+                
             }
             
             HStack (spacing: 7.5) {
