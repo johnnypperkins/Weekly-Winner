@@ -254,16 +254,15 @@ struct ProfileHeaderView: View {
 //                .frame(height: 50)
             VStack(alignment: .leading) {
                 HStack {
-                    Image(systemName: "bitcoinsign.circle")
+                    Image("poolCoin")
                         .resizable()
-                        .foregroundStyle(.yellow)
                         .frame(width: 15, height: 15)
                     Text("\(String(format: "%.0f", StaticUserData.shared.currentUser.poolCoins))")
                         .foregroundStyle(.white)
                         .font(.custom(K.customFonts.lexendDecaSB, size: 14))
                 }
                 HStack {
-                    Image(systemName: "dollarsign.square.fill")
+                    Image("poolBuck")
                         .resizable()
                         .foregroundStyle(.green)
                         .frame(width: 15, height: 15)

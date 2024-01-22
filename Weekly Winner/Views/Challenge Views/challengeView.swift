@@ -110,9 +110,13 @@ struct challengeCardView: View {
                 
                 VStack {
                     HStack {
-                        Text("Purchase PoolBucks/PoolCoins")
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
-                            .foregroundColor(.white)
+                        NavigationLink {
+                            purchaseCurrencyView()
+                        } label: {
+                            Text("Purchase PoolBucks/PoolCoins")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                .foregroundColor(.white)
+                        }
                         
                     }
                 }
@@ -166,16 +170,23 @@ struct challengePage1: View {
                                 .font(.custom(K.customFonts.lexendDecaMedium, size: 50))
                                 .foregroundColor(.white)
                         }else{
-                            Text(String(format: "$%.2f", wagerAmount))
+                            Image(currencyChosen == "poolCoins" ? "poolCoin" : "poolBuck")
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                            Text(String(format: "%.2f", wagerAmount))
                                 .font(.custom(K.customFonts.lexendDecaMedium, size: 50))
                                 .foregroundColor(.white)
+                            
                         }
                     }.padding(.top, 30)
                     HStack (spacing: 20){
                         Button(action: {
                             if currencyChosen != "poolBucks" {
-                                currencyChosen = "poolBucks"
-                                wagerAmount = 0
+                                withAnimation {
+                                    currencyChosen = "poolBucks"
+                                    wagerAmount = 0
+                                }
+                                
                             }
                         }) {
                             HStack {
@@ -189,8 +200,11 @@ struct challengePage1: View {
                         }
                         Button(action: {
                             if currencyChosen != "poolCoins" {
-                                currencyChosen = "poolCoins"
-                                wagerAmount = 0
+                                withAnimation {
+                                    currencyChosen = "poolCoins"
+                                    wagerAmount = 0
+                                }
+                                
                             }
                         }) {
                             HStack {

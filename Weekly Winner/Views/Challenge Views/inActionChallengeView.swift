@@ -47,7 +47,7 @@ struct inActionChallengeView: View {
 
                                 Text("Currency: ")
                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 15)).foregroundColor(K.finalColor.textWhite) +
-                                Text("\(challenge.currencyChosen)")
+                                Text("\(challenge.currencyChosen.capitalized)")
                                     .font(.custom(K.customFonts.lexendDecaLight, size: 15)).foregroundColor(K.finalColor.textWhite)
 
                                 Text("Wager Amount: ")
@@ -57,7 +57,7 @@ struct inActionChallengeView: View {
 
                                 Text("Opponent: ")
                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 18)).foregroundColor(K.finalColor.textWhite) +
-                                Text("\(viewModel.opponentUsername)")
+                                Text("\(viewModel.opponentUsername.capitalized)")
                                     .font(.custom(K.customFonts.lexendDecaLight, size: 18)).foregroundColor(K.finalColor.textWhite)
 
                             }
@@ -91,7 +91,8 @@ struct inActionChallengeView: View {
 //            NavigationLink(destination: tabBarView(selection: .profile), isActive: $shouldNavigate) {
 //                
 //            }
-        }.background(K.finalColor.backgroundBlue)
+        }.frame(minWidth: 0, maxWidth: .infinity)
+        .background(K.finalColor.backgroundBlue)
         .onAppear {
 //            fetchUserProfilePic(uid: viewModel.opponentID) { (profileImageUrl, error) in
 //                if let error = error {

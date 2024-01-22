@@ -207,13 +207,13 @@ struct pendingOption2: View {
                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
                     .foregroundColor(.white)
                 if challenge.currencyChosen == "poolBucks" {
-                    Image(systemName: "dollarsign.square.fill")
+                    Image("poolBuckSkewed")
                         .resizable()
                         .foregroundStyle(.green)
                         .frame(width: 18, height: 18)
                 }
                 else{
-                    Image(systemName: "dollarsign.square.fill")
+                    Image("poolCoin")
                         .resizable()
                         .foregroundStyle(.green)
                         .frame(width: 15, height: 15)
@@ -258,7 +258,7 @@ struct pendingOption2: View {
                 })
             }
         }.padding(.vertical, 10)
-        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 100, maxHeight: 100)
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 140, maxHeight: 140)
         .background(K.finalColor.cardBlue)
         .cornerRadius(10)
         .padding(.horizontal, 15)

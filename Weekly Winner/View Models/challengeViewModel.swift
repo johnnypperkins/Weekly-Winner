@@ -461,6 +461,7 @@ class challengeViewModel: ObservableObject {
                                 "groupID": challengeTicket.customID,
                                 "whichSport": bet.whichSport,
                                 "timestamp": bet.timestamp,
+                                "teamBetOn": bet.teamBetOn,
                                 "points_bought": bet.points_bought,
                                 "timeFrame": ""
                                 
@@ -599,7 +600,7 @@ class challengeViewModel: ObservableObject {
                     print("Document data is incomplete or of incorrect type for document: \(document.documentID)")
                 }
             }
-            print("CHALLENGES: \(self.currentChallenges)")
+//            print("CHALLENGES: \(self.currentChallenges)")
             completion()
         }
     }

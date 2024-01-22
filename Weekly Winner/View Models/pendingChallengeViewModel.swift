@@ -257,7 +257,7 @@ class pendingChallengeViewModel: ObservableObject {
             let responderRef = db.collection("users").document(responderUserId)
         if acceptedChallenge {
             // Update the status field of the challenge in the current user's collection
-            self.db.collection("users").document(StaticUserData.shared.currentUser.id ?? "").collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).updateData(["status": "inAction"]) { error in
+            self.db.collection("users").document(StaticUserData.shared.currentUser.id ?? "").collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).updateData(["status": "inAction", "totalPotentialWon": challenge.totalPotentialWon]) { error in
                 if let error = error {
                     print("Error updating challenge status: \(error)")
                 } else {
@@ -266,7 +266,37 @@ class pendingChallengeViewModel: ObservableObject {
                         if let error = error {
                             print("Error updating challenge status: \(error)")
                         } else {
-                            completion() // Call completion when both updates are successful
+                             // Call completion when both updates are successful
+                        }
+                    }
+                }
+            }
+            
+            let betsPath = db.collection("users").document(StaticUserData.shared.currentUser.id ?? "").collection("challenges").document("bets").collection("currentWeekBets")
+            for betArray in self.totalBetArrays {
+                for bet in betArray {
+                    
+                    var betData: [String: Any] = [
+                        "groupNumber": bet.groupNumber,
+                        "betNumber": bet.betNumber,
+                        "betType": bet.betType.rawValue,
+                        "betLine": bet.betLine,
+                        "betOdds": bet.betOdds,
+                        "result": bet.result.rawValue,
+                        "gameID": bet.gameID,
+                        "groupID": challenge.customID,
+                        "whichSport": bet.whichSport,
+                        "timestamp": bet.timestamp,
+                        "teamBetOn": bet.teamBetOn,
+                        "points_bought": bet.points_bought,
+                        "timeFrame": ""
+                        
+                    ]
+                    
+                    
+                    betsPath.addDocument(data: betData) { error in
+                        if let error = error {
+                            print("Error adding document: \(error)")
                         }
                     }
                 }
@@ -282,7 +312,7 @@ class pendingChallengeViewModel: ObservableObject {
             else {
                 print("Invalid Currency")
             }
-            
+            completion()
         } else {
             self.db.collection("users").document(StaticUserData.shared.currentUser.id ?? "").collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).delete { error in
                 if let error = error {
