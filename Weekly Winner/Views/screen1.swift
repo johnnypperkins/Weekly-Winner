@@ -256,35 +256,7 @@ struct ProfileHeaderView: View {
 
                 
 
-                Rectangle()
-            
-                    .frame(width: 120, height: 40)
-                    .foregroundStyle(K.finalColor.cardBlue)
-                    .clipShape(RoundedRectangle(cornerSize: CGSize(width: 17, height: 17)))
-                    .overlay(
-                        HStack {
-                            HStack {
-                                Image("poolCoin")
-                                    .resizable()
-                                    .frame(width: 15, height: 15)
-                                Text("\(String(format: "%.0f", StaticUserData.shared.currentUser.poolCoins))")
-                                    .foregroundStyle(.white)
-                                    .font(.custom(K.customFonts.lexendDecaSB, size: 14))
-                            }
-                            Text("|")
-                                .foregroundStyle(.white)
-                                .font(.custom(K.customFonts.lexendDecaSB, size: 14))
-                            HStack {
-                                Image("poolBuck")
-                                    .resizable()
-                                    .foregroundStyle(.green)
-                                    .frame(width: 15, height: 15)
-                                Text("\(String(format: "%.0f", StaticUserData.shared.currentUser.poolBucks))")
-                                    .foregroundStyle(.white)
-                                    .font(.custom(K.customFonts.lexendDecaSB, size: 14))
-                            }
-                        }
-                    )
+                currencyView()
             
             
         }
@@ -667,6 +639,37 @@ struct yourGroups: View {
                         .cornerRadius(12)
                         .overlay(self.overlayShape(for: 1))
                     }
+                    
+                    Link(destination: URL(string: "https://www.instagram.com/wagerpool/")!) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            VStack(alignment: .leading, spacing: 3) {
+                                HStack {
+                                    Spacer()
+                                    Image(systemName: "camera")
+                                        .resizable()
+                                        .cornerRadius(7.5)
+                                        .foregroundColor(.white)
+                                        .scaledToFit()
+                                        .frame(height: 80)
+                                    Spacer()
+                                }
+                                HStack(alignment: .top) {
+                                    Spacer()
+                                    Text("Instagram")
+                                        .font(.custom(K.customFonts.poppinsMedium, size: 20))
+                                        .foregroundColor(.white)
+                                    Spacer()
+                                }
+                            }
+                        }
+                        .padding(10)
+                        .frame(width: 140, height: 205)
+                        .background(K.finalColor.backgroundBlue)
+                        .cornerRadius(12)
+                        .overlay(self.overlayShape(for: 1))
+                    }
+
+            
                     
 //                    NavigationView {
 //                        // Your other content...

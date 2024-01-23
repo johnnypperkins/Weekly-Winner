@@ -44,6 +44,9 @@ class screen1ViewModel: ObservableObject {
         }
 
     }
+    
+
+
 
     
     func setStaticUser(completion: @escaping () -> Void) {

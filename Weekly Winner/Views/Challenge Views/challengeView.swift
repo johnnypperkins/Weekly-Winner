@@ -31,48 +31,35 @@ struct challengeView: View {
         let offset = baseOffset + CGFloat(tabSelected + 1) * tabWidth
         return offset
     }
+    
+    
 
     var body: some View {
         ZStack {
             K.finalColor.backgroundBlue
             VStack(alignment: .trailing){
                 HStack{
+                    currencyView()
+                    
                     Spacer()
-                    Rectangle()
+
+                    NavigationLink(destination: settingsView(), label: {
+                        HStack {
+                            Image(systemName: "line.horizontal.3")
+                                .resizable()
+                                .frame(width: 20, height: 20)
+                                .foregroundColor(.white)
+                                .background(Color.red.padding(40)) // Add this line
+                        }.frame(width: 50, height: 50)
+                            .background(.clear)
+                    })
+                    .id(UUID())
                     
-                        .frame(width: 110, height: 40)
-                        .foregroundStyle(K.finalColor.cardBlue)
-                        .clipShape(RoundedRectangle(cornerSize: CGSize(width: 17, height: 17)))
-                        .overlay(
-                            HStack {
-                                HStack {
-                                    Image("poolCoin")
-                                        .resizable()
-                                        .frame(width: 15, height: 15)
-                                    Text("\(String(format: "%.0f", StaticUserData.shared.currentUser.poolCoins))")
-                                        .foregroundStyle(.white)
-                                        .font(.custom(K.customFonts.lexendDecaSB, size: 14))
-                                }
-                                Text("|")
-                                    .foregroundStyle(.white)
-                                    .font(.custom(K.customFonts.lexendDecaSB, size: 14))
-                                HStack {
-                                    Image("poolBuck")
-                                        .resizable()
-                                        .foregroundStyle(.green)
-                                        .frame(width: 15, height: 15)
-                                    Text("\(String(format: "%.0f", StaticUserData.shared.currentUser.poolBucks))")
-                                        .foregroundStyle(.white)
-                                        .font(.custom(K.customFonts.lexendDecaSB, size: 14))
-                                }
-                            }
-                        )
-                    
-                    
-                    
-                }.padding(.trailing)
+                }.padding(.horizontal)
+
                 Spacer()
             }.padding(.top,50)
+            
             VStack {
                 VStack (spacing: 4) {
                     HStack (spacing: 0) {
@@ -107,7 +94,7 @@ struct challengeView: View {
                 
                 Spacer()
             }/*.background(K.finalColor.backgroundBlue)*/
-            .padding(.top,15)
+            .padding(.top,30)
         }
     }
 }
@@ -717,3 +704,38 @@ struct userBio: View {
             }
         }
     }
+
+struct currencyView: View {
+    var body: some View {
+        Rectangle()
+        
+            .frame(minWidth: 175, maxWidth: 175, minHeight: 40, maxHeight: 40)
+            .foregroundStyle(K.finalColor.cardBlue)
+            .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))
+            .overlay(
+                HStack {
+                    HStack {
+                        Image("poolCoin")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                        Text("\(String(format: "%.0f", StaticUserData.shared.currentUser.poolCoins))")
+                            .foregroundStyle(.white)
+                            .font(.custom(K.customFonts.lexendDecaSB, size: 16))
+                    }
+                    Text("|")
+                        .foregroundStyle(.white)
+                        .font(.custom(K.customFonts.lexendDecaSB, size: 16))
+                    
+                    HStack {
+                        Image("poolBuck")
+                            .resizable()
+                            .foregroundStyle(.green)
+                            .frame(width: 20, height: 20)
+                        Text("\(String(format: "%.0f", StaticUserData.shared.currentUser.poolBucks))")
+                            .foregroundStyle(.white)
+                            .font(.custom(K.customFonts.lexendDecaSB, size: 16))
+                    }
+                }
+            )
+    }
+}

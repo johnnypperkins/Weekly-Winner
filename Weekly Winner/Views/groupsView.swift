@@ -50,44 +50,6 @@ struct groupsView: View {
         )
         ZStack{
             K.finalColor.backgroundBlue.ignoresSafeArea(.all)
-            VStack(alignment: .trailing){
-                HStack{
-                    Spacer()
-                    Rectangle()
-                
-                        .frame(width: 110, height: 40)
-                        .foregroundStyle(K.finalColor.cardBlue)
-                        .clipShape(RoundedRectangle(cornerSize: CGSize(width: 17, height: 17)))
-                        .overlay(
-                            HStack {
-                                HStack {
-                                    Image("poolCoin")
-                                        .resizable()
-                                        .frame(width: 15, height: 15)
-                                    Text("\(String(format: "%.0f", StaticUserData.shared.currentUser.poolCoins))")
-                                        .foregroundStyle(.white)
-                                        .font(.custom(K.customFonts.lexendDecaSB, size: 14))
-                                }
-                                Text("|")
-                                    .foregroundStyle(.white)
-                                    .font(.custom(K.customFonts.lexendDecaSB, size: 14))
-                                HStack {
-                                    Image("poolBuck")
-                                        .resizable()
-                                        .foregroundStyle(.green)
-                                        .frame(width: 15, height: 15)
-                                    Text("\(String(format: "%.0f", StaticUserData.shared.currentUser.poolBucks))")
-                                        .foregroundStyle(.white)
-                                        .font(.custom(K.customFonts.lexendDecaSB, size: 14))
-                                }
-                            }
-                        )
-                
-                
-                    
-                }.padding(.trailing)
-                Spacer()
-            }.padding(.top,50)
             NavigationStack {
                 if (StaticUserData.shared.weeklyTicket.groupID == "Global") {
                     VStack {
