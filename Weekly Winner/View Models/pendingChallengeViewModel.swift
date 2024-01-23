@@ -32,7 +32,8 @@ class pendingChallengeViewModel: ObservableObject {
     init(challenge: ChallengeTicket) {
         self.challenge = challenge
         fetchSelectedGames(gameIDS: challenge.gameIDs) { games, error in
-            self.selectedGames = games ?? []
+//            self.selectedGames = games ?? []
+            print(self.selectedGames)
         }
         self.setEmptyTotalBetArray(ticketFormat: challenge.ticketFormat)
         self.setBetAvailability(ticketFormat: challenge.ticketFormat)
@@ -56,7 +57,7 @@ class pendingChallengeViewModel: ObservableObject {
         let db = Firestore.firestore()
         
         // Initialize an array to store fetched games
-        var selectedGames: [Game] = []
+//        var selectedGames: [Game] = []
 
         // Loop through each gameID and fetch the corresponding games
         let group = DispatchGroup()
@@ -94,7 +95,7 @@ class pendingChallengeViewModel: ObservableObject {
                        let bet_statistics = data["bet_statistics"] as? [Int],
                        let total_plays = data["total_plays"] as? Int {
                         let newGame = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays)
-                        selectedGames.append(newGame)
+                        self.selectedGames.append(newGame)
                     }
                     else {
                         print("Error decoding game data for ID: \(gameID)")
@@ -106,7 +107,7 @@ class pendingChallengeViewModel: ObservableObject {
 
         // After all queries are completed, call the completion handler
         group.notify(queue: .main) {
-            completion(selectedGames, nil)
+            completion(nil, nil)
         }
     }
     
