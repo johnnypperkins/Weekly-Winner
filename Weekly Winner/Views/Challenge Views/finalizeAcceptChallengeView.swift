@@ -69,12 +69,8 @@ struct finalizeAcceptChallengeView: View {
             }
             
                 
-            Button(action: {
-                challengeViewModel.respondToChallenge(acceptedChallenge: true, challenge: viewModel.challenge) {
-                    challengeViewModel.fetchChallenges {
-                        shouldNavigate.toggle()
-                    }
-                }
+            NavigationLink(destination: {
+                tabBarView(selection: .profile)
             }, label: {
                 HStack{
                     Spacer()
@@ -87,11 +83,19 @@ struct finalizeAcceptChallengeView: View {
                     .cornerRadius(10)
                     .padding(.horizontal,16)
                     .padding(.bottom,20)
-            })
-            
-            NavigationLink(destination: tabBarView(selection: .profile), isActive: $shouldNavigate) {
+            }).onSubmit {
                 
+                viewModel.respondToChallenge(acceptedChallenge: true, challenge: viewModel.challenge) {
+                    challengeViewModel.fetchChallenges {
+                        shouldNavigate.toggle()
+                    }
+                }
             }
+            
+            
+//            NavigationLink(destination: tabBarView(selection: .profile), isActive: $shouldNavigate) {
+//                
+//            }
         }.onAppear {
             fetchUserProfilePic(uid: viewModel.opponentID) { (profileImageUrl, error) in
                 if let error = error {

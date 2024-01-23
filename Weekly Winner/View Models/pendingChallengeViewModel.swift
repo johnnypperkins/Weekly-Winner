@@ -34,6 +34,8 @@ class pendingChallengeViewModel: ObservableObject {
         fetchSelectedGames(gameIDS: challenge.gameIDs) { games, error in
 //            self.selectedGames = games ?? []
             print(self.selectedGames)
+            print(challenge.gameIDs)
+            print("game ids")
         }
         self.setEmptyTotalBetArray(ticketFormat: challenge.ticketFormat)
         self.setBetAvailability(ticketFormat: challenge.ticketFormat)
@@ -95,7 +97,9 @@ class pendingChallengeViewModel: ObservableObject {
                        let bet_statistics = data["bet_statistics"] as? [Int],
                        let total_plays = data["total_plays"] as? Int {
                         let newGame = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays)
-                        self.selectedGames.append(newGame)
+                        if !self.selectedGames.contains(where: { $0.idd == newGame.idd }) {
+                                        self.selectedGames.append(newGame)
+                                    }
                     }
                     else {
                         print("Error decoding game data for ID: \(gameID)")
@@ -204,6 +208,7 @@ class pendingChallengeViewModel: ObservableObject {
 
         self.totalWon = totalWonLocal
         self.totalPotentialWon = totalPotentialWonLocal
+        self.challenge.totalPotentialWon = totalPotentialWonLocal
     }
     
     func fetchGameDocument(byID documentID: String, completion: @escaping (Game?) -> Void) {
@@ -258,20 +263,26 @@ class pendingChallengeViewModel: ObservableObject {
             let responderRef = db.collection("users").document(responderUserId)
         if acceptedChallenge {
             // Update the status field of the challenge in the current user's collection
+            print("challenge accepted")
             self.db.collection("users").document(StaticUserData.shared.currentUser.id ?? "").collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).updateData(["status": "inAction", "totalPotentialWon": challenge.totalPotentialWon]) { error in
                 if let error = error {
-                    print("Error updating challenge status: \(error)")
-                } else {
-                    // Update the status field of the challenge in the receiver's collection
-                    self.db.collection("users").document(challenge.challengerID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).updateData(["status": "inAction"]) { error in
-                        if let error = error {
-                            print("Error updating challenge status: \(error)")
-                        } else {
-                             // Call completion when both updates are successful
-                            let betsPath = self.db.collection("users").document(StaticUserData.shared.currentUser.id ?? "").collection("challenges").document("bets").collection("currentWeekBets")
-                            for betArray in self.totalBetArrays {
-                                for bet in betArray {
-                                    
+                                print("Error updating challenge status: \(error)")
+                            } else {
+                                print("Challenge status updated for current user")
+
+                                // Update the status field of the challenge in the receiver's collection
+                                self.db.collection("users").document(challenge.challengerID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).updateData(["status": "inAction"]) { error in
+                                    if let error = error {
+                                        print("Error updating challenge status for challenger: \(error)")
+                                    } else {
+                                        print("Challenge status updated for challenger")
+
+                                        let betsPath = self.db.collection("users").document(StaticUserData.shared.currentUser.id ?? "").collection("challenges").document("bets").collection("currentWeekBets")
+                                        print("Uploading bets...")
+
+                                        for betArray in self.totalBetArrays {
+                                            for bet in betArray {
+                                                print("Adding bet: \(bet)")
                                     var betData: [String: Any] = [
                                         "groupNumber": bet.groupNumber,
                                         "betNumber": bet.betNumber,
@@ -314,7 +325,7 @@ class pendingChallengeViewModel: ObservableObject {
             }
             
             
-            completion()
+//            completion()
         } else {
             self.db.collection("users").document(StaticUserData.shared.currentUser.id ?? "").collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).delete { error in
                 if let error = error {

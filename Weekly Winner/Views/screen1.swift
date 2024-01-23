@@ -252,26 +252,40 @@ struct ProfileHeaderView: View {
 //                .font(.custom(K.customFonts.lexendDecaSB, size: 18))
 //                .foregroundColor(.white)
 //                .frame(height: 50)
-            VStack(alignment: .leading) {
-                HStack {
-                    Image("poolCoin")
-                        .resizable()
-                        .frame(width: 15, height: 15)
-                    Text("\(String(format: "%.0f", StaticUserData.shared.currentUser.poolCoins))")
-                        .foregroundStyle(.white)
-                        .font(.custom(K.customFonts.lexendDecaSB, size: 14))
-                }
-                HStack {
-                    Image("poolBuck")
-                        .resizable()
-                        .foregroundStyle(.green)
-                        .frame(width: 15, height: 15)
-                    Text("\(String(format: "%.0f", StaticUserData.shared.currentUser.poolBucks))")
-                        .foregroundStyle(.white)
-                        .font(.custom(K.customFonts.lexendDecaSB, size: 14))
-                }
+//            VStack(alignment: .leading) {
 
-            }
+                
+
+                Rectangle()
+            
+                    .frame(width: 120, height: 40)
+                    .foregroundStyle(K.finalColor.cardBlue)
+                    .clipShape(RoundedRectangle(cornerSize: CGSize(width: 17, height: 17)))
+                    .overlay(
+                        HStack {
+                            HStack {
+                                Image("poolCoin")
+                                    .resizable()
+                                    .frame(width: 15, height: 15)
+                                Text("\(String(format: "%.0f", StaticUserData.shared.currentUser.poolCoins))")
+                                    .foregroundStyle(.white)
+                                    .font(.custom(K.customFonts.lexendDecaSB, size: 14))
+                            }
+                            Text("|")
+                                .foregroundStyle(.white)
+                                .font(.custom(K.customFonts.lexendDecaSB, size: 14))
+                            HStack {
+                                Image("poolBuck")
+                                    .resizable()
+                                    .foregroundStyle(.green)
+                                    .frame(width: 15, height: 15)
+                                Text("\(String(format: "%.0f", StaticUserData.shared.currentUser.poolBucks))")
+                                    .foregroundStyle(.white)
+                                    .font(.custom(K.customFonts.lexendDecaSB, size: 14))
+                            }
+                        }
+                    )
+            
             
         }
         .padding(.top,15)
