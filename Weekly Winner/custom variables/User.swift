@@ -15,7 +15,7 @@ struct User: Identifiable, Decodable, Encodable {
     var profileImageUrl: String
     let email: String
     var keywordsForLookup: [String] {
-        [self.firstName.generateStringSequence(), self.lastName.generateStringSequence(), self.username.generateStringSequence()].flatMap { $0 }
+        [/*self.firstName.generateStringSequence(), self.lastName.generateStringSequence(), */self.username.lowercased().generateStringSequence()].flatMap { $0 }
     }
     
     var isCurrentUser: Bool {

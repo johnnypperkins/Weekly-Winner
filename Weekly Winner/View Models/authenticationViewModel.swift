@@ -447,7 +447,7 @@ print("fetched user")
                 //print(user)
                 self.currUser = user
             self.username = user!.username
-//                StaticUserData.shared.username = self.currUser!.username
+                StaticUserData.shared.username = self.currUser!.username
                 //print(UserData.shared.username)
                 //print(user)
             }
