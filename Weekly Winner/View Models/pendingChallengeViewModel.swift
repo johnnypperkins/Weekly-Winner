@@ -209,6 +209,7 @@ class pendingChallengeViewModel: ObservableObject {
         self.totalWon = totalWonLocal
         self.totalPotentialWon = totalPotentialWonLocal
         self.challenge.totalPotentialWon = totalPotentialWonLocal
+        self.challenge.totalPotentialWon = totalPotentialWonLocal
     }
     
     func fetchGameDocument(byID documentID: String, completion: @escaping (Game?) -> Void) {
@@ -325,7 +326,7 @@ class pendingChallengeViewModel: ObservableObject {
             }
             
             
-//            completion()
+            completion()
         } else {
             self.db.collection("users").document(StaticUserData.shared.currentUser.id ?? "").collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).delete { error in
                 if let error = error {

@@ -237,7 +237,12 @@ struct pendingOption2: View {
                     .frame(width: 80, height: 40)
                     .background(K.finalColor.winningGreen)
                     .cornerRadius(7.5)
-                })
+                }).onSubmit {
+//                    viewModel.respondToChallenge(acceptedChallenge: true, challenge: challenge) {
+//                        viewModel.fetchChallenges {}
+//                        self.showingSheet.toggle()
+//                    }
+                }
 //                .sheet(isPresented: $showingSheet, content: {
 //                    acceptChallengeView(viewModel: pendingChallengeViewModel(challenge: challenge), challenge: challenge)
 //                })

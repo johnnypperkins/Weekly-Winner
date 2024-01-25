@@ -558,11 +558,13 @@ class challengeViewModel: ObservableObject {
             }
 
             guard let documents = querySnapshot?.documents else {
-                print("No documents")
+                print("No documents found for query")
                 completion()
                 return
             }
-            
+
+            print("Found \(documents.count) documents")
+
             self.currentChallenges.removeAll()
             for document in documents {
                 let data = document.data()
@@ -584,7 +586,7 @@ class challengeViewModel: ObservableObject {
                         customID: customID,
                         username: username,
                         opponentUsername: opponentUsername,
-                        dateCreated: dateCreated,
+                        dateCreated: dateCreated, // Converts Timestamp to Date
                         wagerAmount: wagerAmount,
                         currencyChosen: currencyChosen,
                         totalPotentialWon: totalPotentialWon,
@@ -600,10 +602,12 @@ class challengeViewModel: ObservableObject {
                     print("Document data is incomplete or of incorrect type for document: \(document.documentID)")
                 }
             }
-//            print("CHALLENGES: \(self.currentChallenges)")
+
+            print("Completed processing \(self.currentChallenges.count) challenges")
             completion()
         }
     }
+
     
     func respondToChallenge(acceptedChallenge: Bool, challenge: ChallengeTicket, completion: @escaping () -> Void) {
         let challengerUserId = challenge.challengerID

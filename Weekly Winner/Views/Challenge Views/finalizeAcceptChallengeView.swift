@@ -9,10 +9,18 @@ import SwiftUI
 import FirebaseAuth
 import Kingfisher
 
+
+enum NavigationDestination {
+    case profile
+    // Add other cases as needed
+}
+
 struct finalizeAcceptChallengeView: View {
     @ObservedObject var viewModel: pendingChallengeViewModel
     @ObservedObject var challengeViewModel: challengeViewModel
     @StateObject var authViewModel = authenticationViewModel()
+    
+    @State private var navigationSelection: NavigationDestination?
     
     @State var shouldNavigate = false
     
@@ -69,33 +77,35 @@ struct finalizeAcceptChallengeView: View {
             }
             
                 
-            NavigationLink(destination: {
-                tabBarView(selection: .profile)
-            }, label: {
-                HStack{
-                    Spacer()
-                    Text("Send Challenge")
-                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
-                        .foregroundColor(.white)
-                    Spacer()
-                }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+//            NavigationStack {
+            Button(action: {
+                    print("Button tapped")
+                    viewModel.respondToChallenge(acceptedChallenge: true, challenge: viewModel.challenge) {
+                        challengeViewModel.fetchChallenges {
+                            print("Toggling shouldNavigate")
+                            shouldNavigate.toggle()
+                        }
+                    }
+                }, label: {
+                    HStack {
+                        Spacer()
+                        Text("Send Challenge")
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                            .foregroundColor(.white)
+                        Spacer()
+                    }
+                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 56, maxHeight: 56)
                     .background(Color(red: 0.31, green: 0.57, blue: 1))
                     .cornerRadius(10)
-                    .padding(.horizontal,16)
-                    .padding(.bottom,20)
-            }).onSubmit {
-                
-                viewModel.respondToChallenge(acceptedChallenge: true, challenge: viewModel.challenge) {
-                    challengeViewModel.fetchChallenges {
-                        shouldNavigate.toggle()
-                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 20)
+                })
+                .navigationDestination(isPresented: $shouldNavigate) {
+//                    print("Navigating to tabBarView")
+                    tabBarView(selection: .profile)
                 }
-            }
-            
-            
-//            NavigationLink(destination: tabBarView(selection: .profile), isActive: $shouldNavigate) {
-//                
 //            }
+
         }.onAppear {
             fetchUserProfilePic(uid: viewModel.opponentID) { (profileImageUrl, error) in
                 if let error = error {
