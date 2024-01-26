@@ -14,6 +14,7 @@ struct pendingCardView: View {
     @State private var selfProfileImageURL = ""
     @State private var opponentProfileImageURL = ""
     
+    
     var body: some View {
         ScrollView {
             ForEach(viewModel.currentChallenges, id: \.customID) { challenge in
@@ -39,6 +40,9 @@ struct pendingCardView: View {
             }
         }
         .onAppear() {
+            viewModel.fetchChallenges {}
+        }
+        .refreshable {
             viewModel.fetchChallenges {}
         }
     }

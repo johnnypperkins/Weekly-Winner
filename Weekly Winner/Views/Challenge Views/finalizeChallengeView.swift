@@ -95,7 +95,9 @@ struct challengePage4: View {
                         challengerID: StaticUserData.shared.currentUser.id!,
                         receiverIDs: [viewModel.opponentID],
                         ticketFormat: viewModel.ticketFormat,
-                        gameIDs: viewModel.selectedGameIDs)
+                        gameIDs: viewModel.selectedGameIDs,
+                        gamesToPlay: viewModel.totalBetArrays.count,
+                    gamesPlayed: 0)
                     
                 ) {
                     self.shouldNavigate = true

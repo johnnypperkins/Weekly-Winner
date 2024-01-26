@@ -67,6 +67,7 @@ struct UserProfileView: View {
                     }
                 }
             }
+            screen1VM.setStaticUser {}
         }.padding(.top, 35)
     }
 }

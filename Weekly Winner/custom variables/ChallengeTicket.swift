@@ -23,6 +23,8 @@ struct ChallengeTicket {
     var receiverIDs: [String]
     var ticketFormat: [Int]
     var gameIDs: [String]
+    var gamesToPlay: Int
+    var gamesPlayed: Int
 }
 
 

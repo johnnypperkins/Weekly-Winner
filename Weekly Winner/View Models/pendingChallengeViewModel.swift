@@ -54,6 +54,9 @@ class pendingChallengeViewModel: ObservableObject {
 //        print("TOTAL BET ARRAYS \(self.totalBetArrays)")
     }
     
+    
+    
+    
     func fetchSelectedGames(gameIDS: [String], completion: @escaping ([Game]?, Error?) -> Void) {
         // Reference to the Firestore database
         let db = Firestore.firestore()

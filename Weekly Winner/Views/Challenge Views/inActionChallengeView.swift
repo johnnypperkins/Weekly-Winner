@@ -16,6 +16,10 @@ struct inActionChallengeView: View {
     @State var shouldNavigate = false
     
     @State var profileImageURL: String = ""
+    
+    @State var opponentChallengeTicket: ChallengeTicket?
+    
+    @State var loaded = false
 
     var body: some View {
         NavigationStack {
@@ -28,42 +32,161 @@ struct inActionChallengeView: View {
                         .font(.custom(K.customFonts.lexendDecaMedium, size: 28).weight(.medium))
                         .foregroundStyle(.white)
                 }
-                HStack {
-                            // Opponent's Profile Picture
-                            if viewModel.opponentProfilePicURL != "" {
-                                KFImage(URL(string: viewModel.opponentProfilePicURL))
-                                    .resizable()
-                                    .frame(width: 50, height: 50)
-                                    .clipShape(Circle())
-                            } else {
-                                Image(systemName: "person.fill")
-                                    .resizable()
-                                    .frame(width: 50, height: 50)
-                                    .clipShape(Circle())
-                            }
-                            // Bet Information
-                            VStack(alignment: .leading) {
+                HStack{
+                    Image(challenge.currencyChosen == "poolCoins" ? "poolCoin" : "poolBuck")
+                        .resizable()
+                        .frame(width: 50, height: 50)
+                    
+                    Text(String(format: "%.2f", challenge.wagerAmount))
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 50))
+                        .foregroundColor(.white)
+                }
+//                HStack {
+//                            // Opponent's Profile Picture
+//                            if viewModel.opponentProfilePicURL != "" {
+//                                KFImage(URL(string: viewModel.opponentProfilePicURL))
+//                                    .resizable()
+//                                    .frame(width: 50, height: 50)
+//                                    .clipShape(Circle())
+//                            } else {
+//                                Image(systemName: "person.fill")
+//                                    .resizable()
+//                                    .frame(width: 50, height: 50)
+//                                    .clipShape(Circle())
+//                            }
+//                            // Bet Information
+//                            VStack(alignment: .leading) {
+//                                    
+//
+//                                Text("Currency: ")
+//                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 15)).foregroundColor(K.finalColor.textWhite) +
+//                                Text("\(challenge.currencyChosen.capitalized)")
+//                                    .font(.custom(K.customFonts.lexendDecaLight, size: 15)).foregroundColor(K.finalColor.textWhite)
+//
+//                                Text("Wager Amount: ")
+//                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 15)).foregroundColor(K.finalColor.textWhite) +
+//                                Text("\(String(format: "%.0f", challenge.wagerAmount))")
+//                                    .font(.custom(K.customFonts.lexendDecaLight, size: 15)).foregroundColor(K.finalColor.textWhite)
+//
+//                                Text("Opponent: ")
+//                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 18)).foregroundColor(K.finalColor.textWhite) +
+//                                Text("\(viewModel.opponentUsername.capitalized)")
+//                                    .font(.custom(K.customFonts.lexendDecaLight, size: 18)).foregroundColor(K.finalColor.textWhite)
+//
+//                            }
+//                        }
+                VStack{
+                    if loaded == true{
+                        
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(Color.white, lineWidth: 1.5)
+                                .shadow(radius: 2)
+                            
+                            challengeOpponentBetsDisplayAccept(uid: StaticUserData.shared.currentUser.id! == opponentChallengeTicket!.challengerID ? opponentChallengeTicket!.receiverIDs[0] : opponentChallengeTicket!.challengerID, viewModel: viewModel).padding(1)
+                                
+                        }.padding()
+                    }
+                    HStack{
+                        VStack{
+                            if loaded == true{
+                                HStack(alignment: .top, spacing: 10) {
                                     
-
-                                Text("Currency: ")
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 15)).foregroundColor(K.finalColor.textWhite) +
-                                Text("\(challenge.currencyChosen.capitalized)")
-                                    .font(.custom(K.customFonts.lexendDecaLight, size: 15)).foregroundColor(K.finalColor.textWhite)
-
-                                Text("Wager Amount: ")
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 15)).foregroundColor(K.finalColor.textWhite) +
-                                Text("\(String(format: "%.0f", challenge.wagerAmount))")
-                                    .font(.custom(K.customFonts.lexendDecaLight, size: 15)).foregroundColor(K.finalColor.textWhite)
-
-                                Text("Opponent: ")
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 18)).foregroundColor(K.finalColor.textWhite) +
-                                Text("\(viewModel.opponentUsername.capitalized)")
-                                    .font(.custom(K.customFonts.lexendDecaLight, size: 18)).foregroundColor(K.finalColor.textWhite)
-
+                                    HStack (alignment: .center) {
+                                        Text(String(format: "%.0f", opponentChallengeTicket?.totalPotentialWon ?? 0))
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                            .foregroundColor(K.finalColor.potentialOrange)
+                                            .frame(width: 45, height: 20, alignment: .center)
+                                    }
+                                    .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                    .background(K.finalColor.potentialOrange.opacity(0.1))
+                                    .cornerRadius(5)
+                                    
+                                    HStack (alignment: .center) {
+                                        Text(String(format: "%.0f", opponentChallengeTicket?.totalWon ?? 0))
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                            .foregroundColor((opponentChallengeTicket?.totalWon ?? 0) >= 0 ? K.finalColor.winningGreen : K.finalColor.deleteRed)
+                                            .frame(width: 45 , height: 20, alignment: .center)
+                                    }
+                                    .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                    .background(K.finalColor.winningGreen.opacity(0.1))
+                                    .cornerRadius(5)
+                                    .padding(.trailing, 0)
+                                    
+                                    Text("\(viewModel.opponentUsername.capitalized)")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                        .foregroundStyle(.white)
+                                    
+                                    if viewModel.opponentProfilePicURL != "" {
+                                        KFImage(URL(string: viewModel.opponentProfilePicURL))
+                                            .resizable()
+                                            .frame(width: 30, height: 30)
+                                            .clipShape(Circle())
+                                    } else {
+                                        Image(systemName: "person.fill")
+                                            .resizable()
+                                            .frame(width: 30, height: 30)
+                                            .clipShape(Circle())
+                                    }
+                                }
+                            }
+                            Spacer()
+                            
+                            Text("VS")
+                                .foregroundStyle(.white)
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 30))
+                            
+                            Spacer()
+                            
+                            HStack {
+                                if StaticUserData.shared.currentUser.profileImageUrl != "" {
+                                    KFImage(URL(string: StaticUserData.shared.currentUser.profileImageUrl))
+                                        .resizable()
+                                        .frame(width: 30, height: 30)
+                                        .clipShape(Circle())
+                                } else {
+                                    Image(systemName: "person.fill")
+                                        .resizable()
+                                        .frame(width: 30, height: 30)
+                                        .clipShape(Circle())
+                                }
+                                Text("\(StaticUserData.shared.currentUser.username)")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .foregroundStyle(.white)
+                                
+                                
+                                HStack (alignment: .center) {
+                                    Text(String(format: "%.0f", challenge.totalWon))
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                        .foregroundColor(challenge.totalWon >= 0 ? K.finalColor.winningGreen : K.finalColor.deleteRed)
+                                        .frame(width: 45 , height: 20, alignment: .center)
+                                }
+                                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                .background(K.finalColor.winningGreen.opacity(0.1))
+                                .cornerRadius(5)
+                                .padding(.trailing, 0)
+                                
+                                HStack (alignment: .center) {
+                                    Text(String(format: "%.0f", challenge.totalPotentialWon))
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                        .foregroundColor(K.finalColor.potentialOrange)
+                                        .frame(width: 45, height: 20, alignment: .center)
+                                }
+                                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                .background(K.finalColor.potentialOrange.opacity(0.1))
+                                .cornerRadius(5)
                             }
                         }
-                VStack{
-                    challengeBetsDisplayAccept(uid: StaticUserData.shared.currentUser.id!, viewModel: viewModel)
+                    }
+
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(Color.white, lineWidth: 1.5)
+                            .shadow(radius: 2)
+                        
+                        challengeBetsDisplayAccept(uid: StaticUserData.shared.currentUser.id!, viewModel: viewModel).padding(1)
+                            
+                    }.padding()
                 }
             }.background(K.finalColor.backgroundBlue)
             
@@ -94,6 +217,11 @@ struct inActionChallengeView: View {
         }.frame(minWidth: 0, maxWidth: .infinity)
         .background(K.finalColor.backgroundBlue)
         .onAppear {
+                viewModel.fetchChallengeTicket(by: challenge.customID, uid: StaticUserData.shared.currentUser.id == challenge.challengerID ? challenge.receiverIDs[0] : challenge.challengerID) { challenge in
+                    opponentChallengeTicket = challenge
+                    loaded = true
+                }
+            
 //            fetchUserProfilePic(uid: viewModel.opponentID) { (profileImageUrl, error) in
 //                if let error = error {
 //                    print("Error fetching profile image URL: \(error)")
@@ -112,41 +240,41 @@ struct challengeBetsDisplayAccept: View {
     @ObservedObject var viewModel: inActionChallengeViewModel
 
     var body: some View {
-        HStack (alignment: .center, spacing: 23){
-            HStack (spacing: 0) {
-                Text("Pending").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
-                Spacer()
-                Text("\(String(format: "%.0f", viewModel.challenge.totalPotentialWon))")
-                    .font(.custom("Futura", size: 20))
-                    .foregroundColor(K.finalColor.potentialOrange)
-            }.padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-                .frame(width: 160, height: 55, alignment: .center)
-                .background(
-                    RoundedRectangle(cornerRadius: 7.5)
-                        .fill(K.finalColor.cardBlue) // Change the opacity as needed
-                ).cornerRadius(7.5)
-            HStack (spacing: 0){
-                Text("Balance").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
-                Spacer()
-                Text("\(String(format: "%.0f", viewModel.challenge.totalWon))")
-                    .font(.custom("Futura", size: 20))
-                    .foregroundColor(viewModel.challenge.totalWon >= 0 ? K.finalColor.winningGreen : K.finalColor.deleteRed)
-            }
-            .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-            .frame(width: 160, height: 55, alignment: .center)
-            .background(
-                RoundedRectangle(cornerRadius: 7.5)
-                    .fill(K.finalColor.cardBlue) // Change the opacity as needed
-            )
-            .cornerRadius(7.5)
-        }.padding([.horizontal,.top])
+//        HStack (alignment: .center, spacing: 23){
+//            HStack (spacing: 0) {
+//                Text("Pending").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
+//                Spacer()
+//                Text("\(String(format: "%.0f", viewModel.challenge.totalPotentialWon))")
+//                    .font(.custom("Futura", size: 20))
+//                    .foregroundColor(K.finalColor.potentialOrange)
+//            }.padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
+//                .frame(width: 160, height: 55, alignment: .center)
+//                .background(
+//                    RoundedRectangle(cornerRadius: 7.5)
+//                        .fill(K.finalColor.cardBlue) // Change the opacity as needed
+//                ).cornerRadius(7.5)
+//            HStack (spacing: 0){
+//                Text("Balance").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
+//                Spacer()
+//                Text("\(String(format: "%.0f", viewModel.challenge.totalWon))")
+//                    .font(.custom("Futura", size: 20))
+//                    .foregroundColor(viewModel.challenge.totalWon >= 0 ? K.finalColor.winningGreen : K.finalColor.deleteRed)
+//            }
+//            .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
+//            .frame(width: 160, height: 55, alignment: .center)
+//            .background(
+//                RoundedRectangle(cornerRadius: 7.5)
+//                    .fill(K.finalColor.cardBlue) // Change the opacity as needed
+//            )
+//            .cornerRadius(7.5)
+//        }.padding([.horizontal,.top])
         
         ScrollView {
             VStack {
                 VStack {
-                    ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
-                        if viewModel.challenge.ticketFormat.count > 0 && viewModel.totalBetArrays.count == viewModel.challenge.ticketFormat.count {
-                            SectionTitleAccept(title: parlayTitle(ticketFormat: viewModel.challenge.ticketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.challenge.ticketFormat[parlayIndex], uid: StaticUserData.shared.currentUser.id ?? "", viewModel: viewModel)
+                    ForEach(0..<viewModel.selfTotalBetArrays.count, id: \.self) { parlayIndex in
+                        if viewModel.challenge.ticketFormat.count > 0 && viewModel.selfTotalBetArrays.count == viewModel.challenge.ticketFormat.count {
+                            SectionTitleAccept(title: parlayTitle(ticketFormat: viewModel.challenge.ticketFormat, index: parlayIndex), betArray: viewModel.selfTotalBetArrays[parlayIndex], maxBetsPlaced: viewModel.challenge.ticketFormat[parlayIndex], uid: StaticUserData.shared.currentUser.id ?? "", viewModel: viewModel)
                         }
                     }
                 }
@@ -155,6 +283,55 @@ struct challengeBetsDisplayAccept: View {
         }
     }
 }
+    
+    struct challengeOpponentBetsDisplayAccept: View {
+        let uid: String
+        @ObservedObject var viewModel: inActionChallengeViewModel
+
+        var body: some View {
+//            HStack (alignment: .center, spacing: 23){
+//                HStack (spacing: 0) {
+//                    Text("Pending").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
+//                    Spacer()
+//                    Text("\(String(format: "%.0f", viewModel.challenge.totalPotentialWon))")
+//                        .font(.custom("Futura", size: 20))
+//                        .foregroundColor(K.finalColor.potentialOrange)
+//                }.padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
+//                    .frame(width: 160, height: 55, alignment: .center)
+//                    .background(
+//                        RoundedRectangle(cornerRadius: 7.5)
+//                            .fill(K.finalColor.cardBlue) // Change the opacity as needed
+//                    ).cornerRadius(7.5)
+//                HStack (spacing: 0){
+//                    Text("Balance").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
+//                    Spacer()
+//                    Text("\(String(format: "%.0f", viewModel.challenge.totalWon))")
+//                        .font(.custom("Futura", size: 20))
+//                        .foregroundColor(viewModel.challenge.totalWon >= 0 ? K.finalColor.winningGreen : K.finalColor.deleteRed)
+//                }
+//                .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
+//                .frame(width: 160, height: 55, alignment: .center)
+//                .background(
+//                    RoundedRectangle(cornerRadius: 7.5)
+//                        .fill(K.finalColor.cardBlue) // Change the opacity as needed
+//                )
+//                .cornerRadius(7.5)
+//            }.padding([.horizontal,.top])
+            
+            ScrollView {
+                VStack {
+                    VStack {
+                        ForEach(0..<viewModel.opponentTotalBetArrays.count, id: \.self) { parlayIndex in
+                            if viewModel.challenge.ticketFormat.count > 0 && viewModel.opponentTotalBetArrays.count == viewModel.challenge.ticketFormat.count {
+                                SectionTitleAccept(title: parlayTitle(ticketFormat: viewModel.challenge.ticketFormat, index: parlayIndex), betArray: viewModel.opponentTotalBetArrays[parlayIndex], maxBetsPlaced: viewModel.challenge.ticketFormat[parlayIndex], uid: uid, viewModel: viewModel)
+                            }
+                        }
+                    }
+                }.padding(.bottom,15)
+                    .padding()
+            }
+        }
+    }
 
     struct SectionTitleAccept: View {
         let title: String

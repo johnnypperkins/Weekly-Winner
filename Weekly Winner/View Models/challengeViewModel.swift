@@ -444,9 +444,9 @@ class challengeViewModel: ObservableObject {
         
         // 1. Send bets to own user
         print("Checking opponent's currency")
-            checkOpponentCurrency(challengeTicket: challengeTicket) { hasEnoughCurrency in
-                print("Checked opponent's currency: \(hasEnoughCurrency)")
-                if hasEnoughCurrency {
+//            checkOpponentCurrency(challengeTicket: challengeTicket) { hasEnoughCurrency in
+//                print("Checked opponent's currency: \(hasEnoughCurrency)")
+//                if hasEnoughCurrency {
                     print("Deducting currency from users")
                     self.deductCurrencyFromUsers(challengeTicket: challengeTicket) {
                         print("Currency deducted successfully")
@@ -499,7 +499,9 @@ class challengeViewModel: ObservableObject {
                         "challengerID": challengeTicket.challengerID,
                         "receiverIDs": challengeTicket.receiverIDs,
                         "ticketFormat": challengeTicket.ticketFormat,
-                        "gameIDs": challengeTicket.gameIDs
+                        "gameIDs": challengeTicket.gameIDs,
+                        "gamesToPlay": challengeTicket.gamesToPlay,
+                        "gamesPlayed": challengeTicket.gamesPlayed
                     ]
                         
                         let recieverTicketData: [String: Any] = [
@@ -515,7 +517,9 @@ class challengeViewModel: ObservableObject {
                             "challengerID": challengeTicket.challengerID,
                             "receiverIDs": challengeTicket.receiverIDs,
                             "ticketFormat": challengeTicket.ticketFormat,
-                            "gameIDs": challengeTicket.gameIDs
+                            "gameIDs": challengeTicket.gameIDs,
+                            "gamesToPlay": challengeTicket.gamesToPlay,
+                            "gamesPlayed": challengeTicket.gamesPlayed
                         ]
 
                     
@@ -540,13 +544,13 @@ class challengeViewModel: ObservableObject {
                 print("Currency deduction failed: \(errorMessage)")
                 self.errorMessage = errorMessage
                         }
-            } else {
-                // Notify the user that the opponent lacks enough funds
-                print("Opponent lacks the funds to accept the challenge.")
-                self.errorMessage = "Opponent lacks the funds to accept the challenge."
-                completion()
-            }
-        }
+//            } else {
+//                // Notify the user that the opponent lacks enough funds
+//                print("Opponent lacks the funds to accept the challenge.")
+//                self.errorMessage = "Opponent lacks the funds to accept the challenge."
+//                completion()
+//            }
+//        }
     }
     
     func fetchChallenges(completion: @escaping () -> Void) {
@@ -554,6 +558,7 @@ class challengeViewModel: ObservableObject {
 
         let query = self.db.collection("users").document(StaticUserData.shared.currentUser.id ?? "").collection("challenges").document("tickets").collection("currentChallengeTickets")
                     .whereField("status", in: statuses)
+                    .order(by: "dateCreated", descending: true)
 
         query.getDocuments { (querySnapshot, error) in
             if let error = error {
@@ -585,7 +590,10 @@ class challengeViewModel: ObservableObject {
                    let challengerID = data["challengerID"] as? String,
                    let receiverIDs = data["receiverIDs"] as? [String],
                    let ticketFormat = data["ticketFormat"] as? [Int],
-                   let gameIDs = data["gameIDs"] as? [String] {
+                   let gameIDs = data["gameIDs"] as? [String],
+                   let gamesToPlay = data["gamesToPlay"] as? Int,
+                   let gamesPlayed = data["gamesPlayed"] as? Int
+                {
                     
                     let challengeTicket = ChallengeTicket(
                         customID: customID,
@@ -600,7 +608,9 @@ class challengeViewModel: ObservableObject {
                         challengerID: challengerID,
                         receiverIDs: receiverIDs,
                         ticketFormat: ticketFormat,
-                        gameIDs: gameIDs
+                        gameIDs: gameIDs,
+                        gamesToPlay: gamesToPlay,
+                        gamesPlayed: gamesPlayed
                     )
                     self.currentChallenges.append(challengeTicket)
                 } else {
