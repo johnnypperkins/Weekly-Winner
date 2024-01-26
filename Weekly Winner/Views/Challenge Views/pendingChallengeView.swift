@@ -50,6 +50,21 @@ struct pendingCardView: View {
 
 
 struct pendingOption1: View {
+    
+    //                            if opponentProfileImageURL != "" {
+    //                                KFImage(URL(string: opponentProfileImageURL))
+    //                                    .resizable()
+    //                                    .aspectRatio(contentMode: .fill)
+    //                                    .clipShape(Circle())
+    //                                    .frame(width: 35, height: 35)
+    //                            } else {
+    //                                Image(systemName: "photo.circle.fill")
+    //                                    .resizable()
+    //                                    .aspectRatio(contentMode: .fill)
+    //                                    .frame(width: 35, height: 35)
+    //                                    .background(K.finalColor.tabSelectedBlue)
+    //                                    .clipShape(Circle())
+    //                            }
     let challenge: ChallengeTicket
     @State private var selfProfileImageURL = ""
     @State private var opponentProfileImageURL = ""
@@ -58,8 +73,24 @@ struct pendingOption1: View {
             VStack (spacing: 10) {
                 HStack {
                     HStack(spacing: 11) {
+//                        if selfProfileImageURL != "" {
+//                            KFImage(URL(string: selfProfileImageURL))
+//                                .resizable()
+//                                .aspectRatio(contentMode: .fill)
+//                                .clipShape(Circle())
+//                                .frame(width: 35, height: 35)
+//                        } else {
+//                            Image(systemName: "photo.circle.fill")
+//                                .resizable()
+//                                .aspectRatio(contentMode: .fill)
+//                                .frame(width: 35, height: 35)
+//                                .background(K.finalColor.tabSelectedBlue)
+//                                .clipShape(Circle())
+//                            
+//                        }
                         VStack(alignment: .center, spacing: 10) {
-                     
+                            
+                            HStack {
                                 HStack (alignment: .center) {
                                     Text("\(Int(challenge.totalPotentialWon))")
                                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
@@ -69,75 +100,84 @@ struct pendingOption1: View {
                                 .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
                                 .background(K.finalColor.potentialOrange.opacity(0.1))
                                 .cornerRadius(5)
-                        
-                            HStack (alignment: .center) {
-                                Text("\(Int(challenge.totalWon))")
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                    .foregroundColor(challenge.totalWon>=0 ? K.finalColor.winningGreen : K.finalColor.deleteRed)
-                                    .frame(width: 45 , height: 20, alignment: .center)
-                            }
-                            .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
-                            .background(K.finalColor.winningGreen.opacity(0.1))
-                            .cornerRadius(5)
-                           
-                        }
-                        HStack(spacing: 5) {
-//                            if selfProfileImageURL != "" {
-//                                KFImage(URL(string: selfProfileImageURL))
-//                                    .resizable()
-//                                    .aspectRatio(contentMode: .fill)
-//                                    .clipShape(Circle())
-//                                    .frame(width: 35, height: 35)
-//                            } else {
-//                                Image(systemName: "photo.circle.fill")
-//                                    .resizable()
-//                                    .aspectRatio(contentMode: .fill)
-//                                    .frame(width: 35, height: 35)
-//                                    .background(K.finalColor.tabSelectedBlue)
-//                                    .clipShape(Circle())
-//
-//                            }
-                            HStack {
-                                Text("\(StaticUserData.shared.currentUser.username)")
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
-                                    .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
-                               
-                                Text("vs")
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
-                                    .foregroundColor(.white)
                                 
-                                Text("\(challenge.challengerID == StaticUserData.shared.currentUser.id ? challenge.opponentUsername : challenge.username)")
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
-                                    .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+                                HStack (alignment: .center) {
+                                    Text("\(Int(challenge.totalWon))")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                        .foregroundColor(challenge.totalWon>=0 ? K.finalColor.winningGreen : K.finalColor.deleteRed)
+                                        .frame(width: 45 , height: 20, alignment: .center)
+                                }
+                                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                .background(K.finalColor.winningGreen.opacity(0.1))
+                                .cornerRadius(5)
+                                
                             }
                             
-//                            if opponentProfileImageURL != "" {
-//                                KFImage(URL(string: opponentProfileImageURL))
-//                                    .resizable()
-//                                    .aspectRatio(contentMode: .fill)
-//                                    .clipShape(Circle())
-//                                    .frame(width: 35, height: 35)
-//                            } else {
-//                                Image(systemName: "photo.circle.fill")
-//                                    .resizable()
-//                                    .aspectRatio(contentMode: .fill)
-//                                    .frame(width: 35, height: 35)
-//                                    .background(K.finalColor.tabSelectedBlue)
-//                                    .clipShape(Circle())
-//                            }
+                            
+                            Text("\(StaticUserData.shared.currentUser.username)")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                .foregroundColor(.white)
                             
                         }
-                        .frame(maxHeight: .infinity)
-                    }
-                    .frame(height: 70)
-                    .frame(maxHeight: .infinity)
-                        HStack {
-                            Image(systemName: "chevron.right") // Use any image you'd like
-                                .resizable()
-                                .frame(width: 7.5, height: 10) // Adjust size to your liking
-                                .foregroundColor(.white ) // Choose color
+                    }.frame(width: 150)
+                    
+                    Text("vs")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                    
+                    HStack(spacing: 11) {
+                        
+                        VStack(alignment: .center, spacing: 10) {
+                            
+                            HStack {
+                                HStack (alignment: .center) {
+                                    Text("\(Int(challenge.totalPotentialWon))")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                        .foregroundColor(K.finalColor.potentialOrange)
+                                        .frame(width: 45, height: 20, alignment: .center)
+                                }
+                                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                .background(K.finalColor.potentialOrange.opacity(0.1))
+                                .cornerRadius(5)
+                                
+                                HStack (alignment: .center) {
+                                    Text("\(Int(challenge.totalWon))")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                        .foregroundColor(challenge.totalWon>=0 ? K.finalColor.winningGreen : K.finalColor.deleteRed)
+                                        .frame(width: 45 , height: 20, alignment: .center)
+                                }
+                                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                .background(K.finalColor.winningGreen.opacity(0.1))
+                                .cornerRadius(5)
+                                
+                            }
+                            
+                            
+                            Text("\(challenge.opponentUsername)")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                .foregroundColor(.white)
+                            
                         }
-                }.padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))
+//                        if selfProfileImageURL != "" {
+//                            KFImage(URL(string: selfProfileImageURL))
+//                                .resizable()
+//                                .aspectRatio(contentMode: .fill)
+//                                .clipShape(Circle())
+//                                .frame(width: 35, height: 35)
+//                        } else {
+//                            Image(systemName: "photo.circle.fill")
+//                                .resizable()
+//                                .aspectRatio(contentMode: .fill)
+//                                .frame(width: 35, height: 35)
+//                                .background(K.finalColor.tabSelectedBlue)
+//                                .clipShape(Circle())
+//                            
+//                        }
+                    }.frame(width: 150)
+                   
+                } .frame(height: 70)
+                    .frame(maxHeight: .infinity)
+                .padding(EdgeInsets(top: 10, leading: 10, bottom: 0, trailing: 10))
             }
         }
 

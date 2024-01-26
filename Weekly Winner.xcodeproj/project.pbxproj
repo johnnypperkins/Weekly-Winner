@@ -26,6 +26,7 @@
 		3C91B6C82A58BE6D00398F53 /* RoundingUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C91B6C72A58BE6D00398F53 /* RoundingUI.swift */; };
 		3C972C8A2B2FC07100671D0F /* screen1ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C972C892B2FC07100671D0F /* screen1ViewModel.swift */; };
 		3C97BA5D2B0BDF7A00FE7A6B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3C97BA5C2B0BDF7A00FE7A6B /* GoogleService-Info.plist */; };
+		3C9D85C02B63551F001E702C /* PopupView in Frameworks */ = {isa = PBXBuildFile; productRef = 3C9D85BF2B63551F001E702C /* PopupView */; };
 		3CADF50D2B4F091400BE850E /* pendingChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CADF50C2B4F091400BE850E /* pendingChallengeView.swift */; };
 		3CB1AC8B2A61602700C931CA /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB1AC8A2A61602700C931CA /* Group.swift */; };
 		3CB799BC2B47501D00C7A9F0 /* challengeViewTwo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB799BB2B47501D00C7A9F0 /* challengeViewTwo.swift */; };
@@ -227,6 +228,7 @@
 				8603AD0E2B1099C500B3B6BD /* FirebaseInAppMessaging-Beta in Frameworks */,
 				8603AD142B1099C500B3B6BD /* FirebaseStorage in Frameworks */,
 				8603AD022B1099C500B3B6BD /* FirebaseAuth in Frameworks */,
+				3C9D85C02B63551F001E702C /* PopupView in Frameworks */,
 				8603AD0C2B1099C500B3B6BD /* FirebaseFunctions in Frameworks */,
 				8603AD172B109A0E00B3B6BD /* Kingfisher in Frameworks */,
 				8603AD0A2B1099C500B3B6BD /* FirebaseFirestoreSwift in Frameworks */,
@@ -500,6 +502,7 @@
 				8603AD162B109A0E00B3B6BD /* Kingfisher */,
 				8642C2132B249D0E00BB96AD /* GoogleSignIn */,
 				8642C2152B249D0E00BB96AD /* GoogleSignInSwift */,
+				3C9D85BF2B63551F001E702C /* PopupView */,
 			);
 			productName = "Weekly Winner";
 			productReference = 867801512A213010006FE479 /* Weekly Winner.app */;
@@ -577,6 +580,7 @@
 				8603ACFC2B1099C500B3B6BD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				8603AD152B109A0E00B3B6BD /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				8642C2122B249D0D00BB96AD /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				3C9D85BE2B63551F001E702C /* XCRemoteSwiftPackageReference "PopupView" */,
 			);
 			productRefGroup = 867801522A213010006FE479 /* Products */;
 			projectDirPath = "";
@@ -1075,6 +1079,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		3C9D85BE2B63551F001E702C /* XCRemoteSwiftPackageReference "PopupView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/exyte/PopupView.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.8.4;
+			};
+		};
 		8603ACFC2B1099C500B3B6BD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
@@ -1102,6 +1114,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		3C9D85BF2B63551F001E702C /* PopupView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3C9D85BE2B63551F001E702C /* XCRemoteSwiftPackageReference "PopupView" */;
+			productName = PopupView;
+		};
 		8603ACFD2B1099C500B3B6BD /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 8603ACFC2B1099C500B3B6BD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

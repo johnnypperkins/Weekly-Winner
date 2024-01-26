@@ -486,6 +486,8 @@ class challengeViewModel: ObservableObject {
                     let challengePath2 = db.collection("users").document(challengeTicket.receiverIDs[0]).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challengeTicket.customID)
                     print("\(challengeTicket) + helllooooooeeoeo     ")
                     print("\(username) + helllooooooeeoeo     ")
+                        
+                        // YOUR TICKET
                     let challengerTicketData: [String: Any] = [
                         "customID": challengeTicket.customID,
                         "username": username,
@@ -503,19 +505,19 @@ class challengeViewModel: ObservableObject {
                         "gamesToPlay": challengeTicket.gamesToPlay,
                         "gamesPlayed": challengeTicket.gamesPlayed
                     ]
-                        
+                        // OPPONENT TICKET
                         let recieverTicketData: [String: Any] = [
                             "customID": challengeTicket.customID,
-                            "username": username,
-                            "opponentUsername": challengeTicket.opponentUsername,
+                            "username": challengeTicket.opponentUsername, // NEEDS TO BE FLIPPED
+                            "opponentUsername": username,
                             "dateCreated": challengeTicket.dateCreated, // Assuming `dateCreated` is a Date object
                             "wagerAmount": challengeTicket.wagerAmount,
                             "currencyChosen": challengeTicket.currencyChosen,
                             "totalPotentialWon": 0,
                             "totalWon": 0,
                             "status": challengeTicket.status,
-                            "challengerID": challengeTicket.challengerID,
-                            "receiverIDs": challengeTicket.receiverIDs,
+                            "challengerID": challengeTicket.receiverIDs[0],
+                            "receiverIDs": [challengeTicket.challengerID], // FLIPPED
                             "ticketFormat": challengeTicket.ticketFormat,
                             "gameIDs": challengeTicket.gameIDs,
                             "gamesToPlay": challengeTicket.gamesToPlay,
