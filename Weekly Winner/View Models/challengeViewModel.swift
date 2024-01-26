@@ -69,6 +69,10 @@ class challengeViewModel: ObservableObject {
         self.ticketFormat = ticketFormat
     }
     
+    func isGameSelected(gameId: String) -> Bool {
+        return selectedGameIDs.contains(gameId)
+    }
+    
     func setEmptyTotalBetArray(ticketFormat: [Int]) {
         self.totalBetArrays.removeAll() // Clear previous data
         for _ in ticketFormat {
@@ -103,6 +107,7 @@ class challengeViewModel: ObservableObject {
         
         
         print("ALL GAMES IN ARRAY: \(selectedGames)")
+        print("ALL GAMES IDS IN ARRAY: \(selectedGameIDs)")
         
     }
     

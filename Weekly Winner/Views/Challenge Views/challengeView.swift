@@ -204,7 +204,7 @@ struct challengePage1: View {
                                 .foregroundColor(.white)
                             
                         }
-                    }.padding(.top, 30)
+                    }.padding(.top, 10)
                     HStack (spacing: 20){
                         Button(action: {
                             if currencyChosen != "poolBucks" {
@@ -267,26 +267,20 @@ struct challengePage1: View {
                     
                     searchBarView(keyword: keywordBinding)
                             
-                            
-//                        Text((viewModel.opponentUsernameExists && opponentUsername != "") ? "Available" : "Unavailable")
-//                            .foregroundColor((viewModel.opponentUsernameExists && opponentUsername != "") ? K.finalColor.winningGreen : K.finalColor.deleteRed)
-//                            .padding(4)
-//                            .background((viewModel.opponentUsernameExists && opponentUsername != "") ? K.finalColor.winningGreen.opacity(0.6) : K.finalColor.deleteRed.opacity(0.6))
-                        
-//                    .onChange(of: opponentUsername) { newValue in
-//                        viewModel.checkUsernameAvailable(username: newValue) {_,_ in
-//                        }
-//                    }
                     ScrollView {
                         ForEach(viewModel.queriedUsers, id: \.id) { user in
-                            userBio(user: user, selectedUserID: $selectedUserID, selectedUserUsername: $opponentUsername)
-                                .padding(.vertical,3)
-                                .padding(.horizontal,14)
+                            if user.id != StaticUserData.shared.currentUser.id {
+                                userBio(user: user, selectedUserID: $selectedUserID, selectedUserUsername: $opponentUsername)
+                                    .padding(.vertical,3)
+                                    .padding(.horizontal,14)
+                            }
                         }
-                    }.frame(height: 150)
+                    }.frame(height: 115)
+                        .padding(.vertical)
                     VStack {
-                        CustomStepper(value: $oneLegNum, range: 0...3, title: "1 Legs")
+                        CustomStepper2(value: $oneLegNum, range: 0...3, title: "Wagers")
                             .padding(.horizontal,14)
+                            .padding(.top,10)
                     }
                     Spacer()
 
@@ -318,7 +312,7 @@ struct challengePage1: View {
                                     .foregroundColor(.white)
                                 Spacer()
                             }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                                .background(Color(red: 0.31, green: 0.57, blue: 1))
+                                .background(K.finalColor.winningGreen)
                                 .cornerRadius(10)
                                 .padding(.horizontal,16)
                                 .padding(.bottom,20)
@@ -331,13 +325,13 @@ struct challengePage1: View {
                                 .foregroundColor(.white)
                             Spacer()
                         }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                            .background(K.finalColor.titleBlue.opacity(0.6))
+                            .background(K.finalColor.deleteRed.opacity(0.6))
                             .cornerRadius(10)
                             .padding(.horizontal,16)
                             .padding(.bottom,20)
                     }
                     
-                    
+                    //Spacer()
                 }
             }.onAppear() {
                 viewModel.selectedGames = []
@@ -369,18 +363,6 @@ struct challengePage2: View {
 //    @State var challengeFormat = "gameBased"
     @State var amountTime = 1
     
-//    init(viewModel: challengeViewModel, currencyChosen: String, opponentUsername: String, selectedUserID: String?, wagerAmount: Double, ticketFormat: [Int]) {
-//            self.viewModel = viewModel
-//            self.currencyChosen = currencyChosen
-//            self.opponentUsername = opponentUsername
-//            self.selectedUserID = selectedUserID
-//            self.wagerAmount = wagerAmount
-//            self.ticketFormat = ticketFormat
-//
-//            viewModel.setEmptyTotalBetArray(ticketFormat: ticketFormat)
-//            viewModel.setBetAvailability(ticketFormat: ticketFormat)
-//        }
-    
     var body: some View {
         
         NavigationStack {
@@ -410,7 +392,7 @@ struct challengePage2: View {
                                 .foregroundColor(.white)
                             Spacer()
                         }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                            .background(Color(red: 0.31, green: 0.57, blue: 1))
+                            .background(K.finalColor.winningGreen)
                             .cornerRadius(10)
                             .padding(.horizontal,16)
                             .padding(.bottom,20)
@@ -423,18 +405,15 @@ struct challengePage2: View {
                             .foregroundColor(.white)
                         Spacer()
                     }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                        .background(K.finalColor.titleBlue.opacity(0.6))
+                        .background(K.finalColor.deleteRed)
                         .cornerRadius(10)
                         .padding(.horizontal,16)
                         .padding(.bottom,20)
                 }
                 
-                }.padding(.top, 35)
+                }.padding(.top, 10)
             }.background(K.finalColor.backgroundBlue)
         }
-//        .onAppear() {
-//            viewModel.selectedGames.removeAll()
-//        }
     }
 }
 
@@ -508,20 +487,12 @@ struct gameBasedView: View {
             ScrollView {
                 VStack(spacing: 5) {
                     ForEach(viewModel.allGames, id: \.idd) { game in
-                                    if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
-                        if game.commenceTime.dateValue() > Date() {
-                            Button {
-                                viewModel.toggleGameSelection(game)
-                            } label: {
-                                gameRowImages(game: game, /*challengeFormat: challengeFormat,*/ viewModel: viewModel)
-//                                    .background(viewModel.selectedGameIDs.contains(game.idd) ? Color.gray : Color.clear)
+                        if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
+                            if game.commenceTime.dateValue() > Date() {
+                                gameRowImages(game: game, viewModel: viewModel, isSelected: viewModel.isGameSelected(gameId: game.idd), searchTerm: $searchTerm)
 
                             }
-
-                            
                         }
-                        
-                                    }
                     }.padding(.horizontal)
                 }
             }
@@ -532,15 +503,13 @@ struct gameBasedView: View {
 struct gameRowImages: View {
     
     let game: Game
-//     var challengeFormat: String
     @ObservedObject var viewModel: challengeViewModel
     
     @State var titleStringH: String = ""
     @State var titleStringA: String = ""
-    @State private var isSelected: Bool = false // FIX
-    
-    
-    
+    @State var isSelected: Bool // FIX
+    @Binding var searchTerm: String
+
     var maxHeight = 100
     var maxWidth = 100
     
@@ -600,8 +569,14 @@ struct gameRowImages: View {
             
             viewModel.toggleGameSelection(game)
         
-            // Toggle the selection state when the view is tapped
-                }
+        }
+//        .onChange(of: searchTerm) { _ in
+//            if viewModel.selectedGameIDs.contains(game.idd) {
+//                self.isSelected = true
+//                print("HERE BLAHBLAH")
+//            }
+//        
+//        }
     }
     
     struct PlaceBetImage: View {

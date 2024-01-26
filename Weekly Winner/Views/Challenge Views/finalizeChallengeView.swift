@@ -114,7 +114,7 @@ struct challengePage4: View {
                         .foregroundColor(.white)
                     Spacer()
                 }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                    .background(Color(red: 0.31, green: 0.57, blue: 1))
+                    .background(K.finalColor.winningGreen)
                     .cornerRadius(10)
                     .padding(.horizontal,16)
                     .padding(.bottom,20)

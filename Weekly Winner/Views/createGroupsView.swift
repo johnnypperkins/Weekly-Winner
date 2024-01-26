@@ -248,6 +248,46 @@ struct CustomStepper: View {
     }
 }
 
+struct CustomStepper2: View {
+    @Binding var value: Int
+    let range: ClosedRange<Int>
+    let title: String
+    
+    var body: some View {
+        HStack (spacing: 15) {
+            Button(action: {
+                if value > range.lowerBound {
+                    value -= 1
+                }
+            }) {
+                Image(systemName: "minus")
+                    .font(.system(size: 30))
+                    .foregroundColor(.white)
+                    .frame(width: 60, height: 60)
+                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                    .cornerRadius(5)
+            }
+            
+            Text("\(value) \(title)")
+                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 30))
+                .foregroundColor(.white)
+            
+            Button(action: {
+                if value < range.upperBound {
+                    value += 1
+                }
+            }) {
+                Image(systemName: "plus")
+                    .font(.system(size: 30))
+                    .foregroundColor(.white)
+                    .frame(width: 60, height: 60)
+                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                    .cornerRadius(5)
+            }
+        }
+    }
+}
+
 
 struct createGroupsView_Previews: PreviewProvider {
     static var previews: some View {

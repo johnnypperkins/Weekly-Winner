@@ -87,15 +87,15 @@ struct challengePage3: View {
                         }, label: {
                             HStack{
                                 Spacer()
-                                Text("Finalize")
+                                Text("Finalize Challenge")
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
                                     .foregroundColor(.white)
                                 Spacer()
                             }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                                .background(Color(red: 0.31, green: 0.57, blue: 1))
+                                .background(K.finalColor.winningGreen)
                                 .cornerRadius(10)
                                 .padding(.horizontal,16)
-                                .padding(.bottom,20)
+                                .padding(.bottom,10)
                         })
                         
                         
@@ -107,10 +107,10 @@ struct challengePage3: View {
                                 .foregroundColor(.white)
                             Spacer()
                         }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                            .background(K.finalColor.titleBlue.opacity(0.6))
+                            .background(K.finalColor.deleteRed)
                             .cornerRadius(10)
                             .padding(.horizontal,16)
-                            .padding(.bottom,20)
+                            .padding(.bottom,10)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -120,7 +120,7 @@ struct challengePage3: View {
                 .offset(x:isShowing ? 300 : 0, y: isShowing ? 100 : 0)
                 .scaleEffect(isShowing ? 0.8 : 1)
             }.background(K.finalColor.backgroundBlue)
-                .padding(EdgeInsets(top: 20, leading: 0, bottom: 55, trailing: 0))
+                .padding(EdgeInsets(top: 20, leading: 0, bottom: 40, trailing: 0))
                 .navigationBarHidden(false)
         }
     }
@@ -320,33 +320,6 @@ struct BetDetailsViewCHALLENGE: View {
                 }
                 VStack {
                     HStack (spacing: 20){
-                        //ZStack(alignment: .topLeading) {
-                        
-                        
-//                            VStack (alignment: .center){
-//                                VStack {
-//                                    Text("Group")
-//                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-//                                        .foregroundColor(K.finalColor.textWhite)
-//                                        .frame(width: 150, alignment: .leading)
-//                                        //.padding(EdgeInsets(top: 70, leading: 15, bottom: 2.5, trailing: 0))
-//                                        .background(K.finalColor.backgroundBlue)
-//                                }
-//             
-//                                //.padding(.horizontal)
-//                                .frame(width: 150, height: 120)
-//                                //.padding(.horizontal)
-//                                .onAppear {
-//                                    if let firstNumberGreaterThanZero = viewModel.availableBetsArray.first(where: { $0 > 0 }) {
-//                                        betNumber = firstNumberGreaterThanZero
-//                                    } else {
-//                                        betNumber = -99
-//                                    }
-//                                    checkTeamTaken()
-//                                }
-//                                //.background(K.finalColor.cardBlue)
-//                                .cornerRadius(7.5)
-//                            }
                         VStack {
                                 VStack {
                                     Text("Challenge Ticket")

@@ -89,7 +89,7 @@ struct finalizeAcceptChallengeView: View {
                 }, label: {
                     HStack {
                         Spacer()
-                        Text("Send Challenge")
+                        Text("Accept Challenge")
                             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
                             .foregroundColor(.white)
                         Spacer()
