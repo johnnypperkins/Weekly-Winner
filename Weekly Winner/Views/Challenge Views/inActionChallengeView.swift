@@ -38,7 +38,7 @@ struct inActionChallengeView: View {
                         
                         ZStack {
                             RoundedRectangle(cornerRadius: 20)
-                                .stroke(Color.white, lineWidth: 1.5)
+                                .stroke(Color.gray, lineWidth: 0.5)
                                 .shadow(radius: 2)
                             
                             VStack {
@@ -93,7 +93,7 @@ struct inActionChallengeView: View {
 
                     ZStack {
                         RoundedRectangle(cornerRadius: 20)
-                            .stroke(Color.white, lineWidth: 1.5)
+                            .stroke(Color.gray, lineWidth: 0.5)
                             .shadow(radius: 2)
                         
                         VStack {

@@ -37,8 +37,6 @@
 		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This app needs your location for app functionality</string>
 	<key>aps-connection-initiate</key>
 	<true/>
 </dict>

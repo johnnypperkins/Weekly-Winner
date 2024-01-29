@@ -10,11 +10,14 @@
 import Foundation
 import SwiftUI
 import Kingfisher
+import PopupView
 
 struct challengeView: View {
     @State var tabSelected = 0
     
     @ObservedObject var challengeVM = challengeViewModel()
+    
+    @State private var showRulesPage = false
     
     private func tabTitle(for index: Int) -> String {
         switch index {
@@ -96,7 +99,9 @@ struct challengeView: View {
             }/*.background(K.finalColor.backgroundBlue)*/
             .padding(.top,30)
         }
+        
     }
+        
 }
 
 
@@ -104,6 +109,7 @@ struct challengeView: View {
 
 struct challengeCardView: View {
     @ObservedObject var viewModel: challengeViewModel
+    @State private var showRulesPage = false
     var body: some View {
         ScrollView {
             VStack (spacing: 10) {
@@ -122,12 +128,18 @@ struct challengeCardView: View {
                 .padding(.horizontal,15)
                 
                 VStack {
-                    HStack {
-                        Text("What are challenges?")
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
-                            .foregroundColor(.white)
-                        
+                    Button {
+                        showRulesPage.toggle()
+                    } label: {
+                        HStack {
+                            Text("What are challenges?")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                .foregroundColor(.white)
+                            
+                        }
                     }
+
+                    
                 }
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 90, maxHeight: 90)
                 .background(K.finalColor.cardBlue)
@@ -151,6 +163,25 @@ struct challengeCardView: View {
                 .cornerRadius(7.5)
                 .padding(.horizontal,15)
             }
+        }
+        .popup(isPresented: $showRulesPage) {
+            Text("The popup")
+                challengeDescription()
+                .frame(height: 500)
+
+        } customize: {
+            $0
+                .type (.toast)
+                .position(.bottom)
+                //.dragToDismiss(true)
+                .isOpaque(true)
+                .closeOnTap(false)
+                .closeOnTapOutside(true)
+                .backgroundColor(.black.opacity(0.4))
+
+                
+                
+
         }
     }
 }
@@ -575,7 +606,7 @@ struct gameRowImages: View {
 //                self.isSelected = true
 //                print("HERE BLAHBLAH")
 //            }
-//        
+//
 //        }
     }
     

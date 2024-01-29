@@ -100,7 +100,7 @@
 		869B67F42B5B248300F6CCDF /* finalizeAcceptChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869B67F32B5B248300F6CCDF /* finalizeAcceptChallengeView.swift */; };
 		869B67F62B5D750200F6CCDF /* inActionChallengeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869B67F52B5D750200F6CCDF /* inActionChallengeViewModel.swift */; };
 		869B67F82B5D797500F6CCDF /* inActionChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869B67F72B5D797500F6CCDF /* inActionChallengeView.swift */; };
-		869B67FA2B5ECF0300F6CCDF /* CLLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869B67F92B5ECF0300F6CCDF /* CLLocationManager.swift */; };
+		869B67FA2B5ECF0300F6CCDF /* DeviceLocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869B67F92B5ECF0300F6CCDF /* DeviceLocationService.swift */; };
 		869B67FC2B5ED16500F6CCDF /* purchaseCurrencyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869B67FB2B5ED16500F6CCDF /* purchaseCurrencyView.swift */; };
 		86E55C302B5B1C4F003164EE /* pendingChallengeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E55C2F2B5B1C4F003164EE /* pendingChallengeViewModel.swift */; };
 		86E55C322B5B1CB3003164EE /* acceptChallengeVew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E55C312B5B1CB3003164EE /* acceptChallengeVew.swift */; };
@@ -208,7 +208,7 @@
 		869B67F32B5B248300F6CCDF /* finalizeAcceptChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = finalizeAcceptChallengeView.swift; sourceTree = "<group>"; };
 		869B67F52B5D750200F6CCDF /* inActionChallengeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = inActionChallengeViewModel.swift; sourceTree = "<group>"; };
 		869B67F72B5D797500F6CCDF /* inActionChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = inActionChallengeView.swift; sourceTree = "<group>"; };
-		869B67F92B5ECF0300F6CCDF /* CLLocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLLocationManager.swift; sourceTree = "<group>"; };
+		869B67F92B5ECF0300F6CCDF /* DeviceLocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceLocationService.swift; sourceTree = "<group>"; };
 		869B67FB2B5ED16500F6CCDF /* purchaseCurrencyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = purchaseCurrencyView.swift; sourceTree = "<group>"; };
 		86E55C2F2B5B1C4F003164EE /* pendingChallengeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pendingChallengeViewModel.swift; sourceTree = "<group>"; };
 		86E55C312B5B1CB3003164EE /* acceptChallengeVew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = acceptChallengeVew.swift; sourceTree = "<group>"; };
@@ -363,7 +363,7 @@
 				864A2D622A6D7F93000FBA35 /* AppUtilitiy.swift */,
 				864A2D6D2A70ED21000FBA35 /* imageUploader.swift */,
 				864A2D6F2A70EE9E000FBA35 /* imagePicker.swift */,
-				869B67F92B5ECF0300F6CCDF /* CLLocationManager.swift */,
+				869B67F92B5ECF0300F6CCDF /* DeviceLocationService.swift */,
 			);
 			path = services;
 			sourceTree = "<group>";
@@ -676,7 +676,7 @@
 				3C8E5C932B43AA8A0075B300 /* challengeView.swift in Sources */,
 				864A2D5F2A6D7DAF000FBA35 /* profileViewModel.swift in Sources */,
 				863FC0512A41176400405F2A /* ticketViewModel.swift in Sources */,
-				869B67FA2B5ECF0300F6CCDF /* CLLocationManager.swift in Sources */,
+				869B67FA2B5ECF0300F6CCDF /* DeviceLocationService.swift in Sources */,
 				868FDA8D2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift in Sources */,
 				866251102A3E862400708495 /* Ticket.swift in Sources */,
 				866251122A3E892E00708495 /* Bet.swift in Sources */,
@@ -869,12 +869,17 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Weekly-Winner-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = WagerPool;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app needs your location for app functionality";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -915,12 +920,17 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Weekly-Winner-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = WagerPool;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app needs your location for app functionality";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
