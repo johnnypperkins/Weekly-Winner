@@ -64,6 +64,7 @@ class LocationViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
 struct purchaseCurrencyView: View {
     @ObservedObject private var locationViewModel = LocationViewModel()
     
+    @State var timeFrame = "Deposit"
     let allowedStates = ["AK", "AZ", "AR", "CA", "CO", "FL", "GA", "IL", "IN",
                   "KS","KY","MD","MA","MI","MN","NE","NM","NY",
                   "NC","ND","OK","OR","RI",
@@ -77,27 +78,53 @@ struct purchaseCurrencyView: View {
     
     var body: some View {
             if allowedStates.contains(locationViewModel.state) {
-                ZStack {
-                    VStack {
-                        Text("Betting is allowed in your state. May the odds be in your favor.")
-                        Text(String(format: "Speed: %.2f m/s", locationViewModel.speed))
-                            .padding(30)
-                            .frame(maxWidth: .infinity)
-                            .background(locationViewModel.speed < 1.0 ? Color.gray : Color.green)
-                            .foregroundColor(.white)
-                            .cornerRadius(20)
-
-                        Text("Latitude: \(locationViewModel.latitude)")
-                        Text("Longitude: \(locationViewModel.longitude)")
-                            .padding()
-                            .frame(maxWidth: .infinity)
-
-                        Text(locationViewModel.log)
-                            .padding()
-                            .frame(maxWidth: .infinity)
+                VStack{
+                    VStack (spacing: 4){
+                        HStack (spacing: 0){
+                            Button(action: {
+                                //viewModel.canGetHistoricalData = false
+                                if timeFrame != "Deposit" {
+                                    timeFrame = "Deposit"
+                                    
+                                }
+                                
+                            }) {
+                                //Text(viewModel.userTickets[self.selectedGroup-1].groupName)
+                                Text("Deposit")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
+                                    .foregroundColor(.white)
+                                    .frame(width: 150, height: 35, alignment: .center)
+                                //.background(timeFrame == "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                    .cornerRadius(5)
+                            }
+                            
+                            Button(action: {
+                                //viewModel.canGetHistoricalData = false
+                                if timeFrame == "Deposit" {
+                                    
+                                    timeFrame = "Withdrawl"
+                                    
+                                    
+                                }
+                                
+                            }) {
+                                Text("Withdrawl")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
+                                    .foregroundColor(.white)
+                                    .frame(width: 150, height: 35, alignment: .center)
+                                    .cornerRadius(5)
+                            }
+                        }
+                        Rectangle()
+                            .fill(Color.white) // Sets the rectangle's fill color to white
+                            .frame(width: 120, height: 3)
+                            .cornerRadius(1) // Apply rounded corners
+                            .offset(x: timeFrame == "Deposit" ? -75 : 75, y: 0)
+                            .animation(.easeInOut(duration: 0.35))
+                        
                     }
-                    .padding()
-                }
+                }.padding(.top, 23)
+                    .background(K.finalColor.backgroundBlue)
             } else {
                 Text("This page is not available in your location.")
                 Text(locationViewModel.state)
