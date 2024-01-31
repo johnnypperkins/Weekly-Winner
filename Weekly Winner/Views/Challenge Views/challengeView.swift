@@ -21,7 +21,7 @@ struct challengeView: View {
     
     private func tabTitle(for index: Int) -> String {
         switch index {
-        case 0: return "Available"
+        case 0: return "Challenges"
         case 1: return "Pending"
         case 2: return "Completed"
         default: return "PoolCoins"
@@ -47,14 +47,15 @@ struct challengeView: View {
                     Spacer()
 
                     NavigationLink(destination: settingsView(), label: {
-                        HStack {
+                        
                             Image(systemName: "line.horizontal.3")
                                 .resizable()
                                 .frame(width: 20, height: 20)
                                 .foregroundColor(.white)
                                 .background(Color.red.padding(40)) // Add this line
-                        }.frame(width: 50, height: 50)
-                            .background(.clear)
+                                .frame(width: 40, height: 40)
+                                .background(K.finalColor.cardBlue)
+                                .cornerRadius(7.5)
                     })
                     .id(UUID())
                     
@@ -150,10 +151,22 @@ struct challengeCardView: View {
                     HStack {
                         NavigationLink {
                             purchaseCurrencyView()
+                                .background(K.finalColor.backgroundBlue)
                         } label: {
-                            Text("Purchase PoolBucks/PoolCoins")
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
-                                .foregroundColor(.white)
+                            HStack (spacing: 7.5){
+                                Image("poolBuck")
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+                                Text("Deposit/Withdrawal")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .foregroundColor(.white)
+                                Image("poolBuck")
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+
+
+                            }
+                      
                         }
                         
                     }
