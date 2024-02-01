@@ -96,7 +96,7 @@ struct challengePage4: View {
                         receiverIDs: [viewModel.opponentID],
                         ticketFormat: viewModel.ticketFormat,
                         gameIDs: viewModel.selectedGameIDs,
-                        gamesToPlay: viewModel.totalBetArrays.count,
+                        gamesToPlay: viewModel.totalBetArrays.count*2,
                     gamesPlayed: 0)
                     
                 ) {

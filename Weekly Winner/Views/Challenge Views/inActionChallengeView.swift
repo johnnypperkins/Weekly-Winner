@@ -65,7 +65,7 @@ struct inActionChallengeView: View {
                                     .cornerRadius(5)
                                     .padding(.trailing, 0)
                                     
-                                    Text("\(viewModel.opponentUsername.capitalized)")
+                                    Text("\(opponentChallengeTicket?.username ?? "")")
                                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 25))
                                         .foregroundStyle(.white)
                                     

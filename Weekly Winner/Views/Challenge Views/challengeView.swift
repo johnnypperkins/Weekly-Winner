@@ -243,8 +243,8 @@ struct challengePage1: View {
                             Image(currencyChosen == "poolCoins" ? "poolCoin" : "poolBuck")
                                 .resizable()
                                 .frame(width: 50, height: 50)
-                            Text(String(format: "%.2f", wagerAmount))
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 50))
+                            Text("\(String(format: "%.2f", wagerAmount)) : \(String(format: "%.2f", wagerAmount*0.952))")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 45))
                                 .foregroundColor(.white)
                             
                         }

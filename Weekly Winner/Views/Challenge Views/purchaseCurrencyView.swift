@@ -232,8 +232,107 @@ struct depositView: View {
 }
 
 struct withdrawalView: View {
+    @State private var value = 0 //in cents
+    @State private var venmoUsername = "" //in cents
+    
+    
+    private var numberFormatter: NumberFormatter
+    
+    init(numberFormatter: NumberFormatter = NumberFormatter()) {
+        self.numberFormatter = numberFormatter
+        self.numberFormatter.numberStyle = .currency
+        self.numberFormatter.maximumFractionDigits = 2
+    }
     var body: some View {
-        Text("Here")
+        VStack {
+            ZStack {
+                HStack {
+                    Image("poolBuck")
+                        .resizable()
+                        .frame(width: 65, height: 65)
+                        .padding(.leading, 15)
+                    Spacer()
+                }
+                
+                CurrencyTextField(numberFormatter: numberFormatter, value: $value)
+                    .padding(.trailing, 15)
+                    
+            }.frame(width: 300, height: 75)
+                .background(K.finalColor.cardBlue)
+                .cornerRadius(7.5)
+                .padding(.bottom, 25)
+                .padding(.top, 15)
+                .onAppear() {
+                    value = 0
+                }
+            
+            
+            
+            TextField("", text: $venmoUsername)
+                .placeholder(when: venmoUsername == "", placeholder: {
+                    Text("Venmo Username").foregroundColor(.gray)
+                        .padding(.leading, 4)
+                })
+                .padding(.leading,7.5)
+                .foregroundColor(.white)
+                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                .accentColor(.white)
+                .textInputAutocapitalization(.never)
+                .disableAutocorrection(true)
+                .frame(width: 300, height: 40)
+                .background(K.finalColor.cardBlue)
+                .cornerRadius(5)
+        
+                
+            
+                
+ 
+            if value < 1500 {
+                Text("Minimum withdrawal: $15:00")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
+                    .foregroundColor(.red)
+                    .frame(width: 300)
+                    .padding(.top, 25)
+            } else if value/100 > Int(StaticUserData.shared.currentUser.poolBucks) {
+                Text("Insufficient funds.")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
+                    .foregroundColor(.red)
+                    .frame(width: 300)
+                    .padding(.top, 25)
+            }
+            
+            Text("Please allow 1-2 business days for our team to process your withdrawal. Additionally, make sure you enter the correct venmo username.")
+                .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
+                .foregroundColor(.white)
+                .frame(width: 300)
+                .padding(.top, 25)
+            
+            Spacer()
+            
+            if value > 1500 && value/100 <= Int(StaticUserData.shared.currentUser.poolBucks) && venmoUsername != "" {
+                Button(action: {
+                    // process withdrawal
+                }, label: {
+                    HStack{
+                        Spacer()
+                        Text("Process Withdrawal")
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                            .foregroundColor(.white)
+                        Spacer()
+                    }.frame(width: 300, height: 56)
+                        .background(K.finalColor.winningGreen)
+                        .cornerRadius(10)
+                      
+                })
+           
+            }
+        
+                        
+            
+            
+        }
+     
+        
     }
 }
 

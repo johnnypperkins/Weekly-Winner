@@ -339,7 +339,7 @@ struct pendingOption3: View {
     var body: some View {
         VStack {
             HStack(spacing: 5) {
-                Text("Waiting for @\(challenge.opponentUsername) to accept your challenge")
+                Text("Pending Acceptance: @\(challenge.opponentUsername)")
                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
                     .foregroundColor(.white)
             }

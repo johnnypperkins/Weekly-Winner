@@ -516,8 +516,8 @@ class challengeViewModel: ObservableObject {
                             "totalPotentialWon": 0,
                             "totalWon": 0,
                             "status": challengeTicket.status,
-                            "challengerID": challengeTicket.receiverIDs[0],
-                            "receiverIDs": [challengeTicket.challengerID], // FLIPPED
+                            "challengerID": challengeTicket.challengerID,
+                            "receiverIDs": challengeTicket.receiverIDs, // FLIPPED
                             "ticketFormat": challengeTicket.ticketFormat,
                             "gameIDs": challengeTicket.gameIDs,
                             "gamesToPlay": challengeTicket.gamesToPlay,
