@@ -50,14 +50,7 @@ struct profilePhotoSelectorView: View {
             "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington",
             "West Virginia", "Wisconsin", "Wyoming"
         ]
-    let countries = [
-            "Choose here", "United States of America"
-        ]
-    
-    
-    
-    
-    
+    let countries = [ "Choose here", "United States of America" ]
     
     init(model: authenticationViewModel) {
         viewModel = model
@@ -551,20 +544,6 @@ struct CustomDatePicker: View {
             .pickerStyle(WheelPickerStyle())
         }
     }
-//    private func adjustDayIfNeeded() {
-//        let closedRange: ClosedRange<Int> = 1...28
-//
-//        // Convert to Range<Int>
-//        let range: Range<Int> = (closedRange.lowerBound)..<((closedRange.upperBound) + 1)
-//        if !range.contains(selectedDate.day) {
-//            selectedDate.day = range.upperBound
-//        }
-//    }
-
-//    private func adjustDayAndMonthIfNeeded() {
-//        adjustDayIfNeeded()
-//        // Add any additional logic for adjusting month if needed
-//    }
 }
 
 private extension Date {

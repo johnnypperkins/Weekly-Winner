@@ -348,6 +348,10 @@ struct BetDetailsView: View {
     @State private var timeFrame = "daily"
     
     
+  
+    let midnightTimestamp = Timestamp(date: Calendar.current.startOfDay(for: Calendar.current.date(byAdding: .hour, value: -5, to: Date())!))
+    
+    
     func checkTeamTaken() {
         
         if timeFrame == "daily" {
@@ -357,23 +361,11 @@ struct BetDetailsView: View {
                 placeBetOpacity = 0.6
                 placeBetColor = K.finalColor.titleBlue.opacity(0.6)
             } else {
-                let dateMinusFiveHours = Calendar.current.date(byAdding: .hour, value: -5, to: Date())
-                let midnight = Calendar.current.startOfDay(for: dateMinusFiveHours!)
-//                let dateMinusFiveHours = Calendar.current.date(byAdding: .hour, value: -5, to: midnight)
-              
-                let midnightTimestamp = Timestamp(date: midnight)
-                
-//                let calendar = Calendar.current
-//                let midnight = calendar.startOfDay(for: Date())
-//                if let dateMinusFiveHours = calendar.date(byAdding: .hour, value: -5, to: midnight) {
-//                    // use dateMinusFiveHours as needed
-//                }
 
-                
                 if game.commenceTime.seconds > (midnightTimestamp.seconds + 86400) {
                     uploadText = "Not Available for Daily"
                     placeBetOpacity = 0.6
-                    placeBetColor = K.finalColor.titleBlue.opacity(0.6)
+                    placeBetColor = K.finalColor.deleteRed.opacity(0.6)
                 } else {
                     if ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) {
                         uploadText = "Place Bet"
@@ -403,7 +395,7 @@ struct BetDetailsView: View {
                 } else {
                     uploadText = "Team Taken"
                     placeBetOpacity = 0.6
-                    placeBetColor = K.finalColor.titleBlue.opacity(0.6)
+                    placeBetColor = K.finalColor.deleteRed.opacity(0.6)
                     
                 }
             }
@@ -689,9 +681,12 @@ struct BetDetailsView: View {
                         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
                         //f.padding(.horizontal, 25)
                 })
-                .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) || (game.commenceTime.seconds > (Timestamp(date: Calendar.current.startOfDay(for: Date())).seconds + 86400) && timeFrame == "daily"))
+                .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) || (game.commenceTime.seconds > (midnightTimestamp.seconds + 86400) && timeFrame == "daily"))
                 .padding(.horizontal)
                 .background(K.finalColor.backgroundBlue)
+                
+                
+                
             }.padding(.horizontal)
             .onAppear(perform: {
                 if betType == .betAwaySpread {

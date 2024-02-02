@@ -22,6 +22,7 @@ class challengeViewModel: ObservableObject {
     @Published var canDeleteBets: Bool = true
     
     @Published var currentChallenges: [ChallengeTicket] = []
+    @Published var opponentChallenges: [ChallengeTicket] = []
     
     @Published var ticketFormat: [Int] = []
     @Published var totalWon: Double = 0
@@ -555,6 +556,11 @@ class challengeViewModel: ObservableObject {
 //        }
     }
     
+    func fetchAllOpponentChallenges(completion: @escaping () -> Void) {
+        // create collection group at "currentChallengeTickets"
+        // I want all documents there that that EITHER have a value called "challengerID" set to a value OR an array called receiverIDs contains a certain value
+    }
+    
     func fetchChallenges(completion: @escaping () -> Void) {
         let statuses = ["pendingAcceptance", "inAction", "win", "loss", "push"] // Replace with your actual status values
 
@@ -624,6 +630,146 @@ class challengeViewModel: ObservableObject {
             completion()
         }
     }
+    
+    
+
+    func fetchAllOpponentChallenges(userID: String, completion: @escaping () -> Void) {
+        let db = Firestore.firestore()
+        let group = DispatchGroup()
+        var opponentChallengesLocal: [ChallengeTicket] = []
+        self.opponentChallenges.removeAll()
+        
+        // Query for documents where challengerID matches
+        group.enter()
+        db.collectionGroup("currentChallengeTickets")
+            .whereField("challengerID", isEqualTo: userID)
+            .getDocuments { (querySnapshot, error) in
+
+                if let error = error {
+                    print("Error getting documents: \(error)")
+                    completion()
+                    return
+                }
+                
+                guard let documents = querySnapshot?.documents else {
+                    print("No documents found for query")
+                    return
+                }
+                
+                for document in documents {
+                    let data = document.data()
+                    if let customID = data["customID"] as? String,
+                       let username = data["username"] as? String,
+                       let opponentUsername = data["opponentUsername"] as? String,
+                       let dateCreated = data["dateCreated"] as? Timestamp, // Or convert to Date if needed
+                       let wagerAmount = data["wagerAmount"] as? Double,
+                       let currencyChosen = data["currencyChosen"] as? String,
+                       let totalPotentialWon = data["totalPotentialWon"] as? Double,
+                       let totalWon = data["totalWon"] as? Double,
+                       let status = data["status"] as? String,
+                       let challengerID = data["challengerID"] as? String,
+                       let receiverIDs = data["receiverIDs"] as? [String],
+                       let ticketFormat = data["ticketFormat"] as? [Int],
+                       let gameIDs = data["gameIDs"] as? [String],
+                       let gamesToPlay = data["gamesToPlay"] as? Int,
+                       let gamesPlayed = data["gamesPlayed"] as? Int
+                    {
+                        
+                        let challengeTicket = ChallengeTicket(
+                            customID: customID,
+                            username: username,
+                            opponentUsername: opponentUsername,
+                            dateCreated: dateCreated, // Converts Timestamp to Date
+                            wagerAmount: wagerAmount,
+                            currencyChosen: currencyChosen,
+                            totalPotentialWon: totalPotentialWon,
+                            totalWon: totalWon,
+                            status: status,
+                            challengerID: challengerID,
+                            receiverIDs: receiverIDs,
+                            ticketFormat: ticketFormat,
+                            gameIDs: gameIDs,
+                            gamesToPlay: gamesToPlay,
+                            gamesPlayed: gamesPlayed
+                        )
+                        opponentChallengesLocal.append(challengeTicket)
+                    } else {
+                        print("Document data is incomplete or of incorrect type for document: \(document.documentID)")
+                    }
+                }
+                
+                //group.leave()
+            }
+        
+        // Query for documents where receiverIDs array contains a certain value
+      //  group.enter()
+        db.collectionGroup("currentChallengeTickets")
+            .whereField("receiverIDs", arrayContains: userID)
+            .getDocuments { (querySnapshot, error) in
+
+                if let error = error {
+                    print("Error getting documents: \(error)")
+                    completion()
+                    return
+                }
+                
+                guard let documents = querySnapshot?.documents else {
+                    print("No documents found for query")
+                    return
+                }
+                
+                for document in documents {
+                    let data = document.data()
+                    if let customID = data["customID"] as? String,
+                       let username = data["username"] as? String,
+                       let opponentUsername = data["opponentUsername"] as? String,
+                       let dateCreated = data["dateCreated"] as? Timestamp, // Or convert to Date if needed
+                       let wagerAmount = data["wagerAmount"] as? Double,
+                       let currencyChosen = data["currencyChosen"] as? String,
+                       let totalPotentialWon = data["totalPotentialWon"] as? Double,
+                       let totalWon = data["totalWon"] as? Double,
+                       let status = data["status"] as? String,
+                       let challengerID = data["challengerID"] as? String,
+                       let receiverIDs = data["receiverIDs"] as? [String],
+                       let ticketFormat = data["ticketFormat"] as? [Int],
+                       let gameIDs = data["gameIDs"] as? [String],
+                       let gamesToPlay = data["gamesToPlay"] as? Int,
+                       let gamesPlayed = data["gamesPlayed"] as? Int
+                    {
+                        
+                        let challengeTicket = ChallengeTicket(
+                            customID: customID,
+                            username: username,
+                            opponentUsername: opponentUsername,
+                            dateCreated: dateCreated, // Converts Timestamp to Date
+                            wagerAmount: wagerAmount,
+                            currencyChosen: currencyChosen,
+                            totalPotentialWon: totalPotentialWon,
+                            totalWon: totalWon,
+                            status: status,
+                            challengerID: challengerID,
+                            receiverIDs: receiverIDs,
+                            ticketFormat: ticketFormat,
+                            gameIDs: gameIDs,
+                            gamesToPlay: gamesToPlay,
+                            gamesPlayed: gamesPlayed
+                        )
+                        opponentChallengesLocal.append(challengeTicket)
+                    } else {
+                        print("Document data is incomplete or of incorrect type for document: \(document.documentID)")
+                    }
+                }
+                
+                group.leave()
+            }
+        
+        // Completion handler
+        group.notify(queue: .main) {
+            self.opponentChallenges = opponentChallengesLocal
+            completion()
+        }
+    }
+
 
     
     func respondToChallenge(acceptedChallenge: Bool, challenge: ChallengeTicket, completion: @escaping () -> Void) {

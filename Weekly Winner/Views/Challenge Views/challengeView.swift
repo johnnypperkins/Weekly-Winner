@@ -93,6 +93,8 @@ struct challengeView: View {
                         .padding(.top, 20)
                 } else if tabSelected == 1 {
                     pendingCardView(viewModel: challengeVM)
+                } else if tabSelected == 2 {
+                    finishedCardView(viewModel: challengeVM)
                 }
                 
                 

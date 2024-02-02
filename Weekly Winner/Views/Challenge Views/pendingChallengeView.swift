@@ -23,8 +23,9 @@ struct pendingCardView: View {
                     NavigationLink {
                         inActionChallengeView(challenge: challenge, viewModel: inActionChallengeViewModel(challenge: challenge))
                     } label: {
-                        pendingOption1(challenge: challenge)
+                        pendingOption1(challenge: challenge, opponentChallenge: viewModel.opponentChallenges.first(where: { $0.customID == challenge.customID}) ?? challenge)
                     }
+
 
                     
                 } else if challenge.status == "pendingAcceptance" && challenge.challengerID != StaticUserData.shared.currentUser.id {
@@ -41,31 +42,19 @@ struct pendingCardView: View {
         }
         .onAppear() {
             viewModel.fetchChallenges {}
+            viewModel.fetchAllOpponentChallenges(userID: StaticUserData.shared.currentUser.id!) {}
         }
         .refreshable {
             viewModel.fetchChallenges {}
+            viewModel.fetchAllOpponentChallenges(userID: StaticUserData.shared.currentUser.id!) {}
         }
     }
 }
 
 
 struct pendingOption1: View {
-    
-    //                            if opponentProfileImageURL != "" {
-    //                                KFImage(URL(string: opponentProfileImageURL))
-    //                                    .resizable()
-    //                                    .aspectRatio(contentMode: .fill)
-    //                                    .clipShape(Circle())
-    //                                    .frame(width: 35, height: 35)
-    //                            } else {
-    //                                Image(systemName: "photo.circle.fill")
-    //                                    .resizable()
-    //                                    .aspectRatio(contentMode: .fill)
-    //                                    .frame(width: 35, height: 35)
-    //                                    .background(K.finalColor.tabSelectedBlue)
-    //                                    .clipShape(Circle())
-    //                            }
     let challenge: ChallengeTicket
+    let opponentChallenge: ChallengeTicket
     @State private var selfProfileImageURL = ""
     @State private var opponentProfileImageURL = ""
     var body: some View {
@@ -73,21 +62,6 @@ struct pendingOption1: View {
             VStack (spacing: 10) {
                 HStack {
                     HStack(spacing: 11) {
-//                        if selfProfileImageURL != "" {
-//                            KFImage(URL(string: selfProfileImageURL))
-//                                .resizable()
-//                                .aspectRatio(contentMode: .fill)
-//                                .clipShape(Circle())
-//                                .frame(width: 35, height: 35)
-//                        } else {
-//                            Image(systemName: "photo.circle.fill")
-//                                .resizable()
-//                                .aspectRatio(contentMode: .fill)
-//                                .frame(width: 35, height: 35)
-//                                .background(K.finalColor.tabSelectedBlue)
-//                                .clipShape(Circle())
-//                            
-//                        }
                         VStack(alignment: .center, spacing: 10) {
                             
                             HStack {
@@ -131,7 +105,7 @@ struct pendingOption1: View {
                             
                             HStack {
                                 HStack (alignment: .center) {
-                                    Text("\(Int(challenge.totalPotentialWon))")
+                                    Text("\(Int(opponentChallenge.totalPotentialWon))")
                                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
                                         .foregroundColor(K.finalColor.potentialOrange)
                                         .frame(width: 45, height: 20, alignment: .center)
@@ -141,7 +115,7 @@ struct pendingOption1: View {
                                 .cornerRadius(5)
                                 
                                 HStack (alignment: .center) {
-                                    Text("\(Int(challenge.totalWon))")
+                                    Text("\(Int(opponentChallenge.totalWon))")
                                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
                                         .foregroundColor(challenge.totalWon>=0 ? K.finalColor.winningGreen : K.finalColor.deleteRed)
                                         .frame(width: 45 , height: 20, alignment: .center)
@@ -158,21 +132,6 @@ struct pendingOption1: View {
                                 .foregroundColor(.white)
                             
                         }
-//                        if selfProfileImageURL != "" {
-//                            KFImage(URL(string: selfProfileImageURL))
-//                                .resizable()
-//                                .aspectRatio(contentMode: .fill)
-//                                .clipShape(Circle())
-//                                .frame(width: 35, height: 35)
-//                        } else {
-//                            Image(systemName: "photo.circle.fill")
-//                                .resizable()
-//                                .aspectRatio(contentMode: .fill)
-//                                .frame(width: 35, height: 35)
-//                                .background(K.finalColor.tabSelectedBlue)
-//                                .clipShape(Circle())
-//                            
-//                        }
                     }.frame(width: 150)
                    
                 } .frame(height: 70)
@@ -185,9 +144,6 @@ struct pendingOption1: View {
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 75, maxHeight: 75)
         .background(K.finalColor.cardBlue)
         .cornerRadius(10)
-        //.overlay(ownCard ? RoundedRectangle(cornerRadius: 10).stroke(Color.white, lineWidth: 1) : RoundedRectangle(cornerRadius: 10).stroke(Color.clear, lineWidth: 0))
-        //.shadow(color: ownCard ? Color.white : Color.clear, radius: ownCard ? 2.5 : 0, x: 0, y: 0)
-
 
         
         .onAppear {
@@ -268,10 +224,7 @@ struct pendingOption2: View {
             
             HStack (spacing: 7.5) {
                 NavigationLink(destination: {acceptChallengeView(viewModel: pendingChallengeViewModel(challenge: challenge), challengeViewModel: viewModel, challenge: challenge)
-//                    viewModel.respondToChallenge(acceptedChallenge: true, challenge: challenge) {
-////                        viewModel.fetchChallenges {}
-//                        self.showingSheet.toggle()
-//                    }
+
                 }, label: {
                     HStack {
                         Text("Accept")
@@ -282,14 +235,9 @@ struct pendingOption2: View {
                     .background(K.finalColor.winningGreen)
                     .cornerRadius(7.5)
                 }).onSubmit {
-//                    viewModel.respondToChallenge(acceptedChallenge: true, challenge: challenge) {
-//                        viewModel.fetchChallenges {}
-//                        self.showingSheet.toggle()
-//                    }
+
                 }
-//                .sheet(isPresented: $showingSheet, content: {
-//                    acceptChallengeView(viewModel: pendingChallengeViewModel(challenge: challenge), challenge: challenge)
-//                })
+
                 
                 Button(action: {
                     viewModel.respondToChallenge(acceptedChallenge: false, challenge: challenge) {

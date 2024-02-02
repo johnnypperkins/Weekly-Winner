@@ -234,7 +234,11 @@ struct depositView: View {
 struct withdrawalView: View {
     @State private var value = 0 //in cents
     @State private var venmoUsername = "" //in cents
+    @ObservedObject private var viewModel = paymentViewModel()
     
+    @State private var popUpTest = false
+    @State var shouldNavigate = false
+
     
     private var numberFormatter: NumberFormatter
     
@@ -309,9 +313,12 @@ struct withdrawalView: View {
             
             Spacer()
             
-            if value > 1500 && value/100 <= Int(StaticUserData.shared.currentUser.poolBucks) && venmoUsername != "" {
+            if value >= 1500 && value/100 <= Int(StaticUserData.shared.currentUser.poolBucks) && venmoUsername != "" {
                 Button(action: {
-                    // process withdrawal
+                    viewModel.processWithdrawal(userID: StaticUserData.shared.currentUser.id!, amount: Double(value/100), venmoUsername: venmoUsername) {
+                        value = 0
+                        StaticUserData.shared.currentUser.poolCoins = StaticUserData.shared.currentUser.poolCoins - Double(value/100)
+                    }
                 }, label: {
                     HStack{
                         Spacer()
@@ -324,12 +331,63 @@ struct withdrawalView: View {
                         .cornerRadius(10)
                       
                 })
+                
+          
            
             }
+            
+            Button(action: {
+                popUpTest = true
+                }
+            , label: {
+                HStack{
+                    Spacer()
+                    Text("Process Withdrawal")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                        .foregroundColor(.white)
+                    Spacer()
+                }.frame(width: 300, height: 56)
+                    .background(K.finalColor.winningGreen)
+                    .cornerRadius(10)
+                  
+            })
         
                         
             
             
+        }.popup(isPresented: $popUpTest) {
+            Button(action: {
+  
+                popUpTest = false
+                shouldNavigate.toggle()
+
+            }, label: {
+                Text("We are procesing your withdrawal for x dollars right now.")
+                    .background(.orange)
+                    .padding(100)
+                    .cornerRadius(10)
+            })
+        
+            .navigationDestination(isPresented: $shouldNavigate) {
+                tabBarView(selection: .profile)
+            }
+
+        } customize: {
+            $0
+                .type (.floater())
+                .position(.bottom)
+                .animation(.spring())
+                .closeOnTap(false)
+                .closeOnTapOutside(true)
+//                .position(.bottom)
+//                .isOpaque(true)
+                
+
+//                .backgroundColor(.black.opacity(0.4))
+
+                
+                
+
         }
      
         

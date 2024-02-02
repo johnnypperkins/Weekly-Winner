@@ -20,60 +20,7 @@ struct challengePage4: View {
     var body: some View {
         NavigationStack {
             VStack {
-                    VStack(alignment: .center) {
-                            
-                        HStack {
-                            Image(viewModel.currencyChosen == "poolCoins" ? "poolCoin" : "poolBuck")
-                                .resizable()
-                                .frame(width: 50, height: 50)
-                            Text(String(format: "%.2f", viewModel.wagerAmount))
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 50))
-                                .foregroundColor(.white)
-                        }
-                        
-                        HStack {
-                            Spacer()
-                            HStack {
-                                if StaticUserData.shared.currentUser.profileImageUrl != "" {
-                                    KFImage(URL(string: StaticUserData.shared.currentUser.profileImageUrl))
-                                        .resizable()
-                                        .frame(width: 30, height: 30)
-                                        .clipShape(Circle())
-                                } else {
-                                    Image(systemName: "person.fill")
-                                        .resizable()
-                                        .frame(width: 30, height: 30)
-                                        .clipShape(Circle())
-                                }
-                                Text("\(StaticUserData.shared.currentUser.username)")
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 18)).foregroundColor(K.finalColor.textWhite)
-                                    .frame(width: 100)
-                            }
-                            
-                            Text("vs")
-                                .font(.custom(K.customFonts.lexendDecaLight, size: 12)).foregroundColor(K.finalColor.textWhite)
-                                .padding(.horizontal,10)
-                            
-                            HStack (spacing: 0){
-                                Text("\(viewModel.opponentUsername)")
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 18)).foregroundColor(K.finalColor.textWhite)
-                                    .frame(width: 100)
-                                if viewModel.opponentProfilePicURL != "" {
-                                    KFImage(URL(string: viewModel.opponentProfilePicURL))
-                                        .resizable()
-                                        .frame(width: 30, height: 30)
-                                        .clipShape(Circle())
-                                } else {
-                                    Image(systemName: "person.fill")
-                                        .resizable()
-                                        .frame(width: 30, height: 30)
-                                        .clipShape(Circle())
-                                }
-                            }
-                            
-                            Spacer()
-                        }
-                    }
+                    sendHeader(viewModel: viewModel)
                         
                 VStack{
                     challengeBetsDisplay(uid: StaticUserData.shared.currentUser.id!, viewModel: viewModel)
@@ -140,4 +87,62 @@ struct challengePage4: View {
 
 
 
-
+struct sendHeader: View {
+    @ObservedObject var viewModel: challengeViewModel
+    var body: some View {
+        VStack(alignment: .center) {
+                
+            HStack {
+                Image(viewModel.currencyChosen == "poolCoins" ? "poolCoin" : "poolBuck")
+                    .resizable()
+                    .frame(width: 50, height: 50)
+                Text(String(format: "%.2f", viewModel.wagerAmount))
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 50))
+                    .foregroundColor(.white)
+            }
+            
+            HStack {
+                Spacer()
+                HStack {
+                    if StaticUserData.shared.currentUser.profileImageUrl != "" {
+                        KFImage(URL(string: StaticUserData.shared.currentUser.profileImageUrl))
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                            .clipShape(Circle())
+                    } else {
+                        Image(systemName: "person.fill")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                            .clipShape(Circle())
+                    }
+                    Text("\(StaticUserData.shared.currentUser.username)")
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 18)).foregroundColor(K.finalColor.textWhite)
+                        .frame(width: 100)
+                }
+                
+                Text("vs")
+                    .font(.custom(K.customFonts.lexendDecaLight, size: 12)).foregroundColor(K.finalColor.textWhite)
+                    .padding(.horizontal,10)
+                
+                HStack (spacing: 0){
+                    Text("\(viewModel.opponentUsername)")
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 18)).foregroundColor(K.finalColor.textWhite)
+                        .frame(width: 100)
+                    if viewModel.opponentProfilePicURL != "" {
+                        KFImage(URL(string: viewModel.opponentProfilePicURL))
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                            .clipShape(Circle())
+                    } else {
+                        Image(systemName: "person.fill")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                            .clipShape(Circle())
+                    }
+                }
+                
+                Spacer()
+            }
+        }
+    }
+}
