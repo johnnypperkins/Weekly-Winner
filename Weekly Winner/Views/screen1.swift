@@ -221,17 +221,19 @@ struct ProfileHeaderView: View {
             NavigationLink(destination: settingsView()) {
                 
                 
-                if screen1VM.currentUser?.profileImageUrl != nil {
+                if screen1VM.currentUser?.profileImageUrl != "" {
                     KFImage(URL(string: StaticUserData.shared.currentUser.profileImageUrl))
                         .resizable()
                         .clipShape(Circle())
+                        .aspectRatio(contentMode: .fill)
                         .foregroundColor(.clear)
                         .frame(width: 30, height: 30)
-                }else {
+                } else {
                     Image("sampleImage")
                         .resizable()
                         .foregroundColor(.clear)
                         .frame(width: 30, height: 30)
+                        .cornerRadius(15)
                 }
                 Text("\(screen1VM.currentUser?.username ?? "")")
                     .font(.custom(K.customFonts.lexendDecaSB, size: 18))
@@ -295,12 +297,29 @@ struct announcementView: View {
                         ForEach(viewModel.userAnnouncements.indices, id: \.self) { index in
                             let announcement = viewModel.userAnnouncements[index]
                             if announcement.status == status {
+                                
                                 HStack {
-                                    Text("\(formatDateMMDDYY(from: announcement.timestamp)): \(announcement.description)")
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
-                                        .foregroundColor(.white)
-                                        .padding()
-                                    Spacer()
+                                    ZStack {
+                                        VStack {
+                                            HStack {
+                                                Spacer()
+                                                Text("\(formatDateMMDDYY(from: announcement.timestamp))")
+                                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 10))
+                                                    .foregroundColor(.white)
+                                                    .padding(.top,3)
+                                                Spacer()
+                                            }
+                                            Spacer()
+                                        }
+                                        Text("\(announcement.description)")
+                                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                            .foregroundColor(.white)
+                                            .padding(.top, 17.5)
+                                            .padding(.horizontal)
+                                            .padding(.bottom)
+                                        
+                                    }
+                                    
                                 }.frame(width: 300)
                                     .background(K.finalColor.cardBlue)
                                     .cornerRadius(7.5)
@@ -584,39 +603,26 @@ struct countDown: View {
                     
                     ForEach(0..<3, id: \.self) { index in
                         HStack {
-                            if index == 0 {
-                                Image(systemName: "trophy.fill")
-                                .foregroundColor(.yellow)
-                            } else if index == 1 {
-                                Image(systemName: "trophy.fill")
-                                .foregroundColor(Color(hex: "C0C0C0"))
-                            } else if index == 2 {
-                                Image(systemName: "trophy.fill")
-                                .foregroundColor(Color(hex: "9F7A34"))
-                            }
-                            
-
-
-                            Text("$")
-                                .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                            Spacer()
+                            Image("poolBuck")
+                                .resizable()
+                                .frame(width: 30, height: 30)
                             if prizesVM.canViewPrizes == true && prizesVM.canViewDailyPrizes == true{
                                 if timeFrame != "daily" {
                                     Text("\(prizesVM.prizes[index])  ")
                                         .foregroundColor(.white)
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                        .padding(.leading,-8)
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 22))
                                 }
                                 else {
                                     Text("\(prizesVM.dailyPrizes[index])  ")
                                         .foregroundColor(.white)
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                        .padding(.leading,-8)
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 22))
                                 }
                             }
+                            Spacer()
                         }.frame(width: 100, height: 30)
                             .padding(3)
-                            .background(K.finalColor.titleBlue.opacity(0.5))
+                            .background(index == 0 ? CommodityColor.gold.linearGradient : (index == 1 ? CommodityColor.silver.linearGradient : CommodityColor.bronze.linearGradient))
                             .cornerRadius(5)
                     }
                 }

@@ -300,3 +300,63 @@ extension String {
         return false
     }
 }
+
+
+
+enum CommodityColor {
+    case gold
+    case silver
+    case platinum
+    case bronze
+
+    var colors: [Color] {
+        switch self {
+        case .gold:
+            return [Color(hex: "#DBB400"),
+                    Color(hex: "#EFAF00"),
+                    Color(hex: "#F5D100"),
+                    Color(hex: "#F5D100"),
+                    Color(hex: "#D1AE15"),
+                    Color(hex: "#DBB400"),
+            ]
+
+        case .silver:
+            return [Color(hex: "#70706F"),
+                    Color(hex: "#7D7D7A"),
+                    Color(hex: "#B3B6B5"),
+                    Color(hex: "#8E8D8D"),
+                    Color(hex: "#B3B6B5"),
+                    Color(hex: "#A1A2A3"),
+            ]
+
+        case .platinum:
+            return [Color(hex: "#000000"),
+                    Color(hex: "#444444"),
+                    Color(hex: "#000000"),
+                    Color(hex: "#444444"),
+                    Color(hex: "#111111"),
+                    Color(hex: "#000000"),
+            ]
+
+        case .bronze:
+            return [Color(hex: "#804A00"),
+                    Color(hex: "#9C7A3C"),
+                    Color(hex: "#B08D57"),
+                    Color(hex: "#895E1A"),
+                    Color(hex: "#804A00"),
+                    Color(hex: "#B08D57"),
+            ]
+        }
+    }
+
+    var linearGradient: LinearGradient {
+        return LinearGradient(
+            gradient: Gradient(colors: self.colors),
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+}
+
+
+

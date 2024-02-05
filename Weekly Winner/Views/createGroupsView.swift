@@ -254,37 +254,43 @@ struct CustomStepper2: View {
     let title: String
     
     var body: some View {
-        HStack (spacing: 15) {
-            Button(action: {
-                if value > range.lowerBound {
-                    value -= 1
-                }
-            }) {
-                Image(systemName: "minus")
-                    .font(.system(size: 30))
-                    .foregroundColor(.white)
-                    .frame(width: 60, height: 60)
-                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                    .cornerRadius(5)
-            }
-            
+        VStack {
             Text("\(value) \(title)")
                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 30))
                 .foregroundColor(.white)
             
-            Button(action: {
-                if value < range.upperBound {
-                    value += 1
+            HStack (spacing: 15) {
+                Spacer()
+                Button(action: {
+                    if value > range.lowerBound {
+                        value -= 1
+                    }
+                }) {
+                    Image(systemName: "minus")
+                        .font(.system(size: 30))
+                        .foregroundColor(.white)
+                        .frame(width: 120, height: 60)
+                        .background(K.finalColor.titleBlue.opacity(0.7))
+                        .cornerRadius(5)
                 }
-            }) {
-                Image(systemName: "plus")
-                    .font(.system(size: 30))
-                    .foregroundColor(.white)
-                    .frame(width: 60, height: 60)
-                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                    .cornerRadius(5)
+                
+                Button(action: {
+                    if value < range.upperBound {
+                        value += 1
+                    }
+                }) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 30))
+                        .foregroundColor(.white)
+                        .frame(width: 120, height: 60)
+                        .background(K.finalColor.titleBlue.opacity(0.7))
+                        .cornerRadius(5)
+                }
+                Spacer()
             }
-        }
+            
+        }.frame(height: 150).background(K.finalColor.cardBlue).cornerRadius(7.5)
+    
     }
 }
 

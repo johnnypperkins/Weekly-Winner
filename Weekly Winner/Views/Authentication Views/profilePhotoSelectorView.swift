@@ -388,7 +388,7 @@ struct profilePhotoSelectorView: View {
                         Spacer()
                     }.frame(height: 550)
                     
-                    if let selectedImage = selectedImage {
+//                    if let selectedImage = selectedImage {
                         if country != "Choose here" && selectedYear != "" && selectedState != "Choose here" && username != "" && !viewModel.usernameTaken && !username.contains(" ") && !username.containsEmoji(){
                             NavigationLink(destination: {
                                 TermsAndConditionsView(viewModel: viewModel) },label: {
@@ -408,7 +408,9 @@ struct profilePhotoSelectorView: View {
                                         .padding(.bottom,30)
                                 })
                             .simultaneousGesture(TapGesture().onEnded{
-                                viewModel.uploadProfileImage(selectedImage)
+                                if let selectedImage = selectedImage {
+                                    viewModel.uploadProfileImage(selectedImage)
+                                }
                                 if let date = createDate(day: selectedDay, month: selectedMonth, year: Int(selectedYear) ?? 0) {
                                     viewModel.uploadSupplementaryData(country: country, birthday: date, state: selectedState, gender: selectedGender, username: username, instagram: instagram, promoCode: promoCode)
                                     viewModel.sendPromoBucks(to: promoCode, from: username)
@@ -445,23 +447,23 @@ struct profilePhotoSelectorView: View {
                                 .padding(.bottom,30)
                                 .opacity(0.66)
                         }
-                    } else {
-                        HStack{
-                            Spacer()
-                            
-                            Text("Fill All Fields")
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
-                                .foregroundColor(.white)
-                            //shadow
-                            
-                            Spacer()
-                        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                            .background(K.finalColor.deleteRed)
-                            .cornerRadius(10)
-                            .padding(.horizontal,16)
-                            .padding(.bottom,30)
-                            .opacity(0.66)
-                    }
+//                    } else {
+//                        HStack{
+//                            Spacer()
+//                            
+//                            Text("Fill All Fields")
+//                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+//                                .foregroundColor(.white)
+//                            //shadow
+//                            
+//                            Spacer()
+//                        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+//                            .background(K.finalColor.deleteRed)
+//                            .cornerRadius(10)
+//                            .padding(.horizontal,16)
+//                            .padding(.bottom,30)
+//                            .opacity(0.66)
+//                    }
                 }
                 
                 

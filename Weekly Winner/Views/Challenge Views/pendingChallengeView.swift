@@ -29,15 +29,15 @@ struct pendingCardView: View {
                     
                 } else if challenge.status == "pendingAcceptance" && challenge.challengerID != StaticUserData.shared.currentUser.id {
                     // someone sent to you
-                    if let fiveMinutesAfterChallenge = Calendar.current.date(byAdding: .minute, value: 5, to: challenge.dateCreated.dateValue()) {
-                        if Date() < fiveMinutesAfterChallenge {
+                    if let tenMinutesAfterChallenge = Calendar.current.date(byAdding: .minute, value: 10, to: challenge.dateCreated.dateValue()) {
+                        if Date() < tenMinutesAfterChallenge {
                             pendingOption2(viewModel: viewModel, challenge: challenge)
                         }
                     }
                 } else if challenge.status == "pendingAcceptance" && challenge.challengerID == StaticUserData.shared.currentUser.id {
                     // you sent waiting acceptance
-                    if let fiveMinutesAfterChallenge = Calendar.current.date(byAdding: .minute, value: 5, to: challenge.dateCreated.dateValue()) {
-                        if Date() < fiveMinutesAfterChallenge {
+                    if let tenMinutesAfterChallenge = Calendar.current.date(byAdding: .minute, value: 10, to: challenge.dateCreated.dateValue()) {
+                        if Date() < tenMinutesAfterChallenge {
                             pendingOption3(challenge: challenge)
                         } else {
                            pendingOption3Expired(challenge: challenge, viewModel: viewModel)
@@ -388,10 +388,10 @@ struct pendingOption3Expired: View {
             }, label: {
                 HStack {
                     Text("Reclaim Funds")
-                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
                         .foregroundColor(.white)
                 }
-                .frame(width: 120, height: 40)
+                .frame(width: 160, height: 40)
                 .background(K.finalColor.potentialOrange)
                 .cornerRadius(7.5)
             })
@@ -408,7 +408,7 @@ struct pendingOption3Expired: View {
 func toHHMMSS(from timestamp: Date) -> String {
     let calendar = Calendar.current
         // Add 5 minutes to the timestamp
-        guard let futureDate = calendar.date(byAdding: .minute, value: 5, to: timestamp) else {
+        guard let futureDate = calendar.date(byAdding: .minute, value: 10, to: timestamp) else {
             // Handle the case where the date couldn't be created
             return "Error creating future date"
         }

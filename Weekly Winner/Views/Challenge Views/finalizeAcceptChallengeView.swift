@@ -32,8 +32,10 @@ struct finalizeAcceptChallengeView: View {
         NavigationStack {
             VStack {
                 
-                acceptHeader(viewModel: viewModel) // FIX THIS
-
+                payoutHeader(currencyChosen: $viewModel.currencyChosen, wagerAmount: $viewModel.wagerAmount)
+                    
+                versusHeader(opponentUsername: viewModel.opponentUsername, opponentProfilePic: viewModel.opponentProfilePicURL)
+                
                 VStack{
                     challengeBetsDisplayAccept(uid: StaticUserData.shared.currentUser.id!, viewModel: viewModel)
                 }
@@ -86,7 +88,7 @@ struct challengeBetsDisplayAccept: View {
     @ObservedObject var viewModel: pendingChallengeViewModel
 
     var body: some View {
-        HStack (alignment: .center, spacing: 23){
+        HStack (alignment: .center, spacing: 15){
             HStack (spacing: 0) {
                 Text("Pending").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
                 Spacer()
@@ -416,65 +418,4 @@ struct SectionTitleAccept: View {
         }
     }
     
-}
-
-
-struct acceptHeader: View {
-    @ObservedObject var viewModel: pendingChallengeViewModel
-    var body: some View {
-        VStack(alignment: .center) {
-                
-            HStack {
-                Image(viewModel.currencyChosen == "poolCoins" ? "poolCoin" : "poolBuck")
-                    .resizable()
-                    .frame(width: 50, height: 50)
-                Text("\(String(format: "%.2f", viewModel.wagerAmount)) : \(String(format: "%.2f", viewModel.wagerAmount*0.952))")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 50))
-                    .foregroundColor(.white)
-            }
-            
-            HStack {
-                Spacer()
-                HStack {
-                    if StaticUserData.shared.currentUser.profileImageUrl != "" {
-                        KFImage(URL(string: StaticUserData.shared.currentUser.profileImageUrl))
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .clipShape(Circle())
-                    } else {
-                        Image(systemName: "person.fill")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .clipShape(Circle())
-                    }
-                    Text("\(StaticUserData.shared.currentUser.username)")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 18)).foregroundColor(K.finalColor.textWhite)
-                        .frame(width: 100)
-                }
-                
-                Text("vs")
-                    .font(.custom(K.customFonts.lexendDecaLight, size: 12)).foregroundColor(K.finalColor.textWhite)
-                    .padding(.horizontal,10)
-                
-                HStack (spacing: 0){
-                    Text("\(viewModel.opponentUsername)")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 18)).foregroundColor(K.finalColor.textWhite)
-                        .frame(width: 100)
-                    if viewModel.opponentProfilePicURL != "" {
-                        KFImage(URL(string: viewModel.opponentProfilePicURL))
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .clipShape(Circle())
-                    } else {
-                        Image(systemName: "person.fill")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .clipShape(Circle())
-                    }
-                }
-                
-                Spacer()
-            }
-        }
-    }
 }

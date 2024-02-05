@@ -57,6 +57,7 @@ struct settingsView: View {
                                 KFImage(URL(string: user.profileImageUrl))
                                     .resizable()
                                     .frame(width: 40,height: 40, alignment: .trailing)
+                                    .aspectRatio(contentMode: .fill)
                                     .cornerRadius(20)
                                     .padding(.trailing)
                             }
@@ -117,23 +118,23 @@ struct settingsView: View {
                                     Text("User")
                                         .font(Font.custom(K.customFonts.lexendDecaSB, size: 16).weight(.semibold))
                                         .foregroundColor(.white)
-//                                    NavigationLink(destination: {editProfileView(user1: StaticUserData.shared.currentUser)}) {
-//                                        HStack{
-//                                            ZStack{
-//                                                Circle()
-//                                                    .frame(width: 40, height: 40)
-//                                                    .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
-//                                                    .cornerRadius(43)
-//                                                Image(systemName: "person.fill")
-//                                                    .resizable()
-//                                                    .frame(width: 20, height: 20)
-//                                                    .foregroundColor(.white)
-//                                            }
-//                                            Text("Edit Profile")
-//                                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
-//                                                .foregroundColor(.white)
-//                                        }.padding(.vertical, 10)
-//                                    }
+                                    NavigationLink(destination: {editProfileView(user1: StaticUserData.shared.currentUser)}) {
+                                        HStack{
+                                            ZStack{
+                                                Circle()
+                                                    .frame(width: 40, height: 40)
+                                                    .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                                    .cornerRadius(43)
+                                                Image(systemName: "person.fill")
+                                                    .resizable()
+                                                    .frame(width: 20, height: 20)
+                                                    .foregroundColor(.white)
+                                            }
+                                            Text("Edit Profile")
+                                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
+                                                .foregroundColor(.white)
+                                        }.padding(.vertical, 10)
+                                    }.id(UUID())
 //                                    
 //                                    Divider()
                                     

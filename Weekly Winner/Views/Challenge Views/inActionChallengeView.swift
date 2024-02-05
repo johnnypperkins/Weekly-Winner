@@ -11,6 +11,7 @@ import Kingfisher
 
 struct inActionChallengeView: View {
     var challenge: ChallengeTicket
+
     @ObservedObject var viewModel: inActionChallengeViewModel
     
     @State var shouldNavigate = false
@@ -24,21 +25,9 @@ struct inActionChallengeView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                HStack{
-                    Image(challenge.currencyChosen == "poolCoins" ? "poolCoin" : "poolBuck")
-                        .resizable()
-                        .frame(width: 50, height: 50)
-                    if challenge.currencyChosen == "poolCoins" {
-                        Text("\(String(format: "%.2f", challenge.wagerAmount)) : \(String(format: "%.2f", challenge.wagerAmount))")
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 30))
-                            .foregroundColor(.white)
-                    } else {
-                        Text("\(String(format: "%.2f", challenge.wagerAmount)) : \(String(format: "%.2f", challenge.wagerAmount*0.952))")
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 30))
-                            .foregroundColor(.white)
-                    }
-                    
-                }
+                
+                payoutHeader(currencyChosen: challenge.currencyChosen, wagerAmount: challenge.wagerAmount)
+
                 VStack{
                     if loaded == true{
                         

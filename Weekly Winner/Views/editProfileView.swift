@@ -80,6 +80,8 @@ struct editProfileView: View {
                     }
                            .padding(.top)
                            .padding(.bottom)
+                    
+                    
                     VStack(alignment: .leading, spacing: 10) {
                         Text("First Name")
                             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
@@ -92,11 +94,13 @@ struct editProfileView: View {
                             
                         }
                         .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                        .cornerRadius(15)
                         .background(Color(red: 0.13, green: 0.14, blue: 0.34))
                         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+                        .cornerRadius(15)
                     }
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+                    
+                    
                     
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Last Name")
@@ -116,6 +120,8 @@ struct editProfileView: View {
                     }
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
                     
+                    
+                    
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Instagram")
                             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
@@ -134,44 +140,44 @@ struct editProfileView: View {
                     }
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
                     
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Username")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                        HStack() {
-                            Text("\(viewModel.username)")
-                                .foregroundColor(.white)
-                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
-                                .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                            Spacer()
-                            
-                        }
-                        .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                        .cornerRadius(15)
-                    }
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-                    
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Email")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                        HStack() {
-                            //Spacer()
-                            Text("\(viewModel.email)")
-                                .foregroundColor(.white)
-                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
-                                .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                            Spacer()
-                            
-                        }
-                        .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                        .cornerRadius(15)
-                    }
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+//                    VStack(alignment: .leading, spacing: 10) {
+//                        Text("Username")
+//                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+//                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+//                        HStack() {
+//                            Text("\(viewModel.username)")
+//                                .foregroundColor(.white)
+//                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+//                                .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+//                            Spacer()
+//                            
+//                        }
+//                        .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+//                        //.background(Color(red: 0.13, green: 0.14, blue: 0.34))
+//                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+//                        .cornerRadius(15)
+//                    }
+//                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
+//                    
+//                    VStack(alignment: .leading, spacing: 10) {
+//                        Text("Email")
+//                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+//                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
+//                        HStack() {
+//                            //Spacer()
+//                            Text("\(viewModel.email)")
+//                                .foregroundColor(.white)
+//                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
+//                                .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+//                            Spacer()
+//                            
+//                        }
+//                        .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
+//                        //.background(Color(red: 0.13, green: 0.14, blue: 0.34))
+//                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
+//                        .cornerRadius(15)
+//                    }
+//                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
                     
                     
                     Spacer()

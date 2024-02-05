@@ -20,8 +20,11 @@ struct challengePage4: View {
     var body: some View {
         NavigationStack {
             VStack {
-                    sendHeader(viewModel: viewModel)
-                        
+                payoutHeader(currencyChosen: $viewModel.currencyChosen, wagerAmount: $viewModel.wagerAmount)
+                    .padding(.top)
+                    
+                versusHeader(opponentUsername: viewModel.opponentUsername, opponentProfilePic: viewModel.opponentProfilePicURL)
+                
                 VStack{
                     challengeBetsDisplay(uid: StaticUserData.shared.currentUser.id!, viewModel: viewModel)
                 }
@@ -82,64 +85,55 @@ struct challengePage4: View {
     }
 }
 
-
-
-struct sendHeader: View {
-    @ObservedObject var viewModel: challengeViewModel
+struct versusHeader: View {
+    let opponentUsername: String
+    let opponentProfilePic: String
     var body: some View {
-        VStack(alignment: .center) {
-                
-            HStack {
-                Image(viewModel.currencyChosen == "poolCoins" ? "poolCoin" : "poolBuck")
-                    .resizable()
-                    .frame(width: 50, height: 50)
-                Text("\(String(format: "%.2f", viewModel.wagerAmount)) : \(String(format: "%.2f", viewModel.wagerAmount*0.952))")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 45))
-                    .foregroundColor(.white)
-            }
-            
+        VStack (spacing: 0){
+            HStack (spacing: 2) {
+                Spacer()
+                if StaticUserData.shared.currentUser.profileImageUrl != "" {
+                    KFImage(URL(string: StaticUserData.shared.currentUser.profileImageUrl))
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .clipShape(Circle())//.padding(.leading, 40)
+                } else {
+                    Image(systemName: "person.fill")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .clipShape(Circle())//.padding(.leading, 40)
+                }
+                Text("\(StaticUserData.shared.currentUser.username)")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 22)).foregroundColor(K.finalColor.textWhite)
+                    .padding(.leading, 4)
+                Spacer()
+            }.padding(.top, 7.5)
             HStack {
                 Spacer()
-                HStack {
-                    if StaticUserData.shared.currentUser.profileImageUrl != "" {
-                        KFImage(URL(string: StaticUserData.shared.currentUser.profileImageUrl))
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .clipShape(Circle())
-                    } else {
-                        Image(systemName: "person.fill")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .clipShape(Circle())
-                    }
-                    Text("\(StaticUserData.shared.currentUser.username)")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 18)).foregroundColor(K.finalColor.textWhite)
-                        .frame(width: 100)
-                }
-                
                 Text("vs")
                     .font(.custom(K.customFonts.lexendDecaLight, size: 12)).foregroundColor(K.finalColor.textWhite)
                     .padding(.horizontal,10)
-                
-                HStack (spacing: 0){
-                    Text("\(viewModel.opponentUsername)")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 18)).foregroundColor(K.finalColor.textWhite)
-                        .frame(width: 100)
-                    if viewModel.opponentProfilePicURL != "" {
-                        KFImage(URL(string: viewModel.opponentProfilePicURL))
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .clipShape(Circle())
-                    } else {
-                        Image(systemName: "person.fill")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .clipShape(Circle())
-                    }
-                }
-                
                 Spacer()
             }
-        }
+            HStack (spacing: 2){
+                Spacer()
+                Text("\(opponentUsername)")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 22)).foregroundColor(K.finalColor.textWhite).padding(.trailing, 4)
+                    //.frame(width: 100)
+                if opponentProfilePic != "" {
+                    KFImage(URL(string: opponentProfilePic))
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .clipShape(Circle())//.padding(.trailing, 40)
+                } else {
+                    Image(systemName: "person.fill")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .clipShape(Circle())//.padding(.trailing, 40)
+                }
+                Spacer()
+            }.padding(.bottom, 7.5)
+        }.frame(width: 343, height: 90).background(K.finalColor.cardBlue).cornerRadius(7.5)
+            .padding(.top, 5)
     }
 }
