@@ -47,6 +47,8 @@ struct finalizeAcceptChallengeView: View {
                         challengeViewModel.fetchChallenges {
                             print("Toggling shouldNavigate")
                             shouldNavigate.toggle()
+                            challengeViewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {}
+
                         }
                     }
                 }, label: {

@@ -43,6 +43,7 @@ struct K {
     static let darkMidnightBlue = Color(hex: "#1D3557")
     static let darkCyan = Color(hex: "#1A535C")
     static let lightMoneyGreen = Color(hex: "#30DF7A")
+    static let averageGray = Color(hex: "#808080")
     
     struct finalColor {
         static let titleBlue = Color(hex: "#4F91FF")

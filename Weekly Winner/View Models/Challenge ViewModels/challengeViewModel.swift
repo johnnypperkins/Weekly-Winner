@@ -84,6 +84,8 @@ class challengeViewModel: ObservableObject {
     }
     
     
+    
+    
     func toggleGameSelection(_ game: Game) {
         // Assuming 'gameID' is a property of 'Game'
         let gameID = game.idd
@@ -140,6 +142,25 @@ class challengeViewModel: ObservableObject {
         }
         print("AVAILABLE BETS ARR \(self.availableBetsArray)")
 
+    }
+    
+    func fetchUserCoinsAndBucks(userID: String, completion: @escaping () -> Void) {
+        let db = Firestore.firestore()
+        let userRef = db.collection("users").document(userID)
+        
+        userRef.getDocument { (document, error) in
+            if let document = document, document.exists {
+                let data = document.data()
+                let poolCoins = data?["poolCoins"] as? Double
+                let poolBucks = data?["poolBucks"] as? Double
+                StaticUserData.shared.currentUser.poolBucks = poolBucks ?? -99
+                StaticUserData.shared.currentUser.poolCoins = poolCoins ?? -99
+                completion()
+            } else {
+                print("Document does not exist or error fetching document: \(error?.localizedDescription ?? "Unknown error")")
+                completion()
+            }
+        }
     }
     
     func fetchUserProfilePic(uid: String, completion: @escaping () -> Void) {

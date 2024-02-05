@@ -40,59 +40,125 @@ struct globalPrizesView: View {
                     }
                     HStack (alignment: .center){
                         VStack (alignment: .leading, spacing: 10){
+                            
                             Text("1st Place: ")
-                                .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
-                            Text("2nd Place: ")
-                                .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
-                            Text("3rd Place: ")
-                                .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
-                            Text("4th Place: ")
-                                .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
-                            Text("5th Place: ")
-                                .foregroundColor(.white)
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                               .foregroundColor(.white)
+                               .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                            
+                            
+                                Text("2nd Place: ")
+                                    .foregroundColor(.white)
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                  
+                            
+                                Text("3rd Place: ")
+                                    .foregroundColor(.white)
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                 
+                            
+                                Text("4th Place: ")
+                                    .foregroundColor(.white)
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                    
+                            
+                                Text("5th Place: ")
+                                    .foregroundColor(.white)
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                        
                         }
                         if viewModel.canViewPrizes {
                             if time != "daily"{
                                 VStack(alignment: .leading, spacing: 10) {
-                                    Text("$\(viewModel.prizes[0])")
-                                        .foregroundColor(.white)
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
-                                    Text("$\(viewModel.prizes[1])")
-                                        .foregroundColor(.white)
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
-                                    Text("$\(viewModel.prizes[2])")
-                                        .foregroundColor(.white)
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
-                                    Text("$\(viewModel.prizes[3])")
-                                        .foregroundColor(.white)
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
-                                    Text("$\(viewModel.prizes[4])")
-                                        .foregroundColor(.white)
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                    HStack (spacing: 4) {
+                                        Image("poolBuck")
+                                            .resizable()
+                                            .frame(width: 23, height: 23)
+                                        Text("\(viewModel.prizes[0])")
+                                            .foregroundColor(.white)
+                                            .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                    }
+                                 
+                                    HStack (spacing: 4) {
+                                        Image("poolBuck")
+                                            .resizable()
+                                            .frame(width: 23, height: 23)
+                                        Text("\(viewModel.prizes[1])")
+                                            .foregroundColor(.white)
+                                            .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                    }
+                                    
+                                    
+                                    HStack (spacing: 4) {
+                                        Image("poolBuck")
+                                            .resizable()
+                                            .frame(width: 23, height: 23)
+                                        Text("\(viewModel.prizes[2])")
+                                            .foregroundColor(.white)
+                                            .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                    }
+                                    
+                                    HStack (spacing: 4) {
+                                        Image("poolBuck")
+                                            .resizable()
+                                            .frame(width: 23, height: 23)
+                                        Text("\(viewModel.prizes[3])")
+                                            .foregroundColor(.white)
+                                            .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                    }
+                   
+                                    HStack (spacing: 4) {
+                                        Image("poolBuck")
+                                            .resizable()
+                                            .frame(width: 23, height: 23)
+                                        Text("\(viewModel.prizes[4])")
+                                            .foregroundColor(.white)
+                                            .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                    }
+                               
                                 }
                             }
                             else {
                                 VStack(alignment: .leading, spacing: 10) {
-                                    Text("$\(viewModel.dailyPrizes[0])")
-                                        .foregroundColor(.white)
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
-                                    Text("$\(viewModel.dailyPrizes[1])")
-                                        .foregroundColor(.white)
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
-                                    Text("$\(viewModel.dailyPrizes[2])")
-                                        .foregroundColor(.white)
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
-                                    Text("$\(viewModel.dailyPrizes[3])")
-                                        .foregroundColor(.white)
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
-                                    Text("$\(viewModel.dailyPrizes[4])")
-                                        .foregroundColor(.white)
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                    HStack (spacing: 4) {
+                                        Image("poolBuck")
+                                            .resizable()
+                                            .frame(width: 23, height: 23)
+                                        Text("\(viewModel.dailyPrizes[0])")
+                                            .foregroundColor(.white)
+                                            .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                    }
+                                    HStack (spacing: 4) {
+                                        Image("poolBuck")
+                                            .resizable()
+                                            .frame(width: 23, height: 23)
+                                        Text("\(viewModel.dailyPrizes[1])")
+                                            .foregroundColor(.white)
+                                            .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                    }
+                                    HStack (spacing: 4) {
+                                        Image("poolBuck")
+                                            .resizable()
+                                            .frame(width: 23, height: 23)
+                                        Text("\(viewModel.dailyPrizes[2])")
+                                            .foregroundColor(.white)
+                                            .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                    }
+                                    HStack (spacing: 4) {
+                                        Image("poolBuck")
+                                            .resizable()
+                                            .frame(width: 23, height: 23)
+                                        Text("\(viewModel.dailyPrizes[3])")
+                                            .foregroundColor(.white)
+                                            .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                    }
+                                    HStack (spacing: 4) {
+                                        Image("poolBuck")
+                                            .resizable()
+                                            .frame(width: 23, height: 23)
+                                        Text("\(viewModel.dailyPrizes[4])")
+                                            .foregroundColor(.white)
+                                            .font(.custom(K.customFonts.lexendDecaMedium, size: prizeSize))
+                                    }
                                 }
                             }
                         }

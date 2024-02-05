@@ -37,3 +37,13 @@ enum challengeStatus: String, Codable {
     case win
     case loss
 }
+
+
+struct Withdrawal {
+    var uid: String
+    var dateRequested: Timestamp
+    var status: String
+    var amount: Double
+    var venmoUsername: String
+    var customID: String
+}

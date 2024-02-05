@@ -10,60 +10,62 @@ import UIKit
 import CoreLocation
 
 // Updated LocationViewModel
-class LocationViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
-    private var locationManager: CLLocationManager?
+class LocationViewModel: NSObject, ObservableObject
+//, CLLocationManagerDelegate
+{
+   // private var locationManager: CLLocationManager?
     @Published var speed: Double = 0.0
     @Published var latitude: Double = 0.0
     @Published var longitude: Double = 0.0
     @Published var log: String = ""
     @Published var state: String = ""
     
-    override init() {
-        super.init()
-        locationManager = CLLocationManager()
-        locationManager?.delegate = self
-        locationManager?.requestWhenInUseAuthorization()
-    }
+//    override init() {
+//        super.init()
+//        locationManager = CLLocationManager()
+//        locationManager?.delegate = self
+//        locationManager?.requestWhenInUseAuthorization()
+//    }
 }
     
-    extension LocationViewModel {
-        func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-            switch manager.authorizationStatus {
-            case .notDetermined:
-                log = "Location authorization not determined"
-            case .restricted:
-                log = "Location authorization restricted"
-            case .denied:
-                log = "Location authorization denied"
-            case .authorizedAlways:
-                manager.requestLocation()
-                log = "Location authorization always granted"
-            case .authorizedWhenInUse:
-                manager.startUpdatingLocation()
-                log = "Location authorization when in use granted"
-            @unknown default:
-                log = "Unknown authorization status"
-            }
-        }
-        func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-                locations.forEach { location in
-                    self.speed = location.speed
-                    self.latitude = location.coordinate.latitude
-                    self.longitude = location.coordinate.longitude
-
-                    let geocoder = CLGeocoder()
-                    geocoder.reverseGeocodeLocation(location) { placemarks, error in
-                        if let placemark = placemarks?.first, let adminArea = placemark.administrativeArea {
-                            self.state = adminArea
-                        }
-                    }
-                }
-            }
-}
+//    extension LocationViewModel {
+//        func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+//            switch manager.authorizationStatus {
+//            case .notDetermined:
+//                log = "Location authorization not determined"
+//            case .restricted:
+//                log = "Location authorization restricted"
+//            case .denied:
+//                log = "Location authorization denied"
+//            case .authorizedAlways:
+//                manager.requestLocation()
+//                log = "Location authorization always granted"
+//            case .authorizedWhenInUse:
+//                manager.startUpdatingLocation()
+//                log = "Location authorization when in use granted"
+//            @unknown default:
+//                log = "Unknown authorization status"
+//            }
+//        }
+//        func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+//                locations.forEach { location in
+//                    self.speed = location.speed
+//                    self.latitude = location.coordinate.latitude
+//                    self.longitude = location.coordinate.longitude
+//
+//                    let geocoder = CLGeocoder()
+//                    geocoder.reverseGeocodeLocation(location) { placemarks, error in
+//                        if let placemark = placemarks?.first, let adminArea = placemark.administrativeArea {
+//                            self.state = adminArea
+//                        }
+//                    }
+//                }
+//            }
+//}
 
 // Updated purchaseCurrencyView
 struct purchaseCurrencyView: View {
-    @ObservedObject private var locationViewModel = LocationViewModel()
+    //@ObservedObject private var locationViewModel = LocationViewModel()
     
     @State var timeFrame = "Deposit"
     let allowedStates = ["AK", "AZ", "AR", "CA", "CO", "FL", "GA", "IL", "IN",
@@ -84,7 +86,7 @@ struct purchaseCurrencyView: View {
         ZStack {
             K.finalColor.backgroundBlue
             
-            if allowedStates.contains(locationViewModel.state) {
+            //if allowedStates.contains(locationViewModel.state) {
                 VStack{
 
                     
@@ -136,10 +138,10 @@ struct purchaseCurrencyView: View {
                         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                     }
                     
-            } else {
-                Text("This page is not available in your location.")
-                Text(locationViewModel.state)
-            }
+//            } else {
+//                Text("This page is not available in your location.")
+//                Text(locationViewModel.state)
+//            }
         }
     }
 }
@@ -238,6 +240,7 @@ struct withdrawalView: View {
     
     @State private var popUpTest = false
     @State var shouldNavigate = false
+    @State var showPreviousWithdrawals = false
 
     
     private var numberFormatter: NumberFormatter
@@ -311,13 +314,31 @@ struct withdrawalView: View {
                 .frame(width: 300)
                 .padding(.top, 25)
             
+            Button(action: {
+                showPreviousWithdrawals = true
+            }, label: {
+                HStack{
+                    Spacer()
+                    Text("Previous Withdrawls")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 15))
+                        .foregroundColor(K.finalColor.titleBlue)
+                    Spacer()
+                }.frame(width: 200, height: 30)
+                    .background(K.finalColor.cardBlue)
+                    .cornerRadius(7.5)
+                    .padding(.top, 5)
+                
+            })
+            
             Spacer()
             
             if value >= 1500 && value/100 <= Int(StaticUserData.shared.currentUser.poolBucks) && venmoUsername != "" {
                 Button(action: {
                     viewModel.processWithdrawal(userID: StaticUserData.shared.currentUser.id!, amount: Double(value/100), venmoUsername: venmoUsername) {
-                        value = 0
-                        StaticUserData.shared.currentUser.poolCoins = StaticUserData.shared.currentUser.poolCoins - Double(value/100)
+//                        StaticUserData.shared.currentUser.poolCoins = StaticUserData.shared.currentUser.poolCoins - Double(value/100)
+                        shouldNavigate = true
+                        //value = 0
+                        viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {}
                     }
                 }, label: {
                     HStack{
@@ -336,57 +357,26 @@ struct withdrawalView: View {
            
             }
             
-            Button(action: {
-                popUpTest = true
-                }
-            , label: {
-                HStack{
-                    Spacer()
-                    Text("Process Withdrawal")
-                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
-                        .foregroundColor(.white)
-                    Spacer()
-                }.frame(width: 300, height: 56)
-                    .background(K.finalColor.winningGreen)
-                    .cornerRadius(10)
-                  
-            })
+            NavigationLink(destination: withdrawalConfirmation(withdrawalAmount: Double(value/100)).background(K.finalColor.backgroundBlue), isActive: $shouldNavigate) {}
+            
         
                         
             
             
-        }.popup(isPresented: $popUpTest) {
-            Button(action: {
-  
-                popUpTest = false
-                shouldNavigate.toggle()
-
-            }, label: {
-                Text("We are procesing your withdrawal for x dollars right now.")
-                    .background(.orange)
-                    .padding(100)
-                    .cornerRadius(10)
-            })
-        
-            .navigationDestination(isPresented: $shouldNavigate) {
-                tabBarView(selection: .profile)
-            }
+        }.popup(isPresented: $showPreviousWithdrawals) {
+            Text("The popup")
+                previousWithdrawals(viewModel: viewModel)
+                .frame(height: 500)
 
         } customize: {
             $0
-                .type (.floater())
+                .type (.toast)
                 .position(.bottom)
-                .animation(.spring())
+                //.dragToDismiss(true)
+                .isOpaque(true)
                 .closeOnTap(false)
                 .closeOnTapOutside(true)
-//                .position(.bottom)
-//                .isOpaque(true)
-                
-
-//                .backgroundColor(.black.opacity(0.4))
-
-                
-                
+                .backgroundColor(.black.opacity(0.4))
 
         }
      
@@ -394,7 +384,78 @@ struct withdrawalView: View {
     }
 }
 
+struct previousWithdrawals: View {
+    @ObservedObject var viewModel: paymentViewModel
+    var body: some View {
+        ZStack {
+            K.finalColor.backgroundBlue.cornerRadius(40, corners: [.topLeft, .topRight])
+            VStack {
+                Color.white
+                    .opacity(0.2)
+                    .frame(width: 30, height: 6)
+                    .clipShape(Capsule())
+                    .padding(.top, 15)
+                    .padding(.bottom, 10)
+                ScrollView {
+                    VStack (spacing: 10){
+                        ForEach(viewModel.withdrawalHistory, id: \.customID) { withdrawal in
+                            VStack {
+                                Text("\(withdrawal.status)")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .foregroundColor(withdrawal.status == "pending" ? K.finalColor.potentialOrange : K.finalColor.winningGreen)
+                                Text("Amount: $\(String(format: "%.2f", withdrawal.amount))")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .foregroundColor(.white)
+                                Text("Request Date: \(formatDateMMDDYY(from: withdrawal.dateRequested))")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .foregroundColor(.white)
+                            }.frame(width: 300, height: 150)
+                                .background(K.finalColor.cardBlue)
+                                .cornerRadius(7.5)
+                        }
+                    }
+                }
+            }
+        }.onAppear() {
+            viewModel.fetchWithdrawals(userID: StaticUserData.shared.currentUser.id!) {}
+        }
+    }
+}
 
+struct withdrawalConfirmation: View {
+    let withdrawalAmount: Double
+    @State var shouldNavigate: Bool = false
+    var body: some View {
+        ZStack {
+            K.finalColor.backgroundBlue
+            NavigationStack {
+                VStack {
+                    Text("Your withdrawal amount of $\(String(format: "%.2f", withdrawalAmount)) is currently being processed.")
+                    
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 16)
+                    Button(action: {
+                        shouldNavigate = true
+                    }, label: {
+                        HStack{
+                            Spacer()
+                            Text("Return")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                .foregroundColor(.white)
+                            Spacer()
+                        }.frame(width: 300, height: 56)
+                            .background(K.finalColor.winningGreen)
+                            .cornerRadius(10)
+                        
+                    })
+                    
+                    NavigationLink(destination: tabBarView(selection: .profile), isActive: $shouldNavigate) {}
+                }
+            }.navigationBarBackButtonHidden(true)
+        }
+    }
+}
 
 
 class CurrencyUITextField: UITextField {

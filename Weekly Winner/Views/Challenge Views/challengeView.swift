@@ -159,7 +159,7 @@ struct challengeCardView: View {
                                 Image("poolBuck")
                                     .resizable()
                                     .frame(width: 20, height: 20)
-                                Text("Deposit/Withdrawal")
+                                Text("Deposit/Withdraw")
                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
                                     .foregroundColor(.white)
                                 Image("poolBuck")
@@ -178,7 +178,9 @@ struct challengeCardView: View {
                 .cornerRadius(7.5)
                 .padding(.horizontal,15)
             }
-        }
+        }.refreshable {
+            viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {}
+            }
         .popup(isPresented: $showRulesPage) {
             Text("The popup")
                 challengeDescription()
@@ -193,9 +195,6 @@ struct challengeCardView: View {
                 .closeOnTap(false)
                 .closeOnTapOutside(true)
                 .backgroundColor(.black.opacity(0.4))
-
-                
-                
 
         }
     }
@@ -752,7 +751,7 @@ struct currencyView: View {
                             .resizable()
                             .foregroundStyle(.green)
                             .frame(width: 20, height: 20)
-                        Text("\(String(format: "%.0f", StaticUserData.shared.currentUser.poolBucks))")
+                        Text("\(String(format: "%.2f", StaticUserData.shared.currentUser.poolBucks))")
                             .foregroundStyle(.white)
                             .font(.custom(K.customFonts.lexendDecaSB, size: 16))
                     }

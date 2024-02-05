@@ -313,7 +313,6 @@
 				3C7C708B2A92F5F800C7C9DB /* prizesViewModel.swift */,
 				3C972C892B2FC07100671D0F /* screen1ViewModel.swift */,
 				3C065BA92AC714C40040D6CE /* statsViewModel.swift */,
-				3CFD81C32B6C64E600DB3E7C /* paymentViewModel.swift */,
 			);
 			path = "View Models";
 			sourceTree = "<group>";
@@ -324,6 +323,7 @@
 				3C8E5C942B43C28C0075B300 /* challengeViewModel.swift */,
 				86E55C2F2B5B1C4F003164EE /* pendingChallengeViewModel.swift */,
 				869B67F52B5D750200F6CCDF /* inActionChallengeViewModel.swift */,
+				3CFD81C32B6C64E600DB3E7C /* paymentViewModel.swift */,
 			);
 			path = "Challenge ViewModels";
 			sourceTree = "<group>";

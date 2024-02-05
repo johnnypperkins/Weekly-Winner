@@ -48,11 +48,8 @@ struct challengePage4: View {
                     
                 ) {
                     self.shouldNavigate = true
-//                    if viewModel.errorMessage != "" {
-//                        AppUtility.shared.showCustomAlert(alertType: .none, message: viewModel.errorMessage, actionButtonTitle: nil, cancelButtonTitle: K.appButtonTitle.cancel) { action in
-//                            
-//                        }
-//                    }
+                    viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {}
+
                 }
                 
             }, label: {
