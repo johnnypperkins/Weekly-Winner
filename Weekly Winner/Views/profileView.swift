@@ -342,7 +342,7 @@ struct ProfileStatsView: View {
           
           if user.isCurrentUser == true {
               NavigationLink {
-                  editProfileView(user1: viewModel.user, profileVM: viewModel)
+//                  editProfileView(user1: viewModel.user, profileVM: viewModel)
               } label: {
                   Text("Edit Profile")
                       .foregroundColor(.white)

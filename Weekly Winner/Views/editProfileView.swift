@@ -18,11 +18,11 @@ struct editProfileView: View {
     @StateObject var viewModelAuth = authenticationViewModel()
     @State private var sourceType: UIImagePickerController.SourceType = .photoLibrary
     //@State private var instagramText: String = "@liluzivert"
-    @ObservedObject var profileVM: profileViewModel
+//    @ObservedObject var profileVM: profileViewModel
     
-    init(user1: User, profileVM: profileViewModel) {
+    init(user1: User/*, profileVM: profileViewModel*/) {
         user = user1
-        self.profileVM = profileVM
+//        self.profileVM = profileVM
         viewModel = editProfileViewModel(user: user)
     }
     var body: some View {
@@ -182,13 +182,13 @@ struct editProfileView: View {
                         viewModel.updateUserInfo()
                         if selectedImage != nil {
                             viewModel.uploadProfileImage(selectedImage!) {url in
-                                profileVM.profileImageURLHolder = url
+//                                profileVM.profileImageURLHolder = url
                                 
                             }
                             
                             
                         }
-                        profileVM.fetchUser()
+                        
                         withAnimation {
                             dismiss()
                         }

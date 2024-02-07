@@ -20,6 +20,7 @@ struct settingsView: View {
     @State private var showingAlert = false
     @State private var showingAlert2 = false
     @State private var showContentView = false
+    @State private var showInvitePage = false
     
     var body: some View {
         if let user = authInfo.currUser{
@@ -102,6 +103,54 @@ struct settingsView: View {
                                                     .foregroundColor(.white)
                                             }
                                             Text("Our Mission")
+                                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
+                                                .foregroundColor(.white)
+                                        }.padding(.top, 10)
+                                            .padding(.bottom,20)
+                                    }
+                                    
+                                }
+                                
+                                VStack(alignment: .leading){
+                                    
+                                    Text("User")
+                                        .font(Font.custom(K.customFonts.lexendDecaSB, size: 16).weight(.semibold))
+                                        .foregroundColor(.white)
+//                                    NavigationLink(destination: {editProfileView(user1: StaticUserData.shared.currentUser)}) {
+//                                        HStack{
+//                                            ZStack{
+//                                                Circle()
+//                                                    .frame(width: 40, height: 40)
+//                                                    .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
+//                                                    .cornerRadius(43)
+//                                                Image(systemName: "person.fill")
+//                                                    .resizable()
+//                                                    .frame(width: 20, height: 20)
+//                                                    .foregroundColor(.white)
+//                                            }
+//                                            Text("Edit Profile")
+//                                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
+//                                                .foregroundColor(.white)
+//                                        }.padding(.vertical, 10)
+//                                    }
+//                                    
+//                                    Divider()
+                                    
+                                    Button(action: {
+                                        showInvitePage.toggle()
+                                    }) {
+                                        HStack{
+                                            ZStack{
+                                                Circle()
+                                                    .frame(width: 40, height: 40)
+                                                    .foregroundColor(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                                    .cornerRadius(43)
+                                                Image(systemName: "person.crop.circle.fill.badge.plus")
+                                                    .resizable()
+                                                    .frame(width: 20, height: 20)
+                                                    .foregroundColor(.white)
+                                            }
+                                            Text("Invite Friends")
                                                 .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
                                                 .foregroundColor(.white)
                                         }.padding(.top, 10)
@@ -304,7 +353,19 @@ struct settingsView: View {
                         .padding(.bottom,40)
                     Spacer()
                     //Spacer()
-                }.edgesIgnoringSafeArea(.bottom)
+                }.popup(isPresented: $showInvitePage) {
+                    inviteFriendsView()
+                    .frame(height: 650)
+                } customize: {
+                    $0
+                        .type (.toast)
+                        .position(.bottom)
+                        .isOpaque(true)
+                        .closeOnTap(false)
+                        .closeOnTapOutside(true)
+                        .backgroundColor(.black.opacity(0.4))
+                }
+                .edgesIgnoringSafeArea(.bottom)
                 
                 .toolbar(.hidden)
                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
@@ -377,6 +438,39 @@ struct settingsView_Previews: PreviewProvider {
     }
 }
 
+struct inviteFriendsView: View {
+    var body: some View {
+        ZStack {
+            K.finalColor.backgroundBlue.cornerRadius(40, corners: [.topLeft, .topRight])
+            VStack {
+                
+              popUpPill()
+                
+                ScrollView {
+                    K.finalColor.backgroundBlue
+                    VStack (spacing: 5) {
+                        Text("How To Invite Friends?")
+                            .font(.custom(K.customFonts.lexendDecaSB, size: 20))
+                            .foregroundColor(K.finalColor.titleBlue)
+                            .padding(.vertical)
+                        
+                        Text("     WagerPool users can earn 2 PoolBucks for every user they refer. To refer a friend, all they have to do is enter your promo code during sign up. Easy as that!")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
+                            .foregroundColor(K.finalColor.textWhite)
+                            .padding(.bottom)
+                        
+                        Text("Promo code: \(StaticUserData.shared.username)")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
+                            .foregroundColor(K.finalColor.textWhite)
+                            .padding(.bottom)
+                        
+                        
+                    }.padding(.horizontal)
+                }
+            }
+        }
+    }
+}
 struct TermsAndConditionsViewSettings: View {
     @Environment(\.dismiss) var dismiss
     

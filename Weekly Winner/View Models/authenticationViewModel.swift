@@ -113,6 +113,42 @@ class authenticationViewModel: ObservableObject {
         }
     }
     
+
+    func sendPromoBucks(to username: String) {
+        // Access the Firestore shared instance
+        let db = Firestore.firestore()
+        
+        // Reference to the 'users' collection
+        let usersCollection = db.collection("users")
+        
+        // Query the document where 'username' field matches the provided username
+        usersCollection.whereField("username", isEqualTo: username.lowercased()).getDocuments { (querySnapshot, err) in
+            if let err = err {
+                // Handle any errors (e.g., user not found, connection issues)
+                print("Error getting documents: \(err)")
+            } else {
+                for document in querySnapshot!.documents {
+                    // Assuming there is only one user with this username
+                    let userRef = usersCollection.document(document.documentID)
+                    
+                    // Increment the 'poolBucks' field by 2
+                    userRef.updateData([
+                        "poolBucks": FieldValue.increment(Double(2))
+                    ]) { err in
+                        if let err = err {
+                            // Handle any errors during update
+                            print("Error updating document: \(err)")
+                        } else {
+                            // Update was successful
+                            print("poolBucks successfully updated")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    
     private func randomNonceString(length: Int = 32) -> String {
       precondition(length > 0)
       var randomBytes = [UInt8](repeating: 0, count: length)

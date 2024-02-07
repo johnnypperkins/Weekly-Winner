@@ -10,65 +10,68 @@ import UIKit
 import CoreLocation
 
 // Updated LocationViewModel
-class LocationViewModel: NSObject, ObservableObject
-//, CLLocationManagerDelegate
-{
-   // private var locationManager: CLLocationManager?
+class LocationViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
+    private var locationManager: CLLocationManager?
     @Published var speed: Double = 0.0
     @Published var latitude: Double = 0.0
     @Published var longitude: Double = 0.0
     @Published var log: String = ""
     @Published var state: String = ""
     
-//    override init() {
-//        super.init()
-//        locationManager = CLLocationManager()
-//        locationManager?.delegate = self
-//        locationManager?.requestWhenInUseAuthorization()
-//    }
+    override init() {
+        super.init()
+        locationManager = CLLocationManager()
+        locationManager?.delegate = self
+        locationManager?.requestWhenInUseAuthorization()
+    }
 }
+
+extension LocationViewModel {
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        switch manager.authorizationStatus {
+        case .notDetermined:
+            log = "Location authorization not determined"
+        case .restricted:
+            log = "Location authorization restricted"
+        case .denied:
+            log = "Location authorization denied"
+        case .authorizedAlways, .authorizedWhenInUse:
+            // This method requests the current location once.
+            manager.requestLocation()
+            log = "Location authorization granted"
+        @unknown default:
+            log = "Unknown authorization status"
+        }
+    }
     
-//    extension LocationViewModel {
-//        func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-//            switch manager.authorizationStatus {
-//            case .notDetermined:
-//                log = "Location authorization not determined"
-//            case .restricted:
-//                log = "Location authorization restricted"
-//            case .denied:
-//                log = "Location authorization denied"
-//            case .authorizedAlways:
-//                manager.requestLocation()
-//                log = "Location authorization always granted"
-//            case .authorizedWhenInUse:
-//                manager.startUpdatingLocation()
-//                log = "Location authorization when in use granted"
-//            @unknown default:
-//                log = "Unknown authorization status"
-//            }
-//        }
-//        func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-//                locations.forEach { location in
-//                    self.speed = location.speed
-//                    self.latitude = location.coordinate.latitude
-//                    self.longitude = location.coordinate.longitude
-//
-//                    let geocoder = CLGeocoder()
-//                    geocoder.reverseGeocodeLocation(location) { placemarks, error in
-//                        if let placemark = placemarks?.first, let adminArea = placemark.administrativeArea {
-//                            self.state = adminArea
-//                        }
-//                    }
-//                }
-//            }
-//}
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.first {
+            self.speed = location.speed
+            self.latitude = location.coordinate.latitude
+            self.longitude = location.coordinate.longitude
+            
+            let geocoder = CLGeocoder()
+            geocoder.reverseGeocodeLocation(location) { placemarks, error in
+                if let placemark = placemarks?.first, let adminArea = placemark.administrativeArea {
+                    self.state = adminArea
+                }
+            }
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        // Handle failure to get a location
+        print("Failed to get location: \(error.localizedDescription)")
+        log = "Failed to get location: \(error.localizedDescription)"
+    }
+}
 
 // Updated purchaseCurrencyView
 struct purchaseCurrencyView: View {
-    //@ObservedObject private var locationViewModel = LocationViewModel()
+    @ObservedObject private var locationViewModel = LocationViewModel()
     
     @State var timeFrame = "Deposit"
-    let allowedStates = ["AK", "AZ", "AR", "CA", "CO", "FL", "GA", "IL", "IN",
+    let allowedStates = ["AK", "AZ", "AR", "CO", "FL", "GA", "IL", "IN",
                   "KS","KY","MD","MA","MI","MN","NE","NM","NY",
                   "NC","ND","OK","OR","RI",
                   "SC","SD","TX",
@@ -86,7 +89,7 @@ struct purchaseCurrencyView: View {
         ZStack {
             K.finalColor.backgroundBlue
             
-            //if allowedStates.contains(locationViewModel.state) {
+            if allowedStates.contains(locationViewModel.state) {
                 VStack{
 
                     
@@ -145,10 +148,12 @@ struct purchaseCurrencyView: View {
                         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                     }
                     
-//            } else {
-//                Text("This page is not available in your location.")
-//                Text(locationViewModel.state)
-//            }
+            } else {
+                Text("This page is not available in your location.")
+                    .foregroundStyle(.white)
+                Text(locationViewModel.state)
+                    .foregroundStyle(.white)
+            }
         }
     }
 }

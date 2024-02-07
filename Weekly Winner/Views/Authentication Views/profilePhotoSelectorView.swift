@@ -408,6 +408,7 @@ struct profilePhotoSelectorView: View {
                                 viewModel.uploadProfileImage(selectedImage)
                                 if let date = createDate(day: selectedDay, month: selectedMonth, year: Int(selectedYear) ?? 0) {
                                     viewModel.uploadSupplementaryData(country: country, birthday: date, state: selectedState, gender: selectedGender, username: username, instagram: instagram, promoCode: promoCode)
+                                    viewModel.sendPromoBucks(to: promoCode)
                                     print(date)
                                 }
                                 Task{
