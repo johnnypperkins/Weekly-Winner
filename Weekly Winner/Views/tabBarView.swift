@@ -39,6 +39,7 @@ struct tabBarView: View {
                                 .tag(Tab.dashboard)
                             //.background(K.veryLightBlue.opacity(0.5))
                             BettingAppView()
+                                .background(K.finalColor.backgroundBlue)
                                 .ignoresSafeArea(.all)
                                 .tabItem {
                                     CustomTabBarItem(index: 1, selectedTab: $selectedTab, item: TabItem(title: "Bets", icon: Image(systemName: "dollarsign.circle.fill"), color: .green))
@@ -65,6 +66,7 @@ struct tabBarView: View {
                             challengeView()
                                 .background(K.finalColor.cardBlue )
                                 .ignoresSafeArea(.all)
+                                .navigationBarHidden(true)
                                 .tabItem {
                                     CustomTabBarItem(index: 4, selectedTab: $selectedTab, item: TabItem(title: "Profile", icon: Image(systemName: "person.crop.circle.fill"), color: .orange))
                                 }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)

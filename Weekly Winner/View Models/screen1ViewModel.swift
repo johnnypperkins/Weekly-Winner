@@ -27,6 +27,7 @@ class screen1ViewModel: ObservableObject {
     @Published var canFetchDailyRankedTickets = false
     @Published var canFetchWeeklyRankedTickets = false
 
+    @Published var userAnnouncements: [Announcement] = []
 
     
     init() {
@@ -48,6 +49,80 @@ class screen1ViewModel: ObservableObject {
         
 
     }
+    
+    func fetchUserAnnouncements(userID: String, completion: @escaping () -> Void) {
+        self.userAnnouncements.removeAll()
+
+        let db = Firestore.firestore()
+        let announcementsRef = db.collection("users").document(userID).collection("Misc").document("announcements").collection("announcementCollection")
+        //users/fg57TZhmLmWH9TT3WCA3WuXT7dy2/Misc/announcements/announcementCollection/xJKBZ69o5nmPtIzNFO2h
+
+        announcementsRef.getDocuments { (querySnapshot, error) in
+            if let error = error {
+                print("Error getting documents: \(error)")
+                completion()
+            }
+            
+            if let documents = querySnapshot?.documents {
+                for doc in querySnapshot!.documents {
+                    let data = doc.data()
+                    if let status = data["status"] as? String,
+                        let description = data["description"] as? String,
+                        let announcementType = data["announcementType"] as? String,
+                       let timestamp = data["timestamp"] as? Timestamp
+                    {
+                        
+                        let announcement = Announcement(status: status, description: description, announcementType: announcementType, timestamp: timestamp)
+                        print("ANn'oun: \(announcement)")
+                        self.userAnnouncements.append(announcement)
+                    } else {
+                        print("wrong fields")
+                    }
+                }
+            }
+            self.userAnnouncements.sort(by: { $0.timestamp.dateValue() > $1.timestamp.dateValue() })
+            print("ANNOubc: \(self.userAnnouncements)")
+            completion()
+        }
+    }
+    
+    func setAllAnnouncementsToSeen(userID: String, completion: @escaping () -> Void) {
+        let db = Firestore.firestore()
+        let announcementsRef = db.collection("users").document(userID).collection("Misc").document("announcements").collection("announcementCollection")
+
+        announcementsRef.getDocuments { (querySnapshot, error) in
+            guard let documents = querySnapshot?.documents, error == nil else {
+                print("Error fetching documents: \(String(describing: error))")
+                completion()
+                return
+            }
+            
+            // Check if there are any documents to update
+            guard !documents.isEmpty else {
+                print("No documents found to update.")
+                completion()
+                return
+            }
+
+            let batch = db.batch()
+            
+            for document in documents {
+                let docRef = announcementsRef.document(document.documentID)
+                batch.updateData(["status": "seen"], forDocument: docRef)
+            }
+            
+            // Commit the batch
+            batch.commit { err in
+                if let err = err {
+                    print("Error updating documents: \(err)")
+                } else {
+                    print("All documents successfully updated")
+                }
+                completion()
+            }
+        }
+    }
+
     
     func fetchUserCoinsAndBucks(userID: String, completion: @escaping () -> Void) {
         let db = Firestore.firestore()

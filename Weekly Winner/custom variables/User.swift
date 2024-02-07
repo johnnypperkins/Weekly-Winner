@@ -30,6 +30,15 @@ struct User: Identifiable, Decodable, Encodable {
     let gender: String
     var poolCoins: Double
     var poolBucks: Double
+    var paymentVerified: String
+}
+
+struct Announcement: Identifiable, Decodable, Encodable {
+    @DocumentID var id: String?
+    let status: String
+    let description: String
+    let announcementType: String
+    let timestamp: Timestamp
 }
 
 extension String { // Lmao what is this johnny
@@ -65,7 +74,7 @@ class StaticUserData: ObservableObject {
     // Singleton instance
     static var shared = StaticUserData(
         username: "",
-        currentUser: User(id: "", username: "", firstName: "", lastName: "", profileImageUrl: "", email: "", dateJoined: Timestamp(date:Date()), instagram: "", promoCode: "", country: "", state: "", birthday: Timestamp(date:Date()), gender: "", poolCoins: 0.0, poolBucks: 0.0),
+        currentUser: User(id: "", username: "", firstName: "", lastName: "", profileImageUrl: "", email: "", dateJoined: Timestamp(date:Date()), instagram: "", promoCode: "", country: "", state: "", birthday: Timestamp(date:Date()), gender: "", poolCoins: 0.0, poolBucks: 0.0, paymentVerified: "false"),
         dailyTicket: Ticket(id: "", username: "", uid: "", groupID: "", groupNumber: -99, dateCreated: Timestamp(date:Date()), totalWon: 0, totalPotentialWon: 0, groupName: "", rank: "", isEnabled: false, groupAdmin: "", ticketFormat: [0]),
         weeklyTicket: Ticket(id: "", username: "", uid: "", groupID: "", groupNumber: -99, dateCreated: Timestamp(date:Date()), totalWon: 0, totalPotentialWon: 0, groupName: "", rank: "", isEnabled: false, groupAdmin: "", ticketFormat: [0]),
         dailyRankedTickets: [Ticket(id: "", username: "", uid: "", groupID: "", groupNumber: -99, dateCreated: Timestamp(date:Date()), totalWon: 0, totalPotentialWon: 0, groupName: "", rank: "", isEnabled: false, groupAdmin: "", ticketFormat: [0])],

@@ -127,7 +127,14 @@ struct purchaseCurrencyView: View {
                         if timeFrame == "Deposit" {
                             depositView()
                         } else {
-                            withdrawalView()
+                            if StaticUserData.shared.currentUser.paymentVerified == "true" {
+                                withdrawalView()
+                            } else {
+                                Text("Please DM @WagerPool on instagram to become verified for withdrawals. A more efficient solution will be released soon. Thank you for your patience.")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .foregroundColor(.white)
+                                    .padding()
+                            }
                         }
 
                     }

@@ -125,6 +125,17 @@ extension Color {
     }
 }
 
+struct popUpPill: View {
+    var body: some View {
+        Color.white
+            .opacity(0.2)
+            .frame(width: 30, height: 6)
+            .clipShape(Capsule())
+            .padding(.top, 15)
+            .padding(.bottom, 10)
+    }
+}
+
 extension UIColor {
     convenience init(hex: String) {
         let scanner = Scanner(string: hex.replacingOccurrences(of: "#", with: ""))

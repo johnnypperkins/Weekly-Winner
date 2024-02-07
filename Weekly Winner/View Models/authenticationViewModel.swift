@@ -189,7 +189,7 @@ class authenticationViewModel: ObservableObject {
                             print(user)
                             print(success)
                             if success == false {
-                                let newUser = User(username: "", firstName: self.firstName, lastName: self.lastName, profileImageUrl: "", email: firebaseUser.email ?? "", dateJoined: Timestamp(date: Date()), instagram: "", promoCode: "", country: "",state: "", birthday: Timestamp(date: Date()), gender: "", poolCoins: 100.0, poolBucks: 0.0)
+                                let newUser = User(username: "", firstName: self.firstName, lastName: self.lastName, profileImageUrl: "", email: firebaseUser.email ?? "", dateJoined: Timestamp(date: Date()), instagram: "", promoCode: "", country: "",state: "", birthday: Timestamp(date: Date()), gender: "", poolCoins: 100.0, poolBucks: 0.0, paymentVerified: "false")
                                 self.currUser = newUser
                                 Task{
                                     await self.uploadUser(newUser)
@@ -257,7 +257,7 @@ class authenticationViewModel: ObservableObject {
                   print(user)
                   print(success)
                   if success == false {
-                      let newUser = User(username: "", firstName: self.firstName, lastName: self.lastName, profileImageUrl: "", email: firebaseUser.email ?? "", dateJoined: Timestamp(date: Date()), instagram: "", promoCode: "", country: "",state: "", birthday: Timestamp(date: Date()), gender: "", poolCoins: 100.0, poolBucks: 0.0)
+                      let newUser = User(username: "", firstName: self.firstName, lastName: self.lastName, profileImageUrl: "", email: firebaseUser.email ?? "", dateJoined: Timestamp(date: Date()), instagram: "", promoCode: "", country: "",state: "", birthday: Timestamp(date: Date()), gender: "", poolCoins: 100.0, poolBucks: 0.0, paymentVerified: "false")
                       self.currUser = newUser
                       Task{
                           await self.uploadUser(newUser)
@@ -379,7 +379,7 @@ print("fetched user")
                 //userSession = authResult!.user // added - Reid
                 let user = authResult!.user
                 
-                let newUser = User(username: "", firstName: firstName, lastName: lastName, profileImageUrl: "", email: email, dateJoined: Timestamp(date: Date()), instagram: "", promoCode: "", country: "",state: "", birthday: Timestamp(date: Date()), gender: "", poolCoins: 100.0, poolBucks: 0.0)
+                let newUser = User(username: "", firstName: firstName, lastName: lastName, profileImageUrl: "", email: email, dateJoined: Timestamp(date: Date()), instagram: "", promoCode: "", country: "",state: "", birthday: Timestamp(date: Date()), gender: "", poolCoins: 100.0, poolBucks: 0.0, paymentVerified: "false")
                 await uploadUser(newUser)
                 
                 authenticationState = .authenticated

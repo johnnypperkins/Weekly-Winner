@@ -12,11 +12,6 @@ import SafariServices
 import WebKit
 import PopupView
 
-
-
-
-
-
 struct UserProfileView: View {
     @ObservedObject private var screen1VM = screen1ViewModel()
    // @StateObject var countdownTimer = CountdownTimer()
@@ -41,7 +36,7 @@ struct UserProfileView: View {
 
             VStack {
              yourGroups(screen1VM: screen1VM, tab: $tab)
-                    .padding(.horizontal)
+                    .padding(.top, 20)
 
                 weeklyGlobalLeaders(screen1VM: screen1VM, timeFrame: $timeFrame)
                     .padding(.horizontal)
@@ -68,8 +63,8 @@ struct UserProfileView: View {
                     }
                 }
             }
-            screen1VM.setStaticUser {}
         }.padding(.top, 35)
+        
     }
 }
 
@@ -221,7 +216,8 @@ struct SafariView: UIViewControllerRepresentable {
 
 struct ProfileHeaderView: View {
     @State private var showWebpage = false
-    @State private var showRulesPage = false
+    @State private var poolBucks = StaticUserData.shared.currentUser.poolBucks
+    
     @ObservedObject var screen1VM: screen1ViewModel
     @Binding var timeFrame: String
     
@@ -249,26 +245,84 @@ struct ProfileHeaderView: View {
                     .foregroundColor(.white)
             }
             Spacer()
-
-//            Link("@WagerPool", destination: URL(string: "https://www.instagram.com/wagerpool/")!)
-//                .font(.custom(K.customFonts.lexendDecaSB, size: 18))
-//                .foregroundColor(.white)
-//                .frame(height: 50)
-//            VStack(alignment: .leading) {
-
-                
-
-                currencyView()
-            
+            currencyView(poolCoins: StaticUserData.shared.currentUser.poolCoins, poolBucks: $poolBucks)
             
         }
         .padding(.top,15)
-//        .sheet(isPresented: $showRulesPage) {
-//            rulesView()
-//                .presentationDetents([.fraction(0.65)])
-//                .presentationDragIndicator(.hidden)
-//                .background(K.finalColor.backgroundBlue)
-//        }
+        .onAppear() {
+            screen1VM.fetchUserCoinsAndBucks(userID: Auth.auth().currentUser?.uid ?? "") {
+                poolBucks = StaticUserData.shared.currentUser.poolBucks
+            }
+        }
+    }
+}
+
+struct announcementView: View {
+    
+    @ObservedObject var viewModel: screen1ViewModel
+    @State var status = "unSeen"
+    
+    var body: some View {
+        ZStack (){
+            K.finalColor.backgroundBlue.cornerRadius(40, corners: [.topLeft, .topRight])
+            VStack(spacing: 4) {
+                popUpPill()
+                
+                HStack (spacing: 0) {
+                    Button(action: {
+                        status = "unSeen"
+                    }) {
+                        Text("New")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                            .foregroundColor(.white)
+                            .frame(width: 100, height: 35, alignment: .center)
+                            .cornerRadius(5)
+                    }
+                    
+                    Button(action: {
+                        status = "seen"
+                    }) {
+                        Text("Old")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                            .foregroundColor(.white)
+                            .frame(width: 100, height: 35, alignment: .center)
+                            .cornerRadius(5)
+                    }
+                }
+                Rectangle()
+                    .fill(Color.white) // Sets the rectangle's fill color to white
+                    .frame(width: 75, height: 3)
+                    .cornerRadius(1) // Apply rounded corners
+                    .offset(x: status == "unSeen" ? -50 : 50, y: 0)
+                    .animation(.easeInOut(duration: 0.35))
+                
+                ScrollView {
+                    VStack {
+                        ForEach(viewModel.userAnnouncements.indices, id: \.self) { index in
+                            let announcement = viewModel.userAnnouncements[index]
+                            if announcement.status == status {
+                                HStack {
+                                    Text("\(formatDateMMDDYY(from: announcement.timestamp)): \(announcement.description)")
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                        .foregroundColor(.white)
+                                        .padding()
+                                    Spacer()
+                                }.frame(width: 300)
+                                    .background(K.finalColor.cardBlue)
+                                    .cornerRadius(7.5)
+                                    .padding(.top)
+                            }
+                        }
+                    }
+                }
+
+                Spacer()
+            }
+        }.onAppear {
+            viewModel.fetchUserAnnouncements(userID: Auth.auth().currentUser!.uid) {}
+        }.onDisappear() {
+            viewModel.setAllAnnouncementsToSeen(userID: Auth.auth().currentUser!.uid) {}
+        }
     }
 }
 
@@ -278,12 +332,7 @@ struct rulesView: View {
             K.finalColor.backgroundBlue.cornerRadius(40, corners: [.topLeft, .topRight])
             VStack {
                 
-                Color.white
-                    .opacity(0.2)
-                    .frame(width: 30, height: 6)
-                    .clipShape(Capsule())
-                    .padding(.top, 15)
-                    .padding(.bottom, 10)
+              popUpPill()
                 
                 ScrollView {
                     K.finalColor.backgroundBlue
@@ -293,7 +342,7 @@ struct rulesView: View {
                             .foregroundColor(K.finalColor.titleBlue)
                             .padding(.vertical)
                         
-                        Text("     WagerPool is a FREE TO PLAY social sportsbook where players can place risk free bets in an attempt to win real prizes. ")
+                        Text("     WagerPool is a FREE TO PLAY social sportsbook where players can place risk free bets in an attempt to win real prizes.")
                             .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
                             .foregroundColor(K.finalColor.textWhite)
                             .padding(.bottom)
@@ -382,10 +431,18 @@ struct rulesView: View {
                             .cornerRadius(5)
                             .shadow(color: .gray, radius: 2, x: 0, y: 2)
                         
-                        Text("When the day/week ends, winning players can receive their prizes by dming @WagerPool on instagram!")
+                        Text("When the day/week ends, winning players will automatically receive their prizes! They will receive PoolBucks that they can redeem 1:1 for $.")
                             .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
                             .foregroundColor(K.finalColor.textWhite)
                             .padding()
+                        
+                        Image("howTo8")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 320)
+                            .cornerRadius(5)
+                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                            .padding(.bottom, 20)
                         
                     }.padding(.horizontal)
                 }
@@ -528,227 +585,134 @@ struct yourGroups: View {
     @StateObject var screen1VM: screen1ViewModel
     @Binding var tab: Tab
     @State private var showRulesPage = false
+    @State private var showAnnouncementsPage = false
+    @State private var showPopUp = false
+    
 
     var body: some View {
         VStack(alignment: .center, spacing: 12) {
-            Text("Your Groups")
-                .font(.custom(K.customFonts.lexendDecaMedium, size: 24).weight(.medium))
-                .foregroundColor(.white)
-            
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(0..<2, id: \.self) { index in
-                        // Use your custom view or data here.
-                        // Replace `Text("Item \(index)")` with your custom view
-                        VStack(alignment: .leading, spacing: 8) {
-                            VStack(alignment: .leading, spacing: 3) {
-                                
-                                if screen1VM.userGroupsLoaded {
-                                    if screen1VM.userGroups[0].groupImageURL != "" {
-                                        HStack {
-                                            Spacer()
-                                            KFImage(URL(string: screen1VM.userGroups[0].groupImageURL))
-                                                .resizable()
-                                                .cornerRadius(7.5)
-                                                .foregroundColor(.clear)
-                                                .scaledToFit()
-                                                .frame(height: 95)
-                                            Spacer()
-                                        }
-                                    }
-                                    else {
-                                        Image(systemName: "photo.circle.fill")
-                                            .resizable()
-                                            .cornerRadius(7.5)
-                                            .foregroundColor(.clear)
-                                            .scaledToFit()
-                                            .frame(height: 95)
-                                    }
-                                    HStack(alignment: .top) {
-                                        Spacer()
-                                        Text("\(index == 0 ? "Daily" : "Weekly")")
-                                            .font(.custom(K.customFonts.poppinsMedium, size: 16))
-                                            .foregroundColor(.white)
-                                        
-                                        Spacer()
-                                    }
-                                }
-                               
-                            }
-                            VStack(alignment: .leading, spacing: 0) {
-                                HStack() {
-                                    Text("Rank")
-                                        .font(.custom(K.customFonts.poppinsRegular, size: 12))
-                                        .foregroundColor(.white)
-                                    
-                                    Spacer()
-                                    
-                                    Text("#\(index == 0 ? StaticUserData.shared.dailyTicket.rank : StaticUserData.shared.weeklyTicket.rank)")
-                                        .font(.custom(K.customFonts.poppinsRegular, size: 14))
-                                        .foregroundColor(.white)
-                                }
-                                HStack() {
-                                    Text("Pending")
-                                        .font(.custom(K.customFonts.poppinsRegular, size: 12))
-                                        .foregroundColor(.white)
-                                    
-                                    Spacer()
-                                    
-                                    Text("\(index == 0 ? StaticUserData.shared.dailyTicket.totalPotentialWon : StaticUserData.shared.weeklyTicket.totalPotentialWon)")
-                                        .font(.custom(K.customFonts.poppinsRegular, size: 14))
-                                        .foregroundColor(.white)
-                                }
-                                HStack() {
-                                    Text("Total Won")
-                                        .font(.custom(K.customFonts.poppinsRegular, size: 12))
-                                        .foregroundColor(.white)
-                                    
-                                    Spacer()
-                                    
-                                    Text("\(index == 0 ? StaticUserData.shared.dailyTicket.totalWon : StaticUserData.shared.weeklyTicket.totalWon)")
-                                        .font(.custom(K.customFonts.poppinsRegular, size: 14))
-                                        .foregroundColor(.white)
-                                }
-                            }
+            HStack (spacing: 15) {
+                
+                Button {
+                    showPopUp = true
+                } label: {
+                    HStack {
+                        Spacer()
+                        VStack {
+                            Image("howTo")
+                                .resizable()
+                                .cornerRadius(7.5)
+                                .foregroundColor(.white)
+                                .scaledToFit()
+                                .frame(height: 40)
+                            Text("How To Play?")
+                                .font(.custom(K.customFonts.poppinsMedium, size: 20))
+                                .foregroundColor(.white)
                         }
-                        .padding(10)
-                        .frame(width: 135, height: 205)
-                        .background(self.backgroundColor(for: index))
-                        .cornerRadius(12)
-                        .overlay(self.overlayShape(for: index))
-                    }
-                    
-                    Button {
-                    
-                        showRulesPage.toggle()
-                        
-                    } label: {
-                        VStack(alignment: .leading, spacing: 8) {
-                            VStack(alignment: .leading, spacing: 3) {
-                                
-                                HStack {
-                                    Spacer()
-                                    Image(systemName: "questionmark.circle")
-                                        .resizable()
-                                        .cornerRadius(7.5)
-                                        .foregroundColor(.white)
-                                        .scaledToFit()
-                                        .frame(height: 80)
-                                    Spacer()
-                                }
-                                HStack(alignment: .top) {
-                                    Spacer()
-                                    Text("How To Play?")
-                                        .font(.custom(K.customFonts.poppinsMedium, size: 20))
-                                        .foregroundColor(.white)
-                                    Spacer()
-                                }
-                            }
-                        }
-                        .padding(10)
-                        .frame(width: 140, height: 205)
+                        Spacer()
+                    }.frame(height: 100)
+                        .background(K.finalColor.cardBlue)
+                        .cornerRadius(7.5)
+                }
+                
+                NavigationLink {
+                    purchaseCurrencyView()
                         .background(K.finalColor.backgroundBlue)
-                        .cornerRadius(12)
-                        .overlay(self.overlayShape(for: 1))
-                    }
-                    
-                    Link(destination: URL(string: "https://www.instagram.com/wagerpool/")!) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            VStack(alignment: .leading, spacing: 3) {
-                                HStack {
-                                    Spacer()
-                                    Image(systemName: "camera")
-                                        .resizable()
-                                        .cornerRadius(7.5)
-                                        .foregroundColor(.white)
-                                        .scaledToFit()
-                                        .frame(height: 80)
-                                    Spacer()
-                                }
-                                HStack(alignment: .top) {
-                                    Spacer()
-                                    Text("Instagram")
-                                        .font(.custom(K.customFonts.poppinsMedium, size: 20))
-                                        .foregroundColor(.white)
-                                    Spacer()
-                                }
-                            }
+                } label: {
+                    HStack {
+                        Spacer()
+                        VStack {
+                            Image("poolBuck")
+                                .resizable()
+                                .cornerRadius(7.5)
+                                .foregroundColor(.white)
+                                .scaledToFit()
+                                .frame(height: 50)
+                            Text("Deposit/Withdraw")
+                                .font(.custom(K.customFonts.poppinsMedium, size: 16))
+                                .foregroundColor(.white)
                         }
-                        .padding(10)
-                        .frame(width: 140, height: 205)
-                        .background(K.finalColor.backgroundBlue)
-                        .cornerRadius(12)
-                        .overlay(self.overlayShape(for: 1))
-                    }
+                        Spacer()
+                    }.frame(height: 100)
+                        .background(K.finalColor.cardBlue)
+                        .cornerRadius(7.5)
+                }
+              
+            }.padding(.horizontal, 16)
 
             
+            HStack (spacing: 15) {
+                Button {
+                    showAnnouncementsPage = true
                     
-//                    NavigationView {
-//                        // Your other content...
-// 
-//                            NavigationLink(destination: purchaseView()) {
-//                                VStack(alignment: .leading, spacing: 8) {
-//                                    VStack(alignment: .leading, spacing: 3) {
-//                                        HStack {
-//                                            Spacer()
-//                                            Image(systemName: "questionmark.circle")
-//                                                .resizable()
-//                                                .cornerRadius(7.5)
-//                                                .foregroundColor(.white)
-//                                                .scaledToFit()
-//                                                .frame(height: 80)
-//                                            Spacer()
-//                                        }
-//                                        HStack(alignment: .top) {
-//                                            Spacer()
-//                                            Text("Purchase PoolCoins!")
-//                                                .font(.custom(K.customFonts.poppinsMedium, size: 20))
-//                                                .foregroundColor(.white)
-//                                            Spacer()
-//                                        }
-//                                    }
-//                                }
-//                                
-//                            }
-//                        
-//
-//                        // Your other content...
-//                    }.padding(10)
-//                        .frame(width: 140, height: 205)
-//                        .background(K.finalColor.backgroundBlue)
-//                        .cornerRadius(12)
-//                        .overlay(self.overlayShape(for: 1))
-
+                } label: {
+                    HStack {
+                        Spacer()
+                        VStack {
+                            Image("announcements")
+                                .resizable()
+                                .cornerRadius(7.5)
+                                .foregroundColor(.white)
+                                .scaledToFit()
+                                .frame(height: 40)
+                            Text("Announcements")
+                                .font(.custom(K.customFonts.poppinsMedium, size: 15))
+                                .foregroundColor(.white)
+                        }
+                        Spacer()
+                    }.frame(height: 100)
+                        .background(K.finalColor.cardBlue)
+                        .cornerRadius(7.5)
                     
                 }
-            }
+                
+               
+                
+                Link(destination: URL(string: "https://www.instagram.com/wagerpool/")!) {
+                    HStack {
+                        Spacer()
+                        VStack {
+                            Image("instagram")
+                                .resizable()
+                                .cornerRadius(7.5)
+                                .foregroundColor(.white)
+                                .scaledToFit()
+                                .frame(height: 40)
+                            Text("Instagram")
+                                .font(.custom(K.customFonts.poppinsMedium, size: 15))
+                                .foregroundColor(.white)
+                        }
+                        Spacer()
+                    }.frame(height: 100)
+                        .background(K.finalColor.cardBlue)
+                        .cornerRadius(7.5)
+                }
+            }.padding(.horizontal, 16)
         }
-//        .sheet(isPresented: $showRulesPage) {
-//            rulesView()
-//            //.padding(.horizontal)
-//                .presentationDetents([.fraction(0.65)])
-//                .presentationDragIndicator(.hidden)
-//                .background(K.finalColor.backgroundBlue)
-//        }
-        .popup(isPresented: $showRulesPage) {
-            Text("The popup")
-                rulesView()
-                .frame(height: 500)
-
+        .popup(isPresented: $showPopUp) {
+            rulesView()
+            .frame(height: 650)
         } customize: {
             $0
                 .type (.toast)
                 .position(.bottom)
-                //.dragToDismiss(true)
                 .isOpaque(true)
                 .closeOnTap(false)
                 .closeOnTapOutside(true)
                 .backgroundColor(.black.opacity(0.4))
-
-                
-                
-
-        }
+        }.popup(isPresented:
+            $showAnnouncementsPage) {
+                announcementView(viewModel: screen1VM)
+                .frame(height: 650)
+            } customize: {
+                $0
+                .type (.toast)
+                .position(.bottom)
+                .isOpaque(true)
+                .closeOnTap(false)
+                .closeOnTapOutside(true)
+                .backgroundColor(.black.opacity(0.4))
+            }
     }
     func backgroundColor(for index: Int) -> LinearGradient {
         if index % 3 == 0 {

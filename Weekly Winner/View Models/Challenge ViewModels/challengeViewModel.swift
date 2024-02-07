@@ -36,6 +36,9 @@ class challengeViewModel: ObservableObject {
     
     @Published var errorMessage: String = ""
     
+    @Published var poolCoins: Double = StaticUserData.shared.currentUser.poolCoins
+    @Published var poolBucks: Double = StaticUserData.shared.currentUser.poolBucks
+    
 
 
 
@@ -155,6 +158,9 @@ class challengeViewModel: ObservableObject {
                 let poolBucks = data?["poolBucks"] as? Double
                 StaticUserData.shared.currentUser.poolBucks = poolBucks ?? -99
                 StaticUserData.shared.currentUser.poolCoins = poolCoins ?? -99
+                self.poolBucks = poolBucks ?? -99
+                self.poolCoins = poolCoins ?? -99
+                print("PoolBucks: \(StaticUserData.shared.currentUser.poolBucks)")
                 completion()
             } else {
                 print("Document does not exist or error fetching document: \(error?.localizedDescription ?? "Unknown error")")
@@ -214,7 +220,8 @@ class challengeViewModel: ObservableObject {
                         birthday: data["birthday"] as? Timestamp ?? Timestamp(),
                         gender: data["gender"] as? String ?? "",
                         poolCoins: data["poolCoins"] as? Double ?? 0,
-                        poolBucks: data["poolBucks"] as? Double ?? 0
+                        poolBucks: data["poolBucks"] as? Double ?? 0,
+                        paymentVerified: data["paymentVerified"] as? String ?? "false"
                     )
                     completion(user, true)
                 } else {

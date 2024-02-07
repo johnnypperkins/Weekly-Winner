@@ -14,10 +14,12 @@ import PopupView
 
 struct challengeView: View {
     @State var tabSelected = 0
-    
+
     @ObservedObject var challengeVM = challengeViewModel()
     
     @State private var showRulesPage = false
+    
+    @State var poolBucks = StaticUserData.shared.currentUser.poolBucks
     
     private func tabTitle(for index: Int) -> String {
         switch index {
@@ -42,7 +44,7 @@ struct challengeView: View {
             K.finalColor.backgroundBlue
             VStack(alignment: .trailing){
                 HStack{
-                    currencyView()
+                    currencyView(poolCoins: StaticUserData.shared.currentUser.poolCoins, poolBucks: $poolBucks)
                     
                     Spacer()
 
@@ -89,7 +91,7 @@ struct challengeView: View {
                 }.padding(.top, 40)
                  .cornerRadius(7.5)
                 if tabSelected == 0 {
-                    challengeCardView(viewModel: challengeVM)
+                    challengeCardView(viewModel: challengeVM, poolBucks: $poolBucks)
                         .padding(.top, 20)
                 } else if tabSelected == 1 {
                     pendingCardView(viewModel: challengeVM)
@@ -113,6 +115,7 @@ struct challengeView: View {
 struct challengeCardView: View {
     @ObservedObject var viewModel: challengeViewModel
     @State private var showRulesPage = false
+    @Binding var poolBucks: Double
     var body: some View {
         ScrollView {
             VStack (spacing: 10) {
@@ -136,6 +139,25 @@ struct challengeCardView: View {
                     } label: {
                         HStack {
                             Text("What are challenges?")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                .foregroundColor(.white)
+                            
+                        }
+                    }
+
+                    
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 90, maxHeight: 90)
+                .background(K.finalColor.cardBlue)
+                .cornerRadius(7.5)
+                .padding(.horizontal,15)
+                
+                VStack {
+                    Button {
+                        showRulesPage.toggle()
+                    } label: {
+                        HStack {
+                            Text("What are PoolBucks?")
                                 .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
                                 .foregroundColor(.white)
                             
@@ -179,8 +201,15 @@ struct challengeCardView: View {
                 .padding(.horizontal,15)
             }
         }.refreshable {
-            viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {}
+            viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {
+                poolBucks = StaticUserData.shared.currentUser.poolBucks
+                }
             }
+        .onAppear() {
+            viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {
+                poolBucks = StaticUserData.shared.currentUser.poolBucks
+                }
+            }        
         .popup(isPresented: $showRulesPage) {
             Text("The popup")
                 challengeDescription()
@@ -726,6 +755,8 @@ struct userBio: View {
     }
 
 struct currencyView: View {
+    let poolCoins: Double
+    @Binding var poolBucks: Double
     var body: some View {
         Rectangle()
         
@@ -738,7 +769,7 @@ struct currencyView: View {
                         Image("poolCoin")
                             .resizable()
                             .frame(width: 20, height: 20)
-                        Text("\(String(format: "%.0f", StaticUserData.shared.currentUser.poolCoins))")
+                        Text("\(String(format: "%.0f", poolCoins))")
                             .foregroundStyle(.white)
                             .font(.custom(K.customFonts.lexendDecaSB, size: 16))
                     }
@@ -751,7 +782,7 @@ struct currencyView: View {
                             .resizable()
                             .foregroundStyle(.green)
                             .frame(width: 20, height: 20)
-                        Text("\(String(format: "%.2f", StaticUserData.shared.currentUser.poolBucks))")
+                        Text("\(String(format: "%.2f", poolBucks))")
                             .foregroundStyle(.white)
                             .font(.custom(K.customFonts.lexendDecaSB, size: 16))
                     }
