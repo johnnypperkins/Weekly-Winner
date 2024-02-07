@@ -838,7 +838,7 @@ class challengeViewModel: ObservableObject {
                     print("Error deleting challenge: \(error)")
                 } else {
                     // Deleting the challenge from the receiver's collection
-                    self.db.collection("users").document(challenge.receiverIDs[0]).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).delete { error in
+                    self.db.collection("users").document(challenge.challengerID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).delete { error in
                         if let error = error {
                             print("Error deleting challenge: \(error)")
                         } else {

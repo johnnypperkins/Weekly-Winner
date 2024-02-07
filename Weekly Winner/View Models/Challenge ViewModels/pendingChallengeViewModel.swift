@@ -43,6 +43,7 @@ class pendingChallengeViewModel: ObservableObject {
         self.ticketFormat = challenge.ticketFormat
         self.opponentID = challenge.challengerID
         self.wagerAmount = challenge.wagerAmount
+        self.opponentUsername = challenge.opponentUsername
     }
 
     func setEmptyTotalBetArray(ticketFormat: [Int]) {
@@ -304,7 +305,6 @@ class pendingChallengeViewModel: ObservableObject {
                                         
                                     ]
                                     
-                                    
                                     betsPath.addDocument(data: betData) { error in
                                         if let error = error {
                                             print("Error adding document: \(error)")
@@ -331,20 +331,21 @@ class pendingChallengeViewModel: ObservableObject {
             
             completion()
         } else {
+            self.db.collection("users").document(challenge.challengerID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).delete { error in
+                if let error = error {
+                    print("Error deleting challenge: \(error)")
+                }
+            }
+            
             self.db.collection("users").document(StaticUserData.shared.currentUser.id ?? "").collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).delete { error in
                 if let error = error {
                     print("Error deleting challenge: \(error)")
                 } else {
-                    // Deleting the challenge from the receiver's collection
-                    self.db.collection("users").document(challenge.receiverIDs[0]).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).delete { error in
-                        if let error = error {
-                            print("Error deleting challenge: \(error)")
-                        } else {
-                            completion() // Call completion when both deletions are successful
-                        }
-                    }
+                    
+                    completion()
                 }
             }
+            
             db.runTransaction({ (transaction, errorPointer) -> Any? in
                     do {
                         // Read phase

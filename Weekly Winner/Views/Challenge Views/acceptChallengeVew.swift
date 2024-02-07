@@ -236,7 +236,6 @@ struct BetDetailsViewAcceptCHALLENGE: View {
     @State private var chosenSpread: Double = -99
     @State private var originalSpread: Double = -99
     @ObservedObject var viewModel: pendingChallengeViewModel
-//    @StateObject var ticketVM = ticketViewModel()
     
     @State private var groupNumber = 0
     @State private var betNumber = -99

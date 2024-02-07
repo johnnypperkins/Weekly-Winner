@@ -197,7 +197,7 @@ struct pendingOption2: View {
                         .clipShape(Circle())
                 }
 
-                Text("\(challenge.username) has challenged you")
+                Text("\(challenge.opponentUsername) has challenged you")
                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
                     .foregroundColor(.white)
             }
@@ -223,20 +223,35 @@ struct pendingOption2: View {
             }
             
             HStack (spacing: 7.5) {
-                NavigationLink(destination: {acceptChallengeView(viewModel: pendingChallengeViewModel(challenge: challenge), challengeViewModel: viewModel, challenge: challenge)
+                if StaticUserData.shared.currentUser.poolBucks >= challenge.wagerAmount {
+                    NavigationLink(destination: {acceptChallengeView(viewModel: pendingChallengeViewModel(challenge: challenge), challengeViewModel: viewModel, challenge: challenge)
 
-                }, label: {
+                    }, label: {
+                        HStack {
+                            Text("Accept")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                .foregroundColor(.white)
+                        }
+                        .frame(width: 80, height: 40)
+                        .background(K.finalColor.winningGreen)
+                        .cornerRadius(7.5)
+                    }).onSubmit {
+
+                    }
+                } else {
                     HStack {
-                        Text("Accept")
+                        Text("Need")
                             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
                             .foregroundColor(.white)
+                        Image("poolBuck")
+                            .resizable()
+                            .frame(width: 20, height: 20)
                     }
                     .frame(width: 80, height: 40)
-                    .background(K.finalColor.winningGreen)
+                    .background(K.finalColor.potentialOrange)
                     .cornerRadius(7.5)
-                }).onSubmit {
-
                 }
+                
 
                 
                 Button(action: {

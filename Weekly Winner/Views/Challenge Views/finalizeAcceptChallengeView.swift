@@ -39,8 +39,6 @@ struct finalizeAcceptChallengeView: View {
                 }
             }
             
-                
-//            NavigationStack {
             Button(action: {
                     print("Button tapped")
                     viewModel.respondToChallenge(acceptedChallenge: true, challenge: viewModel.challenge) {
@@ -48,7 +46,6 @@ struct finalizeAcceptChallengeView: View {
                             print("Toggling shouldNavigate")
                             shouldNavigate.toggle()
                             challengeViewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {}
-
                         }
                     }
                 }, label: {
@@ -66,10 +63,9 @@ struct finalizeAcceptChallengeView: View {
                     .padding(.bottom, 20)
                 })
                 .navigationDestination(isPresented: $shouldNavigate) {
-//                    print("Navigating to tabBarView")
                     tabBarView(selection: .profile)
                 }
-//            }
+
 
         }.onAppear {
             fetchUserProfilePic(uid: viewModel.opponentID) { (profileImageUrl, error) in
