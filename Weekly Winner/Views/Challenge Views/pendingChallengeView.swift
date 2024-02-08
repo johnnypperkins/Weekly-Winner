@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+
 import Kingfisher
 
 struct pendingCardView: View {
@@ -25,15 +26,25 @@ struct pendingCardView: View {
                     } label: {
                         pendingOption1(challenge: challenge, opponentChallenge: viewModel.opponentChallenges.first(where: { $0.customID == challenge.customID}) ?? challenge)
                     }
-
-
                     
                 } else if challenge.status == "pendingAcceptance" && challenge.challengerID != StaticUserData.shared.currentUser.id {
                     // someone sent to you
-                    pendingOption2(viewModel: viewModel, challenge: challenge)
+                    if let fiveMinutesAfterChallenge = Calendar.current.date(byAdding: .minute, value: 5, to: challenge.dateCreated.dateValue()) {
+                        if Date() < fiveMinutesAfterChallenge {
+                            pendingOption2(viewModel: viewModel, challenge: challenge)
+                        } else {
+                           Text("past")
+                        }
+                    }
                 } else if challenge.status == "pendingAcceptance" && challenge.challengerID == StaticUserData.shared.currentUser.id {
                     // you sent waiting acceptance
-                    pendingOption3(challenge: challenge)
+                    if let fiveMinutesAfterChallenge = Calendar.current.date(byAdding: .minute, value: 5, to: challenge.dateCreated.dateValue()) {
+                        if Date() < fiveMinutesAfterChallenge {
+                            pendingOption3(challenge: challenge)
+                        } else {
+                           pendingOption3Expired(challenge: challenge)
+                        }
+                    }
                 }
                 
                 
@@ -175,107 +186,138 @@ struct pendingOption1: View {
 
 struct pendingOption2: View {
     @ObservedObject var viewModel: challengeViewModel
+
     let challenge: ChallengeTicket
     @State private var selfProfileImageURL = ""
     @State private var opponentProfileImageURL = ""
     @State var showingSheet = false
+    
+    
     var body: some View {
-        VStack {
-            HStack(spacing: 5) {
-                if opponentProfileImageURL != "" {
-                    KFImage(URL(string: opponentProfileImageURL))
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .clipShape(Circle())
-                        .frame(width: 35, height: 35)
-                } else {
-                    Image(systemName: "photo.circle.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 35, height: 35)
-                        .background(K.finalColor.tabSelectedBlue)
-                        .clipShape(Circle())
-                }
-
-                Text("\(challenge.opponentUsername) has challenged you")
-                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
-                    .foregroundColor(.white)
-            }
-            
-            HStack{
-                Text("Wager: \(String(format: "%.0f", challenge.wagerAmount))")
-                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
-                    .foregroundColor(.white)
-                if challenge.currencyChosen == "poolBucks" {
-                    Image("poolBuckSkewed")
-                        .resizable()
-                        .foregroundStyle(.green)
-                        .frame(width: 18, height: 18)
-                }
-                else{
-                    Image("poolCoin")
-                        .resizable()
-                        .foregroundStyle(.green)
-                        .frame(width: 15, height: 15)
+        
+        ZStack {
+            HStack  {
+                HStack {
+                    Spacer()
+                    ZStack {
+                        VStack(spacing: 7.5) {
+                            HStack (spacing: 4){
+                                if opponentProfileImageURL != "" {
+                                    KFImage(URL(string: opponentProfileImageURL))
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .clipShape(Circle())
+                                        .frame(width: 30, height: 30)
+                                } else {
+                                    Image(systemName: "photo.circle.fill")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 30, height: 30)
+                                        .background(K.finalColor.tabSelectedBlue)
+                                        .clipShape(Circle())
+                                }
+                                
+                                Text("\(challenge.opponentUsername)")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                    .foregroundColor(.white)
+                            }
+                            HStack {
+                                if challenge.currencyChosen == "poolBucks" {
+                                    Image("poolBuckSkewed")
+                                        .resizable()
+                                        .foregroundStyle(.green)
+                                        .frame(width: 25, height: 25)
+                                }
+                                else{
+                                    Image("poolCoin")
+                                        .resizable()
+                                        .foregroundStyle(.green)
+                                        .frame(width: 25, height: 25)
+                                }
+                                Text("\(String(format: "%.2f", challenge.wagerAmount)) : \(String(format: "%.2f", challenge.wagerAmount*0.952))")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                    .foregroundColor(.white)
+                            }
+                        }.padding(.leading)
+                    }
+                    
+                    
+                    Spacer()
                 }
                 
-                
-            }
-            
-            HStack (spacing: 7.5) {
-                if StaticUserData.shared.currentUser.poolBucks >= challenge.wagerAmount {
-                    NavigationLink(destination: {acceptChallengeView(viewModel: pendingChallengeViewModel(challenge: challenge), challengeViewModel: viewModel, challenge: challenge)
-
-                    }, label: {
-                        HStack {
-                            Text("Accept")
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
-                                .foregroundColor(.white)
+                Spacer()
+                HStack (spacing: 10) {
+                    Rectangle()
+                        .frame(width: 1, height: 80)
+                        .foregroundColor(.white)
+                    
+                    VStack (spacing: 7.5) {
+                        Button(action: {
+                            viewModel.respondToChallenge(acceptedChallenge: false, challenge: challenge) {
+                                viewModel.fetchChallenges {}
+                            }
+                        }, label: {
+                            HStack {
+                                Text("Decline")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                    .foregroundColor(.white)
+                            }
+                            .frame(width: 80, height: 40)
+                            .background(K.finalColor.deleteRed)
+                            .cornerRadius(7.5)
+                        })
+                        
+                        if StaticUserData.shared.currentUser.poolBucks >= challenge.wagerAmount {
+                            NavigationLink(destination: {acceptChallengeView(viewModel: pendingChallengeViewModel(challenge: challenge), challengeViewModel: viewModel, challenge: challenge)
+                                
+                            }, label: {
+                                HStack {
+                                    Text("View")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                        .foregroundColor(.white)
+                                }
+                                .frame(width: 80, height: 40)
+                                .background(K.finalColor.winningGreen)
+                                .cornerRadius(7.5)
+                            }).onSubmit {
+                                
+                            }
+                        } else {
+                            HStack {
+                                Text("Need")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                    .foregroundColor(.white)
+                                Image("poolBuck")
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+                            }
+                            .frame(width: 75, height: 40)
+                            .background(K.finalColor.potentialOrange)
+                            .cornerRadius(7.5)
                         }
-                        .frame(width: 80, height: 40)
-                        .background(K.finalColor.winningGreen)
-                        .cornerRadius(7.5)
-                    }).onSubmit {
-
                     }
-                } else {
-                    HStack {
-                        Text("Need")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
-                            .foregroundColor(.white)
-                        Image("poolBuck")
-                            .resizable()
-                            .frame(width: 20, height: 20)
-                    }
-                    .frame(width: 80, height: 40)
-                    .background(K.finalColor.potentialOrange)
-                    .cornerRadius(7.5)
+                }.padding(.trailing)
+                
+            }.padding(.vertical, 10)
+                .frame(height: 100)
+            .background(K.finalColor.cardBlue)
+            .cornerRadius(10)
+            HStack {
+                VStack {
+                    Spacer()
+                    Text("Expires: \(toHHMMSS(from:challenge.dateCreated.dateValue()))")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 8))
+                        .foregroundColor(K.finalColor.potentialOrange)
+                        .padding(.leading, 4)
+                        .padding(.bottom, 4)
                 }
-                
-
-                
-                Button(action: {
-                    viewModel.respondToChallenge(acceptedChallenge: false, challenge: challenge) {
-                        viewModel.fetchChallenges {}
-                    }
-                }, label: {
-                    HStack {
-                        Text("Decline")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
-                            .foregroundColor(.white)
-                    }
-                    .frame(width: 80, height: 40)
-                    .background(K.finalColor.deleteRed)
-                    .cornerRadius(7.5)
-                })
+                Spacer()
             }
-        }.padding(.vertical, 10)
-            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 140, maxHeight: 140)
-        .background(K.finalColor.cardBlue)
-        .cornerRadius(10)
+            
+        }
         .padding(.horizontal, 15)
         .onAppear {
-            fetchUserProfilePic(uid: challenge.challengerID) { (profileImageUrl, error) in
+            fetchUserProfilePic(uid: StaticUserData.shared.currentUser.id!) { (profileImageUrl, error) in
                 if let error = error {
                     print("Error fetching profile image URL: \(error)")
                    
@@ -284,7 +326,7 @@ struct pendingOption2: View {
                     self.selfProfileImageURL = profileImageUrl
                 }
             }
-            fetchUserProfilePic(uid: challenge.receiverIDs[0]) { (profileImageUrl, error) in
+            fetchUserProfilePic(uid: challenge.challengerID) { (profileImageUrl, error) in
                 if let error = error {
                     print("Error fetching profile image URL: \(error)")
                    
@@ -313,4 +355,37 @@ struct pendingOption3: View {
         .cornerRadius(10)
         .padding(.horizontal, 15)
     }
+}
+
+struct pendingOption3Expired: View {
+    let challenge: ChallengeTicket
+    var body: some View {
+        VStack {
+            HStack(spacing: 5) {
+                Text("Challenge with: @\(challenge.opponentUsername) expired. Funds will return momentarily.")
+                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                    .foregroundColor(.red)
+            }
+            
+        }.padding(.vertical, 10)
+        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 100, maxHeight: 100)
+        .background(K.finalColor.cardBlue)
+        .cornerRadius(10)
+        .padding(.horizontal, 15)
+    }
+}
+
+
+func toHHMMSS(from timestamp: Date) -> String {
+    let calendar = Calendar.current
+        // Add 5 minutes to the timestamp
+        guard let futureDate = calendar.date(byAdding: .minute, value: 5, to: timestamp) else {
+            // Handle the case where the date couldn't be created
+            return "Error creating future date"
+        }
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = TimeZone.current // Adjust if needed
+        dateFormatter.dateFormat = "hh:mm:ss a" // 12-hour format with AM/PM
+        return dateFormatter.string(from: futureDate)
 }

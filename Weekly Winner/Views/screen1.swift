@@ -14,7 +14,6 @@ import PopupView
 
 struct UserProfileView: View {
     @ObservedObject private var screen1VM = screen1ViewModel()
-   // @StateObject var countdownTimer = CountdownTimer()
     @State private var showWebpage = false
     @Binding var tab: Tab
     @State var timeFrame = "daily"
@@ -31,8 +30,6 @@ struct UserProfileView: View {
                 .padding(.horizontal)
            
             countDown(prizesVM: prizesVM, timeFrame: $timeFrame)
-            
-        //    testView()
 
             VStack {
              yourGroups(screen1VM: screen1VM, tab: $tab)
@@ -41,7 +38,6 @@ struct UserProfileView: View {
                 weeklyGlobalLeaders(screen1VM: screen1VM, timeFrame: $timeFrame)
                     .padding(.horizontal)
                 
-                
                 Spacer()
             }.padding(.bottom,45)
 
@@ -49,8 +45,6 @@ struct UserProfileView: View {
         .sheet(isPresented: $showWebpage) {
             SafariView(url: URL(string: screen1VM.updateURL)!)
         }
-       
-        
         .background(K.finalColor.backgroundBlue)
         .onAppear() {
             screen1VM.forceUpdate () {
@@ -64,7 +58,6 @@ struct UserProfileView: View {
                 }
             }
         }.padding(.top, 35)
-        
     }
 }
 
@@ -319,9 +312,10 @@ struct announcementView: View {
                 Spacer()
             }
         }.onAppear {
-            viewModel.fetchUserAnnouncements(userID: Auth.auth().currentUser!.uid) {}
         }.onDisappear() {
-            viewModel.setAllAnnouncementsToSeen(userID: Auth.auth().currentUser!.uid) {}
+            viewModel.setAllAnnouncementsToSeen(userID: Auth.auth().currentUser!.uid) {
+                viewModel.fetchUserAnnouncements(userID: Auth.auth().currentUser!.uid) {}
+            }
         }
     }
 }
@@ -646,28 +640,42 @@ struct yourGroups: View {
                     showAnnouncementsPage = true
                     
                 } label: {
-                    HStack {
-                        Spacer()
-                        VStack {
-                            Image("announcements")
-                                .resizable()
-                                .cornerRadius(7.5)
-                                .foregroundColor(.white)
-                                .scaledToFit()
-                                .frame(height: 40)
-                            Text("Announcements")
-                                .font(.custom(K.customFonts.poppinsMedium, size: 15))
-                                .foregroundColor(.white)
+                    ZStack {
+                        HStack {
+                            Spacer()
+                            VStack {
+                                Image("announcements")
+                                    .resizable()
+                                    .cornerRadius(7.5)
+                                    .foregroundColor(.white)
+                                    .scaledToFit()
+                                    .frame(height: 40)
+                                Text("Announcements")
+                                    .font(.custom(K.customFonts.poppinsMedium, size: 15))
+                                    .foregroundColor(.white)
+                            }
+                            Spacer()
                         }
-                        Spacer()
+                        if screen1VM.userAnnouncements.contains(where: {$0.status == "unSeen"}) {
+                            VStack {
+                                HStack {
+                                    Spacer()
+                                    Rectangle()
+                                        .frame(width: 30, height: 30)
+                                        .foregroundColor(.red)
+                                        .cornerRadius(7.5)
+                                        .padding(.trailing, -15)
+                                        .padding(.top, -15)
+                                }
+                                Spacer()
+                            }
+                        }
+
                     }.frame(height: 100)
                         .background(K.finalColor.cardBlue)
                         .cornerRadius(7.5)
-                    
                 }
-                
-               
-                
+                 
                 Link(destination: URL(string: "https://www.instagram.com/wagerpool/")!) {
                     HStack {
                         Spacer()
@@ -688,6 +696,8 @@ struct yourGroups: View {
                         .cornerRadius(7.5)
                 }
             }.padding(.horizontal, 16)
+        }.onAppear() {
+            screen1VM.fetchUserAnnouncements(userID: Auth.auth().currentUser!.uid) {}
         }
         .popup(isPresented: $showPopUp) {
             rulesView()

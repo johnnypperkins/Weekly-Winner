@@ -7,6 +7,7 @@
 
 import Foundation
 import Firebase
+import SwiftUI
 
 class pendingChallengeViewModel: ObservableObject {
     private let db = Firestore.firestore()
@@ -381,4 +382,34 @@ class pendingChallengeViewModel: ObservableObject {
     }
     
 }
+
+class TimerViewModel: ObservableObject {
+    @Published var remainingTime: String = ""
+    var timer: Timer?
+    let countdownDuration: TimeInterval = 5 * 60 // 5 minutes in seconds
+
+    func startTimer(from timestamp: Date) {
+        timer?.invalidate() // Invalidate any existing timer
+
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let strongSelf = self else { return }
+
+            let currentTime = Date()
+            let elapsedTime = currentTime.timeIntervalSince(timestamp)
+            let remainingSeconds = max(strongSelf.countdownDuration - elapsedTime, 0)
+            
+            if remainingSeconds <= 0 {
+                strongSelf.timer?.invalidate()
+                strongSelf.timer = nil
+            }
+
+            let minutes = Int(remainingSeconds) / 60
+            let seconds = Int(remainingSeconds) % 60
+            strongSelf.remainingTime = String(format: "%02d:%02d", minutes, seconds)
+        }
+    }
+}
+
+
+
 
