@@ -583,11 +583,7 @@ class challengeViewModel: ObservableObject {
 //            }
 //        }
     }
-    
-    func fetchAllOpponentChallenges(completion: @escaping () -> Void) {
-        // create collection group at "currentChallengeTickets"
-        // I want all documents there that that EITHER have a value called "challengerID" set to a value OR an array called receiverIDs contains a certain value
-    }
+
     
     func fetchChallenges(completion: @escaping () -> Void) {
         let statuses = ["pendingAcceptance", "inAction", "win", "loss", "push"] // Replace with your actual status values
@@ -650,7 +646,7 @@ class challengeViewModel: ObservableObject {
                     )
                     self.currentChallenges.append(challengeTicket)
                 } else {
-                    print("Document data is incomplete or of incorrect type for document: \(document.documentID)")
+                    print("FETCH CHALLENGES Document data is incomplete or of incorrect type for document: \(document.documentID)")
                 }
             }
 
@@ -689,7 +685,7 @@ class challengeViewModel: ObservableObject {
                     if let customID = data["customID"] as? String,
                        let username = data["username"] as? String,
                        let opponentUsername = data["opponentUsername"] as? String,
-                       let dateCreated = data["dateCreated"] as? Timestamp, // Or convert to Date if needed
+                       let dateCreated = data["dateCreated"] as? Timestamp,
                        let wagerAmount = data["wagerAmount"] as? Double,
                        let currencyChosen = data["currencyChosen"] as? String,
                        let totalPotentialWon = data["totalPotentialWon"] as? Double,
@@ -701,13 +697,16 @@ class challengeViewModel: ObservableObject {
                        let gameIDs = data["gameIDs"] as? [String],
                        let gamesToPlay = data["gamesToPlay"] as? Int,
                        let gamesPlayed = data["gamesPlayed"] as? Int
+                        
+
+                         
                     {
                         
                         let challengeTicket = ChallengeTicket(
                             customID: customID,
                             username: username,
                             opponentUsername: opponentUsername,
-                            dateCreated: dateCreated, // Converts Timestamp to Date
+                            dateCreated: dateCreated,
                             wagerAmount: wagerAmount,
                             currencyChosen: currencyChosen,
                             totalPotentialWon: totalPotentialWon,
@@ -720,9 +719,11 @@ class challengeViewModel: ObservableObject {
                             gamesToPlay: gamesToPlay,
                             gamesPlayed: gamesPlayed
                         )
-                        opponentChallengesLocal.append(challengeTicket)
+                        if challengeTicket.username != StaticUserData.shared.currentUser.username {
+                            opponentChallengesLocal.append(challengeTicket)
+                        }
                     } else {
-                        print("Document data is incomplete or of incorrect type for document: \(document.documentID)")
+                        print(" FETCH OPP CHALL PART1 Document data is incomplete or of incorrect type for document: \(document.documentID)")
                     }
                 }
                 
@@ -782,9 +783,11 @@ class challengeViewModel: ObservableObject {
                             gamesToPlay: gamesToPlay,
                             gamesPlayed: gamesPlayed
                         )
-                        opponentChallengesLocal.append(challengeTicket)
+                        if challengeTicket.username != StaticUserData.shared.currentUser.username {
+                            opponentChallengesLocal.append(challengeTicket)
+                        }
                     } else {
-                        print("Document data is incomplete or of incorrect type for document: \(document.documentID)")
+                        print("FETHC ALL P22 Document data is incomplete or of incorrect type for document: \(document.documentID)")
                     }
                 }
                 
