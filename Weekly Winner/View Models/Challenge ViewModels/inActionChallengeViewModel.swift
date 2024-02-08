@@ -279,7 +279,7 @@ class inActionChallengeViewModel: ObservableObject {
                   let gameIDs = data["gameIDs"] as? [String],
                   let gamesToPlay = data["gamesToPlay"] as? Int,
                   let gamesPlayed = data["gamesPlayed"] as? Int else {
-                      print("Document data is incomplete or of incorrect type.")
+                      print("FETCH IN ACTION Document data is incomplete or of incorrect type.")
                       return nil
                   }
 

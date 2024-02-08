@@ -19,14 +19,16 @@ struct finishedCardView: View {
             ForEach(viewModel.currentChallenges, id: \.customID) { challenge in
                 if challenge.status == "win" || challenge.status == "loss" || challenge.status == "push" {
                     // accepted and started
-                    NavigationLink {
-                        inActionChallengeView(challenge: challenge, viewModel: inActionChallengeViewModel(challenge: challenge))
-                    } label: {
-                        finalizedCard(challenge: challenge, opponentChallenge: viewModel.opponentChallenges.first(where: { $0.customID == challenge.customID}) ?? challenge)
+                    if viewModel.opponentChallenges.contains(where: { $0.customID == challenge.customID}) {
+                        NavigationLink {
+                            inActionChallengeView(challenge: challenge, viewModel: inActionChallengeViewModel(challenge: challenge))
+                        } label: {
+                            finalizedCard(challenge: challenge, opponentChallenge: viewModel.opponentChallenges.first(where: { $0.customID == challenge.customID})!)
+                        }
                     }
                 }
             }
-        }
+        }.padding(.bottom, 80)
         .onAppear() {
             viewModel.fetchChallenges {}
             viewModel.fetchAllOpponentChallenges(userID: StaticUserData.shared.currentUser.id!) {}
@@ -94,7 +96,7 @@ struct finalizedCard: View {
                             HStack (alignment: .center) {
                                 Text("\(Int(opponentChallenge.totalWon))")
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
-                                    .foregroundColor(challenge.totalWon>=0 ? K.finalColor.winningGreen : K.finalColor.deleteRed)
+                                    .foregroundColor(opponentChallenge.totalWon>=0 ? K.finalColor.winningGreen : K.finalColor.deleteRed)
                                     .frame(width: 100 , height: 20, alignment: .center)
                             }
                             .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
