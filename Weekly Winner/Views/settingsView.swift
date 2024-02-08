@@ -87,7 +87,8 @@ struct settingsView: View {
                                                 .foregroundColor(.white)
                                         }.padding(.vertical, 10)
                                     }
-                                    
+                                    .id(UUID())
+                                
                                     Divider()
                                     
                                     NavigationLink(destination: {ourMissionView()}) {
@@ -107,7 +108,7 @@ struct settingsView: View {
                                                 .foregroundColor(.white)
                                         }.padding(.top, 10)
                                             .padding(.bottom,20)
-                                    }
+                                    }.id(UUID())
                                     
                                 }
                                 
@@ -216,7 +217,7 @@ struct settingsView: View {
                                                 .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
                                                 .foregroundColor(.white)
                                         }.padding(.vertical,10)
-                                    }
+                                    }.id(UUID())
                                     
                                     Divider()
                                     
@@ -236,7 +237,7 @@ struct settingsView: View {
                                                 .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
                                                 .foregroundColor(.white)
                                         }.padding(.vertical,10)
-                                    }
+                                    }.id(UUID())
                                     
                                     Divider()
                                     

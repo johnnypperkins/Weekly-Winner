@@ -68,7 +68,7 @@ struct tabBarView: View {
                                 .ignoresSafeArea(.all)
                                 .navigationBarHidden(true)
                                 .tabItem {
-                                    CustomTabBarItem(index: 4, selectedTab: $selectedTab, item: TabItem(title: "Profile", icon: Image(systemName: "person.crop.circle.fill"), color: .orange))
+                                    CustomTabBarItem(index: 4, selectedTab: $selectedTab, item: TabItem(title: "Challenge", icon: Image(systemName: "person.line.dotted.person.fill"), color: .orange))
                                 }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
                                                 .tag(Tab.profile)
                         }

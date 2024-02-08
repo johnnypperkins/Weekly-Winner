@@ -167,7 +167,7 @@ struct globalPrizesView: View {
                     
                     HStack {
                         Spacer()
-                        Text("DM @WagerPool to collect!")
+                        Text("Your funds will be credited to your account!")
                             .foregroundColor(.white)
                             .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                             .padding(.bottom)
