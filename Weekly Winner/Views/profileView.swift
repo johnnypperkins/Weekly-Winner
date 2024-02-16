@@ -483,17 +483,7 @@ struct SettingsView: View {
     }
 }
 
-struct RulesView: View {
-    var body: some View {
-        VStack {
-            Text("Rules Page")
-                .font(.largeTitle)
-                .padding()
-            Spacer()
-        }
-        .navigationBarTitle("Rules", displayMode: .inline)
-    }
-}
+
 struct ContactView: View {
     var body: some View {
         VStack {

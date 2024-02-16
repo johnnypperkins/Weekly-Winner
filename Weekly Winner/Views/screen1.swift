@@ -256,8 +256,9 @@ struct announcementView: View {
     @State var status = "unSeen"
     
     var body: some View {
-        ZStack (){
+        ZStack {
             K.finalColor.backgroundBlue.cornerRadius(40, corners: [.topLeft, .topRight])
+            
             VStack(spacing: 4) {
                 popUpPill()
                 
@@ -308,10 +309,11 @@ struct announcementView: View {
                         }
                     }
                 }
-
+                
                 Spacer()
             }
-        }.onAppear {
+        }
+        .onAppear {
         }.onDisappear() {
             viewModel.setAllAnnouncementsToSeen(userID: Auth.auth().currentUser!.uid) {
                 viewModel.fetchUserAnnouncements(userID: Auth.auth().currentUser!.uid) {}
@@ -320,14 +322,69 @@ struct announcementView: View {
     }
 }
 
+struct explanationView: View {
+    @State var pageSelected: Int
+    
+    init(pageSelected: Int) {
+            _pageSelected = State(initialValue: pageSelected)
+        }
+    
+    var body: some View {
+        ZStack (){
+            K.finalColor.backgroundBlue.cornerRadius(40, corners: [.topLeft, .topRight])
+            
+            VStack {
+                popUpPill()
+
+                HStack (spacing: 0){
+                    Button(action: { pageSelected = 0 }) {
+                        Text("Global")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
+                            .foregroundColor(.white)
+                            .frame(width: 100, height: 20, alignment: .center)
+                        
+                    }
+                    
+                    Button(action: { pageSelected = 1 }) {
+                        Text("Challenges")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
+                            .foregroundColor(.white)
+                            .frame(width: 100, height: 20, alignment: .center)
+                            .cornerRadius(5)
+                    }
+                    
+                    Button(action: { pageSelected = 2 }) {
+                        Text("PoolBucks")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
+                            .foregroundColor(.white)
+                            .frame(width: 100, height: 20, alignment: .center)
+                            .cornerRadius(5)
+                    }
+                }.padding(.top, 2)
+                
+                Rectangle()
+                    .fill(Color.white) // Sets the rectangle's fill color to white
+                    .frame(width: 75, height: 3)
+                    .cornerRadius(1) // Apply rounded corners
+                    .offset(x: CGFloat(-100 + 100*pageSelected), y: 0)
+                    .animation(.easeInOut(duration: 0.5))
+                
+                if pageSelected == 0 {
+                    rulesView()
+                } else if pageSelected == 1 {
+                    challengeDescription()
+                } else if pageSelected == 2 {
+                    currencyDescription()
+                }
+            }
+        }
+    }
+}
+
 struct rulesView: View {
     var body: some View {
         ZStack {
-            K.finalColor.backgroundBlue.cornerRadius(40, corners: [.topLeft, .topRight])
             VStack {
-                
-              popUpPill()
-                
                 ScrollView {
                     K.finalColor.backgroundBlue
                     VStack (spacing: 5) {
@@ -700,7 +757,7 @@ struct yourGroups: View {
             screen1VM.fetchUserAnnouncements(userID: Auth.auth().currentUser!.uid) {}
         }
         .popup(isPresented: $showPopUp) {
-            rulesView()
+            explanationView(pageSelected: 0)
             .frame(height: 650)
         } customize: {
             $0

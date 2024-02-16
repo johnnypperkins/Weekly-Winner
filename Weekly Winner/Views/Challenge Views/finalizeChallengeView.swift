@@ -93,8 +93,8 @@ struct sendHeader: View {
                 Image(viewModel.currencyChosen == "poolCoins" ? "poolCoin" : "poolBuck")
                     .resizable()
                     .frame(width: 50, height: 50)
-                Text(String(format: "%.2f", viewModel.wagerAmount))
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 50))
+                Text("\(String(format: "%.2f", viewModel.wagerAmount)) : \(String(format: "%.2f", viewModel.wagerAmount*0.952))")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 45))
                     .foregroundColor(.white)
             }
             

@@ -152,25 +152,7 @@ struct challengeCardView: View {
                 .cornerRadius(7.5)
                 .padding(.horizontal,15)
                 
-                VStack {
-                    Button {
-                        showRulesPage.toggle()
-                    } label: {
-                        HStack {
-                            Text("What are PoolBucks?")
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
-                                .foregroundColor(.white)
-                            
-                        }
-                    }
-
-                    
-                }
-                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 90, maxHeight: 90)
-                .background(K.finalColor.cardBlue)
-                .cornerRadius(7.5)
-                .padding(.horizontal,15)
-                
+  
                 VStack {
                     HStack {
                         NavigationLink {
@@ -212,8 +194,8 @@ struct challengeCardView: View {
             }        
         .popup(isPresented: $showRulesPage) {
             Text("The popup")
-                challengeDescription()
-                .frame(height: 500)
+            explanationView(pageSelected: 1)
+                .frame(height: 650)
 
         } customize: {
             $0
@@ -265,11 +247,25 @@ struct challengePage1: View {
                 K.finalColor.backgroundBlue
                 VStack {
                     HStack {
-                        if maxSliderValue == 1.69 {
-                            Text("Add More!")
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 50))
-                                .foregroundColor(.white)
-                        }else{
+                        if maxSliderValue == -99 && currencyChosen == "poolBucks" {
+                            HStack {
+                                Image("poolBuck")
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+                                Text("Purchase/Win PoolBucks to send a challenge!")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .foregroundColor(.white)
+                                    .multilineTextAlignment(.center) // Centers the text
+                                    .lineLimit(nil) // Allows text to wrap across multiple lines
+                                Image("poolBuck")
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+                            }.padding(.horizontal, 16)
+                        } else if currencyChosen == "poolCoins" {
+                               Text("Coming soon!")
+                                   .font(.custom(K.customFonts.lexendDecaMedium, size: 30))
+                                   .foregroundColor(.white)
+                        } else {
                             Image(currencyChosen == "poolCoins" ? "poolCoin" : "poolBuck")
                                 .resizable()
                                 .frame(width: 50, height: 50)
@@ -279,65 +275,60 @@ struct challengePage1: View {
                             
                         }
                     }.padding(.top, 10)
-                    HStack (spacing: 20){
-                        Button(action: {
-                            if currencyChosen != "poolBucks" {
-                                withAnimation {
-                                    currencyChosen = "poolBucks"
-                                    wagerAmount = 0
-                                }
-                                
-                            }
-                        }) {
-                            HStack {
-                                Text("PoolBucks")
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+//                    HStack (spacing: 20){
+//                        Button(action: {
+//                            if currencyChosen != "poolBucks" {
+//                                withAnimation {
+//                                    currencyChosen = "poolBucks"
+//                                    wagerAmount = 0
+//                                }
+//                                
+//                            }
+//                        }) {
+//                            HStack {
+//                                Text("PoolBucks")
+//                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+//                                    .foregroundColor(.white)
+//                            }
+//                            .frame(width: 150, height: 50, alignment: .center)
+//                            .background(currencyChosen == "poolBucks" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+//                            .cornerRadius(5)
+//                        }
+//                        Button(action: {
+//                            if currencyChosen != "poolCoins" {
+//                                withAnimation {
+//                                    currencyChosen = "poolCoins"
+//                                    wagerAmount = 0
+//                                }
+//                                
+//                            }
+//                        }) {
+//                            HStack {
+//                                Text("PoolCoins")
+//                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+//                                    .foregroundColor(.white)
+//                            }
+//                            .frame(width: 150, height: 50, alignment: .center)
+//                            .background(currencyChosen == "poolCoins" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+//                            .cornerRadius(5)
+//                        }
+//                    }
+                    if maxSliderValue != -99 && currencyChosen == "poolBucks"{
+                        VStack {
+                            HStack{
+                                Text("Adjust Bet Amount")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
                                     .foregroundColor(.white)
+                                Spacer()
                             }
-                            .frame(width: 150, height: 50, alignment: .center)
-                            .background(currencyChosen == "poolBucks" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                            .cornerRadius(5)
-                        }
-                        Button(action: {
-                            if currencyChosen != "poolCoins" {
-                                withAnimation {
-                                    currencyChosen = "poolCoins"
-                                    wagerAmount = 0
-                                }
+                            Slider(value: $wagerAmount, in: 0.0...maxSliderValue, step: 1) { editing in
                                 
-                            }
-                        }) {
-                            HStack {
-                                Text("PoolCoins")
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
-                                    .foregroundColor(.white)
-                            }
-                            .frame(width: 150, height: 50, alignment: .center)
-                            .background(currencyChosen == "poolCoins" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                            .cornerRadius(5)
-                        }
-                    }
-                    
-                    VStack {
-                        HStack{
-                            Text("Adjust Bet Amount")
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
-                                .foregroundColor(.white)
-                            Spacer()
-//                            Text(String(format: "%.1f", wagerAmount))
-//                                .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
-//                                .foregroundColor(.white)
-                        }
-                        Slider(value: $wagerAmount, in: 0.0...maxSliderValue, step: 1) { editing in
+                            }.accentColor(.white)
                             
-                        }
-                        
-                        .accentColor(.white)
-                        //.background(Color(red: 0.77, green: 0.85, blue: 0.98).blur(radius: 15).opacity(0.60))
-                        
-                        
-                    }.padding(.horizontal,20)
-                        .padding(.vertical,10)
+                        }.padding(.horizontal,20)
+                            .padding(.vertical,10)
+                    }
+ 
                     
                     searchBarView(keyword: keywordBinding)
                             
@@ -414,12 +405,12 @@ struct challengePage1: View {
         }.background(K.finalColor.backgroundBlue)
     }
     var maxSliderValue: Double {
-        let defaultValue: Double = 1.69 // Set a default or minimum value for the slider
+        let defaultValue: Double = -99 // Set a default or minimum value for the slider
 
         if currencyChosen == "poolCoins" {
-            return max(StaticUserData.shared.currentUser.poolCoins, defaultValue)
+            return StaticUserData.shared.currentUser.poolCoins > 0 ? StaticUserData.shared.currentUser.poolCoins : defaultValue
         } else {
-            return max(StaticUserData.shared.currentUser.poolBucks, defaultValue)
+            return StaticUserData.shared.currentUser.poolBucks > 0 ? StaticUserData.shared.currentUser.poolBucks : defaultValue
         }
     }
 }

@@ -22,7 +22,7 @@ class screen1ViewModel: ObservableObject {
     @Published var canGetHistoricalData = false
     @Published var userGroupsLoaded = false
     @Published var currentUser: User? = nil
-    private let currentVersion: String = "1.33.2"
+    private let currentVersion: String = "2.0.0"
     
     @Published var canFetchDailyRankedTickets = false
     @Published var canFetchWeeklyRankedTickets = false

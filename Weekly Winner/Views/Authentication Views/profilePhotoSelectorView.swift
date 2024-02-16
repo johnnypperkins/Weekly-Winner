@@ -173,7 +173,7 @@ struct profilePhotoSelectorView: View {
                                             .submitLabel(.next)
                                             .onSubmit {
                                                 withAnimation {
-                                                    self.focus = .instagram
+                                                    self.focus = nil
                                                 }
                                             }
 
@@ -201,7 +201,10 @@ struct profilePhotoSelectorView: View {
                                             ForEach(countries, id: \.self) { country in
                                                 Text(country)
                                             }
-                                        }
+                                        }.onTapGesture{
+                                                self.focus = nil
+                                            }
+                                        
                                         .pickerStyle(DefaultPickerStyle())
                                         
                                         
@@ -408,7 +411,7 @@ struct profilePhotoSelectorView: View {
                                 viewModel.uploadProfileImage(selectedImage)
                                 if let date = createDate(day: selectedDay, month: selectedMonth, year: Int(selectedYear) ?? 0) {
                                     viewModel.uploadSupplementaryData(country: country, birthday: date, state: selectedState, gender: selectedGender, username: username, instagram: instagram, promoCode: promoCode)
-                                    viewModel.sendPromoBucks(to: promoCode)
+                                    viewModel.sendPromoBucks(to: promoCode, from: username)
                                     print(date)
                                 }
                                 Task{

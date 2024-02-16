@@ -9,7 +9,6 @@ import SwiftUI
 import Firebase
 
 struct BettingAppView: View {
-//    @State private var selectedGameType = GameType.nfl
     @StateObject private var viewModel = bookViewModel()
     @State private var showingSheet = false
     @State private var isShowing = false

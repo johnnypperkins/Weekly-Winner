@@ -46,7 +46,7 @@ class authenticationViewModel: ObservableObject {
     @Published var usernameTaken = false
     @Published var updateURL: String = ""
     
-    @Published var currentVersion = "1.33.2"
+    @Published var currentVersion = "2.0.0"
     
     fileprivate var currentNonce: String?
 
@@ -112,41 +112,47 @@ class authenticationViewModel: ObservableObject {
             }
         }
     }
-    
 
-    func sendPromoBucks(to username: String) {
-        // Access the Firestore shared instance
+    func sendPromoBucks(to username: String, from ownUsername: String) {
         let db = Firestore.firestore()
-        
-        // Reference to the 'users' collection
         let usersCollection = db.collection("users")
-        
-        // Query the document where 'username' field matches the provided username
-        usersCollection.whereField("username", isEqualTo: username.lowercased()).getDocuments { (querySnapshot, err) in
-            if let err = err {
-                // Handle any errors (e.g., user not found, connection issues)
-                print("Error getting documents: \(err)")
-            } else {
-                for document in querySnapshot!.documents {
-                    // Assuming there is only one user with this username
-                    let userRef = usersCollection.document(document.documentID)
-                    
-                    // Increment the 'poolBucks' field by 2
-                    userRef.updateData([
-                        "poolBucks": FieldValue.increment(Double(2))
-                    ]) { err in
-                        if let err = err {
-                            // Handle any errors during update
-                            print("Error updating document: \(err)")
-                        } else {
-                            // Update was successful
-                            print("poolBucks successfully updated")
+        if username != "" {
+            usersCollection.whereField("username", isEqualTo: username.lowercased()).getDocuments { (querySnapshot, err) in
+                if let err = err {
+                    print("Error getting documents: \(err)")
+                } else {
+                    for document in querySnapshot!.documents {
+                        let userRef = usersCollection.document(document.documentID)
+                        
+                        userRef.updateData([
+                            "poolBucks": FieldValue.increment(Double(2))
+                        ]) { err in
+                            if let err = err {
+                                print("Error updating document: \(err)")
+                            } else {
+                                print("poolBucks successfully updated")
+                                
+                                let announcementsRef = userRef.collection("Misc").document("announcements").collection("announcementCollection")
+                                announcementsRef.addDocument(data: [
+                                    "status": "unSeen",
+                                    "description": "\(ownUsername) used your promo code to sign up and you were awarded 2 poolBucks!",
+                                    "announcementType": "promoCode",
+                                    "timestamp": Timestamp(date: Date()) // Current timestamp
+                                ]) { err in
+                                    if let err = err {
+                                        print("Error adding announcement document: \(err)")
+                                    } else {
+                                        print("Announcement successfully added")
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
     }
+
 
     
     private func randomNonceString(length: Int = 32) -> String {

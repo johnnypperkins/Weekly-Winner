@@ -32,8 +32,6 @@ struct pendingCardView: View {
                     if let fiveMinutesAfterChallenge = Calendar.current.date(byAdding: .minute, value: 5, to: challenge.dateCreated.dateValue()) {
                         if Date() < fiveMinutesAfterChallenge {
                             pendingOption2(viewModel: viewModel, challenge: challenge)
-                        } else {
-                           Text("past")
                         }
                     }
                 } else if challenge.status == "pendingAcceptance" && challenge.challengerID == StaticUserData.shared.currentUser.id {
@@ -42,7 +40,7 @@ struct pendingCardView: View {
                         if Date() < fiveMinutesAfterChallenge {
                             pendingOption3(challenge: challenge)
                         } else {
-                           pendingOption3Expired(challenge: challenge)
+                           pendingOption3Expired(challenge: challenge, viewModel: viewModel)
                         }
                     }
                 }
@@ -291,7 +289,7 @@ struct pendingOption2: View {
                                     .resizable()
                                     .frame(width: 20, height: 20)
                             }
-                            .frame(width: 75, height: 40)
+                            .frame(width: 80, height: 40)
                             .background(K.finalColor.potentialOrange)
                             .cornerRadius(7.5)
                         }
@@ -342,30 +340,61 @@ struct pendingOption2: View {
 struct pendingOption3: View {
     let challenge: ChallengeTicket
     var body: some View {
-        VStack {
-            HStack(spacing: 5) {
-                Text("Pending Acceptance: @\(challenge.opponentUsername)")
-                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
-                    .foregroundColor(.white)
-            }
+        
+        ZStack {
+            VStack {
+                HStack(spacing: 5) {
+                    Text("Pending Acceptance: @\(challenge.opponentUsername)")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                        .foregroundColor(.white)
+                }
+                
+            }.padding(.vertical, 10)
             
-        }.padding(.vertical, 10)
-        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 100, maxHeight: 100)
-        .background(K.finalColor.cardBlue)
-        .cornerRadius(10)
-        .padding(.horizontal, 15)
+            HStack {
+                VStack {
+                    Spacer()
+                    Text("Expires: \(toHHMMSS(from:challenge.dateCreated.dateValue()))")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 8))
+                        .foregroundColor(K.finalColor.potentialOrange)
+                        .padding(.leading, 4)
+                        .padding(.bottom, 4)
+                }
+                Spacer()
+            }
+        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 100, maxHeight: 100)
+            .background(K.finalColor.cardBlue)
+            .cornerRadius(10)
+            .padding(.horizontal, 15)
     }
 }
 
 struct pendingOption3Expired: View {
     let challenge: ChallengeTicket
+    let viewModel: challengeViewModel
     var body: some View {
         VStack {
             HStack(spacing: 5) {
-                Text("Challenge with: @\(challenge.opponentUsername) expired. Funds will return momentarily.")
+                Text("Challenge with: @\(challenge.opponentUsername) expired.")
                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
                     .foregroundColor(.red)
             }
+            Button(action: {
+                viewModel.reclaimFundFromExpiredChallenge(userID: StaticUserData.shared.currentUser.id!, opponentID: challenge.receiverIDs[0], challengeID: challenge.customID, reclaimAmount: challenge.wagerAmount) {
+                    viewModel.fetchChallenges {
+                        viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {}
+                    }
+                }
+            }, label: {
+                HStack {
+                    Text("Reclaim Funds")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                        .foregroundColor(.white)
+                }
+                .frame(width: 120, height: 40)
+                .background(K.finalColor.potentialOrange)
+                .cornerRadius(7.5)
+            })
             
         }.padding(.vertical, 10)
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 100, maxHeight: 100)

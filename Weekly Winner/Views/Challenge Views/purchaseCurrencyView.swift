@@ -91,8 +91,6 @@ struct purchaseCurrencyView: View {
             
             if allowedStates.contains(locationViewModel.state) {
                 VStack{
-
-                    
                     VStack (spacing: 4){
                         HStack (spacing: 0){
                             Button(action: {
@@ -143,16 +141,21 @@ struct purchaseCurrencyView: View {
                     }
                     Spacer()
                 }.padding(.top, 10)
-                    .background(K.finalColor.backgroundBlue)
-                    .onTapGesture {
-                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                    }
+                .background(K.finalColor.backgroundBlue)
+                .onTapGesture {
+                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                }
                     
             } else {
-                Text("This page is not available in your location.")
-                    .foregroundStyle(.white)
-                Text(locationViewModel.state)
-                    .foregroundStyle(.white)
+                VStack (spacing: 10) {
+                    Text("This page is either not available in your state or the location services are loading and give it a second...")
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                        .foregroundStyle(.white)
+                    Text("Available States: AK, AZ, AR, CO, FL, GA, IL, IN, KS, KY, MD, MA, MI, MN, NE, NM, NY, NC, ND, OK, OR, RI, SC, SD, TX, UT, VT, VA, WI, WY, DC")
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundStyle(.white)
+                }.padding(.horizontal, 16)
+    
             }
         }
     }
@@ -240,8 +243,13 @@ struct depositView: View {
                 .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
                 .foregroundColor(.red)
                 .frame(width: 300)
-                .padding(.top, 25)
+                .padding(.top, 10)
         }
+        Text("Should the deposit site buffer, please copy the link and paste it in your desktop browser.")
+            .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+            .foregroundColor(K.finalColor.potentialOrange)
+            .frame(width: 300)
+            .padding(.top, 10)
     }
 }
 
@@ -342,7 +350,7 @@ struct withdrawalView: View {
                 
             })
             
-            Spacer()
+            //Spacer()
             
             if value >= 1500 && value/100 <= Int(StaticUserData.shared.currentUser.poolBucks) && venmoUsername != "" {
                 Button(action: {
@@ -364,17 +372,10 @@ struct withdrawalView: View {
                         .cornerRadius(10)
                       
                 })
-                
-          
-           
             }
             
             NavigationLink(destination: withdrawalConfirmation(withdrawalAmount: Double(value/100)).background(K.finalColor.backgroundBlue), isActive: $shouldNavigate) {}
-            
-        
-                        
-            
-            
+
         }.popup(isPresented: $showPreviousWithdrawals) {
             Text("The popup")
                 previousWithdrawals(viewModel: viewModel)
@@ -391,8 +392,6 @@ struct withdrawalView: View {
                 .backgroundColor(.black.opacity(0.4))
 
         }
-     
-        
     }
 }
 

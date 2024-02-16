@@ -463,9 +463,48 @@ class challengeViewModel: ObservableObject {
         })
     }
 
-
-
-
+    func reclaimFundFromExpiredChallenge(userID: String, opponentID: String, challengeID: String, reclaimAmount: Double,completion: @escaping () -> Void ) {
+        let db = Firestore.firestore()
+        
+        // Define the document references for the user's and opponent's challenge tickets
+        let userChallengeRef = db.collection("users").document(userID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challengeID)
+        let opponentChallengeRef = db.collection("users").document(opponentID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challengeID)
+        
+        // Use a batch to perform both deletions as a single atomic operation
+        let batch = db.batch()
+        
+        // Delete the user's challenge document
+        batch.deleteDocument(userChallengeRef)
+        
+        // Delete the opponent's challenge document
+        batch.deleteDocument(opponentChallengeRef)
+        
+        // Commit the batch
+        batch.commit { err in
+            if let err = err {
+                // Handle any errors that occur during the batch commit
+                print("Error deleting challenge documents: \(err)")
+                completion()
+            } else {
+                print("Challenge documents successfully deleted")
+                
+                // After successfully deleting the challenge documents, increment the user's poolBucks
+                let userRef = db.collection("users").document(userID)
+                userRef.updateData([
+                    "poolBucks": FieldValue.increment(reclaimAmount)
+                ]) { err in
+                    if let err = err {
+                        // Handle any errors that occur during the update
+                        print("Error incrementing poolBucks: \(err)")
+                        completion()
+                    } else {
+                        print("poolBucks successfully incremented by \(reclaimAmount)")
+                        completion()
+                    }
+                }
+            }
+        }
+    }
 
 
     func sendChallenge(username: String, challengeTicket: ChallengeTicket, completion: @escaping () -> Void) {

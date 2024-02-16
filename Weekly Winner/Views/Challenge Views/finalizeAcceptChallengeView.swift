@@ -428,7 +428,7 @@ struct acceptHeader: View {
                 Image(viewModel.currencyChosen == "poolCoins" ? "poolCoin" : "poolBuck")
                     .resizable()
                     .frame(width: 50, height: 50)
-                Text(String(format: "%.2f", viewModel.wagerAmount))
+                Text("\(String(format: "%.2f", viewModel.wagerAmount)) : \(String(format: "%.2f", viewModel.wagerAmount*0.952))")
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 50))
                     .foregroundColor(.white)
             }
