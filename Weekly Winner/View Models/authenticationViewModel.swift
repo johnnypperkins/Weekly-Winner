@@ -29,6 +29,7 @@ class authenticationViewModel: ObservableObject {
     @Published var authenticationState: AuthenticationState = .unauthenticated
     @Published var userSession : FirebaseAuth.User? = nil
     @Published var currUser: User?
+    @Published var tmpUser: User?
     
 //    @Published var usernameTaken = false
     
@@ -76,6 +77,18 @@ class authenticationViewModel: ObservableObject {
         self.userSession = Auth.auth().currentUser
         self.fetchUser() {}
         
+    }
+    
+    func checkVerification(completion: @escaping (Bool) -> Void) {
+        Auth.auth().currentUser?.reload { error in
+            if let error = error {
+                print("Error reloading user: \(error.localizedDescription)")
+                completion(false)
+            } else {
+                let isVerified = Auth.auth().currentUser?.isEmailVerified ?? false
+                completion(isVerified)
+            }
+        }
     }
     
     enum AuthenticationError: Error {
@@ -334,6 +347,14 @@ print("fetched user")
     
     func uploadSupplementaryData(country: String, birthday: Date, state: String, gender: String, username: String, instagram: String, promoCode: String) {
         guard let uid = Auth.auth().currentUser else {return }
+        
+//        Task{
+//            await uploadUser(tmpUser!)
+//        }
+        joinGlobal { error in
+            print(error)
+        }
+        
         Firestore.firestore().collection("users").document(uid.uid).updateData(["country": country]) { _ in
             
         }
@@ -352,13 +373,13 @@ print("fetched user")
         }
         if state != "Choose here" {
             Firestore.firestore().collection("users").document(uid.uid).updateData(["instagram": instagram]) { _ in
+                
+            }
+            Firestore.firestore().collection("users").document(uid.uid).updateData(["promoCode": promoCode]) { _ in
+                
+            }
             
-        }
-        Firestore.firestore().collection("users").document(uid.uid).updateData(["promoCode": promoCode]) { _ in
             
-        }
-            
-
             
             let userTicketsCollection = Firestore.firestore()
                 .collection("users")
@@ -373,7 +394,7 @@ print("fetched user")
                 .collection("tickets")
                 .document("week")
                 .collection("currentWeekTickets")
-
+            
             userTicketsCollection.getDocuments { (querySnapshot, err) in
                 if let err = err {
                     print("Error getting documents: \(err)")
@@ -407,8 +428,8 @@ print("fetched user")
                     }
                 }
             }
-
-    }
+            
+        }
         
     }
     
@@ -419,15 +440,22 @@ print("fetched user")
             do {
                 authResult = try await Auth.auth().createUser(withEmail: email, password: password)
                 //userSession = authResult!.user // added - Reid
+                
+                authResult?.user.sendEmailVerification { error in
+                    if let error = error {
+                        print("Error sending email verification \(error.localizedDescription)")
+                    } else {
+                        // Email sent
+                    }
+                }
+                
                 let user = authResult!.user
                 
                 let newUser = User(username: "", firstName: firstName, lastName: lastName, profileImageUrl: "", email: email, dateJoined: Timestamp(date: Date()), instagram: "", promoCode: "", country: "",state: "", birthday: Timestamp(date: Date()), gender: "", poolCoins: 100.0, poolBucks: 0.0, paymentVerified: "false")
                 await uploadUser(newUser)
                 
                 authenticationState = .authenticated
-                joinGlobal { error in
-                 print(error)
-                }
+                
             } catch let error {
                 // Handle signup error
                 errorMessage = error.localizedDescription
@@ -436,11 +464,14 @@ print("fetched user")
             }
         }
     
+    
+    
     func signIn() async{
         authenticationState = .authenticating
         do {
             authResult = try await Auth.auth().signIn(withEmail: email, password: password)
 //            guard let self = self else { return }
+            
             
             
             // Handle sign-in error
@@ -487,9 +518,17 @@ print("fetched user")
             
         service.fetchUser(uid: uid) { user,success  in
                 //print(user)
+            
+            if success {
+                self.username = user?.username ?? ""
                 self.currUser = user
-            self.username = user!.username
-                StaticUserData.shared.username = self.currUser!.username
+                self.username = user?.username ?? ""
+                StaticUserData.shared.username = self.currUser?.username ?? ""
+                
+            }
+            else{
+                
+            }
                 //print(UserData.shared.username)
                 //print(user)
             }

@@ -36,6 +36,7 @@ struct profilePhotoSelectorView: View {
     @State var selectedDay = 1
     @State var selectedMonth = 1
     @State var selectedYear = ""
+    @State var verified = false
     @State private var isPickerPresented = false
     
     let states = [
@@ -59,7 +60,8 @@ struct profilePhotoSelectorView: View {
     var body: some View {
         ZStack {
             K.finalColor.backgroundBlue
-            NavigationStack{
+            if verified{
+                NavigationStack{
                 
                 VStack{
                     
@@ -155,28 +157,28 @@ struct profilePhotoSelectorView: View {
                                         
                                         HStack() {
                                             TextField("Username", text: $username)
-                                     
-                                            .onChange(of: username) { newUsername in
-                                                username = newUsername.lowercased()
-                                                viewModel.checkUsernameAvailability(potentialUsername: username) {}
-
-                                            }
-                                            .placeholder(when: username.isEmpty, placeholder: {
-                                                Text("Username").foregroundColor(.gray)
-                                            })
-                                            .foregroundColor(.white)
-                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                                            .accentColor(.white)
-                                            .textInputAutocapitalization(.none)  // Consider changing this to .none if you always want lowercase
-                                            .disableAutocorrection(true)
-                                            .focused($focus, equals: .username)
-                                            .submitLabel(.next)
-                                            .onSubmit {
-                                                withAnimation {
-                                                    self.focus = nil
+                                            
+                                                .onChange(of: username) { newUsername in
+                                                    username = newUsername.lowercased()
+                                                    viewModel.checkUsernameAvailability(potentialUsername: username) {}
+                                                    
                                                 }
-                                            }
-
+                                                .placeholder(when: username.isEmpty, placeholder: {
+                                                    Text("Username").foregroundColor(.gray)
+                                                })
+                                                .foregroundColor(.white)
+                                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                                                .accentColor(.white)
+                                                .textInputAutocapitalization(.none)  // Consider changing this to .none if you always want lowercase
+                                                .disableAutocorrection(true)
+                                                .focused($focus, equals: .username)
+                                                .submitLabel(.next)
+                                                .onSubmit {
+                                                    withAnimation {
+                                                        self.focus = nil
+                                                    }
+                                                }
+                                            
                                             
                                         }
                                         .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
@@ -202,8 +204,8 @@ struct profilePhotoSelectorView: View {
                                                 Text(country)
                                             }
                                         }.onTapGesture{
-                                                self.focus = nil
-                                            }
+                                            self.focus = nil
+                                        }
                                         
                                         .pickerStyle(DefaultPickerStyle())
                                         
@@ -388,82 +390,82 @@ struct profilePhotoSelectorView: View {
                         Spacer()
                     }.frame(height: 550)
                     
-//                    if let selectedImage = selectedImage {
-                        if country != "Choose here" && selectedYear != "" && selectedState != "Choose here" && username != "" && !viewModel.usernameTaken && !username.contains(" ") && !username.containsEmoji(){
-                            NavigationLink(destination: {
-                                TermsAndConditionsView(viewModel: viewModel) },label: {
-                                    HStack{
-                                        Spacer()
-                                        
-                                        Text("Continue")
-                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
-                                            .foregroundColor(.white)
-                                        //shadow
-                                        
-                                        Spacer()
-                                    }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                                        .background(Color(red: 0.31, green: 0.57, blue: 1))
-                                        .cornerRadius(10)
-                                        .padding(.horizontal,16)
-                                        .padding(.bottom,30)
-                                })
-                            .simultaneousGesture(TapGesture().onEnded{
-                                if let selectedImage = selectedImage {
-                                    viewModel.uploadProfileImage(selectedImage)
-                                }
-                                if let date = createDate(day: selectedDay, month: selectedMonth, year: Int(selectedYear) ?? 0) {
-                                    viewModel.uploadSupplementaryData(country: country, birthday: date, state: selectedState, gender: selectedGender, username: username, instagram: instagram, promoCode: promoCode)
-                                    viewModel.sendPromoBucks(to: promoCode, from: username)
-                                    print(date)
-                                }
-                                Task{
-                                    await wait()
-                                }
+                    //                    if let selectedImage = selectedImage {
+                    if country != "Choose here" && selectedYear != "" && selectedState != "Choose here" && username != "" && !viewModel.usernameTaken && !username.contains(" ") && !username.containsEmoji(){
+                        NavigationLink(destination: {
+                            TermsAndConditionsView(viewModel: viewModel) },label: {
+                                HStack{
+                                    Spacer()
+                                    
+                                    Text("Continue")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                        .foregroundColor(.white)
+                                    //shadow
+                                    
+                                    Spacer()
+                                }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+                                    .background(Color(red: 0.31, green: 0.57, blue: 1))
+                                    .cornerRadius(10)
+                                    .padding(.horizontal,16)
+                                    .padding(.bottom,30)
                             })
-                        } else {
-                            HStack{
-                                Spacer()
-                                if username.contains(" ") || username.containsEmoji() {
-                                    Text("Invalid Username")
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
-                                        .foregroundColor(.white)
-                                } else if viewModel.usernameTaken {
-                                    Text("Username Taken")
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
-                                        .foregroundColor(.white)
-                                } else {
-                                    Text("Fill All Fields")
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
-                                        .foregroundColor(.white)
-                                }
-                                
-                                //shadow
-                                
-                                Spacer()
-                            }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                                .background(K.finalColor.deleteRed)
-                                .cornerRadius(10)
-                                .padding(.horizontal,16)
-                                .padding(.bottom,30)
-                                .opacity(0.66)
-                        }
-//                    } else {
-//                        HStack{
-//                            Spacer()
-//                            
-//                            Text("Fill All Fields")
-//                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
-//                                .foregroundColor(.white)
-//                            //shadow
-//                            
-//                            Spacer()
-//                        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-//                            .background(K.finalColor.deleteRed)
-//                            .cornerRadius(10)
-//                            .padding(.horizontal,16)
-//                            .padding(.bottom,30)
-//                            .opacity(0.66)
-//                    }
+                        .simultaneousGesture(TapGesture().onEnded{
+                            if let selectedImage = selectedImage {
+                                viewModel.uploadProfileImage(selectedImage)
+                            }
+                            if let date = createDate(day: selectedDay, month: selectedMonth, year: Int(selectedYear) ?? 0) {
+                                viewModel.uploadSupplementaryData(country: country, birthday: date, state: selectedState, gender: selectedGender, username: username, instagram: instagram, promoCode: promoCode)
+                                viewModel.sendPromoBucks(to: promoCode, from: username)
+                                print(date)
+                            }
+                            Task{
+                                await wait()
+                            }
+                        })
+                    } else {
+                        HStack{
+                            Spacer()
+                            if username.contains(" ") || username.containsEmoji() {
+                                Text("Invalid Username")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .foregroundColor(.white)
+                            } else if viewModel.usernameTaken {
+                                Text("Username Taken")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .foregroundColor(.white)
+                            } else {
+                                Text("Fill All Fields")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .foregroundColor(.white)
+                            }
+                            
+                            //shadow
+                            
+                            Spacer()
+                        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+                            .background(K.finalColor.deleteRed)
+                            .cornerRadius(10)
+                            .padding(.horizontal,16)
+                            .padding(.bottom,30)
+                            .opacity(0.66)
+                    }
+                    //                    } else {
+                    //                        HStack{
+                    //                            Spacer()
+                    //
+                    //                            Text("Fill All Fields")
+                    //                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                    //                                .foregroundColor(.white)
+                    //                            //shadow
+                    //
+                    //                            Spacer()
+                    //                        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+                    //                            .background(K.finalColor.deleteRed)
+                    //                            .cornerRadius(10)
+                    //                            .padding(.horizontal,16)
+                    //                            .padding(.bottom,30)
+                    //                            .opacity(0.66)
+                    //                    }
                 }
                 
                 
@@ -473,6 +475,16 @@ struct profilePhotoSelectorView: View {
                 .ignoresSafeArea()
                 .padding(.top, 50)
         }
+            else{
+                emailVerificationView(viewModel: viewModel, verified: $verified )
+
+            }
+        }.onAppear {
+            viewModel.checkVerification { success in
+                verified = success
+            }
+        }
+        
     }
     
     func loadImage() {

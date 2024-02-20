@@ -12,8 +12,8 @@ struct ContentView: View {
     var body: some View {
         NavigationStack{
             VStack {
-                if viewModel.userSession != nil { // changing from currUser to userSession bc immediate - Reid
-                    if viewModel.currUser?.username == ""{
+                if viewModel.userSession == nil { // changing from currUser to userSession bc immediate - Reid
+                    if viewModel.currUser?.username == "" || viewModel.currUser?.username == nil{
                         profilePhotoSelectorView(model: viewModel)
                     }
                     else {
