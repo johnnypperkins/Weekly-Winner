@@ -348,6 +348,9 @@ struct profilePhotoSelectorView: View {
                                                     .isEmpty, placeholder: {
                                                         Text("Promo Code").foregroundColor(.gray)
                                                     })
+                                                .onChange(of: promoCode) { code in
+                                                    promoCode = code.lowercased()
+                                                }
                                                 .foregroundColor(.white)
                                                 .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
                                                 .accentColor(.white)
@@ -476,7 +479,7 @@ struct profilePhotoSelectorView: View {
                 .padding(.top, 50)
         }
             else{
-                emailVerificationView(viewModel: viewModel, verified: $verified )
+                emailVerificationView(viewModel: viewModel, verified: $verified, email: viewModel.email)
 
             }
         }.onAppear {

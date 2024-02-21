@@ -10,6 +10,8 @@ import SwiftUI
 struct emailVerificationView: View {
     @ObservedObject var viewModel: authenticationViewModel
     @Binding var verified: Bool
+    let email: String
+    @State private var emailYetToBeVerified = false
     
     
     var body: some View {
@@ -30,7 +32,7 @@ struct emailVerificationView: View {
                 .foregroundStyle(.white)
                 .padding(.top,15)
             
-            Text("Reid@gmail.com")
+            Text("\(email)")
                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
                 .foregroundStyle(.white)
                 .padding(.top,8)
@@ -44,17 +46,29 @@ struct emailVerificationView: View {
                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
                 .foregroundStyle(.white)
                 .padding(.top,0)
+            if emailYetToBeVerified {
+                Text("Verify email first")
+                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 24))
+                    .foregroundStyle(.red)
+                    .padding(.top,10)
+            }
             
             Spacer()
+            
+       
+            
             Button {
                 viewModel.checkVerification { success in
                     verified = success
+                    if success == false {
+                        emailYetToBeVerified = true
+                    }
                 }
             } label: {
                 HStack{
                     Spacer()
                     
-                    Text("Confirmed")
+                    Text("Confirm")
                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
                         .foregroundColor(.white)
                     //shadow

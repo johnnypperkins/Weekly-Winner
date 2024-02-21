@@ -63,6 +63,7 @@ struct LoginView: View {
     @FocusState private var focus: FocusableFieldLogin?
     @ObservedObject private var keyboardManager = KeyboardManager()
     @State private var showWebpage = false
+    @State private var signedInAndNavigates = false
 
     
     var body: some View {
@@ -94,12 +95,15 @@ struct LoginView: View {
                                 .accentColor(.white)
                                 .textInputAutocapitalization(.never)
                                 .disableAutocorrection(true)
+                                .textInputAutocapitalization(.none)  // Consider changing this to .none if you always want lowercase
                                 .focused($focus, equals: .email)
                                 .submitLabel(.next)
                                 .onSubmit {
                                     withAnimation {
                                         self.focus = .password
                                     }
+                                }.onChange(of: viewModel.email) { email in
+                                    viewModel.email = email.lowercased()
                                 }
                                 .background(Color(red: 0.13, green: 0.14, blue: 0.34))
                             
@@ -183,16 +187,17 @@ struct LoginView: View {
                     ZStack{
                         Button(action: {
                             Task{
-                                await viewModel.signIn()
+                                await viewModel.signIn() {
+                                    if viewModel.authenticationState == .authenticated && viewModel.currUser?.email != "" {
+                                        signedInAndNavigates = true
+                                    }
+                                }
                                 if viewModel.errorMessage != "" && viewModel.authenticationState == .unauthenticated {
                                     AppUtility.shared.showCustomAlert(alertType: .none, message: viewModel.errorMessage ?? "", actionButtonTitle: nil, cancelButtonTitle: K.appButtonTitle.cancel) { action in
                                         
                                     }
                                 }
                             }
-                          
-                                
-                            
                         }) {
                             HStack{
                                 Spacer()
@@ -207,73 +212,12 @@ struct LoginView: View {
                             
                             
                         }
-                        if viewModel.authenticationState == .authenticated && viewModel.currUser?.email != "" {
                             
-                            
-                            NavigationLink {
-                                profilePhotoSelectorView(model: viewModel)
-                                    .background(K.finalColor.backgroundBlue)
+                        NavigationLink(destination: tabBarView(selection: .dashboard), isActive: $signedInAndNavigates) {}
 
-                            } label: {
-                                
-                                Text("Continue")
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                    .padding()
-                                    .frame(maxWidth: .infinity, minHeight: 55 , maxHeight: 55)
-                                    .background(Color.green)
-                                    .cornerRadius(10)
-                                
-                            }
-                        }
                     }
-                    VStack{
-                        HStack {
-                            Rectangle()
-                                .frame(height: 0.5)
-                                .foregroundColor(.white)
-                            
-                            Text("Or")
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 10)
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 13))
-                            
-                            Rectangle()
-                                .frame(height: 0.5)
-                                .foregroundColor(.white)
-                        }.padding(.horizontal,16)
-                        VStack{
-                            Button {
-                                Task{
-                                    await viewModel.signInWithGoogle()
-                                }
-                            } label: {
-                                Image("googleSignIn")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(height: 50)
-                            }.padding(.bottom,10)
 
-                            SignInWithAppleButton { request in
-                                viewModel.handleSignInWithAppleRequest(request)
-                                print("khklhk")
-                            } onCompletion: { result in
-                                viewModel.handleSignInWithAppleCompletion(result)
-                                print("pressed")
-                            }.signInWithAppleButtonStyle(.whiteOutline)
-                                .frame(maxWidth: 220, minHeight: 50)
-                                .clipShape(RoundedRectangle(
-                                    cornerRadius: 50
-                                ))
-
-                            
-                        }.padding(.top,5)
-                    }
-                    .padding(.bottom,75)
-                    .padding(.top,20)
                     Spacer()
-                    
-                    
                     HStack{
                         Text("Don't have an account? ")
                             .foregroundColor(.white)
@@ -285,9 +229,8 @@ struct LoginView: View {
                             }
                         }) {
                             Text("Sign up")
-                                .font(.subheadline)
+                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
                                 .foregroundColor(.blue)
-                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 12).weight(.light))
                         }.animation(.spring(), value: 3)
                     }.padding(.bottom, 40)
                 }
@@ -303,10 +246,10 @@ struct LoginView: View {
                 
             }
         }
-//        .onTapGesture {
-//                // Resigning first responder when tapping anywhere outside the TextField
-//                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-//            }
+        .onTapGesture {
+            // Resigning first responder when tapping anywhere outside the TextField
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
     }
 
 }
@@ -320,6 +263,26 @@ extension View {
             placeholder().opacity(shouldShow ? 1 : 0)
             self
         }
+    }
+}
+
+extension UIApplication {
+    func endEditing() {
+        sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
+
+struct Background<Content: View>: View {
+    private var content: Content
+
+    init(@ViewBuilder content: @escaping () -> Content) {
+        self.content = content()
+    }
+
+    var body: some View {
+        Color.white
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        .overlay(content)
     }
 }
 
@@ -381,274 +344,6 @@ struct RoundedCorner2: Shape {
     }
 }
 
-private enum FocusableFieldSignup: Hashable {
-    case firstName
-    case lastName
-    case username
-    case instagram
-    case email
-    case password
-    case promoCode
-}
-
-struct SignupView: View {
-    @Binding var isShowingSignup: Bool
-    @State private var firstName = ""
-    @State private var lastName = ""
-    @State private var username = ""
-    @State private var email = ""
-    @State private var password = ""
-    @State private var promoCode = ""
-    @EnvironmentObject var viewModel: authenticationViewModel
-    @FocusState private var focus: FocusableFieldSignup?
-    @ObservedObject private var keyboardManager = KeyboardManager()
-    
-//    private func signUpWithEmailPassword() {
-//        Task {
-//            if await viewModel.signUpWithEmailPassword() == true {
-//            }
-//        }
-//    }
-    
-    var body: some View {
-        VStack {
-            HStack{
-                Text("WagerPool")
-                    .font(Font.custom(K.customFonts.lexendDecaSB, size: 32).weight(.semibold))
-                    .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
-                Spacer()
-            }.frame(minWidth: 0, maxWidth: .infinity)
-                .padding(.top,80)
-                .padding(.bottom,30)
-  
-            
-            Text("Create Account")
-                .font(.custom(K.customFonts.lexendDecaSB, size: 20))
-                .foregroundColor(.white)
-                //.fontWeight(.bold)
-            
-            ScrollView {
-                ScrollViewReader { scrollProxy in
-                    VStack{
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("First Name")
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                            HStack() {
-                                TextField("First Name", text: $viewModel.firstName)
-                                    .placeholder(when: viewModel.firstName
-                                        .isEmpty, placeholder: {
-                                            Text("First Name").foregroundColor(.gray)
-                                        })
-                                    .foregroundColor(.white)
-                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                                    .accentColor(.white)
-                                    .textInputAutocapitalization(.words)
-                                    .disableAutocorrection(true)
-                                    .focused($focus, equals: .firstName)
-                                    .submitLabel(.next)
-                                    .onSubmit {
-                                        withAnimation {
-                                            self.focus = .lastName
-                                        }
-                                    }
-                                
-                            }
-                            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                            .cornerRadius(15)
-                        }
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-                        .id(FocusableFieldSignup.firstName)
-                        
-                        
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("Last Name")
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                            HStack() {
-                                TextField("Last Name", text: $viewModel.lastName)
-                                    .placeholder(when: viewModel.lastName
-                                        .isEmpty, placeholder: {
-                                            Text("Last Name").foregroundColor(.gray)
-                                        })
-                                    .foregroundColor(.white)
-                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                                    .accentColor(.white)
-                                    .textInputAutocapitalization(.words)
-                                    .disableAutocorrection(true)
-                                    .focused($focus, equals: .lastName)
-                                    .submitLabel(.next)
-                                    .onSubmit {
-                                        withAnimation {
-                                            self.focus = .email
-                                        }
-                                    }
-                                
-                            }
-                            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                            .cornerRadius(15)
-                        }
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-                        .id(FocusableFieldSignup.lastName)
-
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("Email")
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                            HStack() {
-                                TextField("Email", text: $viewModel.email)
-                                    .placeholder(when: viewModel.email
-                                        .isEmpty, placeholder: {
-                                            Text("Email").foregroundColor(.gray)
-                                        })
-                                    .foregroundColor(.white)
-                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                                    .accentColor(.white)
-                                    .keyboardType(.emailAddress)
-                                    .textInputAutocapitalization(.words)
-                                    .disableAutocorrection(true)
-                                    .focused($focus, equals: .email)
-                                    .submitLabel(.next)
-                                    .onSubmit {
-                                        withAnimation {
-                                            self.focus = .password
-                                        }
-                                    }
-                                
-                                
-                            }
-                            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                            .cornerRadius(15)
-                        }
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-                        .id(FocusableFieldSignup.email)
-                        
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("Password")
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-                                .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                            HStack() {
-                                SecureField("Password", text: $viewModel.password)
-                                    .placeholder(when: viewModel.password
-                                        .isEmpty, placeholder: {
-                                            Text("Password").foregroundColor(.gray)
-                                        })
-                                    .foregroundColor(.white)
-                                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                                    .accentColor(.white)
-                                    .textInputAutocapitalization(.words)
-                                    .disableAutocorrection(true)
-                                    .focused($focus, equals: .password)
-                                    .submitLabel(.done)
-                                    .onSubmit {
-                                        withAnimation {
-                                            self.focus = nil
-                                        }
-                                    }
-                                
-                            }
-                            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-                            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-                            .cornerRadius(15)
-                        }
-                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-                        .id(FocusableFieldSignup.password)
- 
-                        
-                    }
-//                .padding(.bottom, keyboardManager.keyboardHeight)
-                .padding(.bottom, focus == nil ? 0 : 250)
-                .onChange(of: focus) { newFocus in
-                    //                    if newFocus == .password {
-                    withAnimation {
-                        scrollProxy.scrollTo(newFocus, anchor: .top)
-                    }
-                    //                    }
-                }
-            }
-            }
-            .onTapGesture {
-                    // Resigning first responder when tapping anywhere outside the TextField
-                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                }
-            ZStack{
-                Button(action: {
-                    // Perform signup action
-                    Task{
-                        await viewModel.signUp()
-                        
-                        if viewModel.errorMessage != "" && viewModel.authenticationState == .unauthenticated {
-                            AppUtility.shared.showCustomAlert(alertType: .none, message: viewModel.errorMessage ?? "", actionButtonTitle: nil, cancelButtonTitle: K.appButtonTitle.ok) { action in
-                                
-                            }
-                        }
-                    }
-                    profilePhotoSelectorView(model: viewModel)
-                        .background(K.finalColor.backgroundBlue)
-                }, label: {
-                    if viewModel.authenticationState != .authenticating{
-                        Text("Create Account")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.green)
-                            .cornerRadius(10)
-                    }
-                    else{
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                            .padding(.vertical,8)
-                            .frame(maxWidth: .infinity)
-                    }
-                })
-                if viewModel.authenticationState == .authenticated {
-                    
-                    
-                    NavigationLink {
-                        profilePhotoSelectorView(model: viewModel)
-                            .background(K.finalColor.backgroundBlue)
-                    } label: {
-                        
-                        Text("Continue")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.green)
-                            .cornerRadius(10)
-                        
-                    }
-                }
-            }
-            Spacer()
-            
-            HStack{
-                Text("Already have an account? ")
-                    .foregroundColor(.white)
-                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 12).weight(.light))
-                
-                Button(action: {
-                    withAnimation {
-                        isShowingSignup = false
-                    }
-                }) {
-                    Text("Login")
-                        .font(.subheadline)
-                        .foregroundColor(.blue)
-                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 12).weight(.light))
-                }.animation(.spring(), value: 3)
-            }.padding(.bottom, 40)
-        }
-    }
-}
 
 
 struct PasswordResetView: View {
@@ -711,8 +406,6 @@ struct PasswordResetView: View {
                             }
                         }
                     }
-                    
-                    
                     
                 }, label: {
                     HStack{

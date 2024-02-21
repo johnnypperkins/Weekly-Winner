@@ -47,7 +47,7 @@ class authenticationViewModel: ObservableObject {
     @Published var usernameTaken = false
     @Published var updateURL: String = ""
     
-    @Published var currentVersion = "2.0.1"
+    @Published var currentVersion = "2.0.2"
     
     fileprivate var currentNonce: String?
 
@@ -434,7 +434,7 @@ print("fetched user")
     }
     
     
-    func signUp() async {
+    func signUp(completion: @escaping () -> Void) async {
             authenticationState = .authenticating
             
             do {
@@ -455,42 +455,44 @@ print("fetched user")
                 await uploadUser(newUser)
                 
                 authenticationState = .authenticated
-                
+                completion()
             } catch let error {
                 // Handle signup error
                 errorMessage = error.localizedDescription
                 print("Signup error: \(error.localizedDescription)")
                 authenticationState = .unauthenticated
+                completion()
             }
         }
     
     
     
-    func signIn() async{
+    func signIn(completion: @escaping () -> Void) async {
         authenticationState = .authenticating
         do {
             authResult = try await Auth.auth().signIn(withEmail: email, password: password)
-//            guard let self = self else { return }
+            // Assuming fetchUser() is also an async function. If it's not, consider making appropriate adjustments.
             
-            
-            
-            // Handle sign-in error
-            
-            // Sign-in successful
             self.userSession = authResult!.user  // Set placeholder user session
             
-            self.fetchUser() { } // sets user to user instead of nil
+            // If fetchUser is async, you should await it and handle its completion differently.
+            // Here, it's called with a completion handler assuming it's a non-async function.
+            self.fetchUser() {
+                // This block is executed when fetchUser completes.
+                // You might need to handle success or failure here if fetchUser provides such information.
+            }
             
             self.authenticationState = .authenticated
             print("sign in successful")
-            
-        }
-        catch let error {
+            completion()  // Sign-in successful, passing nil for the error
+        } catch {
+            print("Sign-in error: \(error.localizedDescription)")
             errorMessage = error.localizedDescription
-            print("Signup error: \(error.localizedDescription)")
             authenticationState = .unauthenticated
+            completion()  // Pass the error to the completion handler
         }
     }
+
 
     
     func forgotPassButton_Tapped(email: String, completion: @escaping () -> Void) {

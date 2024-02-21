@@ -43,7 +43,9 @@ struct UserProfileView: View {
 
         }
         .sheet(isPresented: $showWebpage) {
-            SafariView(url: URL(string: screen1VM.updateURL)!)
+            if screen1VM.updateURL != "" {
+                SafariView(url: URL(string: screen1VM.updateURL)!)
+            }
         }
         .background(K.finalColor.backgroundBlue)
         .onAppear() {

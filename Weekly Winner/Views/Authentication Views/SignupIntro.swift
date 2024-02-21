@@ -101,20 +101,7 @@ struct SignupIntro: View {
                 }.padding(.horizontal, 25)
                     .padding(.top,20)
                     .padding(.bottom,50)
-                
-                
-                //                .overlay(
-                //                    HStack(spacing: 15) {
-                //                        ForEach(colors.indices, id: \.self) { index in
-                //                            Capsule()
-                //                                .fill(Color.white)
-                //                                .frame(width: 7, height: 7)
-                //                        }
-                //                    }
-                //                        .padding(.bottom, UIApplication.shared.windows.first?.safeAreaInsets.bottom)
-                //                        .padding(.bottom,10)
-                //                    ,alignment: .bottom
-                //                )
+
             }.padding(.top,45)
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             .background(Color(red: 0.02, green: 0.05, blue: 0.26))

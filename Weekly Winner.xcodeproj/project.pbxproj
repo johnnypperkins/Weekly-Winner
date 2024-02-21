@@ -27,6 +27,7 @@
 		3C972C8A2B2FC07100671D0F /* screen1ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C972C892B2FC07100671D0F /* screen1ViewModel.swift */; };
 		3C97BA5D2B0BDF7A00FE7A6B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3C97BA5C2B0BDF7A00FE7A6B /* GoogleService-Info.plist */; };
 		3C9D85C02B63551F001E702C /* PopupView in Frameworks */ = {isa = PBXBuildFile; productRef = 3C9D85BF2B63551F001E702C /* PopupView */; };
+		3CACEDAB2B856315002A88B2 /* signUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CACEDAA2B856315002A88B2 /* signUpView.swift */; };
 		3CADF50D2B4F091400BE850E /* pendingChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CADF50C2B4F091400BE850E /* pendingChallengeView.swift */; };
 		3CB1AC8B2A61602700C931CA /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB1AC8A2A61602700C931CA /* Group.swift */; };
 		3CB799BC2B47501D00C7A9F0 /* challengeViewTwo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB799BB2B47501D00C7A9F0 /* challengeViewTwo.swift */; };
@@ -147,6 +148,7 @@
 		3C91B6C72A58BE6D00398F53 /* RoundingUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundingUI.swift; sourceTree = "<group>"; };
 		3C972C892B2FC07100671D0F /* screen1ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = screen1ViewModel.swift; sourceTree = "<group>"; };
 		3C97BA5C2B0BDF7A00FE7A6B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		3CACEDAA2B856315002A88B2 /* signUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = signUpView.swift; sourceTree = "<group>"; };
 		3CADF50C2B4F091400BE850E /* pendingChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pendingChallengeView.swift; sourceTree = "<group>"; };
 		3CB1AC8A2A61602700C931CA /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
 		3CB799BB2B47501D00C7A9F0 /* challengeViewTwo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = challengeViewTwo.swift; sourceTree = "<group>"; };
@@ -351,8 +353,9 @@
 		3CFEC4882B4E4F5E00C11B5C /* Authentication Views */ = {
 			isa = PBXGroup;
 			children = (
-				866FFFA72AFE630E00A0CA13 /* SignupIntro.swift */,
+				3CACEDAA2B856315002A88B2 /* signUpView.swift */,
 				865C4A752A327CA600C3C626 /* authenticationView.swift */,
+				866FFFA72AFE630E00A0CA13 /* SignupIntro.swift */,
 				868FDA8C2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift */,
 				86BC79692B843FCD008BA830 /* emailVerificationView.swift */,
 				868FDA8E2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift */,
@@ -673,6 +676,7 @@
 				8653242F2A63B74C005AB3EF /* createGroupsViewModel.swift in Sources */,
 				3C3DB73A2A7C60CE000F6898 /* chatService.swift in Sources */,
 				867801822A213F83006FE479 /* screen1.swift in Sources */,
+				3CACEDAB2B856315002A88B2 /* signUpView.swift in Sources */,
 				3C3DB73C2A7C6129000F6898 /* Chat.swift in Sources */,
 				8668B30F2A2EE62700A1B343 /* Game.swift in Sources */,
 				867801862A213F9A006FE479 /* groupsView.swift in Sources */,
@@ -908,7 +912,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
-				MARKETING_VERSION = 2.0.1;
+				MARKETING_VERSION = 2.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "PerkinsBrown2.Weekly-Winner";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -959,7 +963,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
-				MARKETING_VERSION = 2.0.1;
+				MARKETING_VERSION = 2.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "PerkinsBrown2.Weekly-Winner";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

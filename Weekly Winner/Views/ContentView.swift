@@ -12,21 +12,14 @@ struct ContentView: View {
     var body: some View {
         NavigationStack{
             VStack {
-                if viewModel.userSession == nil { // changing from currUser to userSession bc immediate - Reid
+                if viewModel.userSession != nil { // changing from currUser to userSession bc immediate - Reid
                     if viewModel.currUser?.username == "" || viewModel.currUser?.username == nil{
                         profilePhotoSelectorView(model: viewModel)
-                    }
-                    else {
+                    } else {
                         tabBarView(selection: .dashboard)
                     }
-//                    SettingsView()
-                   //SignupIntro(viewModel: viewModel)
-//profilePhotoSelectorView(model: viewModel)
-//                    authenticationView()
-                }
-                    else{
-//                   . print("Login")
-                authenticationView()
+                } else {
+                    authenticationView()
                 }
 
             }            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
