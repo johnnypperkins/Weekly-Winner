@@ -170,11 +170,19 @@ struct currencyDescription: View {
                         .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
                         .foregroundColor(K.finalColor.textWhite)
                         .padding(.bottom)
+                        .padding(.horizontal)
                     
                     Text("2. Winning a challenge against a friend.")
                         .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
                         .foregroundColor(K.finalColor.textWhite)
                         .padding(.bottom)
+                        .padding(.horizontal)
+                    
+                    Text("3. If someone uses your username as their promo code when they sign up, you will receive 2 poolBucks.")
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
+                        .foregroundColor(K.finalColor.textWhite)
+                        .padding(.bottom)
+                        .padding(.horizontal)
                     
                 }
             }

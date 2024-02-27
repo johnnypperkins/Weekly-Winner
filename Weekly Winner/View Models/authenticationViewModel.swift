@@ -47,7 +47,7 @@ class authenticationViewModel: ObservableObject {
     @Published var usernameTaken = false
     @Published var updateURL: String = ""
     
-    @Published var currentVersion = "2.0.2"
+    @Published var currentVersion = "2.0.3"
     
     fileprivate var currentNonce: String?
 
@@ -249,7 +249,7 @@ class authenticationViewModel: ObservableObject {
                                 Task{
                                     await self.uploadUser(newUser)
                                 }
-                                self.joinGlobal { error in
+                                self.joinGlobal(username: "") { error in
                                     
                                 }
                             }
@@ -317,7 +317,7 @@ class authenticationViewModel: ObservableObject {
                       Task{
                           await self.uploadUser(newUser)
                       }
-                      self.joinGlobal { error in
+                      self.joinGlobal (username: ""){ error in
                           
                       }
                   }
@@ -351,7 +351,7 @@ print("fetched user")
 //        Task{
 //            await uploadUser(tmpUser!)
 //        }
-        joinGlobal { error in
+        joinGlobal(username: username) { error in // also sets tickets
             print(error)
         }
         
@@ -371,7 +371,7 @@ print("fetched user")
         Firestore.firestore().collection("users").document(uid.uid).updateData(["state": state]) { _ in
             
         }
-        if state != "Choose here" {
+//        if state != "Choose here" {
             Firestore.firestore().collection("users").document(uid.uid).updateData(["instagram": instagram]) { _ in
                 
             }
@@ -429,7 +429,7 @@ print("fetched user")
                 }
             }
             
-        }
+//        }
         
     }
     
@@ -565,9 +565,9 @@ print("fetched user")
     
     
     private let db = Firestore.firestore()
-    func joinGlobal(completion: @escaping (Error?) -> Void) {
+    func joinGlobal(username: String, completion: @escaping (Error?) -> Void) {
         Task {
-            let username = username // Access the username asynchronously
+            //let username = username // Access the username asynchronously
             var enabled = false
             let db = Firestore.firestore()
             

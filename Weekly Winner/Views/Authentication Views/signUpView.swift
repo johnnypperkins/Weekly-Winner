@@ -174,7 +174,7 @@ struct SignupView: View {
                                     .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
                                     .accentColor(.white)
                                     .keyboardType(.emailAddress)
-                                    .textInputAutocapitalization(.words)
+                                    .textInputAutocapitalization(.never)
                                     .disableAutocorrection(true)
                                     .focused($focus, equals: .confirmedEmail)
                                     .submitLabel(.next)
@@ -275,6 +275,14 @@ struct SignupView: View {
             ZStack{
                 if viewModel.email != confirmedEmail {
                     Text("Emails not same")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(K.finalColor.deleteRed)
+                        .cornerRadius(10)
+                } else if viewModel.email == "" {
+                    Text("Emails Field Empty")
                         .font(.headline)
                         .foregroundColor(.white)
                         .padding()
