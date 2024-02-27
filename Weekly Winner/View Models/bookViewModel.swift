@@ -14,12 +14,14 @@ class bookViewModel: ObservableObject {
     @Published var NCAAFGames: [Game] = []
     @Published var NBAGames: [Game] = []
     @Published var NCAABGames: [Game] = []
+    @Published var NHLGames: [Game] = []
     @Published var allGames: [Game] = []
     
     @Published var NFLgamesPopular: [Game] = []
     @Published var NCAAFGamesPopular: [Game] = []
     @Published var NBAGamesPopular: [Game] = []
     @Published var NCAABGamesPopular: [Game] = []
+    @Published var NHLGamesPopular: [Game] = []
     @Published var allGamesPopular: [Game] = []
 
     
@@ -50,6 +52,9 @@ class bookViewModel: ObservableObject {
         getGamesCommenceTime(whichSport: "NCAAB") {
             self.combineGamesCommence()
         }
+        getGamesCommenceTime(whichSport: "NHL") {
+            self.combineGamesCommence()
+        }
         
         getGamesMostPopular(whichSport: "NFL"){
             self.combineGamesPopular()
@@ -63,6 +68,9 @@ class bookViewModel: ObservableObject {
         getGamesMostPopular(whichSport: "NCAAB") {
             self.combineGamesPopular()
         }
+        getGamesMostPopular(whichSport: "NHL") {
+            self.combineGamesPopular()
+        }
         //fetchUserTickets(timeFrame: "weekly")
         //fetchUserTickets(timeFrame: "daily")
     }
@@ -72,11 +80,12 @@ class bookViewModel: ObservableObject {
         case nfl = "NFL"
         case NBA = "NBA"
         case NCAAB = "NCAAB"
+        case NHL = "NHL"
     }
     
     func combineGamesCommence() {
         // Combine all games
-        var combinedGames = NFLgames + NCAAFGames + NBAGames + NCAABGames
+        var combinedGames = NFLgames + NCAAFGames + NBAGames + NCAABGames + NHLGames
         
         // Sort the combined array based on commencement time
         combinedGames.sort { game1, game2 in
@@ -89,7 +98,7 @@ class bookViewModel: ObservableObject {
     
     func combineGamesPopular() {
         // Combine all games
-        var combinedGamesPopular = NFLgamesPopular + NCAAFGamesPopular + NBAGamesPopular + NCAABGamesPopular
+        var combinedGamesPopular = NFLgamesPopular + NCAAFGamesPopular + NBAGamesPopular + NCAABGamesPopular + NHLGamesPopular
         
         // Sort the combined array based on commencement time
         combinedGamesPopular.sort { game1, game2 in
@@ -186,7 +195,10 @@ class bookViewModel: ObservableObject {
                     self.NBAGames = games
                 } else if (whichSport == "NCAAB") {
                     self.NCAABGames = games
+                } else if (whichSport == "NHL") {
+                    self.NHLGames = games
                 }
+                
                 
                 completion() // Call the completion handler once the games are populated
             }
@@ -237,6 +249,8 @@ class bookViewModel: ObservableObject {
                     self.NBAGamesPopular = games
                 } else if (whichSport == "NCAAB") {
                     self.NCAABGamesPopular = games
+                } else if (whichSport == "NHL") {
+                    self.NHLGamesPopular = games
                 }
                 
                 completion() // Call the completion handler once the games are populated

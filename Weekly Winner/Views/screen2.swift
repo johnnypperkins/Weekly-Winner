@@ -33,6 +33,8 @@ struct BettingAppView: View {
             return rankedCommence ? viewModel.NBAGames : viewModel.NBAGamesPopular
         case "NCAAB":
             return rankedCommence ? viewModel.NCAABGames : viewModel.NCAABGamesPopular
+        case "NHL":
+            return rankedCommence ? viewModel.NHLGames : viewModel.NHLGamesPopular
         default:
             return []
         }
@@ -191,6 +193,8 @@ struct BettingAppView: View {
             return viewModel.NBAGames
         case "NCAAB":
             return viewModel.NCAABGames
+        case "NHL":
+            return viewModel.NHLGames
         default:
             return []
         }
@@ -795,16 +799,26 @@ struct BetSliderView: View {
                     .font(.custom(K.customFonts.lexendDecaLight, size: 18))
                     .foregroundColor(.white)
                     .frame(width: 60, alignment: .leading)
-                Text("\(percentageToML(percentage: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread), whichSport: whichSport)))")
-                    .font(.custom(K.customFonts.lexendDecaLight, size: 18))
-                    .foregroundColor(.white)
-                    .frame(width: 65, alignment: .trailing)
+                if whichSport == "NHL"{
+                    Text("\(percentageToML(percentage: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread), whichSport: whichSport)))")
+                        .font(.custom(K.customFonts.lexendDecaLight, size: 18))
+                        .foregroundColor(.white)
+                        .frame(width: 65, alignment: .trailing)
+                } else {
+                    Text("0.5")
+                        .font(.custom(K.customFonts.lexendDecaLight, size: 18))
+                        .foregroundColor(.white)
+                        .frame(width: 65, alignment: .trailing)
+                }
+                    
             }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
                 .padding(.horizontal)
                 .background(K.finalColor.backgroundBlue)
             HStack {
-                Slider(value: $chosenSpread, in: betType == .over ? Double(originalSpread - 15)...Double(originalSpread + spreadExtension) : Double(originalSpread - spreadExtension)...Double(originalSpread + 15), step: 1)
-                    .accentColor(K.finalColor.titleBlue)
+                if whichSport != "NHL"{
+                    Slider(value: $chosenSpread, in: betType == .over ? Double(originalSpread - 15)...Double(originalSpread + spreadExtension) : Double(originalSpread - spreadExtension)...Double(originalSpread + 15), step: 1)
+                        .accentColor(K.finalColor.titleBlue)
+                }
             }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
                 .padding(.horizontal)
         }.cornerRadius(10)

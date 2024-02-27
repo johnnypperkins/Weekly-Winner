@@ -253,7 +253,7 @@ class challengeViewModel: ObservableObject {
     func fetchAllGames(completion: @escaping () -> Void) {
         self.allGames.removeAll()
         var tempGames: [Game] = []
-        let sportsArr = ["NFL", "NCAAF", "NBA", "NCAAB"]
+        let sportsArr = ["NFL", "NCAAF", "NBA", "NCAAB", "NHL"]
         let group = DispatchGroup()
 
         for sport in sportsArr {

@@ -50,6 +50,7 @@ struct sideMenuView: View {
         case nfl = "NFL"
         case nba = "NBA"
         case ncaab = "NCAAB"
+        case nhl = "NHL"
     }
 }
 
