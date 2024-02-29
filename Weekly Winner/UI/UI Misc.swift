@@ -358,5 +358,6 @@ enum CommodityColor {
     }
 }
 
-
-
+func isWholeNumber(_ value: Double) -> Bool {
+    return value.truncatingRemainder(dividingBy: 1) == 0
+}

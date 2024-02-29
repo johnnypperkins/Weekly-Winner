@@ -9,7 +9,7 @@ import Foundation
 import Firebase
 import FirebaseFirestoreSwift
 
-struct Game: Identifiable, Decodable {
+struct Game: Identifiable, Decodable, Hashable {
     @DocumentID var id: String?
     var idd: String
     var awaySpread: Double
@@ -26,6 +26,15 @@ struct Game: Identifiable, Decodable {
     
     var bet_statistics: [Int] // Home, Home Stats, Away, Away Stats, Under, Under Stats, Over, Over Stats
     var total_plays: Int
+    
+    var awayML: Int
+    var homeML: Int
+    
+    var awaySpreadODDS: Int
+    var homeSpreadODDS: Int
+    
+    var totalOverODDS: Int
+    var totalUnderODDS: Int
 }
 
 struct P {

@@ -45,6 +45,8 @@ enum BetType: String, Codable {
     case betAwaySpread
     case over
     case under
+    case betHomeML
+    case betAwayML
     case None
 }
 
@@ -503,6 +505,14 @@ func percentageToML(percentage: Double) -> String { // gets ML from percentage
     }
 }
 
+func MLtoPercentage(moneyline: Int) -> Double {
+    if moneyline < 0 {
+        return (Double(-moneyline)/(Double(-moneyline) + 100))
+    } else {
+        return (100/(Double(moneyline) + 100))
+    }
+}
+
 func percentageToTotalWin(percentage: Double) -> String {
     var toWin: Double
     if percentage < 1 && percentage > 0 {
@@ -525,4 +535,22 @@ func parlayNumToSpread(parlayNum: Int) -> Double {
         return -1
     }
     return 5
+}
+
+func betTypeToOdds(game: Game, betType: BetType) -> Int {
+    if betType == .betHomeML {
+        return game.homeML
+    } else if betType == .betAwayML {
+        return game.awayML
+    } else if betType == .betHomeSpread {
+        return game.homeSpreadODDS
+    } else if betType == .betAwaySpread {
+        return game.awaySpreadODDS
+    } else if betType == .over {
+        return game.totalOverODDS
+    } else if betType == .under {
+        return game.totalUnderODDS
+    } else {
+        return -99
+    }
 }

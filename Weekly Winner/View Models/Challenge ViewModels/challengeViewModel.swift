@@ -251,54 +251,57 @@ class challengeViewModel: ObservableObject {
 
     
     func fetchAllGames(completion: @escaping () -> Void) {
-        self.allGames.removeAll()
-        var tempGames: [Game] = []
-        let sportsArr = ["NFL", "NCAAF", "NBA", "NCAAB", "NHL"]
-        let group = DispatchGroup()
-
-        for sport in sportsArr {
-            group.enter() // Enter the group for each sport
-
-            Firestore.firestore().collection("Book").document(sport).collection("games")
-                .order(by: "commenceTime").getDocuments { querySnapshot, error in
-
-                    if let error = error {
-                        print("Error fetching documents: \(error.localizedDescription)")
-                        group.leave() // Leave the group in case of an error
-                        return
-                    }
-
-                    var games: [Game] = []
-
-                    for document in querySnapshot!.documents {
-                        let data = document.data()
-                        if let idd = data["id"] as? String,
-                           let commenceTime = data["commenceTime"] as? Timestamp,
-                           let totalOver = data["totalOver"] as? Double,
-                           let totalUnder = data["totalUnder"] as? Double,
-                           let homeTeam = data["homeTeam"] as? String,
-                           let awayTeam = data["awayTeam"] as? String,
-                           let homeSpread = data["homeSpread"] as? Double,
-                           let awaySpread = data["awaySpread"] as? Double,
-                           let homeTeamScore = data["homeTeamScore"] as? Int,
-                           let awayTeamScore = data["awayTeamScore"] as? Int,
-                           let whichSport = data["whichSport"] as? String? ?? "",
-                           let bet_statistics = data["bet_statistics"] as? [Int],
-                           let total_plays = data["total_plays"] as? Int {
-                            let newGame = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays)
-                            games.append(newGame)
-                        }
-                    }
-
-                    tempGames.append(contentsOf: games)
-                    group.leave() // Leave the group when done processing this sport
-                }
+        service.getGamesCommenceTime() { games in
+            self.allGames = games
         }
-
-        group.notify(queue: .main) {
-            self.allGames = tempGames.sorted { $0.commenceTime.dateValue() < $1.commenceTime.dateValue() }
-            completion() // Call the completion handler once all sports are processed
-        }
+//        self.allGames.removeAll()
+//        var tempGames: [Game] = []
+//        let sportsArr = ["NFL", "NCAAF", "NBA", "NCAAB", "NHL"]
+//        let group = DispatchGroup()
+//
+//        for sport in sportsArr {
+//            group.enter() // Enter the group for each sport
+//
+//            Firestore.firestore().collection("Book").document(sport).collection("games")
+//                .order(by: "commenceTime").getDocuments { querySnapshot, error in
+//
+//                    if let error = error {
+//                        print("Error fetching documents: \(error.localizedDescription)")
+//                        group.leave() // Leave the group in case of an error
+//                        return
+//                    }
+//
+//                    var games: [Game] = []
+//
+//                    for document in querySnapshot!.documents {
+//                        let data = document.data()
+//                        if let idd = data["id"] as? String,
+//                           let commenceTime = data["commenceTime"] as? Timestamp,
+//                           let totalOver = data["totalOver"] as? Double,
+//                           let totalUnder = data["totalUnder"] as? Double,
+//                           let homeTeam = data["homeTeam"] as? String,
+//                           let awayTeam = data["awayTeam"] as? String,
+//                           let homeSpread = data["homeSpread"] as? Double,
+//                           let awaySpread = data["awaySpread"] as? Double,
+//                           let homeTeamScore = data["homeTeamScore"] as? Int,
+//                           let awayTeamScore = data["awayTeamScore"] as? Int,
+//                           let whichSport = data["whichSport"] as? String? ?? "",
+//                           let bet_statistics = data["bet_statistics"] as? [Int],
+//                           let total_plays = data["total_plays"] as? Int {
+//                            let newGame = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays)
+//                            games.append(newGame)
+//                        }
+//                    }
+//
+//                    tempGames.append(contentsOf: games)
+//                    group.leave() // Leave the group when done processing this sport
+//                }
+//        }
+//
+//        group.notify(queue: .main) {
+//            self.allGames = tempGames.sorted { $0.commenceTime.dateValue() < $1.commenceTime.dateValue() }
+//            completion() // Call the completion handler once all sports are processed
+//        }
     }
     
     func fetchGameDocument(byID documentID: String, completion: @escaping (Game?) -> Void) {
@@ -311,28 +314,39 @@ class challengeViewModel: ObservableObject {
                 }
                 
            if let document = querySnapshot?.documents.first {
+               
+               
                         do {
-                            var data = document.data()
-                                 if let idd = data["id"] as? String,
-                                    let commenceTime = data["commenceTime"] as? Timestamp,
-                                    let totalOver = data["totalOver"] as? Double,
-                                    let totalUnder = data["totalUnder"] as? Double,
-                                    let homeTeam = data["homeTeam"] as? String,
-                                    let awayTeam = data["awayTeam"] as? String,
-                                    let homeSpread = data["homeSpread"] as? Double,
-                                    let awaySpread = data["awaySpread"] as? Double,
-                                    let homeTeamScore = data["homeTeamScore"] as? Int,
-                                    let awayTeamScore = data["awayTeamScore"] as? Int,
-                                    let whichSport = data["whichSport"] as? String? ?? "",
-                                    let bet_statistics = data["bet_statistics"] as? [Int],
-                                    let total_plays = data["total_plays"] as? Int
- {
-                                     
-                                        let game = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays)
-                                        
-                                        completion(game) // Call completion with the game object
+                            
+                            let data = document.data()
+                            if let idd = data["id"] as? String,
+                               let commenceTime = data["commenceTime"] as? Timestamp,
+                               let totalOver = data["totalOver"] as? Double,
+                               let totalUnder = data["totalUnder"] as? Double,
+                               let homeTeam = data["homeTeam"] as? String,
+                               let awayTeam = data["awayTeam"] as? String,
+                               let homeSpread = data["homeSpread"] as? Double,
+                               let awaySpread = data["awaySpread"] as? Double,
+                               let homeTeamScore = data["homeTeamScore"] as? Int,
+                               let awayTeamScore = data["awayTeamScore"] as? Int,
+                               let whichSport = data["whichSport"] as? String,
+                               let bet_statistics = data["bet_statistics"] as? [Int],
+                               let total_plays = data["total_plays"] as? Int,
+                               // Extract additional fields here
+                               let awayML = data["awayML"] as? Int,
+                               let homeML = data["homeML"] as? Int,
+                               let awaySpreadODDS = data["awaySpreadODDS"] as? Int,
+                               let homeSpreadODDS = data["homeSpreadODDS"] as? Int,
+                               let totalOverODDS = data["totalOverODDS"] as? Int,
+                               let totalUnderODDS = data["totalUnderODDS"] as? Int
+                            {
+                                // Ensure completed is correctly extracted or defaulted
+                                let completed = data["completed"] as? Bool ?? false
 
-                                }
+                                // Create the newGame instance with all fields
+                                let newGame = Game(id: nil, idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: completed, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays, awayML: awayML, homeML: homeML, awaySpreadODDS: awaySpreadODDS, homeSpreadODDS: homeSpreadODDS, totalOverODDS: totalOverODDS, totalUnderODDS: totalUnderODDS)
+                                completion(newGame)
+                            }
                             } catch let error {
                                 print("Error decoding game document: \(error)")
                                 completion(nil)

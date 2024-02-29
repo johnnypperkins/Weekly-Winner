@@ -13,47 +13,51 @@ class BetService {
     private let db = Firestore.firestore()
     
     
-    
-//        func createHeadToHead(groupAdminUsername: String, groupName: String, groupSlogan: String, password: String?, ticketFormat: [Int], groupUrl: String, completion: @escaping (Result<String, Error>) -> Void) {
-//    
-//            guard let currentUser = Auth.auth().currentUser else {
-//                        completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No user is currently logged in"])))
-//                        return
-//                    }
-//            let time = Timestamp()
-//                var ref: DocumentReference? = nil
-//                ref = db.collection("groups").addDocument(data: [
-//                    "groupName": groupName,
-//                    "dateCreated": time,
-//                    "groupImageURL": groupUrl,
-//                    "groupSlogan": groupSlogan,
-//                    "groupAdmin": currentUser.uid,
-//                    "groupAdminUsername": groupAdminUsername,
-//                    "password": password ?? NSNull(),
-//                    "ticketFormat": ticketFormat
-//                ]) { err in
-//                    if let err = err {
-//                                    completion(.failure(err))
-//                    } else {
-//                        guard let groupID = ref?.documentID else {
-//                            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to retrieve group ID"])))
-//                            return
-//                        }
-//                        self.db.collection("groups").document(groupID).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": currentUser.uid])
-//                        let group = Group(id: groupID, groupName: groupName, dateCreated: time, groupImageURL: groupUrl, groupSlogan: groupSlogan, groupAdmin: currentUser.uid, groupAdminUsername: groupAdminUsername, ticketFormat: ticketFormat)
-//                        self.joinGroup(userID: currentUser.uid, group: group){error in
-//    
-//                        }
-//    
-//    
-//                        do {
-//                            Firestore.firestore().collection("groups").document(groupID).updateData(["keywordsForLookup": group.keywordsForLookup])
-//                        } catch let error {
-//                            print("Error updating data: \(error)")
-//                        }
-//                    }
-//                }
-//            }
+    func getGamesCommenceTime(completion: @escaping ([Game]) -> Void) {
+        Firestore.firestore().collectionGroup("games")
+            //.whereField("whichSport", isEqualTo: whichSport) // Uncomment and adjust if filtering is needed
+            .order(by: "commenceTime") // Could also order by status
+            .getDocuments { querySnapshot, error in // Changed from addSnapshotListener to getDocuments
+                guard let snapshot = querySnapshot else {
+                    print("Error fetching documents: \(error?.localizedDescription ?? "Unknown error")")
+                    completion([]) // Call the completion handler in case of an error
+                    return
+                }
+                
+                var games: [Game] = snapshot.documents.compactMap { doc -> Game? in
+                    let data = doc.data()
+                    guard let idd = data["id"] as? String,
+                          let commenceTime = data["commenceTime"] as? Timestamp,
+                          let totalOver = data["totalOver"] as? Double,
+                          let totalUnder = data["totalUnder"] as? Double,
+                          let homeTeam = data["homeTeam"] as? String,
+                          let awayTeam = data["awayTeam"] as? String,
+                          let homeSpread = data["homeSpread"] as? Double,
+                          let awaySpread = data["awaySpread"] as? Double,
+                          let homeTeamScore = data["homeTeamScore"] as? Int,
+                          let awayTeamScore = data["awayTeamScore"] as? Int,
+                          let whichSport = data["whichSport"] as? String,
+                          let bet_statistics = data["bet_statistics"] as? [Int],
+                          let total_plays = data["total_plays"] as? Int,
+                          let awayML = data["awayML"] as? Int,
+                          let homeML = data["homeML"] as? Int,
+                          let awaySpreadODDS = data["awaySpreadODDS"] as? Int,
+                          let homeSpreadODDS = data["homeSpreadODDS"] as? Int,
+                          let totalOverODDS = data["totalOverODDS"] as? Int,
+                          let totalUnderODDS = data["totalUnderODDS"] as? Int else {
+                              return nil
+                          }
+                    
+                    let completed = data["completed"] as? Bool ?? false
+                    
+                    return Game(id: nil, idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: completed, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays, awayML: awayML, homeML: homeML, awaySpreadODDS: awaySpreadODDS, homeSpreadODDS: homeSpreadODDS, totalOverODDS: totalOverODDS, totalUnderODDS: totalUnderODDS)
+                }
+                
+                completion(games) // Call the completion handler once the games are populated
+            }
+    }
+
+
     
     func uploadBet(_ bet: Bet, timeFrame: String, completion: @escaping (Error?) -> Void) {
         guard let userID = Auth.auth().currentUser?.uid else {
@@ -247,14 +251,8 @@ class BetService {
         }
     }
     
-//    func fetchGroupStatistics(groupID: String, completion: @escaping ([GroupStats]?, Error?) -> Void) {
-//        guard let userID = Auth.auth().currentUser?.uid else {
-//            completion(group, AuthError.userNotFound)
-//            return
-//        }
-//        
-//        
-//    }
+    
+
     
 }
 
