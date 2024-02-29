@@ -19,142 +19,30 @@ struct BettingAppView: View {
     func shouldAppear(search: String, input: String) -> Bool {
         return input.lowercased().contains(search.lowercased())
     }
-    
-    // Add this computed property to determine which array of games to use
-    var gamesToDisplay: [Game] {
-        switch viewModel.selectedGameType {
-        case "All Games":
-            return rankedCommence ? viewModel.allGames : viewModel.allGamesPopular
-        case "NFL":
-            return rankedCommence ? viewModel.NFLgames : viewModel.NFLgamesPopular
-        case "NCAAF":
-            return rankedCommence ? viewModel.NCAAFGames : viewModel.NCAAFGamesPopular
-        case "NBA":
-            return rankedCommence ? viewModel.NBAGames : viewModel.NBAGamesPopular
-        case "NCAAB":
-            return rankedCommence ? viewModel.NCAABGames : viewModel.NCAABGamesPopular
-        case "NHL":
-            return rankedCommence ? viewModel.NHLGames : viewModel.NHLGamesPopular
-        default:
-            return []
-        }
-    }
-
-
+ 
     var body: some View {
         ZStack{
             if isShowing {
                 sideMenuView(bookVM: viewModel, isShowing: $isShowing)
             }
             VStack {
-                ZStack {
-                    HStack {
-                        Button(action: {
-                            withAnimation(.spring()) {
-                                isShowing.toggle()
-                            }
-                            searchTerm = ""
-                            rankedCommence = true
-                        }, label: {
-                            HStack {
-                                Image(systemName: "line.horizontal.3")
-                                    .imageScale(.large)
-                                    .foregroundColor(.white)
-                            }
-                            .padding(10) // Add padding around the button
-                            .background(K.finalColor.cardBlue) // Set the background color
-                            .cornerRadius(5) // Optional: Add a corner radius if you want rounded corners
-                        }).padding(.leading)
+                
+                screen2HeaderView(isShowing: $isShowing, rankedCommence: $rankedCommence, searchTerm: $searchTerm, viewModel: viewModel)
 
-                        Spacer()
-                    }
-                    
-                    Text(viewModel.selectedGameType)
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
-                        .fontWeight(.bold)
-                        .foregroundColor(K.finalColor.textWhite)
-                    
-                    HStack{
-                        Spacer()
-                    }.padding(.trailing)
-                }.padding(.top, 3)
-                HStack {
-                    HStack {
-                        TextField("Search", text: $searchTerm)
-                            .placeholder(when: searchTerm == "", placeholder: {
-                                Text("Search for games...").foregroundColor(.gray)
-                                    .padding(.leading, 2)
-                            })
-                            .foregroundColor(.white)
-                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                            .accentColor(.white)
-                            .textInputAutocapitalization(.words)
-                            .disableAutocorrection(true)
-                        //.padding(.vertical, 5)
-                       
-                        
-                    }
-                    .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 15))
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 40, maxHeight: 40)
-                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                    .cornerRadius(7.5)
-                    .padding(EdgeInsets(top: 0, leading: 14, bottom: 0, trailing: 10))
-                    
-                    Button(action: {
-                        searchTerm = ""
-                        rankedCommence.toggle()
-                    }, label: {
-                        HStack {
-                            Text("\(rankedCommence ? "Upcoming" : "Popular")")
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
-                                .foregroundStyle(.white)
-                        }
-                            .frame(width: 80, height: 40)
-                            .background(K.finalColor.titleBlue)
-                            .cornerRadius(7.5)
-                            .padding(.trailing, 14)
-                    })
-                }
-                HStack{
-                    Text("Team Name") // team name
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                        .foregroundColor(K.finalColor.textWhite)
-                        .padding(.leading)
-                    Spacer()
-                    HStack(spacing: 15) {
-                        Text("Spr")
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                            .foregroundColor(K.finalColor.textWhite)
-                            .frame(width: 50, alignment: .center)
-                        Text("Tot")
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                            .foregroundColor(K.finalColor.textWhite)
-                            .frame(width: 50, alignment: .center)
-                            .padding(.trailing, 9)
-                    }
-                    
-                    Divider()
-                }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 30, alignment: .center)
-                .padding(.horizontal)
-                .overlay(
-                        Rectangle()
-                            .frame(height: 1)
-                            //.padding(.top, 100)
-                            .padding(.horizontal)
-                            .foregroundColor(.white), alignment: .bottom)
-
-                ScrollView {
+                ScrollView { // All the games to display
                     VStack(spacing: 5) {
                         // Displaying games
-                        if !gamesToDisplay.isEmpty {
-                            ForEach(gamesToDisplay, id: \.idd) { game in
+                        if 1 + 1 == 2 {
+                            ForEach(viewModel.allGames, id: \.self) { game in
                                 if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
-                                    if game.commenceTime.dateValue() > Date() {
-                                        gameRowView(game: game, isDisabled: false, viewModel: viewModel)
+                                    let now = Date() // Get the current date and time
+                                    if game.commenceTime.dateValue() > now {
+                                        if viewModel.selectedGameType == "All Games" {
+                                            gameRowView(game: game, isDisabled: false, viewModel: viewModel)
+                                        } else if viewModel.selectedGameType == game.whichSport {
+                                            gameRowView(game: game, isDisabled: false, viewModel: viewModel)
+                                        }
                                     }
-//                                    else {
-//                                        gameRowView(game: game, isDisabled: true).opacity(0.5)
-//                                    }
                                 }
                             }.padding(.horizontal)
                         } else {
@@ -181,56 +69,113 @@ struct BettingAppView: View {
             }
     }
     
-    private var filteredGames: [Game] {
-        switch viewModel.selectedGameType {
-        case "All Games":
-            return viewModel.allGames
-        case "NCAAF":
-            return viewModel.NCAAFGames
-        case "NFL":
-            return viewModel.NFLgames
-        case "NBA":
-            return viewModel.NBAGames
-        case "NCAAB":
-            return viewModel.NCAABGames
-        case "NHL":
-            return viewModel.NHLGames
-        default:
-            return []
-        }
-    }
 }
 
-struct PlaceBetButton: View {
-    let isDisabled: Bool
-    let betType: BetType
-    @Binding var currentBetType: BetType
-    let title: String
-    let action: () -> Void
-
+struct screen2HeaderView: View {
+    @Binding var isShowing: Bool
+    @Binding var rankedCommence: Bool
+    @Binding var searchTerm: String
+    @ObservedObject var viewModel: bookViewModel
+    
     var body: some View {
-        Button(action: action) {
-            Text(title)
-                //.frame(minWidth: 35, maxWidth: 35, alignment: .center)
-                .foregroundColor(K.finalColor.titleBlue)
-                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+        ZStack {
+            HStack {
+                Button(action: {
+                    withAnimation(.spring()) {
+                        isShowing.toggle()
+                    }
+                    searchTerm = ""
+                    rankedCommence = true
+                }, label: {
+                    HStack {
+                        Image(systemName: "line.horizontal.3")
+                            .imageScale(.large)
+                            .foregroundColor(.white)
+                    }
+                    .padding(10) // Add padding around the button
+                    .background(K.finalColor.cardBlue) // Set the background color
+                    .cornerRadius(5) // Optional: Add a corner radius if you want rounded corners
+                }).padding(.leading)
+
+                Spacer()
+            }
+            
+            Text(viewModel.selectedGameType)
+                .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                .fontWeight(.bold)
+                .foregroundColor(K.finalColor.textWhite)
+            
+            HStack{
+                Spacer()
+            }.padding(.trailing)
+        }.padding(.top, 3)
+        HStack {
+            HStack {
+                TextField("Search", text: $searchTerm)
+                    .placeholder(when: searchTerm == "", placeholder: {
+                        Text("Search for games...").foregroundColor(.gray)
+                            .padding(.leading, 2)
+                    })
+                    .foregroundColor(.white)
+                    .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                    .accentColor(.white)
+                    .textInputAutocapitalization(.words)
+                    .disableAutocorrection(true)
+                //.padding(.vertical, 5)
+               
                 
+            }
+            .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 15))
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 40, maxHeight: 40)
+            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+            .cornerRadius(7.5)
+            .padding(EdgeInsets(top: 0, leading: 14, bottom: 0, trailing: 10))
+            
+            Button(action: {
+                searchTerm = ""
+                rankedCommence.toggle()
+            }, label: {
+                HStack {
+                    Text("\(rankedCommence ? "Upcoming" : "Popular")")
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundStyle(.white)
+                }
+                    .frame(width: 80, height: 40)
+                    .background(K.finalColor.titleBlue)
+                    .cornerRadius(7.5)
+                    .padding(.trailing, 14)
+            })
         }
-        .frame(width: 50, height: 30)
-        .animation(.spring(), value: 4)
-        .background(currentBetType == betType ? K.finalColor.textWhite : K.finalColor.cardBlue)
+        HStack{
+            Text("Team Name") // team name
+                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                .foregroundColor(K.finalColor.textWhite)
+                .padding(.leading)
+            Spacer()
+            HStack(spacing: 15) {
+                Text("Spr")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                    .foregroundColor(K.finalColor.textWhite)
+                    .frame(width: 50, alignment: .center)
+                Text("Tot")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                    .foregroundColor(K.finalColor.textWhite)
+                    .frame(width: 50, alignment: .center)
+                    .padding(.trailing, 9)
+            }
+            
+            Divider()
+        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 30, alignment: .center)
+        .padding(.horizontal)
         .overlay(
-                RoundedRectangle(cornerRadius: currentBetType == betType ? 7.5 : 7.5)
-                    .stroke(currentBetType == betType ? Color.blue : Color.gray, lineWidth: 1.0)
-            )
-        .cornerRadius(currentBetType == betType ? 7.5 : 7.5)
-        .shadow(color: currentBetType == betType ? K.veryLightBlue : .clear, radius: 3)
-        .scaleEffect(currentBetType == betType ? 1.05 : 1.0)
-        .disabled(isDisabled)
-        
-        
+                Rectangle()
+                    .frame(height: 1)
+                    //.padding(.top, 100)
+                    .padding(.horizontal)
+                    .foregroundColor(.white), alignment: .bottom)
     }
 }
+
 
 struct gameRowView: View {
     let game: Game
@@ -258,13 +203,18 @@ struct gameRowView: View {
                         .foregroundColor(.white)
                     
                     Spacer()
-                    HStack(spacing: 15) {
-                        PlaceBetButton(isDisabled: isDisabled, betType: .betHomeSpread, currentBetType: $betType, title: titleStringH) { // home spread
+                    HStack(spacing: 7.5) {
+                        PlaceBetButton(game: game, betTypeOfButton: .betHomeSpread, selectedBetType: $betType) { // home spread
                             betType = .betHomeSpread
                             showingSheet.toggle()
                         }
                         
-                        PlaceBetButton(isDisabled: isDisabled, betType: .over, currentBetType: $betType, title: "o" + String(format: "%.0f", game.totalOver)) { // over
+                        PlaceBetButton(game: game, betTypeOfButton: .betHomeML, selectedBetType: $betType) { // Home ML
+                            betType = .betHomeML
+                            showingSheet.toggle()
+                        }
+                        
+                        PlaceBetButton(game: game, betTypeOfButton: .over, selectedBetType: $betType) { // over
                             betType = .over
                             showingSheet.toggle()
                         }
@@ -275,31 +225,24 @@ struct gameRowView: View {
                         .font(.headline)
                         .foregroundColor(.white)
                     Spacer()
-                    HStack(spacing: 15) {
-                        PlaceBetButton(isDisabled: isDisabled, betType: .betAwaySpread, currentBetType: $betType, title: titleStringA) {
+                    HStack(spacing: 7.5) {
+                        PlaceBetButton(game: game, betTypeOfButton: .betAwaySpread, selectedBetType: $betType) {
                             betType = .betAwaySpread
                             showingSheet.toggle()
                         }
                         
-                        PlaceBetButton(isDisabled: isDisabled, betType: .under, currentBetType: $betType, title: "u" + String(format: "%.0f", game.totalUnder)) {
+                        PlaceBetButton(game: game, betTypeOfButton: .betAwayML, selectedBetType: $betType) { // Away ML
+                            betType = .betAwayML
+                            showingSheet.toggle()
+                        }
+                        
+                        PlaceBetButton(game: game, betTypeOfButton: .under, selectedBetType: $betType) {
                             betType = .under
                             showingSheet.toggle()
                         }
                     }
                 }.padding(.top,4)
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
-                    .onAppear {
-                        if (game.homeSpread < 0) {
-                            titleStringH = String(format: "%.0f", game.homeSpread)
-                        } else {
-                            titleStringH = "+" + String(format: "%.0f", game.homeSpread)
-                        }
-                        if (game.awaySpread < 0) {
-                            titleStringA = String(format: "%.0f", game.awaySpread)
-                        } else {
-                            titleStringA = "+" + String(format: "%.0f", game.awaySpread)
-                        }
-                    }
                 Text("\(game.whichSport) | \(formatDateEMMMDHMM.format(date: game.commenceTime.dateValue()))")
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 11))
                     .foregroundColor(K.finalColor.textWhite)
@@ -313,17 +256,125 @@ struct gameRowView: View {
         .padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
         .sheet(isPresented: $showingSheet) {
+            
             BetDetailsView(game: game, betType: $betType, viewModel: viewModel)
-                //.padding(.horizontal)
             .presentationDetents([.medium])
             .presentationDragIndicator(.hidden)
             .background(K.finalColor.backgroundBlue)
+            
             .onDisappear(){
                 withAnimation{
                     betType = .None
                 }
             }
         }
+    }
+}
+
+
+struct PlaceBetButton: View {
+    let game: Game
+    let betTypeOfButton: BetType // the
+    @Binding var selectedBetType: BetType
+    let action: () -> Void
+    
+    var isDisabled: Bool {
+        switch betTypeOfButton {
+        case .betHomeSpread:
+            return game.homeSpread == -99 || game.homeSpread == 0
+        case .betAwaySpread:
+            return game.awaySpread == -99 || game.awaySpread == 0
+        case .over:
+            return game.totalOver == -99
+        case .under:
+            return game.totalUnder == -99
+        case .betHomeML:
+            return game.homeML == -99
+        case .betAwayML:
+            return game.awayML == -99
+        case .None:
+            return true
+        }
+    }
+    
+    var buttonTitle: String {
+        if betTypeOfButton == .betHomeSpread {
+            if (game.homeSpread < 0) {
+                if isWholeNumber(game.homeSpread) {
+                    return String(format: "%.0f", game.homeSpread)
+                } else {
+                    return String(format: "%.1f", game.homeSpread)
+                }
+            } else {
+                if isWholeNumber(game.homeSpread) {
+                    return "+" + String(format: "%.0f", game.homeSpread)
+                } else {
+                    return "+" + String(format: "%.1f", game.homeSpread)
+                }
+            }
+        } else if betTypeOfButton == .betAwaySpread {
+            if (game.awaySpread < 0) {
+                if isWholeNumber(game.awaySpread) {
+                    return String(format: "%.0f", game.awaySpread)
+                } else {
+                    return String(format: "%.1f", game.awaySpread)
+                }
+            } else {
+                if isWholeNumber(game.awaySpread) {
+                    return "+" + String(format: "%.0f", game.awaySpread)
+                } else {
+                    return "+" + String(format: "%.1f", game.awaySpread)
+                }
+            }
+        } else if betTypeOfButton == .over {
+            if isWholeNumber(game.totalOver) {
+                return "o" + String(format: "%.0f", game.totalOver)
+            } else {
+                return "o" + String(format: "%.1f", game.totalOver)
+            }
+        } else if betTypeOfButton == .under {
+            if isWholeNumber(game.totalUnder) {
+                return "u" + String(format: "%.0f", game.totalUnder)
+            } else {
+                return "u" + String(format: "%.1f", game.totalUnder)
+            }
+        } else {
+            switch betTypeOfButton {
+                case .betHomeSpread:
+                    return "" // will never reach
+                case .betAwaySpread:
+                    return "" // will never reach
+                case .over:
+                    return "o\(game.totalOver)"
+                case .under:
+                    return "u\(game.totalUnder)"
+                case .betHomeML:
+                    return game.homeML > 100 ? "+\(game.homeML)" : "\(game.homeML)"
+                case .betAwayML:
+                    return game.awayML > 100 ? "+\(game.awayML)" : "\(game.awayML)"
+                case .None:
+                    return ""
+            }
+        }
+    }
+
+    var body: some View {
+        Button(action: action) {
+            Text(isDisabled ? "" : buttonTitle)
+                .foregroundColor(K.finalColor.titleBlue)
+                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+        }
+        .frame(width: 50, height: 30)
+        .animation(.spring(), value: 4)
+        .background(selectedBetType == betTypeOfButton ? K.finalColor.textWhite : K.finalColor.cardBlue)
+        .disabled(isDisabled)
+        .overlay(
+                RoundedRectangle(cornerRadius: selectedBetType == betTypeOfButton ? 7.5 : 7.5)
+                    .stroke(selectedBetType == betTypeOfButton ? Color.blue : Color.gray, lineWidth: 1.0)
+            )
+        .cornerRadius(selectedBetType == betTypeOfButton ? 7.5 : 7.5)
+        .shadow(color: selectedBetType == betTypeOfButton ? K.veryLightBlue : .clear, radius: 3)
+        .scaleEffect(selectedBetType == betTypeOfButton ? 1.05 : 1.0)
     }
 }
 
@@ -350,15 +401,11 @@ struct BetDetailsView: View {
     
     @State private var timeFrame = "daily"
     
-    
-  
+
     let midnightTimestamp = Timestamp(date: Calendar.current.startOfDay(for: Calendar.current.date(byAdding: .hour, value: -5, to: Date())!))
     
-    
     func checkTeamTaken() {
-        
         if timeFrame == "daily" {
-            
             if betNumber < 0 {
                 uploadText = "Ticket Complete"
                 placeBetOpacity = 0.6
@@ -427,89 +474,11 @@ struct BetDetailsView: View {
                 }
                 VStack {
                     HStack (spacing: 20){
-                        //ZStack(alignment: .topLeading) {
+           
                         
-                        if ticketVM.isBetsLoaded {
-                            VStack (alignment: .center){
-                                VStack {
-                                    Text("Group")
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                        .foregroundColor(K.finalColor.textWhite)
-                                        .frame(width: 150, alignment: .leading)
-                                        //.padding(EdgeInsets(top: 70, leading: 15, bottom: 2.5, trailing: 0))
-                                        .background(K.finalColor.backgroundBlue)
-                                }
-                                VStack(spacing: 0) {
-                                    Button(action: {
-                                        timeFrame = "daily"
-                                        
-                                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: 0, ticketFormat: StaticUserData.shared.dailyTicket.ticketFormat, timeFrame: timeFrame) {
-                                                if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
-                                                    betNumber = firstNumberGreaterThanZero
-                                                } else {
-                                                    betNumber = -99
-                                                }
-                                                checkTeamTaken()
-                                            }
-                                    }, label: {
-                                        VStack (alignment: .center, spacing: 0){
-                                            HStack {
-                                                Text("Daily")
-                                                    .foregroundColor(timeFrame == "daily" ? K.finalColor.textWhite : K.finalColor.textWhite.opacity(0.8))
-                                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
-                                                    .scaleEffect(timeFrame != "weekly" ? 1.15 : 1.0)
-
-                                            }.frame(width: 150, height: 60, alignment: .center)
-                                            .background(timeFrame == "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                                        }
-                                    })
-                                    
-                                    Button(action: {
-                                        timeFrame = "weekly"
-                                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: 0, ticketFormat: StaticUserData.shared.weeklyTicket.ticketFormat, timeFrame: timeFrame) {
-                                                if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
-                                                    betNumber = firstNumberGreaterThanZero
-                                                } else {
-                                                    betNumber = -99
-                                                }
-                                                checkTeamTaken()
-                                            }
-                                    }, label: {
-                                        VStack (spacing: 0) {
-                                            HStack {
-                                                Text("Weekly")
-                                                    .foregroundColor(timeFrame != "daily" ? K.finalColor.textWhite : K.finalColor.textWhite.opacity(0.8))
-                                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
-                                                    .scaleEffect(timeFrame == "weekly" ? 1.15 : 1.0)
-
-                                            }.frame(width: 150, height: 60, alignment: .center)
-                                                .background(timeFrame != "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-//                                                .cornerRadius(5)
-                                        }
-                                        //.scaleEffect(x: 2)
-                                    })
-                                    
-                                    
-                                    
-                                }
-                                //.padding(.horizontal)
-                                .frame(width: 150, height: 120)
-                                //.padding(.horizontal)
-                                .onAppear {
-                                    if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
-                                        betNumber = firstNumberGreaterThanZero
-                                    } else {
-                                        betNumber = -99
-                                    }
-                                    checkTeamTaken()
-                                }
-                                //.background(K.finalColor.cardBlue)
-                                .cornerRadius(7.5)
-                            }
-                        }
-                        //}.background(Color.red)
-                        //Spacer()
-                            //.background(K.veryLightBlue)
+                        // WHERE TO ADD
+                        
+                        
                         VStack {
                             if ticketVM.isBetsLoaded {
                                 VStack {
@@ -713,6 +682,89 @@ struct BetDetailsView: View {
                     whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
                 }
             })
+        }
+    }
+}
+
+struct chooseChallengeTypeBetDetailsView: View {
+    @ObservedObject var viewModel: bookViewModel
+    @ObservedObject var ticketVM: ticketViewModel
+    @Binding var timeFrame: String
+    @Binding var betNumber: Int
+    var checkTeamTaken: () -> Void
+
+    
+    var body: some View {
+        if ticketVM.isBetsLoaded {
+            VStack (alignment: .center){
+                VStack {
+                    Text("Group")
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                        .foregroundColor(K.finalColor.textWhite)
+                        .frame(width: 150, alignment: .leading)
+                        .background(K.finalColor.backgroundBlue)
+                }
+                VStack(spacing: 0) {
+                    Button(action: {
+                        timeFrame = "daily"
+                        
+                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: 0, ticketFormat: StaticUserData.shared.dailyTicket.ticketFormat, timeFrame: timeFrame) {
+                                if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
+                                    betNumber = firstNumberGreaterThanZero
+                                } else {
+                                    betNumber = -99
+                                }
+                                checkTeamTaken()
+                            }
+                    }, label: {
+                        VStack (alignment: .center, spacing: 0){
+                            HStack {
+                                Text("Daily")
+                                    .foregroundColor(timeFrame == "daily" ? K.finalColor.textWhite : K.finalColor.textWhite.opacity(0.8))
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                    .scaleEffect(timeFrame != "weekly" ? 1.15 : 1.0)
+
+                            }.frame(width: 150, height: 60, alignment: .center)
+                            .background(timeFrame == "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                        }
+                    })
+                    
+                    Button(action: {
+                        timeFrame = "weekly"
+                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: 0, ticketFormat: StaticUserData.shared.weeklyTicket.ticketFormat, timeFrame: timeFrame) {
+                                if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
+                                    betNumber = firstNumberGreaterThanZero
+                                } else {
+                                    betNumber = -99
+                                }
+                                checkTeamTaken()
+                            }
+                    }, label: {
+                        VStack (spacing: 0) {
+                            HStack {
+                                Text("Weekly")
+                                    .foregroundColor(timeFrame != "daily" ? K.finalColor.textWhite : K.finalColor.textWhite.opacity(0.8))
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                    .scaleEffect(timeFrame == "weekly" ? 1.15 : 1.0)
+
+                            }.frame(width: 150, height: 60, alignment: .center)
+                                .background(timeFrame != "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                        }
+                    })
+                    
+                }
+                .frame(width: 150, height: 120)
+                .onAppear {
+                    if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
+                        betNumber = firstNumberGreaterThanZero
+                    } else {
+                        betNumber = -99
+                    }
+                    checkTeamTaken()
+                }
+                //.background(K.finalColor.cardBlue)
+                .cornerRadius(7.5)
+            }
         }
     }
 }
