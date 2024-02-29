@@ -152,7 +152,7 @@ struct weeklyGlobalLeaders: View {
         ZStack() {
             VStack(alignment: .center) {
             
-                Text("\(timeFrame == "daily" ? "Daily" : "Weekly") Leaders")
+                Text("Daily Leaders")
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 24).weight(.medium))
                     .foregroundColor(.white)
                 if timeFrame == "daily" {
@@ -169,22 +169,23 @@ struct weeklyGlobalLeaders: View {
                             ).padding(EdgeInsets(top: 0, leading: 8, bottom: 5, trailing: 8))
                         }
                     }
-                } else if timeFrame == "weekly" {
-                    if screen1VM.canFetchWeeklyRankedTickets {
-                        
-                        ForEach(0..<min(3, StaticUserData.shared.weeklyRankedTickets.count), id: \.self) { index in
-                            let ticket = StaticUserData.shared.weeklyRankedTickets[index]
-                            
-                            BetCard(
-                                ticket: ticket,
-                                rank: ticket.rank,
-                                ownCard: false,
-                                currentWeek: true,
-                                homePage: true
-                            ).padding(EdgeInsets(top: 0, leading: 8, bottom: 5, trailing: 8))
-                        }
-                    }
                 }
+//                } else if timeFrame == "weekly" {
+//                    if screen1VM.canFetchWeeklyRankedTickets {
+//                        
+//                        ForEach(0..<min(3, StaticUserData.shared.weeklyRankedTickets.count), id: \.self) { index in
+//                            let ticket = StaticUserData.shared.weeklyRankedTickets[index]
+//                            
+//                            BetCard(
+//                                ticket: ticket,
+//                                rank: ticket.rank,
+//                                ownCard: false,
+//                                currentWeek: true,
+//                                homePage: true
+//                            ).padding(EdgeInsets(top: 0, leading: 8, bottom: 5, trailing: 8))
+//                        }
+//                    }
+//                }
                 
             }.frame(height: 210)
         }
@@ -537,98 +538,99 @@ struct countDown: View {
         ZStack() {
             VStack(alignment: .center) {
                 
-                VStack (spacing: 3){
-                    HStack (spacing: 0){
-                        Button(action: {
-                            //viewModel.canGetHistoricalData = false
-                            if timeFrame != "daily" {
-                                withAnimation {
-                                    timeFrame = "daily"
-//                                    viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {
-//                                    }
-//                                    showingChat = false
-                                }
-                            }
-                            
-                        }) {
-                            //Text(viewModel.userTickets[self.selectedGroup-1].groupName)
-                            Text("Daily")
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+               
+                    //                    HStack (spacing: 0){
+                    ////                        Button(action: {
+                    ////                            //viewModel.canGetHistoricalData = false
+                    ////                            if timeFrame != "daily" {
+                    ////                                withAnimation {
+                    ////                                    timeFrame = "daily"
+                    //////                                    viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {
+                    //////                                    }
+                    //////                                    showingChat = false
+                    ////                                }
+                    ////                            }
+                    ////
+                    ////                        }) {
+                    ////                            //Text(viewModel.userTickets[self.selectedGroup-1].groupName)
+                    ////                            Text("Daily")
+                    ////                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                    ////                                .foregroundColor(.white)
+                    ////                                .frame(width: 100, height: 20, alignment: .center)
+                    ////                                //.background(timeFrame == "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                    ////                                .cornerRadius(5)
+                    ////                        }.scaleEffect(timeFrame == "daily" ? 1.0 : 1.0)
+                    //
+                    //                        Button(action: {
+                    //                            //viewModel.canGetHistoricalData = false
+                    //                            if timeFrame == "daily" {
+                    //
+                    //                                withAnimation {
+                    //                                    timeFrame = "weekly"
+                    //                                }
+                    //                            }
+                    //
+                    //                        }) {
+                    //                            Text("Weekly")
+                    //                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                    //                                .foregroundColor(.white)
+                    //                                .frame(width: 100, height: 20, alignment: .center)
+                    //                                //.background(timeFrame == "weekly" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                    //                                .cornerRadius(5)
+                    //                        }.scaleEffect(timeFrame == "weekly" ? 1.0 : 1.0)
+                    //                    }.padding(.top, 2)
+                    //                    Rectangle()
+                    //                        .fill(Color.white) // Sets the rectangle's fill color to white
+                    //                        .frame(width: 90, height: 3)
+                    //                        .cornerRadius(1) // Apply rounded corners
+                    //                        .offset(x: timeFrame == "daily" ? -50 : 50, y: 0)
+                    //                        .animation(.easeInOut(duration: 0.5))
+                    //                }
+                    
+                    VStack(spacing: 0) {
+                        if timeFrame == "daily" {
+                            Text(countdownTimer.dayTimeRemaining)
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 28))
                                 .foregroundColor(.white)
-                                .frame(width: 100, height: 20, alignment: .center)
-                                //.background(timeFrame == "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                                .cornerRadius(5)
-                        }.scaleEffect(timeFrame == "daily" ? 1.0 : 1.0)
+                                .padding(.vertical)
+                        }
+                        //                    else if timeFrame == "weekly" {
+                        //                        Text(countdownTimer.weekTimeRemaining)
+                        //                            .font(.custom(K.customFonts.lexendDecaMedium, size: 22))
+                        //                            .foregroundColor(.white)
+                        //                            .padding(.vertical)
+                        //                    }
+                    }
+                    .frame(height: 20).padding(.top,3)
+                    
+                    HStack{
                         
-                        Button(action: {
-                            //viewModel.canGetHistoricalData = false
-                            if timeFrame == "daily" {
-                                
-                                withAnimation {
-                                    timeFrame = "weekly"
+                        ForEach(0..<3, id: \.self) { index in
+                            HStack {
+                                Spacer()
+                                Image("poolBuck")
+                                    .resizable()
+                                    .frame(width: 30, height: 30)
+                                if /*prizesVM.canViewPrizes == true &&*/ prizesVM.canViewDailyPrizes == true{
+//                                    if timeFrame != "daily" {
+//                                        Text("\(prizesVM.prizes[index])  ")
+//                                            .foregroundColor(.white)
+//                                            .font(.custom(K.customFonts.lexendDecaMedium, size: 22))
+//                                    }
+//                                    else {
+                                        Text("\(prizesVM.dailyPrizes[index])  ")
+                                            .foregroundColor(.white)
+                                            .font(.custom(K.customFonts.lexendDecaMedium, size: 22))
+//                                    }
                                 }
-                            }
-                            
-                        }) {
-                            Text("Weekly")
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                .foregroundColor(.white)
-                                .frame(width: 100, height: 20, alignment: .center)
-                                //.background(timeFrame == "weekly" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                Spacer()
+                            }.frame(width: 100, height: 30)
+                                .padding(3)
+                                .background(index == 0 ? CommodityColor.gold.linearGradient : (index == 1 ? CommodityColor.silver.linearGradient : CommodityColor.bronze.linearGradient))
                                 .cornerRadius(5)
-                        }.scaleEffect(timeFrame == "weekly" ? 1.0 : 1.0)
-                    }.padding(.top, 2)
-                    Rectangle()
-                        .fill(Color.white) // Sets the rectangle's fill color to white
-                        .frame(width: 90, height: 3)
-                        .cornerRadius(1) // Apply rounded corners
-                        .offset(x: timeFrame == "daily" ? -50 : 50, y: 0)
-                        .animation(.easeInOut(duration: 0.5))
-                }
-
-                VStack(spacing: 0) {
-                    if timeFrame == "daily" {
-                        Text(countdownTimer.dayTimeRemaining)
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 22))
-                            .foregroundColor(.white)
-                            .padding(.vertical)
-                    } else if timeFrame == "weekly" {
-                        Text(countdownTimer.weekTimeRemaining)
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 22))
-                            .foregroundColor(.white)
-                            .padding(.vertical)
+                        }
                     }
-                }
-                .frame(height: 20).padding(.top,3)
-                    
-                HStack{
-                    
-                    ForEach(0..<3, id: \.self) { index in
-                        HStack {
-                            Spacer()
-                            Image("poolBuck")
-                                .resizable()
-                                .frame(width: 30, height: 30)
-                            if prizesVM.canViewPrizes == true && prizesVM.canViewDailyPrizes == true{
-                                if timeFrame != "daily" {
-                                    Text("\(prizesVM.prizes[index])  ")
-                                        .foregroundColor(.white)
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 22))
-                                }
-                                else {
-                                    Text("\(prizesVM.dailyPrizes[index])  ")
-                                        .foregroundColor(.white)
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 22))
-                                }
-                            }
-                            Spacer()
-                        }.frame(width: 100, height: 30)
-                            .padding(3)
-                            .background(index == 0 ? CommodityColor.gold.linearGradient : (index == 1 ? CommodityColor.silver.linearGradient : CommodityColor.bronze.linearGradient))
-                            .cornerRadius(5)
-                    }
-                }
-                .padding(.top,5)
+                    .padding(.top,5)
                 }
                 
             }

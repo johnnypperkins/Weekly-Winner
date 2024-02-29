@@ -43,9 +43,9 @@ class screen1ViewModel: ObservableObject {
             }
         }
         
-        fetchUserTickets(timeFrame: "weekly") {
-            self.fetchCurrentRankedTickets(groupID: "Global", timeFrame: "weekly") {}
-        }
+//        fetchUserTickets(timeFrame: "weekly") {
+//            self.fetchCurrentRankedTickets(groupID: "Global", timeFrame: "weekly") {}
+//        }
         
 
     }

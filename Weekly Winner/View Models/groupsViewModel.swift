@@ -120,7 +120,7 @@ class groupsViewModel: ObservableObject {
     }
     
     func fetchCurrentRankedTickets(groupID: String, timeFrame: String, completion: @escaping () -> Void){
-        grpService.getCurrentRankedTickets(groupID: groupID, timeFrame: timeFrame) { [weak self] (tickets, totalPlayers, error) in
+        grpService.getCurrentRankedTickets(groupID: groupID, timeFrame: "daily") { [weak self] (tickets, totalPlayers, error) in
                 if let error = error {
                     // Handle error
                     //print("Error fetching groups CURRENT: \(error)")
@@ -131,9 +131,10 @@ class groupsViewModel: ObservableObject {
                         //self?.weekIndex = totalArrayOfDates[0].count
                     if timeFrame == "daily" {
                         StaticUserData.shared.dailyRankedTickets = tickets
-                    } else if timeFrame == "weekly" {
-                        StaticUserData.shared.weeklyRankedTickets = tickets
-                    }
+                    } 
+//                    else if timeFrame == "weekly" {
+//                        StaticUserData.shared.weeklyRankedTickets = tickets
+//                    }
                         //print(tickets)
                         print("test print")
                     }
@@ -142,7 +143,7 @@ class groupsViewModel: ObservableObject {
         }
     
     func fetchPastRankedTickets(groupID: String, week: String, timeFrame: String, completion: @escaping () -> Void) {
-        grpService.getPastRankedTickets(groupID: groupID, week: week, timeFrame: timeFrame) { [weak self] (tickets, error) in
+        grpService.getPastRankedTickets(groupID: groupID, week: week, timeFrame: "daily") { [weak self] (tickets, error) in
                 if let error = error {
                     // Handle error
                     print("Error fetching groups PAST: \(error)")
@@ -217,7 +218,7 @@ class groupsViewModel: ObservableObject {
     
     func fetchUserTickets(timeFrame: String, completion: @escaping () -> Void) {
         guard let userId = Auth.auth().currentUser?.uid else { return }
-        grpService.fetchUserTickets(userID: userId, timeFrame: timeFrame) { tickets, error in
+        grpService.fetchUserTickets(userID: userId, timeFrame: "daily") { tickets, error in
             if let error = error {
                 print("Error fetching user groups: \(error.localizedDescription)")
             } else if let tickets = tickets {
@@ -310,7 +311,7 @@ class groupsViewModel: ObservableObject {
     func fetchUserGroups(completion: @escaping () -> Void) {
         
 //        let tempArray = self.userTickets.sorted { $0.groupNumber < $1.groupNumber }
-        var groupIDs: [String] = ["Global", "GlobalDaily"]
+        var groupIDs: [String] = ["GlobalDaily"]
 
         let groupsCollection = db.collection("groups")
 
@@ -510,30 +511,33 @@ class groupsViewModel: ObservableObject {
 
     func resetTicketFormat(newTicketFormat: [Int], groupID: String, timeFrame: String, completion: @escaping () -> Void) {
         
-        let documentLoc:String = {
-            if timeFrame == "weekly" {
-                return "week"
-            } else {
-                return "day"
-            }
-        }()
+        let documentLoc:String = "day"
+//        {
+//            if timeFrame == "weekly" {
+//                return "week"
+//            } else {
+//                return "day"
+//            }
+//        }()
         
-        let collectionLoc:String = {
-            if timeFrame == "weekly" {
-                return "currentWeekTickets"
-            } else {
-                return "currentDayTickets"
-            }
-        }()
+        let collectionLoc:String = "currentDayTickets"
+//        {
+//            if timeFrame == "weekly" {
+//                return "currentWeekTickets"
+//            } else {
+//                return "currentDayTickets"
+//            }
+//        }()
         
-        let collectionLoc2:String = {
-            if timeFrame == "weekly" {
-                return "currentWeekBets"
-            } else {
-                return "currentDayBets"
-            }
-        }()
-        
+        let collectionLoc2:String = "currentDayBets"
+//        {
+//            if timeFrame == "weekly" {
+//                return "currentWeekBets"
+//            } else {
+//                return "currentDayBets"
+//            }
+//        }()
+//        
         let db = Firestore.firestore()
         print("NEW TICKET FORMAT", newTicketFormat)
         print("GROUPID", groupID)

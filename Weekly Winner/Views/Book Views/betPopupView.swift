@@ -43,7 +43,7 @@ struct BetDetailsView: View {
                 placeBetColor = K.finalColor.titleBlue.opacity(0.6)
             } else {
                 if game.commenceTime.seconds > (midnightTimestamp.seconds + 86400) {
-                    uploadText = "Not Available for Daily"
+                    uploadText = "Not Available"
                     placeBetOpacity = 0.6
                     placeBetColor = K.finalColor.deleteRed.opacity(0.6)
                 } else {
@@ -60,25 +60,26 @@ struct BetDetailsView: View {
                     }
                 }
             }
-        } else {
-            if betNumber < 0 {
-                uploadText = "Ticket Complete"
-                placeBetOpacity = 0.6
-                placeBetColor = K.finalColor.titleBlue.opacity(0.6)
-            } else {
-                if ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) {
-                    uploadText = "Place Bet"
-                    placeBetOpacity = 1
-                    placeBetColor = K.finalColor.winningGreen
-                    
-                } else {
-                    uploadText = "Team Taken"
-                    placeBetOpacity = 0.6
-                    placeBetColor = K.finalColor.deleteRed.opacity(0.6)
-                    
-                }
-            }
-        }
+        } 
+//        else {
+//            if betNumber < 0 {
+//                uploadText = "Ticket Complete"
+//                placeBetOpacity = 0.6
+//                placeBetColor = K.finalColor.titleBlue.opacity(0.6)
+//            } else {
+//                if ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) {
+//                    uploadText = "Place Bet"
+//                    placeBetOpacity = 1
+//                    placeBetColor = K.finalColor.winningGreen
+//                    
+//                } else {
+//                    uploadText = "Team Taken"
+//                    placeBetOpacity = 0.6
+//                    placeBetColor = K.finalColor.deleteRed.opacity(0.6)
+//                    
+//                }
+//            }
+//        }
         
     }
     
@@ -104,12 +105,12 @@ struct BetDetailsView: View {
                 VStack {
                     HStack (spacing: 20){
            
-                        chooseChallengeTypeBetDetailsView(
-                            viewModel: viewModel,
-                            ticketVM: ticketVM,
-                            timeFrame: $timeFrame,
-                            betNumber: $betNumber,
-                            checkTeamTaken: checkTeamTaken)
+//                        chooseChallengeTypeBetDetailsView(
+//                            viewModel: viewModel,
+//                            ticketVM: ticketVM,
+//                            timeFrame: $timeFrame,
+//                            betNumber: $betNumber,
+//                            checkTeamTaken: checkTeamTaken)
                         
                         chooseWagerBetDetailsView(
                             viewModel: viewModel,

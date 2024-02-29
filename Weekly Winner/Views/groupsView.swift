@@ -51,59 +51,59 @@ struct groupsView: View {
         ZStack{
             K.finalColor.backgroundBlue.ignoresSafeArea(.all)
             NavigationStack {
-                if (StaticUserData.shared.weeklyTicket.groupID == "Global") {
+//                if (StaticUserData.shared.weeklyTicket.groupID == "Global") {
                     VStack {
                         Spacer()
                         VStack (spacing: 4){
                             HStack (spacing: 0){
-                                Button(action: {
-                                    //viewModel.canGetHistoricalData = false
-                                    if timeFrame != "daily" {
-                                        //                                    withAnimation {
-                                        timeFrame = "daily"
-                                        viewModel.weekIndex = 0
-                                        viewModel.dayIndex = 0
-                                        //                                        showingChat = false
-                                        currentScreen = 0
-                                        //                                    }
-                                    }
-                                    
-                                }) {
-                                    //Text(viewModel.userTickets[self.selectedGroup-1].groupName)
-                                    Text("Daily")
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
-                                        .foregroundColor(.white)
-                                        .frame(width: 150, height: 35, alignment: .center)
-                                        .cornerRadius(5)
-                                }
-                                
-                                Button(action: {
-                                    //viewModel.canGetHistoricalData = false
-                                    if timeFrame == "daily" {
-                                        
-                                        //                                    withAnimation {
-                                        timeFrame = "weekly"
-                                        viewModel.weekIndex = 0
-                                        viewModel.dayIndex = 0
-                                        //                                        showingChat = false
-                                        currentScreen = 1
-                                        //                                    }
-                                    }
-                                    
-                                }) {
-                                    Text("Weekly")
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
-                                        .foregroundColor(.white)
-                                        .frame(width: 150, height: 35, alignment: .center)
-                                        .cornerRadius(5)
-                                }
+//                                Button(action: {
+//                                    //viewModel.canGetHistoricalData = false
+//                                    if timeFrame != "daily" {
+//                                        //                                    withAnimation {
+//                                        timeFrame = "daily"
+//                                        viewModel.weekIndex = 0
+//                                        viewModel.dayIndex = 0
+//                                        //                                        showingChat = false
+//                                        currentScreen = 0
+//                                        //                                    }
+//                                    }
+//                                    
+//                                }) {
+//                                    //Text(viewModel.userTickets[self.selectedGroup-1].groupName)
+//                                    Text("Daily")
+//                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
+//                                        .foregroundColor(.white)
+//                                        .frame(width: 150, height: 35, alignment: .center)
+//                                        .cornerRadius(5)
+//                                }
+//                                
+//                                Button(action: {
+//                                    //viewModel.canGetHistoricalData = false
+//                                    if timeFrame == "daily" {
+//                                        
+//                                        //                                    withAnimation {
+//                                        timeFrame = "weekly"
+//                                        viewModel.weekIndex = 0
+//                                        viewModel.dayIndex = 0
+//                                        //                                        showingChat = false
+//                                        currentScreen = 1
+//                                        //                                    }
+//                                    }
+//                                    
+//                                }) {
+//                                    Text("Weekly")
+//                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
+//                                        .foregroundColor(.white)
+//                                        .frame(width: 150, height: 35, alignment: .center)
+//                                        .cornerRadius(5)
+//                                }
                             }
-                            Rectangle()
-                                .fill(Color.white) // Sets the rectangle's fill color to white
-                                .frame(width: 120, height: 3)
-                                .cornerRadius(1) // Apply rounded corners
-                                .offset(x: timeFrame == "daily" ? -75 : 75, y: 0)
-                                .animation(.easeInOut(duration: 0.35))
+//                            Rectangle()
+//                                .fill(Color.white) // Sets the rectangle's fill color to white
+//                                .frame(width: 120, height: 3)
+//                                .cornerRadius(1) // Apply rounded corners
+//                                .offset(x: timeFrame == "daily" ? -75 : 75, y: 0)
+//                                .animation(.easeInOut(duration: 0.35))
                         }.padding(.top, 40)
                             .cornerRadius(7.5)
                         if selectedGroup == 0 {
@@ -153,103 +153,103 @@ struct groupsView: View {
                                 }
                                 Spacer()
                                 HStack {
-                                    VStack {
-                                        if timeFrame == "weekly" {
-                                            if (viewModel.canGetHistoricalData && !showingChat && viewModel.weekIndex >= 0 && viewModel.weekIndex <= viewModel.totalArrayOfDates[0].count) {
-                                                HStack {
-                                                    Button(action: {
-                                                        if viewModel.weekIndex < viewModel.totalArrayOfDates[0].count-1  {
-                                                            viewModel.weekIndex = viewModel.weekIndex + 1
-                                                            viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, week: viewModel.totalArrayOfDates[0][viewModel.weekIndex], timeFrame: timeFrame) {}
-                                                        }
-                                                    }, label: {
-                                                        if viewModel.weekIndex < viewModel.totalArrayOfDates[0].count-1  {
-                                                            Image(systemName: "chevron.left")
-                                                                .foregroundColor(.white)
-                                                        } else {
-                                                            Image(systemName: "chevron.left")
-                                                                .foregroundColor(.white).opacity(0.6)
-                                                        }
-                                                    })
-                                                    
-                                                    Text(viewModel.totalArrayOfDates[0][viewModel.weekIndex])
-                                                        .foregroundColor(.white)
-                                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                                    
-                                                    Button(action: {
-                                                        if viewModel.weekIndex > 0 {
-                                                            viewModel.weekIndex = viewModel.weekIndex - 1
-                                                            if(viewModel.weekIndex == 0) {
-                                                                viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {}
-                                                            } else {
-                                                                viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, week: viewModel.totalArrayOfDates[0][viewModel.weekIndex], timeFrame: timeFrame) {}
-                                                            }
-                                                        }
-                                                    }, label: {
-                                                        if viewModel.weekIndex > 0 {
-                                                            Image(systemName: "chevron.right")
-                                                                .foregroundColor(.white)
-                                                        } else {
-                                                            Image(systemName: "chevron.right")
-                                                                .foregroundColor(.white).opacity(0.6)
-                                                        }
-                                                    })
-                                                }.padding(.leading)
-                                                
-                                                
-                                                
-                                            } else {
-                                                Text("Test").foregroundColor(.clear)
-                                            }
-                                        } else if timeFrame == "daily" {
-                                            if viewModel.totalArrayOfDates.count > 0 {
-                                                if (viewModel.canGetHistoricalData && !showingChat && viewModel.dayIndex >= 0 && viewModel.dayIndex <= viewModel.totalArrayOfDates[1].count) {
-                                                    HStack {
-                                                        Button(action: {
-                                                            if viewModel.dayIndex < viewModel.totalArrayOfDates[1].count-1  {
-                                                                viewModel.dayIndex = viewModel.dayIndex + 1
-                                                                viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, week: viewModel.totalArrayOfDates[1][viewModel.dayIndex], timeFrame: timeFrame) {}
-                                                            }
-                                                        }, label: {
-                                                            if viewModel.dayIndex < viewModel.totalArrayOfDates[1].count-1  {
-                                                                Image(systemName: "chevron.left")
-                                                                    .foregroundColor(.white)
-                                                            } else {
-                                                                Image(systemName: "chevron.left")
-                                                                    .foregroundColor(.white).opacity(0.6)
-                                                            }
-                                                        })
-                                                        
-                                                        Text(viewModel.totalArrayOfDates[1][viewModel.dayIndex])
-                                                            .foregroundColor(.white)
-                                                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                                        
-                                                        Button(action: {
-                                                            if viewModel.dayIndex > 0 {
-                                                                viewModel.dayIndex = viewModel.dayIndex - 1
-                                                                if(viewModel.dayIndex == 0) {
-                                                                    viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {}
-                                                                } else {
-                                                                    viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, week: viewModel.totalArrayOfDates[1][viewModel.dayIndex], timeFrame: timeFrame) {}
-                                                                }
-                                                            }
-                                                        }, label: {
-                                                            if viewModel.dayIndex > 0 {
-                                                                Image(systemName: "chevron.right")
-                                                                    .foregroundColor(.white)
-                                                            } else {
-                                                                Image(systemName: "chevron.right")
-                                                                    .foregroundColor(.white).opacity(0.6)
-                                                            }
-                                                        })
-                                                    }.padding(.leading)
-                                                } else {
-                                                    Text("Test").foregroundColor(.clear)
-                                                }
-                                            }
-                                            
-                                        }
-                                    }.frame(height: 25)
+//                                    VStack {
+//                                        if timeFrame == "weekly" {
+//                                            if (viewModel.canGetHistoricalData && !showingChat && viewModel.weekIndex >= 0 && viewModel.weekIndex <= viewModel.totalArrayOfDates[0].count) {
+//                                                HStack {
+//                                                    Button(action: {
+//                                                        if viewModel.weekIndex < viewModel.totalArrayOfDates[0].count-1  {
+//                                                            viewModel.weekIndex = viewModel.weekIndex + 1
+//                                                            viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, week: viewModel.totalArrayOfDates[0][viewModel.weekIndex], timeFrame: timeFrame) {}
+//                                                        }
+//                                                    }, label: {
+//                                                        if viewModel.weekIndex < viewModel.totalArrayOfDates[0].count-1  {
+//                                                            Image(systemName: "chevron.left")
+//                                                                .foregroundColor(.white)
+//                                                        } else {
+//                                                            Image(systemName: "chevron.left")
+//                                                                .foregroundColor(.white).opacity(0.6)
+//                                                        }
+//                                                    })
+//                                                    
+//                                                    Text(viewModel.totalArrayOfDates[0][viewModel.weekIndex])
+//                                                        .foregroundColor(.white)
+//                                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+//                                                    
+//                                                    Button(action: {
+//                                                        if viewModel.weekIndex > 0 {
+//                                                            viewModel.weekIndex = viewModel.weekIndex - 1
+//                                                            if(viewModel.weekIndex == 0) {
+//                                                                viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {}
+//                                                            } else {
+//                                                                viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, week: viewModel.totalArrayOfDates[0][viewModel.weekIndex], timeFrame: timeFrame) {}
+//                                                            }
+//                                                        }
+//                                                    }, label: {
+//                                                        if viewModel.weekIndex > 0 {
+//                                                            Image(systemName: "chevron.right")
+//                                                                .foregroundColor(.white)
+//                                                        } else {
+//                                                            Image(systemName: "chevron.right")
+//                                                                .foregroundColor(.white).opacity(0.6)
+//                                                        }
+//                                                    })
+//                                                }.padding(.leading)
+//                                                
+//                                                
+//                                                
+//                                            } else {
+//                                                Text("Test").foregroundColor(.clear)
+//                                            }
+//                                        } else if timeFrame == "daily" {
+//                                            if viewModel.totalArrayOfDates.count > 0 {
+//                                                if (viewModel.canGetHistoricalData && !showingChat && viewModel.dayIndex >= 0 && viewModel.dayIndex <= viewModel.totalArrayOfDates[1].count) {
+//                                                    HStack {
+//                                                        Button(action: {
+//                                                            if viewModel.dayIndex < viewModel.totalArrayOfDates[1].count-1  {
+//                                                                viewModel.dayIndex = viewModel.dayIndex + 1
+//                                                                viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, week: viewModel.totalArrayOfDates[1][viewModel.dayIndex], timeFrame: timeFrame) {}
+//                                                            }
+//                                                        }, label: {
+//                                                            if viewModel.dayIndex < viewModel.totalArrayOfDates[1].count-1  {
+//                                                                Image(systemName: "chevron.left")
+//                                                                    .foregroundColor(.white)
+//                                                            } else {
+//                                                                Image(systemName: "chevron.left")
+//                                                                    .foregroundColor(.white).opacity(0.6)
+//                                                            }
+//                                                        })
+//                                                        
+//                                                        Text(viewModel.totalArrayOfDates[1][viewModel.dayIndex])
+//                                                            .foregroundColor(.white)
+//                                                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+//                                                        
+//                                                        Button(action: {
+//                                                            if viewModel.dayIndex > 0 {
+//                                                                viewModel.dayIndex = viewModel.dayIndex - 1
+//                                                                if(viewModel.dayIndex == 0) {
+//                                                                    viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {}
+//                                                                } else {
+//                                                                    viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, week: viewModel.totalArrayOfDates[1][viewModel.dayIndex], timeFrame: timeFrame) {}
+//                                                                }
+//                                                            }
+//                                                        }, label: {
+//                                                            if viewModel.dayIndex > 0 {
+//                                                                Image(systemName: "chevron.right")
+//                                                                    .foregroundColor(.white)
+//                                                            } else {
+//                                                                Image(systemName: "chevron.right")
+//                                                                    .foregroundColor(.white).opacity(0.6)
+//                                                            }
+//                                                        })
+//                                                    }.padding(.leading)
+//                                                } else {
+//                                                    Text("Test").foregroundColor(.clear)
+//                                                }
+//                                            }
+//                                            
+//                                        }
+//                                    }.frame(height: 25)
                                     Spacer()
                                     //                                Button(action: {
                                     //                                    showingChat = false
@@ -282,24 +282,24 @@ struct groupsView: View {
                                     //                                        .presentationDetents([.fraction(0.75)])
                                     //                                }
                                     
-                                    if StaticUserData.shared.weeklyTicket.groupID == "Global" {
-                                        Button(action: {
-                                            isGlobalPrizesShowing.toggle()
-                                        }, label: {
-                                            HStack {
-                                                Text("Prizes")
-                                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                                    .foregroundStyle(.white)
-                                                    .padding(5)
-                                            }
-                                            .background(K.finalColor.winningGreen)
-                                            .cornerRadius(7.5)
-                                        })
-                                        .sheet(isPresented: $isGlobalPrizesShowing) {
-                                            globalPrizesView(time: timeFrame, viewModel: prizesViewModel())
-                                                .presentationDetents([.fraction(0.5)])
-                                        }
-                                    }
+//                                    if StaticUserData.shared.weeklyTicket.groupID == "Global" {
+//                                        Button(action: {
+//                                            isGlobalPrizesShowing.toggle()
+//                                        }, label: {
+//                                            HStack {
+//                                                Text("Prizes")
+//                                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+//                                                    .foregroundStyle(.white)
+//                                                    .padding(5)
+//                                            }
+//                                            .background(K.finalColor.winningGreen)
+//                                            .cornerRadius(7.5)
+//                                        })
+//                                        .sheet(isPresented: $isGlobalPrizesShowing) {
+//                                            globalPrizesView(time: timeFrame, viewModel: prizesViewModel())
+//                                                .presentationDetents([.fraction(0.5)])
+//                                        }
+//                                    }
                                     
                                     if Auth.auth().currentUser?.uid == "fg57TZhmLmWH9TT3WCA3WuXT7dy2" { // reidbrown1 id
                                         Button(action: {
@@ -311,12 +311,12 @@ struct groupsView: View {
                                             //.padding()
                                                 .foregroundColor(.white)
                                         }
-                                        .sheet(isPresented: $isGroupSettingsViewPresented) {
-                                            
-                                            groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel, groupAdmin: StaticUserData.shared.weeklyTicket.groupAdmin, groupNum: 0,
-                                                              ticketFormat: timeFrame == "weekly" ? StaticUserData.shared.weeklyTicket.ticketFormat : StaticUserData.shared.dailyTicket.ticketFormat, timeFrame: timeFrame)
-                                            .presentationDetents([.fraction(0.75)])
-                                        }
+//                                        .sheet(isPresented: $isGroupSettingsViewPresented) {
+//                                            
+//                                            groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel, groupAdmin: StaticUserData.shared.weeklyTicket.groupAdmin, groupNum: 0,
+//                                                              ticketFormat: timeFrame == "weekly" ? StaticUserData.shared.weeklyTicket.ticketFormat : StaticUserData.shared.dailyTicket.ticketFormat, timeFrame: timeFrame)
+//                                            .presentationDetents([.fraction(0.75)])
+//                                        }
                                     }
                                     
                                 }.padding(EdgeInsets(top: 5, leading: 5, bottom: 10, trailing: 16))
@@ -367,7 +367,7 @@ struct groupsView: View {
                             if timeFrame == "daily" {
                                 viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {}
                             } else {
-                                viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {}
+//                                viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {}
                             }
                         }
                     }
@@ -376,7 +376,7 @@ struct groupsView: View {
                             print("on appear ranked")
                         }
                     }
-                }
+//                }
             }.navigationTitle("Groups")
                 .onAppear() {
                     
@@ -530,15 +530,16 @@ struct currentLeaderboardView: View {
                                 BetCard(ticket: StaticUserData.shared.dailyRankedTickets[index], rank: (StaticUserData.shared.dailyRankedTickets[index].rank), ownCard: StaticUserData.shared.dailyRankedTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, currentWeek: true, homePage: false).padding(.bottom,16)
                             }).id(UUID())
                         }
-                    } else if timeFrame == "weekly" {
-                        ForEach(0..<StaticUserData.shared.weeklyRankedTickets.count, id: \.self) { index in
-                            NavigationLink(destination:
-                                            ticketView(username: StaticUserData.shared.weeklyRankedTickets[index].username, uid: StaticUserData.shared.weeklyRankedTickets[index].uid, groupID: StaticUserData.shared.weeklyRankedTickets[index].groupID, selectedWeek: "current", ticketFormatForGroups: [], ownTicket: StaticUserData.shared.weeklyRankedTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, onTicketPage: false, passedTimeFrame: timeFrame), // FIX LATER ?
-                                           label: {
-                                BetCard(ticket: StaticUserData.shared.weeklyRankedTickets[index], rank: (StaticUserData.shared.weeklyRankedTickets[index].rank), ownCard: StaticUserData.shared.weeklyRankedTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, currentWeek: true, homePage: false).padding(.bottom,16)
-                            }).id(UUID())
-                        }
                     }
+//                    else if timeFrame == "weekly" {
+//                        ForEach(0..<StaticUserData.shared.weeklyRankedTickets.count, id: \.self) { index in
+//                            NavigationLink(destination:
+//                                            ticketView(username: StaticUserData.shared.weeklyRankedTickets[index].username, uid: StaticUserData.shared.weeklyRankedTickets[index].uid, groupID: StaticUserData.shared.weeklyRankedTickets[index].groupID, selectedWeek: "current", ticketFormatForGroups: [], ownTicket: StaticUserData.shared.weeklyRankedTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, onTicketPage: false, passedTimeFrame: timeFrame), // FIX LATER ?
+//                                           label: {
+//                                BetCard(ticket: StaticUserData.shared.weeklyRankedTickets[index], rank: (StaticUserData.shared.weeklyRankedTickets[index].rank), ownCard: StaticUserData.shared.weeklyRankedTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, currentWeek: true, homePage: false).padding(.bottom,16)
+//                            }).id(UUID())
+//                        }
+//                    }
                 }.padding(.bottom,40)
             }.refreshable {
                 await viewModel.fetchUserTickets(timeFrame: timeFrame) {}
@@ -547,7 +548,7 @@ struct currentLeaderboardView: View {
                     if timeFrame == "daily" {
                         viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {}
                     } else {
-                        viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {}
+//                        viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {}
                     }                }
             }.onAppear() {
                 //print("\(viewModel.currentRankedGroupTickets.count) is count")
@@ -1071,7 +1072,7 @@ struct chatView: View {
     
     func submitMessage() {
         if !chatMessage.isEmpty {
-            viewModel.uploadChat(message: chatMessage, groupID: timeFrame == "weekly" ? StaticUserData.shared.weeklyTicket.groupID : StaticUserData.shared.dailyTicket.groupID)
+            viewModel.uploadChat(message: chatMessage, groupID: StaticUserData.shared.dailyTicket.groupID)
             chatMessage = "" // clear the text field
             hideKeyboard() // hide keyboard
         }
