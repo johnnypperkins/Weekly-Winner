@@ -255,18 +255,23 @@ struct gameRowView: View {
             .cornerRadius(10)
         .padding(EdgeInsets(top: 0, leading: 0, bottom: 6, trailing: 0))
         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
-        .sheet(isPresented: $showingSheet) {
-            
-            BetDetailsView(game: game, betType: $betType, viewModel: viewModel)
-            .presentationDetents([.medium])
-            .presentationDragIndicator(.hidden)
-            .background(K.finalColor.backgroundBlue)
-            
-            .onDisappear(){
-                withAnimation{
-                    betType = .None
+        
+        .popup(isPresented: $showingSheet) {
+            BetDetailsView(game: game, betType: $betType, viewModel: viewModel, showingSheet: $showingSheet)
+            .frame(height: 500)
+        } customize: {
+            $0
+                .type (.toast)
+                .position(.bottom)
+                .isOpaque(true)
+                .closeOnTap(false)
+                .closeOnTapOutside(true)
+                .backgroundColor(.black.opacity(0.4))
+                .dismissCallback {
+                    withAnimation {
+                        betType = .None
+                    }
                 }
-            }
         }
     }
 }
@@ -304,7 +309,7 @@ struct PlaceBetButton: View {
         Button(action: action) {
             Text(isDisabled ? "" : buttonTitle)
                 .foregroundColor(K.finalColor.titleBlue)
-                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                .font(.custom(K.customFonts.lexendDecaMedium, size: betTypeOfButton == .over || betTypeOfButton == .under ? 14 : 16))
         }
         .frame(width: 50, height: 30)
         .animation(.spring(), value: 4)

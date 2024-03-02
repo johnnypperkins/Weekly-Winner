@@ -31,6 +31,7 @@ struct BetDetailsView: View {
     @State private var placeholder = 5
     
     @State private var timeFrame = "daily"
+    @Binding var showingSheet: Bool
     
 
     let midnightTimestamp = Timestamp(date: Calendar.current.startOfDay(for: Calendar.current.date(byAdding: .hour, value: -5, to: Date())!))
@@ -60,108 +61,31 @@ struct BetDetailsView: View {
                     }
                 }
             }
-        } 
-//        else {
-//            if betNumber < 0 {
-//                uploadText = "Ticket Complete"
-//                placeBetOpacity = 0.6
-//                placeBetColor = K.finalColor.titleBlue.opacity(0.6)
-//            } else {
-//                if ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) {
-//                    uploadText = "Place Bet"
-//                    placeBetOpacity = 1
-//                    placeBetColor = K.finalColor.winningGreen
-//                    
-//                } else {
-//                    uploadText = "Team Taken"
-//                    placeBetOpacity = 0.6
-//                    placeBetColor = K.finalColor.deleteRed.opacity(0.6)
-//                    
-//                }
-//            }
-//        }
+        }
         
     }
     
     var body: some View {
             
         ZStack {
-            K.finalColor.backgroundBlue.ignoresSafeArea(.all)
+            K.finalColor.backgroundBlue.cornerRadius(40, corners: [.topLeft, .topRight])
+            
             VStack {
-                HStack (){
-                    Spacer()
-                    Button {
-                        withAnimation {
-                            dismiss()
-                            betType = .None
-                        }
-                    } label: {
-                        Image(systemName: "xmark")
-                            .resizable()
-                            .frame(width: 15, height: 15)
-                            .foregroundColor(.white)
-                    }.padding([.top, .trailing])
-                }
-                VStack {
-                    HStack (spacing: 20){
-           
-//                        chooseChallengeTypeBetDetailsView(
-//                            viewModel: viewModel,
-//                            ticketVM: ticketVM,
-//                            timeFrame: $timeFrame,
-//                            betNumber: $betNumber,
-//                            checkTeamTaken: checkTeamTaken)
-                        
-                        chooseWagerBetDetailsView(
-                            viewModel: viewModel,
-                            ticketVM: ticketVM,
-                            timeFrame: $timeFrame,
-                            betNumber: $betNumber,
-                            chosenSpread: $chosenSpread,
-                            betType: $betType,
-                            game: game, 
-                            checkTeamTaken: checkTeamTaken)
-                        
-                    }.cornerRadius(10)
-                    
-                    
-                        BetSliderView(game: game, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: betType, chosenSpread: $chosenSpread)
-                            //.padding(.horizontal)
-                    
-//                    if betType == .betHomeSpread {
-//                        BetSliderView(whichSport: game.whichSport, teamName: game.homeTeam, originalSpread: game.homeSpread, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: .betHomeSpread, chosenSpread: $chosenSpread)
-//                            //.padding(.horizontal)
-//
-//                    }
-//                    if betType == .over {
-//                        BetSliderView(whichSport: game.whichSport, teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalOver, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: .over, chosenSpread: $chosenSpread)
-//                            //.padding(.horizontal)
-//
-//                    }
-//                    if betType == .under {
-//                        BetSliderView(whichSport: game.whichSport, teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalUnder, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: .under, chosenSpread: $chosenSpread)
-//                            //.padding(.horizontal)
-//
-//                    }
-                }
-                .onAppear {
-                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid,
-                                           for: groupNumber,
-                                           ticketFormat: timeFrame == "daily" ? StaticUserData.shared.dailyTicket.ticketFormat : StaticUserData.shared.dailyTicket.ticketFormat,
-                                           timeFrame: timeFrame) {
-                            if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
-                                betNumber = firstNumberGreaterThanZero
-                            } else {
-                                betNumber = -99
-                            }
-                            checkTeamTaken()
-                        }
-                    print("Group Number: \(groupNumber), Bet Number: \(betNumber)")
-                }.padding(.horizontal)
-                .background(K.finalColor.backgroundBlue)
-                    
+                popUpPill()
+                
+                BetSliderView(game: game, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: betType, chosenSpread: $chosenSpread)
+                
+                chooseWagerBetDetailsView(
+                    viewModel: viewModel,
+                    ticketVM: ticketVM,
+                    timeFrame: $timeFrame,
+                    betNumber: $betNumber,
+                    chosenSpread: $chosenSpread,
+                    betType: $betType,
+                    game: game,
+                    checkTeamTaken: checkTeamTaken)
+                
                 Button(action: {
-                    print("groupNumber: \(groupNumber), betNumber: \(betNumber)")
                     viewModel.uploadBet(
                         groupNumber: groupNumber,
                         groupID: timeFrame == "daily" ? StaticUserData.shared.dailyTicket.groupID : StaticUserData.shared.weeklyTicket.groupID,
@@ -170,23 +94,20 @@ struct BetDetailsView: View {
                         betLine: chosenSpread,
                         betOdds: MLtoPercentage(moneyline: betTypeToOdds(game: game, betType: betType)),
                         betType: betType,
-                        gameID: game.idd, 
+                        gameID: game.idd,
                         whichSport: game.whichSport,
                         points_bought: Int(chosenSpread-originalSpread),
-                        timeFrame: timeFrame) 
-         
+                        timeFrame: timeFrame)
                     
                     { _ in
-                            
                         ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat, timeFrame: timeFrame) {
                             let groupServe = groupService()
                             groupServe.setPotentialToWin(potential: Int(ticketVM.totalPotentialWon), groupNumber: groupNumber, timeFrame: timeFrame, completion: {_ in })
                             ticketVM.fetchUserTickets(timeFrame: timeFrame) {}
-                            
                         }
                     }
                     withAnimation {
-                        dismiss()
+                        showingSheet = false
                         betType = .None
                     }
                     
@@ -195,52 +116,62 @@ struct BetDetailsView: View {
                         .foregroundColor(.white)
                         .font(.custom(K.customFonts.lexendDecaMedium, size: 20.0))
                         .padding()
-                        .frame(maxWidth: .infinity)
                         .background(placeBetColor)
                         .cornerRadius(10)
                         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
-                        //f.padding(.horizontal, 25)
+                        .padding(.horizontal, 25)
                 })
                 .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) || (game.commenceTime.seconds > (midnightTimestamp.seconds + 86400) && timeFrame == "daily"))
                 .padding(.horizontal)
-                .background(K.finalColor.backgroundBlue)
                 
+                Spacer()
                 
-                
-            }.padding(.horizontal)
-            .onAppear(perform: {
-                if betType == .betAwaySpread {
-                    chosenSpread = game.awaySpread
-                    originalSpread = game.awaySpread
-                    whichTeam = game.awayTeam
+            }
+            
+        }.onAppear(perform: {
+            ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid,
+                               for: groupNumber,
+                               ticketFormat: timeFrame == "daily" ? StaticUserData.shared.dailyTicket.ticketFormat : StaticUserData.shared.dailyTicket.ticketFormat,
+                               timeFrame: timeFrame) {
+                if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
+                    betNumber = firstNumberGreaterThanZero
+                } else {
+                    betNumber = -99
                 }
-                if betType == .betHomeSpread {
-                    chosenSpread = game.homeSpread
-                    originalSpread = game.homeSpread
-                    whichTeam = game.homeTeam
-                }
-                if betType == .over {
-                    chosenSpread = game.totalOver
-                    originalSpread = game.totalOver
-                    whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
-                }
-                if betType == .under {
-                    chosenSpread = game.totalUnder
-                    originalSpread = game.totalUnder
-                    whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
-                }
-                if betType == .betHomeML {
-                    chosenSpread = 0
-                    originalSpread = 0
-                    whichTeam = game.homeTeam
-                }
-                if betType == .betAwayML {
-                    chosenSpread = 0
-                    originalSpread = 0
-                    whichTeam = game.awayTeam
-                }
-            })
-        }
+                checkTeamTaken()
+            }
+            
+            if betType == .betAwaySpread {
+                chosenSpread = game.awaySpread
+                originalSpread = game.awaySpread
+                whichTeam = game.awayTeam
+            }
+            if betType == .betHomeSpread {
+                chosenSpread = game.homeSpread
+                originalSpread = game.homeSpread
+                whichTeam = game.homeTeam
+            }
+            if betType == .over {
+                chosenSpread = game.totalOver
+                originalSpread = game.totalOver
+                whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
+            }
+            if betType == .under {
+                chosenSpread = game.totalUnder
+                originalSpread = game.totalUnder
+                whichTeam = "\(game.homeTeam) / \(game.awayTeam)"
+            }
+            if betType == .betHomeML {
+                chosenSpread = 0
+                originalSpread = 0
+                whichTeam = game.homeTeam
+            }
+            if betType == .betAwayML {
+                chosenSpread = 0
+                originalSpread = 0
+                whichTeam = game.awayTeam
+            }
+        })
     }
 }
 
@@ -304,7 +235,7 @@ struct BetSliderView: View {
         } else if betType == .betAwayML || betType == .betAwaySpread {
             return "\(game.awayTeam)"
         } else {
-            return "\(game.homeTeam)" + "/" + "\(game.homeTeam)"
+            return "\(game.homeTeam)" + "/" + "\(game.awayTeam)"
         }
     }
     
@@ -327,56 +258,66 @@ struct BetSliderView: View {
     }
     
     var body: some View {
-        VStack (spacing: 0){
-            HStack (spacing: 10) {
-                Text("Team")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                    .foregroundColor(.white)
-                    .frame(width: 100, alignment: .leading)
-                Spacer()
-                Text(betType == .over || betType == .under ? "Total" : "Spread")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                    .foregroundColor(.white)
-                    .frame(width: 60, alignment: .leading)
-                Text("Odds")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                    .foregroundColor(.white)
-                    .frame(width: 65, alignment: .trailing)
-            }.padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
-                .padding(.horizontal)
-                .background(K.finalColor.backgroundBlue)
-            HStack (spacing: 10){
-                Text("\(teamString)")
-                    //.font(.custom(K.customFonts.lexendDecaMedium, size: 15))
-                    .font(.custom(K.customFonts.lexendDecaLight, size: teamString.count < 25 ? 16 : 10))
-                    .foregroundColor(.white)
-                    .lineLimit(3)
-                    .frame(width: 150, height: 40, alignment: .leading)
-                    //.background(.white)
-                Spacer()
-                Text(chosenSpread == 0 ? "ML" : "\(internalExtra)\(String(format: "%.0f", chosenSpread))")
-                    .font(.custom(K.customFonts.lexendDecaLight, size: 18))
-                    .foregroundColor(.white)
-                    .frame(width: 60, alignment: .leading)
-                
-                    //Text("\(percentageToML(percentage: returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread), whichSport: whichSport)))")
-                    Text(MLString)
-                        .font(.custom(K.customFonts.lexendDecaLight, size: 18))
+        
+        HStack(spacing: 7.5) {
+            
+            VStack(spacing: 0) {
+                HStack {
+                    Spacer()
+                    Text("Team")
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
                         .foregroundColor(.white)
-                        .frame(width: 65, alignment: .trailing)
-                
-                    
-            }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
-                .padding(.horizontal)
-                .background(K.finalColor.backgroundBlue)
-//            HStack {
-//                if whichSport != "NHL"{
-//                    Slider(value: $chosenSpread, in: betType == .over ? Double(originalSpread - 15)...Double(originalSpread + spreadExtension) : Double(originalSpread - spreadExtension)...Double(originalSpread + 15), step: 1)
-//                        .accentColor(K.finalColor.titleBlue)
-//                }
-//            }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
-                .padding(.horizontal)
-        }.cornerRadius(10)
+                    Spacer()
+                }.frame(height: 15).background(K.finalColor.tabSelectedBlue)
+                HStack {
+                    Text("\(teamString)")
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: teamString.count < 25 ? 16 : 10))
+                        .foregroundColor(.white)
+                        .lineLimit(3)
+                        .padding(.leading)
+                       // .frame(width: 150, height: 40, alignment: .leading)
+                    Spacer()
+                }.frame(height: 50).background(K.finalColor.cardBlue)
+            }.frame(width: 200).cornerRadius(5)
+            
+            VStack(spacing: 0) {
+                HStack {
+                    Spacer()
+                    Text("Spread")
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                    Spacer()
+                }.frame(height: 15).background(K.finalColor.tabSelectedBlue)
+                HStack {
+                    Spacer()
+                    Text(chosenSpread == 0 ? "ML" : "\(internalExtra)\(String(format: "%.0f", chosenSpread))")
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: teamString.count < 25 ? 16 : 10))
+                        .foregroundColor(.white)
+                        .lineLimit(3)
+                    Spacer()
+                }.frame(height: 50).background(K.finalColor.cardBlue)
+            }.frame(width: 65).cornerRadius(5)
+            
+            VStack(spacing: 0) {
+                HStack {
+                    Spacer()
+                    Text("Odds")
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                    Spacer()
+                }.frame(height: 15).background(K.finalColor.tabSelectedBlue)
+                HStack {
+                    Spacer()
+                    Text(MLString)
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: teamString.count < 25 ? 16 : 10))
+                        .foregroundColor(.white)
+                        .lineLimit(3)
+                    Spacer()
+                }.frame(height: 50).background(K.finalColor.cardBlue)
+            }.frame(width: 65).cornerRadius(5)
+            
+        }
+        
     }
 }
 
@@ -388,7 +329,7 @@ struct chooseChallengeTypeBetDetailsView: View {
     var checkTeamTaken: () -> Void
 
     var body: some View {
-        if ticketVM.isBetsLoaded {
+        //if ticketVM.isBetsLoaded {
             VStack (alignment: .center){
                 VStack {
                     Text("Group")
@@ -458,7 +399,7 @@ struct chooseChallengeTypeBetDetailsView: View {
                 //.background(K.finalColor.cardBlue)
                 .cornerRadius(7.5)
             }
-        }
+        //}
     }
 }
 
@@ -475,17 +416,16 @@ struct chooseWagerBetDetailsView: View {
     
     var body: some View {
         VStack {
-            if ticketVM.isBetsLoaded {
+           // if ticketVM.isBetsLoaded {
                 VStack {
                     Text("Bet")
                         .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                         .foregroundColor(K.finalColor.textWhite)
                         .frame(width: 150, alignment: .leading)
-                    //.padding(EdgeInsets(top: 70, leading: 15, bottom: 0, trailing: 0))
                         .background(K.finalColor.backgroundBlue)
                 }
+                
                 VStack {
-                    
                     ScrollView {
                         if betNumber >= 0 {
                             ForEach(0..<1, id: \.self) { _ in
@@ -558,7 +498,6 @@ struct chooseWagerBetDetailsView: View {
                                 .background(K.finalColor.titleBlue.opacity(0.6))
                                 .cornerRadius(5)
                                 
-                                //.scaleEffect(x: 2)
                                 Spacer()
                                 
                             }.padding(.top,15)
@@ -578,7 +517,7 @@ struct chooseWagerBetDetailsView: View {
                     .background(K.finalColor.cardBlue)
                     .cornerRadius(7.5)
             }
-        }
+        //d}
     }
 }
 
