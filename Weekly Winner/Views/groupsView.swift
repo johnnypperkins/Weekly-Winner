@@ -115,7 +115,8 @@ struct groupsView: View {
                                     VStack(alignment: .leading) {
                                         HStack {
                                             if viewModel.userGroupsLoaded {
-                                                KFImage(URL(string: viewModel.userGroups[selectedGroup-1].groupImageURL))
+//                                                KFImage(URL(string: viewModel.userGroups[selectedGroup-1].groupImageURL))
+                                                Image("Logo")
                                                     .resizable()
                                                     .aspectRatio(contentMode: .fill)
                                                     .clipShape(Circle())
@@ -153,7 +154,7 @@ struct groupsView: View {
                                 }
                                 Spacer()
                                 HStack {
-//                                    VStack {
+                                    VStack {
 //                                        if timeFrame == "weekly" {
 //                                            if (viewModel.canGetHistoricalData && !showingChat && viewModel.weekIndex >= 0 && viewModel.weekIndex <= viewModel.totalArrayOfDates[0].count) {
 //                                                HStack {
@@ -201,55 +202,56 @@ struct groupsView: View {
 //                                            } else {
 //                                                Text("Test").foregroundColor(.clear)
 //                                            }
-//                                        } else if timeFrame == "daily" {
-//                                            if viewModel.totalArrayOfDates.count > 0 {
-//                                                if (viewModel.canGetHistoricalData && !showingChat && viewModel.dayIndex >= 0 && viewModel.dayIndex <= viewModel.totalArrayOfDates[1].count) {
-//                                                    HStack {
-//                                                        Button(action: {
-//                                                            if viewModel.dayIndex < viewModel.totalArrayOfDates[1].count-1  {
-//                                                                viewModel.dayIndex = viewModel.dayIndex + 1
-//                                                                viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, week: viewModel.totalArrayOfDates[1][viewModel.dayIndex], timeFrame: timeFrame) {}
-//                                                            }
-//                                                        }, label: {
-//                                                            if viewModel.dayIndex < viewModel.totalArrayOfDates[1].count-1  {
-//                                                                Image(systemName: "chevron.left")
-//                                                                    .foregroundColor(.white)
-//                                                            } else {
-//                                                                Image(systemName: "chevron.left")
-//                                                                    .foregroundColor(.white).opacity(0.6)
-//                                                            }
-//                                                        })
-//                                                        
-//                                                        Text(viewModel.totalArrayOfDates[1][viewModel.dayIndex])
-//                                                            .foregroundColor(.white)
-//                                                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-//                                                        
-//                                                        Button(action: {
-//                                                            if viewModel.dayIndex > 0 {
-//                                                                viewModel.dayIndex = viewModel.dayIndex - 1
-//                                                                if(viewModel.dayIndex == 0) {
-//                                                                    viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {}
-//                                                                } else {
-//                                                                    viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, week: viewModel.totalArrayOfDates[1][viewModel.dayIndex], timeFrame: timeFrame) {}
-//                                                                }
-//                                                            }
-//                                                        }, label: {
-//                                                            if viewModel.dayIndex > 0 {
-//                                                                Image(systemName: "chevron.right")
-//                                                                    .foregroundColor(.white)
-//                                                            } else {
-//                                                                Image(systemName: "chevron.right")
-//                                                                    .foregroundColor(.white).opacity(0.6)
-//                                                            }
-//                                                        })
-//                                                    }.padding(.leading)
-//                                                } else {
-//                                                    Text("Test").foregroundColor(.clear)
-//                                                }
-//                                            }
-//                                            
-//                                        }
-//                                    }.frame(height: 25)
+//                                        } else 
+                                        if timeFrame == "daily" {
+                                            if viewModel.totalArrayOfDates.count > 0 {
+                                                if (viewModel.canGetHistoricalData && !showingChat && viewModel.dayIndex >= 0 && viewModel.dayIndex <= viewModel.totalArrayOfDates[1].count) {
+                                                    HStack {
+                                                        Button(action: {
+                                                            if viewModel.dayIndex < viewModel.totalArrayOfDates[1].count-1  {
+                                                                viewModel.dayIndex = viewModel.dayIndex + 1
+                                                                viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, week: viewModel.totalArrayOfDates[1][viewModel.dayIndex], timeFrame: timeFrame) {}
+                                                            }
+                                                        }, label: {
+                                                            if viewModel.dayIndex < viewModel.totalArrayOfDates[1].count-1  {
+                                                                Image(systemName: "chevron.left")
+                                                                    .foregroundColor(.white)
+                                                            } else {
+                                                                Image(systemName: "chevron.left")
+                                                                    .foregroundColor(.white).opacity(0.6)
+                                                            }
+                                                        })
+                                                        
+                                                        Text(viewModel.totalArrayOfDates[1][viewModel.dayIndex])
+                                                            .foregroundColor(.white)
+                                                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                                        
+                                                        Button(action: {
+                                                            if viewModel.dayIndex > 0 {
+                                                                viewModel.dayIndex = viewModel.dayIndex - 1
+                                                                if(viewModel.dayIndex == 0) {
+                                                                    viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {}
+                                                                } else {
+                                                                    viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, week: viewModel.totalArrayOfDates[1][viewModel.dayIndex], timeFrame: timeFrame) {}
+                                                                }
+                                                            }
+                                                        }, label: {
+                                                            if viewModel.dayIndex > 0 {
+                                                                Image(systemName: "chevron.right")
+                                                                    .foregroundColor(.white)
+                                                            } else {
+                                                                Image(systemName: "chevron.right")
+                                                                    .foregroundColor(.white).opacity(0.6)
+                                                            }
+                                                        })
+                                                    }.padding(.leading)
+                                                } else {
+                                                    Text("Test").foregroundColor(.clear)
+                                                }
+                                            }
+                                            
+                                        }
+                                    }.frame(height: 25)
                                     Spacer()
                                     //                                Button(action: {
                                     //                                    showingChat = false

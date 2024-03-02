@@ -166,52 +166,52 @@ struct ticketView: View {
         var body: some View {
             VStack (spacing: 4){
                 HStack (spacing: 0){
-                    Button(action: {
-                        //viewModel.canGetHistoricalData = false
-                        if timeFrame != "daily" {
-                            timeFrame = "daily"
-                            viewModel.isBetsLoaded = false
-                            viewModel.isTFLoaded = false
-
-                            viewModel.fetchBets(uid: uid, for: 0, ticketFormat: StaticUserData.shared.dailyTicket.ticketFormat, timeFrame: timeFrame, completion: {})
-                        }
-                        
-                    }) {
+//                    Button(action: {
+//                        //viewModel.canGetHistoricalData = false
+//                        if timeFrame != "daily" {
+//                            timeFrame = "daily"
+//                            viewModel.isBetsLoaded = false
+//                            viewModel.isTFLoaded = false
+//
+//                            viewModel.fetchBets(uid: uid, for: 0, ticketFormat: StaticUserData.shared.dailyTicket.ticketFormat, timeFrame: timeFrame, completion: {})
+//                        }
+//                        
+//                    }) {
                         //Text(viewModel.userTickets[self.selectedGroup-1].groupName)
-                        Text("Daily")
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
+                        Text("Daily Ticket")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 40))
                             .foregroundColor(.white)
-                            .frame(width: 150, height: 35, alignment: .center)
+                            .frame(width: 300, height: 50, alignment: .center)
                             //.background(timeFrame == "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
                             .cornerRadius(5)
-                    }
-                    
-                    Button(action: {
-                        //viewModel.canGetHistoricalData = false
-                        if timeFrame == "daily" {
-                            
-                            timeFrame = "weekly"
-                            viewModel.isBetsLoaded = false
-                            viewModel.isTFLoaded = false
-
-                            viewModel.fetchBets(uid: uid, for: 0, ticketFormat: StaticUserData.shared.weeklyTicket.ticketFormat, timeFrame: timeFrame, completion: {})
-
-                        }
-                        
-                    }) {
-                        Text("Weekly")
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
-                            .foregroundColor(.white)
-                            .frame(width: 150, height: 35, alignment: .center)
-                            .cornerRadius(5)
-                    }
+//                    }
+//                    
+//                    Button(action: {
+//                        //viewModel.canGetHistoricalData = false
+//                        if timeFrame == "daily" {
+//                            
+//                            timeFrame = "weekly"
+//                            viewModel.isBetsLoaded = false
+//                            viewModel.isTFLoaded = false
+//
+//                            viewModel.fetchBets(uid: uid, for: 0, ticketFormat: StaticUserData.shared.weeklyTicket.ticketFormat, timeFrame: timeFrame, completion: {})
+//
+//                        }
+//                        
+//                    }) {
+//                        Text("Weekly")
+//                            .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
+//                            .foregroundColor(.white)
+//                            .frame(width: 150, height: 35, alignment: .center)
+//                            .cornerRadius(5)
+//                    }
                 }
-                Rectangle()
-                    .fill(Color.white) // Sets the rectangle's fill color to white
-                    .frame(width: 120, height: 3)
-                    .cornerRadius(1) // Apply rounded corners
-                    .offset(x: timeFrame == "daily" ? -75 : 75, y: 0)
-                    .animation(.easeInOut(duration: 0.35))
+//                Rectangle()
+//                    .fill(Color.white) // Sets the rectangle's fill color to white
+//                    .frame(width: 120, height: 3)
+//                    .cornerRadius(1) // Apply rounded corners
+//                    .offset(x: timeFrame == "daily" ? -75 : 75, y: 0)
+//                    .animation(.easeInOut(duration: 0.35))
             }.padding(.top, 23)
         }
     }
