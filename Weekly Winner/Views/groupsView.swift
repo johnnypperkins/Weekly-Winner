@@ -56,54 +56,54 @@ struct groupsView: View {
                         Spacer()
                         VStack (spacing: 4){
                             HStack (spacing: 0){
-//                                Button(action: {
-//                                    //viewModel.canGetHistoricalData = false
-//                                    if timeFrame != "daily" {
-//                                        //                                    withAnimation {
-//                                        timeFrame = "daily"
-//                                        viewModel.weekIndex = 0
-//                                        viewModel.dayIndex = 0
-//                                        //                                        showingChat = false
-//                                        currentScreen = 0
-//                                        //                                    }
-//                                    }
+                                Button(action: {
+                                    viewModel.canGetHistoricalData = false
+                                    if timeFrame != "daily" {
+                                        //                                    withAnimation {
+                                        timeFrame = "daily"
+                                        viewModel.weekIndex = 0
+                                        viewModel.dayIndex = 0
+                                        //                                        showingChat = false
+                                        currentScreen = 0
+                                        //                                    }
+                                    }
+                                    
+                                }) {
+                                    //Text(viewModel.userTickets[self.selectedGroup-1].groupName)
+                                    Text("Daily")
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
+                                        .foregroundColor(.white)
+                                        .frame(width: 150, height: 35, alignment: .center)
+                                        .cornerRadius(5)
+                                }
+                                
+                                Button(action: {
+                                    //viewModel.canGetHistoricalData = false
+                                    if timeFrame == "daily" {
+                                        
+                                                                            withAnimation {
+                                        timeFrame = "friends"
+                                        viewModel.weekIndex = 0
+                                        viewModel.dayIndex = 0
+                                        //                                        showingChat = false
+                                        currentScreen = 1
+                                                                            }
+                                    }
 //                                    
-//                                }) {
-//                                    //Text(viewModel.userTickets[self.selectedGroup-1].groupName)
-//                                    Text("Daily")
-//                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
-//                                        .foregroundColor(.white)
-//                                        .frame(width: 150, height: 35, alignment: .center)
-//                                        .cornerRadius(5)
-//                                }
-//                                
-//                                Button(action: {
-//                                    //viewModel.canGetHistoricalData = false
-//                                    if timeFrame == "daily" {
-//                                        
-//                                        //                                    withAnimation {
-//                                        timeFrame = "weekly"
-//                                        viewModel.weekIndex = 0
-//                                        viewModel.dayIndex = 0
-//                                        //                                        showingChat = false
-//                                        currentScreen = 1
-//                                        //                                    }
-//                                    }
-//                                    
-//                                }) {
-//                                    Text("Weekly")
-//                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
-//                                        .foregroundColor(.white)
-//                                        .frame(width: 150, height: 35, alignment: .center)
-//                                        .cornerRadius(5)
-//                                }
+                                }) {
+                                    Text("Friends")
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
+                                        .foregroundColor(.white)
+                                        .frame(width: 150, height: 35, alignment: .center)
+                                        .cornerRadius(5)
+                                }
                             }
-//                            Rectangle()
-//                                .fill(Color.white) // Sets the rectangle's fill color to white
-//                                .frame(width: 120, height: 3)
-//                                .cornerRadius(1) // Apply rounded corners
-//                                .offset(x: timeFrame == "daily" ? -75 : 75, y: 0)
-//                                .animation(.easeInOut(duration: 0.35))
+                            Rectangle()
+                                .fill(Color.white) // Sets the rectangle's fill color to white
+                                .frame(width: 120, height: 3)
+                                .cornerRadius(1) // Apply rounded corners
+                                .offset(x: timeFrame == "daily" ? -75 : 75, y: 0)
+                                .animation(.easeInOut(duration: 0.35))
                         }.padding(.top, 40)
                             .cornerRadius(7.5)
                         if selectedGroup == 0 {
@@ -303,7 +303,7 @@ struct groupsView: View {
 //                                        }
 //                                    }
                                     
-                                    if Auth.auth().currentUser?.uid == "fg57TZhmLmWH9TT3WCA3WuXT7dy2" { // reidbrown1 id
+                                    if Auth.auth().currentUser?.uid == "fg57TZhmLmWH9TT3WCA3WuXT7dy2" || Auth.auth().currentUser?.uid == "y7iX6WkXW6fViIFW63SI4uziVpA2" { // reidbrown1 id
                                         Button(action: {
                                             isGroupSettingsViewPresented = true
                                         }) {
@@ -335,7 +335,7 @@ struct groupsView: View {
                                                     .frame(width: geometry.size.width)
                                                     .padding(EdgeInsets(top: 0, leading: 0, bottom: 40, trailing: 00))
                                                 //                                            .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-                                                currentLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup, timeFrame: "weekly")
+                                                currentLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup, timeFrame: "friends")
                                                     .frame(width: geometry.size.width)
                                                     .padding(EdgeInsets(top: 0, leading: 0, bottom: 40, trailing: 00))
                                             }
