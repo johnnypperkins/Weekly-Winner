@@ -533,15 +533,17 @@ struct currentLeaderboardView: View {
                             }).id(UUID())
                         }
                     }
-//                    else if timeFrame == "weekly" {
-//                        ForEach(0..<StaticUserData.shared.weeklyRankedTickets.count, id: \.self) { index in
-//                            NavigationLink(destination:
-//                                            ticketView(username: StaticUserData.shared.weeklyRankedTickets[index].username, uid: StaticUserData.shared.weeklyRankedTickets[index].uid, groupID: StaticUserData.shared.weeklyRankedTickets[index].groupID, selectedWeek: "current", ticketFormatForGroups: [], ownTicket: StaticUserData.shared.weeklyRankedTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, onTicketPage: false, passedTimeFrame: timeFrame), // FIX LATER ?
-//                                           label: {
-//                                BetCard(ticket: StaticUserData.shared.weeklyRankedTickets[index], rank: (StaticUserData.shared.weeklyRankedTickets[index].rank), ownCard: StaticUserData.shared.weeklyRankedTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, currentWeek: true, homePage: false).padding(.bottom,16)
-//                            }).id(UUID())
-//                        }
-//                    }
+                    else if timeFrame == "friends" {
+                        ForEach(0..<viewModel.friendsTickets.count, id: \.self) { index in
+                            NavigationLink(destination:
+                                            ticketView(username: viewModel.friendsTickets[index].username, uid: viewModel.friendsTickets[index].uid, groupID: viewModel.friendsTickets[index].groupID, selectedWeek: "current", ticketFormatForGroups: [], ownTicket: viewModel.friendsTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, onTicketPage: false, passedTimeFrame: "daily"), // FIX LATER ?
+                                           label: {
+                                BetCard(ticket: viewModel.friendsTickets[index], rank: (viewModel.friendsTickets[index].rank), ownCard: viewModel.friendsTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, currentWeek: true, homePage: false).padding(.bottom,16)
+                            }).id(UUID())
+                            //                        }
+                            //                    }
+                        }
+                    }
                 }.padding(.bottom,40)
             }.refreshable {
                 await viewModel.fetchUserTickets(timeFrame: timeFrame) {}

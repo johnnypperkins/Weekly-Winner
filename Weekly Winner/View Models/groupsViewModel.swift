@@ -25,6 +25,9 @@ class groupsViewModel: ObservableObject {
     @Published var groupAdmin = ""
     @Published var weekIndex = -99
     @Published var dayIndex = -99
+    @Published var friendsTickets: [Ticket] = []
+    @Published var friendsList: [String] = []
+    
     private let grpService = groupService()
     
     private let db = Firestore.firestore()
@@ -32,6 +35,7 @@ class groupsViewModel: ObservableObject {
     
     init() {
 //        fetchUserTickets(timeFrame: "daily") {
+        self.fetchFriendsList()
             self.groupsFetched = true
             self.fetchUserGroups {
                 self.userGroupsLoaded = true
@@ -46,6 +50,24 @@ class groupsViewModel: ObservableObject {
 //            self.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: "weekly") {}
 //        }
     }
+    
+    func fetchFriendsList() {
+        db.collection("users").document(Auth.auth().currentUser?.uid ?? "").collection("friends").getDocuments { [weak self] (querySnapshot, err) in
+                if let err = err {
+                    print("Error getting documents: \(err)")
+                } else {
+                    self?.friendsList = querySnapshot!.documents.map { $0.documentID }
+                    self?.filterFriendsTickets()
+                }
+            }
+        }
+        
+        func filterFriendsTickets() {
+            // Assuming StaticUserData.shared.dailyRankedTickets exists and is accessible
+            friendsTickets = StaticUserData.shared.dailyRankedTickets.filter { ticket in
+                self.friendsList.contains(where: { $0 == ticket.uid })
+            }
+        }
     
     func uploadGroupImage(_ image: UIImage, group: Group, completion: @escaping (String) -> Void) {
         print("entered1")
@@ -64,6 +86,7 @@ class groupsViewModel: ObservableObject {
             }
         }
     }
+    
     
     func fetchUserProfilePic(uid: String, completion: @escaping (String?, Error?) -> Void) {
         let db = Firestore.firestore()
