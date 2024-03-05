@@ -28,6 +28,7 @@
 		3C972C8A2B2FC07100671D0F /* screen1ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C972C892B2FC07100671D0F /* screen1ViewModel.swift */; };
 		3C97BA5D2B0BDF7A00FE7A6B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3C97BA5C2B0BDF7A00FE7A6B /* GoogleService-Info.plist */; };
 		3C9D85C02B63551F001E702C /* PopupView in Frameworks */ = {isa = PBXBuildFile; productRef = 3C9D85BF2B63551F001E702C /* PopupView */; };
+		3CA8603B2B96BCE5006CA81D /* peer2peerPopUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA8603A2B96BCE5006CA81D /* peer2peerPopUp.swift */; };
 		3CACEDAB2B856315002A88B2 /* signUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CACEDAA2B856315002A88B2 /* signUpView.swift */; };
 		3CADF50D2B4F091400BE850E /* pendingChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CADF50C2B4F091400BE850E /* pendingChallengeView.swift */; };
 		3CB1AC8B2A61602700C931CA /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB1AC8A2A61602700C931CA /* Group.swift */; };
@@ -150,6 +151,7 @@
 		3C9567892B90081E000A1A56 /* betPopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = betPopupView.swift; sourceTree = "<group>"; };
 		3C972C892B2FC07100671D0F /* screen1ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = screen1ViewModel.swift; sourceTree = "<group>"; };
 		3C97BA5C2B0BDF7A00FE7A6B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		3CA8603A2B96BCE5006CA81D /* peer2peerPopUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = peer2peerPopUp.swift; sourceTree = "<group>"; };
 		3CACEDAA2B856315002A88B2 /* signUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = signUpView.swift; sourceTree = "<group>"; };
 		3CADF50C2B4F091400BE850E /* pendingChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pendingChallengeView.swift; sourceTree = "<group>"; };
 		3CB1AC8A2A61602700C931CA /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
@@ -283,6 +285,7 @@
 			children = (
 				867801832A213F90006FE479 /* screen2.swift */,
 				3C9567892B90081E000A1A56 /* betPopupView.swift */,
+				3CA8603A2B96BCE5006CA81D /* peer2peerPopUp.swift */,
 			);
 			path = "Book Views";
 			sourceTree = "<group>";
@@ -686,6 +689,7 @@
 				3C7C708C2A92F5F800C7C9DB /* prizesViewModel.swift in Sources */,
 				8653242F2A63B74C005AB3EF /* createGroupsViewModel.swift in Sources */,
 				3C3DB73A2A7C60CE000F6898 /* chatService.swift in Sources */,
+				3CA8603B2B96BCE5006CA81D /* peer2peerPopUp.swift in Sources */,
 				867801822A213F83006FE479 /* screen1.swift in Sources */,
 				3CACEDAB2B856315002A88B2 /* signUpView.swift in Sources */,
 				3C3DB73C2A7C6129000F6898 /* Chat.swift in Sources */,

@@ -257,8 +257,8 @@ struct gameRowView: View {
         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
         
         .popup(isPresented: $showingSheet) {
-            BetDetailsView(game: game, betType: $betType, viewModel: viewModel, showingSheet: $showingSheet)
-            .frame(height: 500)
+            screen2PopUp(game: game, betType: $betType, viewModel: viewModel, showingSheet: $showingSheet)
+                .frame(height: 650)
         } customize: {
             $0
                 .type (.toast)
@@ -309,7 +309,7 @@ struct PlaceBetButton: View {
         Button(action: action) {
             Text(isDisabled ? "" : buttonTitle)
                 .foregroundColor(K.finalColor.titleBlue)
-                .font(.custom(K.customFonts.lexendDecaMedium, size: betTypeOfButton == .over || betTypeOfButton == .under ? 14 : 16))
+                .font(.custom(K.customFonts.lexendDecaMedium, size: buttonTitle.count < 6 ? 16 : 14))
         }
         .frame(width: 50, height: 30)
         .animation(.spring(), value: 4)
@@ -390,6 +390,43 @@ func returnWagerStringFormat(betTypeOfButton: BetType, game: Game) -> String {
                 return game.awayML > 100 ? "+\(game.awayML)" : "\(game.awayML)"
             case .None:
                 return ""
+        }
+    }
+}
+
+
+struct screen2PopUp: View {
+    let game: Game
+    @Binding var betType: BetType
+    @ObservedObject var viewModel: bookViewModel
+    @Binding var showingSheet: Bool
+    @State var onDailyChallenge: Bool = true
+
+    
+    var body: some View {
+        ZStack {
+            K.finalColor.backgroundBlue.cornerRadius(40, corners: [.topLeft, .topRight])
+
+            VStack {
+                popUpPill()
+                HStack(spacing: 20) {
+                    Button(action: {
+                        onDailyChallenge = true
+                    }, label: {
+                        Text("true")
+                    })
+                    Button(action: {
+                        onDailyChallenge = false
+                    }, label: {
+                        Text("false")
+                    })
+                }
+                if onDailyChallenge {
+                    dailyChallengeSubmitView(game: game, betType: $betType, viewModel: viewModel, showingSheet: $showingSheet)
+                } else {
+                    peer2peerSubmitPage(game: game, betType: betType)
+                }
+            }
         }
     }
 }
