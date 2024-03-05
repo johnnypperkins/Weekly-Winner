@@ -11,10 +11,11 @@ import SwiftUI
 struct peer2peerSubmitPage: View {
     let game: Game
     let betType: BetType
+    let viewModel: bookViewModel
     
     var body: some View {
         VStack {
-            yourWager(game: game, parlaySize: 1, betType: betType)
+            yourWager(game: game, parlaySize: 1, viewModel: viewModel, betType: betType)
             Spacer()
         }
     }
@@ -24,6 +25,7 @@ struct peer2peerSubmitPage: View {
 struct yourWager: View {
     let game: Game
     var parlaySize: Int
+    var viewModel: bookViewModel
     //var extra: String
     var internalExtra: String {
         switch betType {
@@ -114,9 +116,35 @@ struct yourWager: View {
             return ""
         }
     }
+    
+    @State private var opponentUsername: String = ""
+    @State private var selectedUserID: String = ""
+    
     var body: some View {
+        let keywordBinding = Binding<String> (
+            get: {
+                opponentUsername.lowercased()
+            },
+            set: {
+                opponentUsername = $0.lowercased()
+                viewModel.fetchUser(from: opponentUsername.lowercased())
+            }
+        )
         
         VStack (spacing: 3){
+            searchBarView(keyword: keywordBinding)
+                    
+            ScrollView {
+                ForEach(viewModel.queriedUsers, id: \.id) { user in
+                    if user.id != StaticUserData.shared.currentUser.id {
+                        userBio(user: user, selectedUserID: $selectedUserID, selectedUserUsername: $opponentUsername)
+                            .padding(.vertical,3)
+                            .padding(.horizontal,14)
+                    }
+                }
+            }.frame(height: 115)
+                .padding(.vertical)
+            
             HStack {
                 Text("Your Wager")
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 12))

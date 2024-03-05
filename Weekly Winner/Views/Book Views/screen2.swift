@@ -424,7 +424,7 @@ struct screen2PopUp: View {
                 if onDailyChallenge {
                     dailyChallengeSubmitView(game: game, betType: $betType, viewModel: viewModel, showingSheet: $showingSheet)
                 } else {
-                    peer2peerSubmitPage(game: game, betType: betType)
+                    peer2peerSubmitPage(game: game, betType: betType, viewModel: viewModel)
                 }
             }
         }

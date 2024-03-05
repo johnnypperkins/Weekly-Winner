@@ -24,7 +24,7 @@ class bookViewModel: ObservableObject {
     @Published var NHLGamesPopular: [Game] = []
     @Published var allGamesPopular: [Game] = []
 
-    
+    @Published var queriedUsers: [User] = []
     
     
     @Published var userTickets: [Ticket] = [] //ticket99
@@ -63,6 +63,15 @@ class bookViewModel: ObservableObject {
 //         allGames = combinedGames
 //        
 //    }
+    
+    func fetchUser(from keyword: String) {
+        db.collection("users").whereField("keywordsForLookup", arrayContains: keyword).limit(to: 5).getDocuments { querySnapshot, error in
+            guard let documents = querySnapshot?.documents, error == nil else {return}
+            self.queriedUsers = documents.compactMap { queryDocumentSnapshot in
+                try? queryDocumentSnapshot.data(as: User.self)
+            }
+        }
+    }
     
     
     func getGamesCommenceTime(completion: @escaping () -> Void) {
