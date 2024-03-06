@@ -42,11 +42,7 @@ class screen1ViewModel: ObservableObject {
             self.fetchCurrentRankedTickets(groupID: "GlobalDaily", timeFrame: "daily") {
             }
         }
-        
-//        fetchUserTickets(timeFrame: "weekly") {
-//            self.fetchCurrentRankedTickets(groupID: "Global", timeFrame: "weekly") {}
-//        }
-        
+
 
     }
     

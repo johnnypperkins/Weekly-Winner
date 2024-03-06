@@ -189,3 +189,135 @@ class bookViewModel: ObservableObject {
     
     
 }
+
+
+
+/// ALL BOOK RELATED STATIC FUNCTIONS
+/// 
+func returnOppBetType(betType: BetType) -> BetType {
+    switch betType {
+    case .betHomeSpread:
+        return .betAwaySpread
+    case .betAwaySpread:
+        return .betHomeSpread
+    case .over:
+        return .under
+    case .under:
+        return .over
+    case .betHomeML:
+        return .betAwayML
+    case .betAwayML:
+        return .betHomeML
+    case .None:
+        return .over
+    }
+}
+
+func returnTeamString(game: Game, betType: BetType) -> String {
+    if betType == .betHomeML || betType == .betHomeSpread {
+        return "\(game.homeTeam)"
+    } else if betType == .betAwayML || betType == .betAwaySpread {
+        return "\(game.awayTeam)"
+    } else {
+        return "\(game.homeTeam)" + "/" + "\(game.awayTeam)"
+    }
+}
+
+func returnMLString(game: Game, betType: BetType) -> String {
+    if betType == .betHomeML {
+        return game.homeML > 0 ? "+\(game.homeML)" : "\(game.homeML)"
+    } else if betType == .betAwayML {
+        return game.awayML > 0 ? "+\(game.awayML)" : "\(game.awayML)"
+    } else if betType == .betHomeSpread {
+        return game.homeSpreadODDS > 0 ? "+\(game.homeSpreadODDS)" : "\(game.homeSpreadODDS)"
+    } else if betType == .betAwaySpread {
+        return game.awaySpreadODDS > 0 ? "+\(game.awaySpreadODDS)" : "\(game.awaySpreadODDS)"
+    } else if betType == .over {
+        return game.totalOverODDS > 0 ? "+\(game.totalOverODDS)" : "\(game.totalOverODDS)"
+    } else if betType == .under {
+        return game.totalUnderODDS > 0 ? "+\(game.totalUnderODDS)" : "\(game.totalUnderODDS)"
+    } else {
+        return ""
+    }
+}
+
+func returnSpreadString(game: Game, betType: BetType) -> String {
+    switch betType {
+    case .betHomeSpread:
+        return (game.homeSpread > 0 ? "+" : "") + (isWholeNumber(game.homeSpread) ? String(format: "%.0f", game.homeSpread) : String(game.homeSpread))
+    case .betAwaySpread:
+        return (game.awaySpread > 0 ? "+" : "") + (isWholeNumber(game.awaySpread) ? String(format: "%.0f", game.awaySpread) : String(game.awaySpread))
+    case .over:
+        return "o" + (isWholeNumber(game.totalOver) ? String(format: "%.0f", game.totalOver) : String(game.totalOver))
+    case .under:
+        return "u" + (isWholeNumber(game.totalUnder) ? String(format: "%.0f", game.totalUnder) : String(game.totalUnder))
+    case .betHomeML:
+        return "ML"
+    case .betAwayML:
+        return "ML"
+    case .None:
+        return ""
+    }
+}
+
+
+func returnWagerStringFormat(betTypeOfButton: BetType, game: Game) -> String {
+    if betTypeOfButton == .betHomeSpread {
+        if (game.homeSpread < 0) {
+            if isWholeNumber(game.homeSpread) {
+                return String(format: "%.0f", game.homeSpread)
+            } else {
+                return String(format: "%.1f", game.homeSpread)
+            }
+        } else {
+            if isWholeNumber(game.homeSpread) {
+                return "+" + String(format: "%.0f", game.homeSpread)
+            } else {
+                return "+" + String(format: "%.1f", game.homeSpread)
+            }
+        }
+    } else if betTypeOfButton == .betAwaySpread {
+        if (game.awaySpread < 0) {
+            if isWholeNumber(game.awaySpread) {
+                return String(format: "%.0f", game.awaySpread)
+            } else {
+                return String(format: "%.1f", game.awaySpread)
+            }
+        } else {
+            if isWholeNumber(game.awaySpread) {
+                return "+" + String(format: "%.0f", game.awaySpread)
+            } else {
+                return "+" + String(format: "%.1f", game.awaySpread)
+            }
+        }
+    } else if betTypeOfButton == .over {
+        if isWholeNumber(game.totalOver) {
+            return "o" + String(format: "%.0f", game.totalOver)
+        } else {
+            return "o" + String(format: "%.1f", game.totalOver)
+        }
+    } else if betTypeOfButton == .under {
+        if isWholeNumber(game.totalUnder) {
+            return "u" + String(format: "%.0f", game.totalUnder)
+        } else {
+            return "u" + String(format: "%.1f", game.totalUnder)
+        }
+    } else {
+        switch betTypeOfButton {
+            case .betHomeSpread:
+                return "" // will never reach
+            case .betAwaySpread:
+                return "" // will never reach
+            case .over:
+                return "o\(game.totalOver)"
+            case .under:
+                return "u\(game.totalUnder)"
+            case .betHomeML:
+                return game.homeML > 100 ? "+\(game.homeML)" : "\(game.homeML)"
+            case .betAwayML:
+                return game.awayML > 100 ? "+\(game.awayML)" : "\(game.awayML)"
+            case .None:
+                return ""
+        }
+    }
+}

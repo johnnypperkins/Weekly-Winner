@@ -523,6 +523,16 @@ func percentageToTotalWin(percentage: Double) -> String {
     }
 }
 
+func percentageToTotalWinDouble(percentage: Double) -> Double {
+    var toWin: Double
+    if percentage < 1 && percentage > 0 {
+        toWin = (1-percentage) / percentage
+        return toWin
+    } else {
+        return -99
+    }
+}
+
 
 func parlayNumToSpread(parlayNum: Int) -> Double {
     if parlayNum == 1 {

@@ -661,14 +661,7 @@ print("fetched user")
     }
 
 
-//
-//    func signOut() {
-//        authenticationState = .unauthenticated
-//        userSession = nil
-//        currUser = nil
-//        try? Auth.auth().signOut()
-//    }
-    
+
     func signOut() {
         userSession = nil
         try? Auth.auth().signOut()

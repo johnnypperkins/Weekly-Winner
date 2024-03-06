@@ -12,110 +12,35 @@ struct peer2peerSubmitPage: View {
     let game: Game
     let betType: BetType
     let viewModel: bookViewModel
-    
+    @State var wagerAmount = 0.0
+
     var body: some View {
         VStack {
-            yourWager(game: game, parlaySize: 1, viewModel: viewModel, betType: betType)
+            twoWagers(game: game, parlaySize: 1, viewModel: viewModel, betType: betType, wagerAmount: $wagerAmount)
+            peer2peerSlider(wagerAmount: $wagerAmount)
             Spacer()
         }
     }
 }
 
+struct peer2peerSlider: View {
+    @Binding var wagerAmount: Double
+    var body: some View {
+        Slider(value: $wagerAmount, in: 0.0...min(StaticUserData.shared.currentUser.poolBucks, 100), step: 1) { editing in
+            
+        }.accentColor(.white)
+            .padding(.horizontal)
+            .padding(.horizontal)
+    }
+}
 
-struct yourWager: View {
+struct twoWagers: View {
     let game: Game
     var parlaySize: Int
     var viewModel: bookViewModel
-    //var extra: String
-    var internalExtra: String {
-        switch betType {
-        case .betHomeSpread:
-            return "+"
-        case .betAwaySpread:
-            return "+"
-        case .betHomeML:
-            return "+"
-        case .betAwayML:
-            return "+"
-        case .over:
-            return "o"
-        case .under:
-            return "u"
-        default:
-            return ""
-        }
-    }
-    
-    var spreadExtension: Double {
-        print("Parlay size: ", parlaySize)
-        if parlaySize == 1 {
-            return 15
-        } else if parlaySize == 2 {
-            return 4
-        } else if parlaySize == 3 {
-            return 1
-        } else if parlaySize == 4 || parlaySize == 5 {
-            return -1
-        }
-        
-        return 10
-    }
-    var step: Int {
-        if betType == .over {
-            return -1
-        } else {
-            return 1
-        }
-    }
-    
-
     var betType: BetType
-    
-    var teamString: String {
-        if betType == .betHomeML || betType == .betHomeSpread {
-            return "\(game.homeTeam)"
-        } else if betType == .betAwayML || betType == .betAwaySpread {
-            return "\(game.awayTeam)"
-        } else {
-            return "\(game.homeTeam)" + "/" + "\(game.awayTeam)"
-        }
-    }
-    
-    var MLString: String {
-        if betType == .betHomeML {
-            return game.homeML > 0 ? "+\(game.homeML)" : "\(game.homeML)"
-        } else if betType == .betAwayML {
-            return game.awayML > 0 ? "+\(game.awayML)" : "\(game.awayML)"
-        } else if betType == .betHomeSpread {
-            return game.homeSpreadODDS > 0 ? "+\(game.homeSpreadODDS)" : "\(game.homeSpreadODDS)"
-        } else if betType == .betAwaySpread {
-            return game.awaySpreadODDS > 0 ? "+\(game.awaySpreadODDS)" : "\(game.awaySpreadODDS)"
-        } else if betType == .over {
-            return game.totalOverODDS > 0 ? "+\(game.totalOverODDS)" : "\(game.totalOverODDS)"
-        } else if betType == .under {
-            return game.totalUnderODDS > 0 ? "+\(game.totalUnderODDS)" : "\(game.totalUnderODDS)"
-        } else {
-            return ""
-        }
-    }
-    var spreadString: String {
-        switch betType {
-        case .betHomeSpread:
-            return isWholeNumber(game.homeSpread) ? String(format: "%.0f", game.homeSpread) : String(game.homeSpread)
-        case .betAwaySpread:
-            return isWholeNumber(game.awaySpread) ? String(format: "%.0f", game.awaySpread) : String(game.awaySpread)
-        case .over:
-            return isWholeNumber(game.totalOver) ? String(format: "%.0f", game.totalOver) : String(game.totalOver)
-        case .under:
-            return isWholeNumber(game.totalUnder) ? String(format: "%.0f", game.totalUnder) : String(game.totalUnder)
-        case .betHomeML:
-            return "ML"
-        case .betAwayML:
-            return "ML"
-        case .None:
-            return ""
-        }
-    }
+    @Binding var wagerAmount: Double
+
     
     @State private var opponentUsername: String = ""
     @State private var selectedUserID: String = ""
@@ -132,18 +57,18 @@ struct yourWager: View {
         )
         
         VStack (spacing: 3){
-            searchBarView(keyword: keywordBinding)
+            //searchBarView(keyword: keywordBinding)
                     
-            ScrollView {
-                ForEach(viewModel.queriedUsers, id: \.id) { user in
-                    if user.id != StaticUserData.shared.currentUser.id {
-                        userBio(user: user, selectedUserID: $selectedUserID, selectedUserUsername: $opponentUsername)
-                            .padding(.vertical,3)
-                            .padding(.horizontal,14)
-                    }
-                }
-            }.frame(height: 115)
-                .padding(.vertical)
+//            ScrollView {
+//                ForEach(viewModel.queriedUsers, id: \.id) { user in
+//                    if user.id != StaticUserData.shared.currentUser.id {
+//                        userBio(user: user, selectedUserID: $selectedUserID, selectedUserUsername: $opponentUsername)
+//                            .padding(.vertical,3)
+//                            .padding(.horizontal,14)
+//                    }
+//                }
+//            }.frame(height: 115)
+//                .padding(.vertical)
             
             HStack {
                 Text("Your Wager")
@@ -155,14 +80,21 @@ struct yourWager: View {
   
             VStack(spacing: 7.5) {
                 HStack(spacing: 7.5) {
-                    teamMiniView(teamString: teamString)
-                    oddsMiniView(betType: betType, internalExtra: internalExtra, spreadString: spreadString)
-                    MLMiniView(MLString: MLString)
+                    teamMiniView(teamString: returnTeamString(game: game, betType: betType))
+                    spreadMiniView(betType: betType, spreadString: returnSpreadString(game: game, betType: betType))
+                    oddsMiniView(MLString: returnMLString(game: game, betType: betType))
                     
                 }
                 HStack(spacing: 7.5) {
-                    riskMiniStruct(game: game, betType: betType, riskAmount: 100.0)
-                    rewardMiniStruct(game: game, betType: betType, riskAmount: 125.0)
+                    riskMiniStruct(game: game, betType: betType, challengeSender: true, challengerOdds: returnOddsFromBetType(betType: betType, game: game),
+                                   receiverOdds: returnOddsFromBetType(betType: returnOppBetType(betType: betType), game: game), wagerAmount: $wagerAmount) // dont need here since you are one sending
+                    rewardMiniStruct(
+                        game: game,
+                        betType: betType,
+                        challengeSender: true,
+                        challengerOdds: returnOddsFromBetType(betType: betType, game: game),
+                        receiverOdds: returnOddsFromBetType(betType: returnOppBetType(betType: betType), game: game),
+                        wagerAmount: $wagerAmount) // dont need here since you are one sending)
                 }.frame(width: 345)
             }
         }
@@ -178,22 +110,44 @@ struct yourWager: View {
   
             VStack(spacing: 7.5) {
                 HStack(spacing: 7.5) {
-                    teamMiniView(teamString: teamString)
-                    oddsMiniView(betType: betType, internalExtra: internalExtra, spreadString: spreadString)
-                    MLMiniView(MLString: MLString)
+                    oddsMiniView(
+                        MLString: returnMLString(game: game, betType: returnOppBetType(betType: betType))
+                    )
+
                     
+                    spreadMiniView(
+                        betType: returnOppBetType(betType: betType),
+                        spreadString: returnSpreadString(game: game, betType: returnOppBetType(betType: betType))
+                    )
+                    
+                    
+                    teamMiniView(
+                        teamString: returnTeamString(game: game, betType: returnOppBetType(betType: betType))
+                    )
                 }
                 HStack(spacing: 7.5) {
-                    riskMiniStruct(game: game, betType: betType, riskAmount: 100.0)
-                    rewardMiniStruct(game: game, betType: betType, riskAmount: 125.0)
+                    riskMiniStruct(
+                        game: game,
+                        betType: betType,
+                        challengeSender: false,
+                        challengerOdds: returnOddsFromBetType(betType: betType, game: game),
+                        receiverOdds: returnOddsFromBetType(betType: returnOppBetType(betType: betType), game: game),
+                        wagerAmount: $wagerAmount) // dont need here since you are one sending
+                    
+                    rewardMiniStruct(
+                        game: game,
+                        betType: betType,
+                        challengeSender: false,
+                        challengerOdds: returnOddsFromBetType(betType: betType, game: game),
+                        receiverOdds: returnOddsFromBetType(betType: returnOppBetType(betType: betType), game: game),
+                        wagerAmount: $wagerAmount) // dont need here since you are one sending)
+                    
+           
                 }.frame(width: 345)
             }
-        }.padding(.top, 5)
-        
-        
+        }.padding(.top, 7.5)
     }
 }
-
 
 struct teamMiniView: View {
     let teamString: String
@@ -218,9 +172,8 @@ struct teamMiniView: View {
     }
 }
 
-struct oddsMiniView: View {
+struct spreadMiniView: View {
     let betType: BetType
-    let internalExtra: String
     let spreadString: String
  
     
@@ -235,8 +188,8 @@ struct oddsMiniView: View {
             }.frame(height: 15).background(K.finalColor.tabSelectedBlue)
             HStack {
                 Spacer()
-                Text(internalExtra + spreadString)
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                Text(spreadString)
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: spreadString.count < 6 ? 16 : 14))
                     .foregroundColor(.white)
                     .lineLimit(3)
                 Spacer()
@@ -245,7 +198,7 @@ struct oddsMiniView: View {
     }
 }
 
-struct MLMiniView: View {
+struct oddsMiniView: View {
     let MLString: String
 
     var body: some View {
@@ -274,20 +227,30 @@ struct MLMiniView: View {
 struct riskMiniStruct: View {
     let game: Game
     let betType: BetType
-    let riskAmount: Double
-    
+    let challengeSender: Bool
+    let challengerOdds: Int
+    let receiverOdds: Int
+    @Binding var wagerAmount: Double
+    var opponentWagerAmount: Double {
+        return returnOpponentWagerAmount(wagerAmount: wagerAmount, odds1: challengerOdds, odds2: receiverOdds, betType: betType, game: game)
+    }
+
     var body: some View {
         VStack (spacing: 0) {
             HStack {
                 Spacer()
+    
                 Text("Risk")
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
                     .foregroundColor(.white)
                 Spacer()
             }.frame(height: 15).background(K.finalColor.deleteRed)
-            HStack {
+            HStack (spacing: 3){
                 Spacer()
-                Text("$100")
+                Image("poolBuck")
+                    .resizable()
+                    .frame(width: 20, height: 20)
+                Text("\(String(format: "%.2f", challengeSender ? wagerAmount : opponentWagerAmount))")
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
                     .foregroundColor(.white)
                 Spacer()
@@ -298,7 +261,13 @@ struct riskMiniStruct: View {
 struct rewardMiniStruct: View {
     let game: Game
     let betType: BetType
-    let riskAmount: Double
+    let challengeSender: Bool
+    let challengerOdds: Int
+    let receiverOdds: Int
+    @Binding var wagerAmount: Double
+    var opponentWagerAmount: Double {
+        return returnOpponentWagerAmount(wagerAmount: wagerAmount, odds1: challengerOdds, odds2: receiverOdds, betType: betType, game: game)
+    }
     
     var body: some View {
         VStack (spacing: 0) {
@@ -309,9 +278,12 @@ struct rewardMiniStruct: View {
                     .foregroundColor(.white)
                 Spacer()
             }.frame(height: 15).background(K.finalColor.potentialOrange)
-            HStack {
+            HStack (spacing: 3){
                 Spacer()
-                Text(percentageToTotalWin(percentage: MLtoPercentage(moneyline: betTypeToOdds(game: game, betType: betType))))
+                Image("poolBuck")
+                    .resizable()
+                    .frame(width: 20, height: 20)
+                Text("\(String(format: "%.2f", returnPotentialWinnings(wagerAmount: challengeSender ? wagerAmount : opponentWagerAmount, MLOdds: challengeSender ? challengerOdds : receiverOdds)))")
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
                     .foregroundColor(.white)
                 Spacer()
@@ -319,3 +291,42 @@ struct rewardMiniStruct: View {
         }.cornerRadius(7.5)
     }
 }
+
+
+func returnOpponentWagerAmount(wagerAmount: Double, odds1: Int, odds2: Int, betType: BetType, game: Game) -> Double {
+    if odds1 >= -110 && odds1 <= -100 && odds2 >= -110 && odds2 <= -100 { // if -107/-103 or -105, -105, then just keep it simple and make users have same amount to potentially win
+        return wagerAmount
+    } else { // if something like -170 and +200, then make the potential winnings of the challenging users bets that that the wager that the receiving user must make
+        // -116, +105 --> 29 to win 25, 25 to win 26ish
+        return returnPotentialWinnings(wagerAmount: wagerAmount, MLOdds: odds1)
+    }
+}
+
+func returnOddsFromBetType(betType: BetType, game: Game) -> Int {
+    switch betType {
+    case .betHomeSpread:
+        return game.homeSpreadODDS
+    case .betAwaySpread:
+        return game.awaySpreadODDS
+    case .over:
+        return game.totalOverODDS
+    case .under:
+        return game.totalUnderODDS
+    case .betHomeML:
+        return game.homeML
+    case .betAwayML:
+        return game.awayML
+    case .None:
+        return -99
+    }
+}
+
+func returnPotentialWinnings(wagerAmount: Double, MLOdds: Int) -> Double {
+    if MLOdds > 0 {
+        return wagerAmount*Double(MLOdds)/100
+    } else {
+        return wagerAmount*(100/((-1)*Double(MLOdds)))
+    }
+}
+
+

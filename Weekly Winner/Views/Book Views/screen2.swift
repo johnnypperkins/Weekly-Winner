@@ -333,66 +333,6 @@ struct BettingAppView_Previews: PreviewProvider {
 }
 
 
-func returnWagerStringFormat(betTypeOfButton: BetType, game: Game) -> String {
-    if betTypeOfButton == .betHomeSpread {
-        if (game.homeSpread < 0) {
-            if isWholeNumber(game.homeSpread) {
-                return String(format: "%.0f", game.homeSpread)
-            } else {
-                return String(format: "%.1f", game.homeSpread)
-            }
-        } else {
-            if isWholeNumber(game.homeSpread) {
-                return "+" + String(format: "%.0f", game.homeSpread)
-            } else {
-                return "+" + String(format: "%.1f", game.homeSpread)
-            }
-        }
-    } else if betTypeOfButton == .betAwaySpread {
-        if (game.awaySpread < 0) {
-            if isWholeNumber(game.awaySpread) {
-                return String(format: "%.0f", game.awaySpread)
-            } else {
-                return String(format: "%.1f", game.awaySpread)
-            }
-        } else {
-            if isWholeNumber(game.awaySpread) {
-                return "+" + String(format: "%.0f", game.awaySpread)
-            } else {
-                return "+" + String(format: "%.1f", game.awaySpread)
-            }
-        }
-    } else if betTypeOfButton == .over {
-        if isWholeNumber(game.totalOver) {
-            return "o" + String(format: "%.0f", game.totalOver)
-        } else {
-            return "o" + String(format: "%.1f", game.totalOver)
-        }
-    } else if betTypeOfButton == .under {
-        if isWholeNumber(game.totalUnder) {
-            return "u" + String(format: "%.0f", game.totalUnder)
-        } else {
-            return "u" + String(format: "%.1f", game.totalUnder)
-        }
-    } else {
-        switch betTypeOfButton {
-            case .betHomeSpread:
-                return "" // will never reach
-            case .betAwaySpread:
-                return "" // will never reach
-            case .over:
-                return "o\(game.totalOver)"
-            case .under:
-                return "u\(game.totalUnder)"
-            case .betHomeML:
-                return game.homeML > 100 ? "+\(game.homeML)" : "\(game.homeML)"
-            case .betAwayML:
-                return game.awayML > 100 ? "+\(game.awayML)" : "\(game.awayML)"
-            case .None:
-                return ""
-        }
-    }
-}
 
 
 struct screen2PopUp: View {
@@ -409,18 +349,27 @@ struct screen2PopUp: View {
 
             VStack {
                 popUpPill()
-                HStack(spacing: 20) {
+                HStack(spacing: 15) {
                     Button(action: {
                         onDailyChallenge = true
                     }, label: {
-                        Text("true")
+                        HStack {
+                        Text("Daily")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                            .foregroundColor(.white)
+                        }.frame(width: 150, height: 30).background(onDailyChallenge ? K.finalColor.titleBlue : K.finalColor.cardBlue).cornerRadius(7.5)
+
                     })
                     Button(action: {
                         onDailyChallenge = false
                     }, label: {
-                        Text("false")
+                        HStack {
+                            Text("Personal")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                .foregroundColor(.white)
+                        }.frame(width: 150, height: 30).background(!onDailyChallenge ? K.finalColor.titleBlue : K.finalColor.cardBlue).cornerRadius(7.5)
                     })
-                }
+                }.padding(.vertical, 10)
                 if onDailyChallenge {
                     dailyChallengeSubmitView(game: game, betType: $betType, viewModel: viewModel, showingSheet: $showingSheet)
                 } else {

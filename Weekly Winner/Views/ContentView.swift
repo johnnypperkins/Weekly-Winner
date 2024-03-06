@@ -8,33 +8,63 @@
 import SwiftUI
 
 struct ContentView: View {
-    @ObservedObject var viewModel = authenticationViewModel()
+    @ObservedObject var viewModel = authenticationViewModel() // Assuming your view model's name starts with an uppercase letter
+    @State private var shouldTransitionToTabBarView = false
+
     var body: some View {
-        NavigationStack{
+        NavigationStack {
             VStack {
-                if viewModel.userSession != nil { // changing from currUser to userSession bc immediate - Reid
-                    if viewModel.currUser?.username == "" || viewModel.currUser?.username == nil{
+                if viewModel.userSession != nil {
+                    if viewModel.currUser?.username == nil {
+                       // if !shouldTransitionToTabBarView {
+                            viewTest()
+                                .onAppear {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                        // This will be executed after a delay of 5 seconds
+                                        self.shouldTransitionToTabBarView = true
+                                    }
+                                }
+                        //}
+                    } else if viewModel.currUser?.username == "" {
                         profilePhotoSelectorView(model: viewModel)
-                    } else {
+                    } else if shouldTransitionToTabBarView {
+                        // Transition to tabBarView after the delay
                         tabBarView(selection: .dashboard)
                     }
                 } else {
                     authenticationView()
                 }
-
-            }            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                .background(Color(red: 0.02, green: 0.05, blue: 0.26))
+            }
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+            .background(Color(red: 0.02, green: 0.05, blue: 0.26))
             .environmentObject(viewModel)
             .ignoresSafeArea(.all)
-        }            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-            .navigationBarBackButtonHidden()
-
-            
+        }
+        .navigationBarBackButtonHidden()
     }
 }
+
+// Ensure your other view structures like viewTest, profilePhotoSelectorView, and tabBarView are correctly defined elsewhere in your code.
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+    }
+}
+
+struct viewTest: View {
+    var body: some View {
+        VStack {
+            Text("Loading...")
+                .font(Font.custom(K.customFonts.lexendDecaSB, size: 30).weight(.semibold))
+                .foregroundColor(K.finalColor.titleBlue)
+        }
+    }
+}
+
+extension Array {
+    subscript (safe index: Int) -> Element? {
+        return indices.contains(index) ? self[index] : nil
     }
 }

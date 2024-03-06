@@ -19,9 +19,6 @@ struct UserProfileView: View {
     @State var timeFrame = "daily"
     @StateObject private var prizesVM = prizesViewModel()
 
-    
-
-    
     var body: some View {
         VStack(spacing: 12) {
 

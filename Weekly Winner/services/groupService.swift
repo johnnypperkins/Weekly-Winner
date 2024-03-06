@@ -593,6 +593,7 @@ class groupService {
                 tickets.sort { $0.groupNumber < $1.groupNumber }
                 print("HEREEEE")
                 print(tickets)
+              
                 
                 completion(tickets, nil)
             }

@@ -86,7 +86,7 @@ struct dailyChallengeSubmitView: View {
                     betType: $betType,
                     game: game,
                     checkTeamTaken: checkTeamTaken)
-                
+                Spacer()
                 Button(action: {
                     viewModel.uploadBet(
                         groupNumber: groupNumber,
@@ -122,13 +122,14 @@ struct dailyChallengeSubmitView: View {
                             .padding(.horizontal)
                         
                     }.frame(height: 50).background(placeBetColor).cornerRadius(7.5)
+                        .padding(.bottom, 20)
 
                  
                 })
                 .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) || (game.commenceTime.seconds > (midnightTimestamp.seconds + 86400) && timeFrame == "daily"))
                 .padding(.horizontal)
                 
-                Spacer()
+                
                 
             }
             
@@ -184,110 +185,16 @@ struct dailyChallengeSubmitView: View {
 struct BetSliderView: View {
     let game: Game
     var parlaySize: Int
-    //var extra: String
-    var internalExtra: String {
-        if chosenSpread < 0 {
-                return ""
-            } else {
-                switch betType {
-                case .betHomeSpread:
-                    return "+"
-                case .betAwaySpread:
-                    return "+"
-                case .betHomeML:
-                    return "+"
-                case .betAwayML:
-                    return "+"
-                case .over:
-                    return "o"
-                case .under:
-                    return "u"
-                default:
-                    return ""
-                }
-            }
-    }
-    
-    var spreadExtension: Double {
-        print("Parlay size: ", parlaySize)
-        if parlaySize == 1 {
-            return 15
-        } else if parlaySize == 2 {
-            return 4
-        } else if parlaySize == 3 {
-            return 1
-        } else if parlaySize == 4 || parlaySize == 5 {
-            return -1
-        }
-        
-        return 10
-    }
-    var step: Int {
-        if betType == .over {
-            return -1
-        } else {
-            return 1
-        }
-    }
-    
 
     var betType: BetType
     @Binding var chosenSpread: Double
     
-    var teamString: String {
-        if betType == .betHomeML || betType == .betHomeSpread {
-            return "\(game.homeTeam)"
-        } else if betType == .betAwayML || betType == .betAwaySpread {
-            return "\(game.awayTeam)"
-        } else {
-            return "\(game.homeTeam)" + "/" + "\(game.awayTeam)"
-        }
-    }
-    
-    var MLString: String {
-        if betType == .betHomeML {
-            return game.homeML > 0 ? "+\(game.homeML)" : "\(game.homeML)"
-        } else if betType == .betAwayML {
-            return game.awayML > 0 ? "+\(game.awayML)" : "\(game.awayML)"
-        } else if betType == .betHomeSpread {
-            return game.homeSpreadODDS > 0 ? "+\(game.homeSpreadODDS)" : "\(game.homeSpreadODDS)"
-        } else if betType == .betAwaySpread {
-            return game.awaySpreadODDS > 0 ? "+\(game.awaySpreadODDS)" : "\(game.awaySpreadODDS)"
-        } else if betType == .over {
-            return game.totalOverODDS > 0 ? "+\(game.totalOverODDS)" : "\(game.totalOverODDS)"
-        } else if betType == .under {
-            return game.totalUnderODDS > 0 ? "+\(game.totalUnderODDS)" : "\(game.totalUnderODDS)"
-        } else {
-            return ""
-        }
-    }
-    var spreadString: String {
-        switch betType {
-        case .betHomeSpread:
-            return isWholeNumber(game.homeSpread) ? String(format: "%.0f", game.homeSpread) : String(game.homeSpread)
-        case .betAwaySpread:
-            return isWholeNumber(game.awaySpread) ? String(format: "%.0f", game.awaySpread) : String(game.awaySpread)
-        case .over:
-            return isWholeNumber(game.totalOver) ? String(format: "%.0f", game.totalOver) : String(game.totalOver)
-        case .under:
-            return isWholeNumber(game.totalUnder) ? String(format: "%.0f", game.totalUnder) : String(game.totalUnder)
-        case .betHomeML:
-            return "ML"
-        case .betAwayML:
-            return "ML"
-        case .None:
-            return ""
-        }
-    }
-    
     var body: some View {
         
         HStack(spacing: 7.5) {
-            
-            teamMiniView(teamString: teamString)
-            oddsMiniView(betType: betType, internalExtra: internalExtra, spreadString: spreadString)
-            MLMiniView(MLString: MLString)
-            
+            teamMiniView(teamString: returnTeamString(game: game, betType: betType))
+            spreadMiniView(betType: betType, spreadString: returnSpreadString(game: game, betType: betType))
+            oddsMiniView(MLString: returnMLString(game: game, betType: betType))
         }
         
     }
@@ -364,7 +271,7 @@ struct chooseWagerBetDetailsView: View {
                                                     .foregroundColor(K.finalColor.textWhite)
                                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
                                             }.frame(width: 170, height: 30)
-                                                .padding(.top, 5)
+                                                //.padding(.top, 5)
                                                 .background(betNumber == index+1 ? K.finalColor.titleBlue : K.veryLightGray.opacity(0.4))
                                                 .cornerRadius(5)
                                         })

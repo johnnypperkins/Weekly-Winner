@@ -35,10 +35,10 @@ struct splashScreenView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color(red: 0.02, green: 0.05, blue: 0.26))
                 .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.6) {
-                        withAnimation(.easeOut(duration: 1.4)) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+//                        withAnimation(.easeOut(duration: 1.4)) {
                             self.isActive = true
-                        }
+//                        }
                     }
                 }
             }
