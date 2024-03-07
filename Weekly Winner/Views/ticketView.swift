@@ -73,9 +73,9 @@ struct ticketView: View {
             
             VStack {
                 if uid == Auth.auth().currentUser?.uid && onTicketPage{
-                    onTicketHeader(viewModel: viewModel, 
-                                   timeFrame: $timeFrame,
-                                   uid: uid)
+//                    onTicketHeader(viewModel: viewModel, 
+//                                   timeFrame: $timeFrame,
+//                                   uid: uid)
                 } else {
                     if viewModel.isBetsLoaded {
                         offTicketHeader(viewModel: viewModel, 

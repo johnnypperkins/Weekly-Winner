@@ -47,7 +47,8 @@ struct tabBarView: View {
                                 }.tag(Tab.book)
                             
                             
-                            ticketView(username: "", uid: Auth.auth().currentUser!.uid, groupID: "", selectedWeek: "current", ticketFormatForGroups: [], ownTicket: true, onTicketPage: true, passedTimeFrame: "daily")
+//                            ticketView(username: "", uid: Auth.auth().currentUser!.uid, groupID: "", selectedWeek: "current", ticketFormatForGroups: [], ownTicket: true, onTicketPage: true, passedTimeFrame: "daily")
+                            profileView(user: authViewModel.currUser!)
                                 .ignoresSafeArea(.all)
                                 //.padding(.top)
                                 .tabItem {

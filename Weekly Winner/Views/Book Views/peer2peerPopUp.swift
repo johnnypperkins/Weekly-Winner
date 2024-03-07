@@ -40,21 +40,24 @@ struct peer2peerSlider: View {
                     .padding(.leading, 2)
                 Spacer()
             }.padding(.top)
-            HStack {
-                Text("0")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                    .foregroundColor(.white)
-                    .padding(.leading)
-                Slider(value: $wagerAmount, in: 0.0...min(StaticUserData.shared.currentUser.poolBucks, 100), step: 1) { editing in
+            if StaticUserData.shared.currentUser.poolBucks != 0 {
+                HStack {
+                    Text("0")
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                        .foregroundColor(.white)
+                        .padding(.leading)
                     
-                }.accentColor(.white)
-                    .padding()
-                Text("\(String(format: "%.0f", min(StaticUserData.shared.currentUser.poolBucks, 100)))")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                    .foregroundColor(.white)
-                    .padding(.trailing)
-            }.frame(height: 50).background(K.finalColor.cardBlue).cornerRadius(5)
-                
+                    Slider(value: $wagerAmount, in: 0.0...min(StaticUserData.shared.currentUser.poolBucks, 100), step: 1) { editing in
+                        
+                    }.accentColor(.white)
+                        .padding()
+                    
+                    Text("\(String(format: "%.0f", min(StaticUserData.shared.currentUser.poolBucks, 100)))")
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                        .foregroundColor(.white)
+                        .padding(.trailing)
+                }.frame(height: 50).background(K.finalColor.cardBlue).cornerRadius(5)
+            }
             if wagerAmount > 0 && selectedUser != nil{
                 HStack {
                     Spacer()
