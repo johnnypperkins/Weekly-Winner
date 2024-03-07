@@ -192,7 +192,7 @@ struct BetSliderView: View {
     var body: some View {
         
         HStack(spacing: 7.5) {
-            teamMiniView(teamString: returnTeamString(game: game, betType: betType))
+            teamMiniView(teamString: returnTeamString(game: game, betType: betType), challengeSender: true)
             spreadMiniView(betType: betType, spreadString: returnSpreadString(game: game, betType: betType))
             oddsMiniView(MLString: returnMLString(game: game, betType: betType))
         }

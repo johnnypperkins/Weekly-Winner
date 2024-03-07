@@ -230,6 +230,8 @@ struct challengePage1: View {
     @State private var fiveLegNum: Int = 0
     
     @ObservedObject var viewModel: challengeViewModel
+    @State private var selectedUser: User? = nil
+
     
     
     var body: some View {
@@ -297,13 +299,14 @@ struct challengePage1: View {
                     ScrollView {
                         ForEach(viewModel.queriedUsers, id: \.id) { user in
                             if user.id != StaticUserData.shared.currentUser.id {
-                                userBio(user: user, selectedUserID: $selectedUserID, selectedUserUsername: $opponentUsername)
+                                userBio(user: user, selectedUserID: $selectedUserID, selectedUserUsername: $opponentUsername, selectedUser: $selectedUser)
                                     .padding(.vertical,3)
                                     .padding(.horizontal,14)
                             }
                         }
                     }.frame(height: 115)
                         .padding(.vertical)
+                    
                     VStack {
                         CustomStepper2(value: $oneLegNum, range: 0...3, title: "\(oneLegNum == 1 ? "Bet to Fill" : "Bets to Fill")")
                             .padding(.horizontal,14)
@@ -512,35 +515,7 @@ struct challengePage2: View {
 }
 
 
-struct searchBarView: View {
-    @Binding var keyword: String
-    
-    var body: some View {
-        HStack {
-            TextField("Search", text: withAnimation{$keyword})
-                .onChange(of: keyword) { keywordd in
-                    keyword = keywordd.lowercased()
-                }
-                .placeholder(when: keyword == "", placeholder: {
-                    Text("Search Users").foregroundColor(.gray)
-                        .padding(.leading, 2)
-                })
-                .foregroundColor(.white)
-                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
-                .accentColor(.white)
-                .textInputAutocapitalization(.words)
-                .disableAutocorrection(true)
-            //.padding(.vertical, 5)
-           
-            
-        }
-        .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 15))
-        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 40, maxHeight: 40)
-        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-        .cornerRadius(7.5)
-        .padding(EdgeInsets(top: 0, leading: 14, bottom: 0, trailing: 14))
-    }
-}
+
 
 
 
@@ -694,6 +669,35 @@ struct gameRowImages: View {
     }
 }
 
+struct searchBarView: View {
+    @Binding var keyword: String
+    
+    var body: some View {
+        HStack {
+            TextField("Search", text: withAnimation{$keyword})
+                .onChange(of: keyword) { keywordd in
+                    keyword = keywordd.lowercased()
+                }
+                .placeholder(when: keyword == "", placeholder: {
+                    Text("Search Users").foregroundColor(.gray)
+                        .padding(.leading, 2)
+                })
+                .foregroundColor(.white)
+                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+                .accentColor(.white)
+                .textInputAutocapitalization(.words)
+                .disableAutocorrection(true)
+                
+            //.padding(.vertical, 5)
+           
+            
+        }
+        .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 15))
+        .frame(width: 345, height: 44)
+        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+        .cornerRadius(7.5)
+    }
+}
 
 struct userBio: View {
     var user: User
@@ -701,18 +705,12 @@ struct userBio: View {
     @State var checked = false
     @Binding var selectedUserID: String
     @Binding var selectedUserUsername: String
+    @Binding var selectedUser: User?
     
     var body: some View {
         Button {
-            withAnimation {
-                if selectedUserID == user.id {
-                    selectedUserID = "" // Deselect if already selected
-                    selectedUserUsername = ""
-                } else {
-                    selectedUserID = user.id ?? "" // Select the user
-                    selectedUserUsername = user.username
-                }
-            }
+            selectedUser = user
+            selectedUserUsername = ""
         } label: {
             ZStack {
                 VStack (spacing: 10) {
@@ -766,13 +764,23 @@ struct userBio: View {
                         }
                     }
                     .padding(.vertical, 10)
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 44, maxHeight: 44)
+                    .frame(width: 345, height: 44)
                     .background(selectedUserID == user.id ? K.finalColor.otherPurple.opacity(0.35) : K.finalColor.cardBlue)
                     .cornerRadius(10)
-                }
             }
+//            .onTapGesture {
+//                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+//                print("tapped also")
+//            }
         }
     }
+}
+
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
 
 struct currencyView: View {
     let poolCoins: Double

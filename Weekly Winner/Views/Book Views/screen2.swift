@@ -14,7 +14,7 @@ struct BettingAppView: View {
     @State private var isShowing = false
     @State private var searchTerm: String = ""
     
-    @State private var rankedCommence = true
+    @State private var rankedCommence = false
 
     func shouldAppear(search: String, input: String) -> Bool {
         return input.lowercased().contains(search.lowercased())
@@ -33,7 +33,7 @@ struct BettingAppView: View {
                     VStack(spacing: 5) {
                         // Displaying games
                         if 1 + 1 == 2 {
-                            ForEach(viewModel.allGames, id: \.self) { game in
+                            ForEach(rankedCommence ? viewModel.allGames : viewModel.allPopularGames, id: \.self) { game in
                                 if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
                                     let now = Date() // Get the current date and time
                                     if game.commenceTime.dateValue() > now {
@@ -65,7 +65,10 @@ struct BettingAppView: View {
             .padding(EdgeInsets(top: 80, leading: 0, bottom: 55, trailing: 0))
             .navigationBarHidden(false)
             .onAppear() {
-                rankedCommence = true
+                rankedCommence = false
+            }
+            .onDisappear() {
+                viewModel.getGamesCommenceTime() {}
             }
     }
     
@@ -258,7 +261,7 @@ struct gameRowView: View {
         
         .popup(isPresented: $showingSheet) {
             screen2PopUp(game: game, betType: $betType, viewModel: viewModel, showingSheet: $showingSheet)
-                .frame(height: 650)
+                .frame(height: 800)
         } customize: {
             $0
                 .type (.toast)

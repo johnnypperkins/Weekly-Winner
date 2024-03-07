@@ -10,22 +10,11 @@ import Firebase
 import FirebaseAuth
 
 class bookViewModel: ObservableObject {
-    @Published var NFLgames: [Game] = []
-    @Published var NCAAFGames: [Game] = []
-    @Published var NBAGames: [Game] = []
-    @Published var NCAABGames: [Game] = []
-    @Published var NHLGames: [Game] = []
-    @Published var allGames: [Game] = []
-    
-    @Published var NFLgamesPopular: [Game] = []
-    @Published var NCAAFGamesPopular: [Game] = []
-    @Published var NBAGamesPopular: [Game] = []
-    @Published var NCAABGamesPopular: [Game] = []
-    @Published var NHLGamesPopular: [Game] = []
-    @Published var allGamesPopular: [Game] = []
 
-    @Published var queriedUsers: [User] = []
+    @Published var allGames: [Game] = []
+    @Published var allPopularGames: [Game] = []
     
+    @Published var queriedUsers: [User] = []
     
     @Published var userTickets: [Ticket] = [] //ticket99
     @Published var isTicketsLoaded = false  // Add this line
@@ -36,7 +25,6 @@ class bookViewModel: ObservableObject {
     
 
     private let betService = BetService()
-//    private let groupServe = groupService()
     private let db = Firestore.firestore()
         
     init() {
@@ -51,19 +39,7 @@ class bookViewModel: ObservableObject {
         case NHL = "NHL"
     }
     
-//    func combineGamesCommence() {
-//        // Combine all games
-//        var combinedGames = NFLgames + NCAAFGames + NBAGames + NCAABGames + NHLGames
-//
-//        // Sort the combined array based on commencement time
-//        combinedGames.sort { game1, game2 in
-//            return game1.commenceTime.dateValue() < game2.commenceTime.dateValue()
-//        }
-//        
-//         allGames = combinedGames
-//        
-//    }
-    
+
     func fetchUser(from keyword: String) {
         db.collection("users").whereField("keywordsForLookup", arrayContains: keyword).limit(to: 5).getDocuments { querySnapshot, error in
             guard let documents = querySnapshot?.documents, error == nil else {return}
@@ -76,29 +52,22 @@ class bookViewModel: ObservableObject {
     
     func getGamesCommenceTime(completion: @escaping () -> Void) {
         self.allGames.removeAll()
+        self.allPopularGames.removeAll()
         betService.getGamesCommenceTime() { [weak self] games in
             guard let self = self else { return }
             let now = Date() // Get the current date and time
             for game in games {
                 self.allGames.append(game) // Append game to allGames array
+                if game.total_plays > 0 {
+                    self.allPopularGames.append(game)
+                }
             }
+            allPopularGames.sort { $0.total_plays > $1.total_plays }
             completion()
         }
     }
 
-    
-//    func combineGamesPopular() {
-//        // Combine all games
-//        var combinedGamesPopular = NFLgamesPopular + NCAAFGamesPopular + NBAGamesPopular + NCAABGamesPopular + NHLGamesPopular
-//        
-//        // Sort the combined array based on commencement time
-//        combinedGamesPopular.sort { game1, game2 in
-//            return game1.total_plays > game2.total_plays
-//        }
-//         allGamesPopular = combinedGamesPopular
-//    }
-    
-    
+
     
     func uploadBet(groupNumber: Int, groupID: String, betNumber: Int, team: String, betLine: Double, betOdds: Double, betType: BetType, gameID: String, whichSport: String, points_bought: Int, timeFrame: String, completion: @escaping (Error?) -> Void) {
             // Prepare the data to upload
@@ -129,67 +98,7 @@ class bookViewModel: ObservableObject {
             }
         }
     }
-
-    
-//    func getGamesMostPopular(whichSport: String, completion: @escaping () -> Void) {
-//        Firestore.firestore().collection("Book").document(whichSport).collection("games")
-//            .order(by: "total_plays", descending: true)
-//            .addSnapshotListener {  querySnapshot, error in
-//                guard (querySnapshot?.documents) != nil else {
-//                    print("Error fetching documents: \(error?.localizedDescription ?? "Unknown error")")
-//                    completion() // Call the completion handler in case of an error
-//                    return
-//                }
-//                
-//                var games: [Game] = []
-//                
-//                if let snapshotDocuments = querySnapshot?.documents {
-//                    for doc in snapshotDocuments {
-//                        let data = doc.data()
-//                        if let idd = data["id"] as? String,
-//                           let commenceTime = data["commenceTime"] as? Timestamp,
-//                           let totalOver = data["totalOver"] as? Double,
-//                           let totalUnder = data["totalUnder"] as? Double,
-//                           let homeTeam = data["homeTeam"] as? String,
-//                           let awayTeam = data["awayTeam"] as? String,
-//                           let homeSpread = data["homeSpread"] as? Double,
-//                           let awaySpread = data["awaySpread"] as? Double,
-//                           let homeTeamScore = data["homeTeamScore"] as? Int,
-//                           let awayTeamScore = data["awayTeamScore"] as? Int,
-//                           let whichSport = data["whichSport"] as? String? ?? "",
-//                           let bet_statistics = data["bet_statistics"] as? [Int],
-//                           let total_plays = data["total_plays"] as? Int
-//                        {
-//                            let newGame = Game(idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: false, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays)
-//                            if total_plays > 0 {
-//                                games.append(newGame)
-//                            }
-//                        }
-//                    }
-//                }
-//
-//                if (whichSport == "NFL") {
-//                    self.NFLgamesPopular = games
-//                } else if (whichSport == "NCAAF") {
-//                    self.NCAAFGamesPopular = games
-//                } else if (whichSport == "NBA") {
-//                    self.NBAGamesPopular = games
-//                } else if (whichSport == "NCAAB") {
-//                    self.NCAABGamesPopular = games
-//                } else if (whichSport == "NHL") {
-//                    self.NHLGamesPopular = games
-//                }
-//                
-//                completion() // Call the completion handler once the games are populated
-//            }
-//    }
-
-    
-
-    
-    
 }
-
 
 
 /// ALL BOOK RELATED STATIC FUNCTIONS
