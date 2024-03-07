@@ -250,6 +250,19 @@ struct ticketView: View {
                     }
                     Spacer()
                 }.padding(.top, 6)
+                Button(action: {
+                    viewModel.isFollow.toggle()
+                }, label: {
+                    HStack {
+                        Text(viewModel.isFollow ? "Follow" : "Unfollow")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                            .foregroundColor(viewModel.isFollow ? K.finalColor.cardBlue : K.finalColor.titleBlue)
+                            .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                    }.frame(width: 200, height: 60)
+                        .background(viewModel.isFollow ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                        .cornerRadius(5)
+                    
+                })
                 
                 HStack (spacing: 5){
                     Button(action: {

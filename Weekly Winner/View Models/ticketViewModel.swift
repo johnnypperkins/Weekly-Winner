@@ -26,16 +26,103 @@ class ticketViewModel: ObservableObject {
 
     private var db = Firestore.firestore()
     private var listener: ListenerRegistration?
+    private let uService = userService()
     
     private let groupServe = groupService()
     @Published var userTickets: [Ticket] = [] // Ticket99
     @Published var stats: Stats? = nil
     @Published var profilePicUrl: String = ""
     @Published var userInfo: User? = nil
+    @Published var isFollow: Bool = false
+    @Published var followerCount: Int = 0
     
     init() {
-        
+        Task{
+            await self.isFollowedd(id: StaticUserData.shared.currentUser.id!)
+        }
     }
+    
+    
+    func isFollowedd (id: String) async  {
+        var iss = true
+        let db = Firestore.firestore()
+        
+        // Get a reference to the document to be read
+        let docRef = db.collection("users").document(Auth.auth().currentUser!.uid)
+        Task{
+            try await docRef.getDocument { (document, error) in
+                if let document = document, document.exists {
+                    let data = document.data()
+                    guard let array = data?["friends"] as? [String]
+                    else {docRef.setData(["friends": []], merge: true) { error in
+                        if let error = error {
+                            print("Error creating array field: \(error)")
+                        } else {
+                            print("Array field created successfully.")
+                        }
+                        
+                    }
+                        return
+                    }
+                    
+                    
+                    // Check if the string is in the array field
+                    if array.contains(id) {
+                        print("The string is in the array.")
+                        self.isFollow = true
+                    } else {
+                        print("The string is not in the array.")
+                        self.isFollow = false
+                    }
+                }
+            }
+            
+        }
+    }
+    
+    func follow () {
+        uService.Follow(uid: Auth.auth().currentUser?.uid ?? "", id: userInfo!.id!)
+        isFollow = true
+        Task{
+            await getCountOfStringsInArrayField(user1: StaticUserData.shared.currentUser)
+        }
+    }
+    
+    func unfollow () {
+        uService.unfollow(uid: Auth.auth().currentUser?.uid ?? "", id: userInfo!.id!)
+        isFollow = false
+        Task{
+            await getCountOfStringsInArrayField(user1: StaticUserData.shared.currentUser)
+        }
+    }
+    
+    func getCountOfStringsInArrayField(user1: User) async{
+        let count = 0
+        // Assuming you have a reference to your Firebase Firestore database
+        let db = Firestore.firestore()
+
+        // Replace "yourCollection" with the name of your collection
+        // and "yourDocumentID" with the ID of the document you want to fetch
+        let docRef = db.collection("users").document(user1.id!)
+
+        // Fetch the document
+        Task{
+            await docRef.getDocument { (document, error) in
+                if let document = document, document.exists {
+                    if let array = document.get("friends") as? [String] {
+                        // Access the array field and get the count
+                        self.followerCount = array.count
+                        print("Count of strings in array: \(count)")
+                    } else {
+                        print("Array field not found or not of type [String]")
+                    }
+                } else {
+                    print("Document does not exist")
+                }
+            }
+                
+            }
+        }
     
     func fetchUserProfilePic(uid: String, completion: @escaping () -> Void) {
         //let db = Firestore.firestore()
@@ -52,6 +139,8 @@ class ticketViewModel: ObservableObject {
             }
         }
     }
+    
+    
     
     func fetchUserInformation(uid: String, completion: @escaping () -> Void) {
         let db = Firestore.firestore()
