@@ -19,6 +19,7 @@
 		3C5F715E2A7983CB00B3AB4C /* LexendDeca-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3C5F715D2A7983CA00B3AB4C /* LexendDeca-Light.ttf */; };
 		3C7C708A2A92F38600C7C9DB /* globalPrizesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7C70892A92F38600C7C9DB /* globalPrizesView.swift */; };
 		3C7C708C2A92F5F800C7C9DB /* prizesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C7C708B2A92F5F800C7C9DB /* prizesViewModel.swift */; };
+		3C86F93A2B9C083500990049 /* peer2peerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C86F9392B9C083500990049 /* peer2peerViewModel.swift */; };
 		3C8E5C912B3FEE1F0075B300 /* inAppPurchaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8E5C902B3FEE1E0075B300 /* inAppPurchaseView.swift */; };
 		3C8E5C932B43AA8A0075B300 /* challengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8E5C922B43AA8A0075B300 /* challengeView.swift */; };
 		3C8E5C952B43C28C0075B300 /* challengeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8E5C942B43C28C0075B300 /* challengeViewModel.swift */; };
@@ -143,6 +144,7 @@
 		3C5F715D2A7983CA00B3AB4C /* LexendDeca-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LexendDeca-Light.ttf"; sourceTree = "<group>"; };
 		3C7C70892A92F38600C7C9DB /* globalPrizesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = globalPrizesView.swift; sourceTree = "<group>"; };
 		3C7C708B2A92F5F800C7C9DB /* prizesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = prizesViewModel.swift; sourceTree = "<group>"; };
+		3C86F9392B9C083500990049 /* peer2peerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = peer2peerViewModel.swift; sourceTree = "<group>"; };
 		3C8E5C902B3FEE1E0075B300 /* inAppPurchaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = inAppPurchaseView.swift; sourceTree = "<group>"; };
 		3C8E5C922B43AA8A0075B300 /* challengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = challengeView.swift; sourceTree = "<group>"; };
 		3C8E5C942B43C28C0075B300 /* challengeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = challengeViewModel.swift; sourceTree = "<group>"; };
@@ -331,6 +333,7 @@
 				3C7C708B2A92F5F800C7C9DB /* prizesViewModel.swift */,
 				3C972C892B2FC07100671D0F /* screen1ViewModel.swift */,
 				3C065BA92AC714C40040D6CE /* statsViewModel.swift */,
+				3C86F9392B9C083500990049 /* peer2peerViewModel.swift */,
 			);
 			path = "View Models";
 			sourceTree = "<group>";
@@ -675,6 +678,7 @@
 				3C91B6C62A58BA0E00398F53 /* UI Misc.swift in Sources */,
 				8668B3112A2EE9CF00A1B343 /* bookViewModel.swift in Sources */,
 				86E989C32B58577E000B2DB4 /* challengeDetails.swift in Sources */,
+				3C86F93A2B9C083500990049 /* peer2peerViewModel.swift in Sources */,
 				3CB1AC8B2A61602700C931CA /* Group.swift in Sources */,
 				868FDA8F2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift in Sources */,
 				866FFFA82AFE630E00A0CA13 /* SignupIntro.swift in Sources */,

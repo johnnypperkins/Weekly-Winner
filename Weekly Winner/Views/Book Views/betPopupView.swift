@@ -195,7 +195,7 @@ struct BetSliderView: View {
             teamMiniView(teamString: returnTeamString(game: game, betType: betType), challengeSender: true)
             spreadMiniView(betType: betType, spreadString: returnSpreadString(game: game, betType: betType))
             oddsMiniView(MLString: returnMLString(game: game, betType: betType))
-        }
+        }.frame(width: 345)
         
     }
 }

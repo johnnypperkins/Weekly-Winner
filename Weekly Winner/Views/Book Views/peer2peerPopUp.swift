@@ -8,71 +8,149 @@
 import Foundation
 import SwiftUI
 import Kingfisher
+import Firebase
 
 struct peer2peerSubmitPage: View {
     let game: Game
     let betType: BetType
-    let viewModel: bookViewModel
     @State var wagerAmount = 0.0
     @State private var selectedUser: User? = nil
+    
+    @ObservedObject var viewModel = peer2peerViewModel()
+
 
     var body: some View {
-        
-            VStack {
-                twoWagers(game: game, parlaySize: 1, viewModel: viewModel, betType: betType, wagerAmount: $wagerAmount, selectedUser: $selectedUser)
-                peer2peerSlider(wagerAmount: $wagerAmount, selectedUser: $selectedUser)
-                Spacer()
-            }
-        
+        VStack {
+            twoWagers(game: game, parlaySize: 1, viewModel: viewModel, betType: betType, wagerAmount: $wagerAmount, selectedUser: $selectedUser)
+            peer2peerSlider(wagerAmount: $wagerAmount, selectedUser: $selectedUser, viewModel: viewModel, game: game)
+            Spacer()
+        }.onAppear() {
+            viewModel.setSelectedBet(bet:
+                    Bet(groupNumber: 1,
+                        groupID: "",
+                        betNumber: 0,
+                        betType: betType,
+                        teamBetOn: "afdasd", // make simple function to return team from bettype
+                        betLine: Float(returnSpreadFromBetType(betType: betType, game: game)),
+                        betOdds: Float(returnOddsFromBetType(betType: betType, game: game)), // prob some function somewhere will find
+                        result: .notStarted,
+                        gameID: game.idd,
+                        whichSport: game.whichSport,
+                        timestamp: Timestamp(date: Date()),
+                        points_bought: 0))
+            
+            viewModel.setSenderDirectTicket(senderTicket: DirectChallengeTicket(
+                customID: "", // WONT BE USED
+                senderUsername: StaticUserData.shared.currentUser.username,
+                senderID: StaticUserData.shared.currentUser.id!,
+                senderOdds: returnOddsFromBetType(betType: betType, game: game),
+                senderBetType: betType,
+                senderWagerAmount: -99, // WILL ADJUST
+
+                receiverUsername: "", // WILL ADJUST
+                receiverID: "", // WILL ADJUST
+                receiverOdds: returnOddsFromBetType(betType: returnOppBetType(betType: betType), game: game),
+                receiverBetType: returnOppBetType(betType: betType),
+                receiverWagerAmount: -99, // WILL ADJUST
+
+                dateCreated: Timestamp(date: Date()),
+                currencyChosen: "poolBucks",
+                status: challengeStatus.pendingAcceptance.rawValue,
+                gameIDs: [game.idd],
+                challengeType: "straight1v1"
+            ))
+        }
     }
 }
 
 struct peer2peerSlider: View {
     @Binding var wagerAmount: Double
     @Binding var selectedUser: User?
+    @ObservedObject var viewModel: peer2peerViewModel
+    let game: Game
 
     var body: some View {
         VStack (spacing: 5){
-            HStack {
-                Text("Wager Amount")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
-                    .foregroundColor(.white)
-                    .padding(.leading, 2)
-                Spacer()
-            }.padding(.top)
-            if StaticUserData.shared.currentUser.poolBucks != 0 {
-                HStack {
-                    Text("0")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                        .foregroundColor(.white)
-                        .padding(.leading)
-                    
-                    Slider(value: $wagerAmount, in: 0.0...min(StaticUserData.shared.currentUser.poolBucks, 100), step: 1) { editing in
-                        
-                    }.accentColor(.white)
-                        .padding()
-                    
-                    Text("\(String(format: "%.0f", min(StaticUserData.shared.currentUser.poolBucks, 100)))")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                        .foregroundColor(.white)
-                        .padding(.trailing)
-                }.frame(height: 50).background(K.finalColor.cardBlue).cornerRadius(5)
-            }
-            if wagerAmount > 0 && selectedUser != nil{
-                HStack {
-                    Spacer()
-                    Text("Send Challenge")
-                        .foregroundColor(.white)
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
-                        .padding(.horizontal)
-                    Spacer()
-                }.frame(height: 50).background(K.finalColor.winningGreen).cornerRadius(7.5).padding(.horizontal)
-                    .padding(.top)
-            }
-      
-        }.frame(width: 345)
-        
+            if selectedUser != nil {
+                    HStack {
+                        Text("Wager Amount")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                            .foregroundColor(.white)
+                            .padding(.leading, 2)
+                        Spacer()
+                    }.padding(.top)
+                    if StaticUserData.shared.currentUser.poolBucks >= 1 {
+                        HStack {
+                            VStack (spacing:0) {
+                                Text("0")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                    .foregroundColor(.white)
+                                    .padding(.leading)
+                                
+                                Image("poolBuck")
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+                                    .padding(.leading)
+                            }
+                            
+                            Slider(value: $wagerAmount, in: 0.0...min(StaticUserData.shared.currentUser.poolBucks, 100), step: 1) { editing in
+                                
+                            }.accentColor(.white)
+                                .padding()
+                            VStack (spacing: 0) {
+                                Text("\(String(format: "%.0f", min(StaticUserData.shared.currentUser.poolBucks, 100)))")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                    .foregroundColor(.white)
+                                    .padding(.trailing)
 
+                                Image("poolBuck")
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+                                    .padding(.trailing)
+                                
+                            }
+                        }.frame(height: 50).background(K.finalColor.cardBlue).cornerRadius(5)
+                    } else {
+                        HStack {
+                            Spacer()
+                            Image("poolBuck")
+                                .resizable()
+                                .frame(width: 25, height: 25)
+                                .padding(.horizontal, 3)
+                            Text("Need PoolBucks")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                .foregroundColor(.white)
+                                .padding(.leading, 2)
+                            Image("poolBuck")
+                                .resizable()
+                                .frame(width: 25, height: 25)
+                                .padding(.horizontal, 3)
+                            Spacer()
+                        }.frame(height: 50).background(K.finalColor.cardBlue).cornerRadius(5)
+                    }
+
+                if wagerAmount > 0 && selectedUser != nil{
+                    Button(action: {
+                        viewModel.sendChallenge(receiverUser: selectedUser!, senderWagerAmount: Int(wagerAmount), game: game) {}
+                    }, label: {
+                        HStack {
+                            Spacer()
+                       
+                            Text("Send Challenge")
+                                .foregroundColor(.white)
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                .padding(.horizontal)
+                            Spacer()
+                        }.frame(height: 50).background(K.finalColor.winningGreen).cornerRadius(7.5).padding(.horizontal)
+                            .padding(.top)
+                    })
+           
+                }
+            }
+        }.frame(width: 345)
+            .onChange(of: wagerAmount) { newWagerAmount in
+                viewModel.senderDirectTicket?.senderWagerAmount = newWagerAmount
+            }
         
     }
 }
@@ -80,7 +158,7 @@ struct peer2peerSlider: View {
 struct twoWagers: View {
     let game: Game
     var parlaySize: Int
-    var viewModel: bookViewModel
+    var viewModel: peer2peerViewModel
     var betType: BetType
     @Binding var wagerAmount: Double
     
@@ -100,78 +178,81 @@ struct twoWagers: View {
         )
         
         //ScrollView {
-            VStack (spacing: 3){
-                ZStack {
-                    VStack {
-                        searchBarView(keyword: keywordBinding)
-                            .frame(height: selectedUser == nil ? 44 : 0)
-                            .disabled(selectedUser == nil ? false : true)
-                            .opacity(selectedUser == nil ? 1 : 0)
-                            
-                        ScrollView {
-                            VStack {
-                                ForEach(viewModel.queriedUsers, id: \.id) { user in
-                                    if user.id != StaticUserData.shared.currentUser.id {
-                                        
-                                        userBio(user: user, selectedUserID: $selectedUserID, selectedUserUsername: $opponentUsername, selectedUser: $selectedUser)
-                                            .padding(.vertical,3)
-                                            .padding(.horizontal,14)
-                                    }
-                                }
-                            }
-                        }.frame(height: selectedUser == nil ? 115 : 0)
-                            .padding(.vertical)
-                    }
-                    if selectedUser != nil {
+        VStack (spacing: 3){
+            ZStack {
+                VStack {
+                    searchBarView(keyword: keywordBinding)
+                        .frame(height: selectedUser == nil ? 44 : 0)
+                        .disabled(selectedUser == nil ? false : true)
+                        .opacity(selectedUser == nil ? 1 : 0)
+                    
+                    ScrollView {
                         VStack {
-                            HStack {
-                                Text("Selected Opponent")
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
-                                    .foregroundColor(.white)
-                                    .padding(.leading,3)
-                                Spacer()
-                                Button(action: {
-                                    selectedUser = nil
-                                }, label: {
-                                    HStack {
-                                        Text("Change")
-                                            .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
-                                            .foregroundColor(.white)
-                                            .padding(EdgeInsets(top: 3, leading: 5, bottom: 3, trailing: 5))
-                                    }.background(K.finalColor.potentialOrange).cornerRadius(5)
-                                })
-                            }
-                            HStack {
-                                Spacer()
-                                if selectedUser?.profileImageUrl != "" {
-                                    KFImage(URL(string: selectedUser!.profileImageUrl))
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .clipShape(Circle())
-                                        .frame(width: 30, height: 30)
-                                } else {
-                                    Image(systemName: "photo.circle.fill")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 30, height: 30)
-                                        .background(K.finalColor.tabSelectedBlue)
-                                        .clipShape(Circle())
+                            ForEach(viewModel.queriedUsers, id: \.id) { user in
+                                if user.id != StaticUserData.shared.currentUser.id {
                                     
+                                    userBio(user: user, selectedUserID: $selectedUserID, selectedUserUsername: $opponentUsername, selectedUser: $selectedUser)
+                                        .padding(.vertical,3)
+                                        .padding(.horizontal,14)
                                 }
-                                Text("\(selectedUser?.username ?? "")")
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
-                                    .foregroundColor(.white)
-                                Spacer()
-                            }.frame(height: 50).background(K.finalColor.cardBlue).cornerRadius(7.5)
-                        }.frame(width: 345)
-                            .padding(.top)
-           
-                            
-                    }
-                }.onChange(of: selectedUser) { _ in
-                        hideKeyboard()
+                            }
+                        }
+                    }.frame(height: selectedUser == nil ? 70 : 0)
+                        .padding(.bottom)
                 }
-                
+                if selectedUser != nil {
+                    VStack {
+                        HStack {
+                            Text("Selected Opponent")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                                .foregroundColor(.white)
+                                .padding(.leading,3)
+                            Spacer()
+                            Button(action: {
+                                selectedUser = nil
+                            }, label: {
+                                HStack {
+                                    Text("Change")
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                                        .foregroundColor(.white)
+                                        .padding(EdgeInsets(top: 3, leading: 5, bottom: 3, trailing: 5))
+                                }.background(K.finalColor.potentialOrange).cornerRadius(5)
+                            })
+                        }
+                        HStack {
+                            Spacer()
+                            if selectedUser?.profileImageUrl != "" {
+                                KFImage(URL(string: selectedUser!.profileImageUrl))
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .clipShape(Circle())
+                                    .frame(width: 30, height: 30)
+                            } else {
+                                Image(systemName: "photo.circle.fill")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 30, height: 30)
+                                    .background(K.finalColor.tabSelectedBlue)
+                                    .clipShape(Circle())
+                                
+                            }
+                            Text("\(selectedUser?.username ?? "")")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                .foregroundColor(.white)
+                            Spacer()
+                        }.frame(height: 50).background(K.finalColor.cardBlue).cornerRadius(7.5)
+                    }.frame(width: 345)
+                        .padding(.top)
+                    
+                    
+                }
+            }.onChange(of: selectedUser) { _ in
+                hideKeyboard()
+                viewModel.senderDirectTicket?.receiverID = selectedUser?.id ?? ""
+                viewModel.senderDirectTicket?.receiverUsername = selectedUser?.username ?? ""
+            }
+        }
+            VStack  (spacing: 3){
                 HStack {
                     Text("Your Wager")
                         .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
@@ -186,7 +267,7 @@ struct twoWagers: View {
                         spreadMiniView(betType: betType, spreadString: returnSpreadString(game: game, betType: betType))
                         oddsMiniView(MLString: returnMLString(game: game, betType: betType))
                         
-                    }
+                    }.frame(width: 345)
                     HStack(spacing: 7.5) {
                         riskMiniStruct(game: game, betType: betType, challengeSender: true, challengerOdds: returnOddsFromBetType(betType: betType, game: game),
                                        receiverOdds: returnOddsFromBetType(betType: returnOppBetType(betType: betType), game: game), wagerAmount: $wagerAmount) // dont need here since you are one sending
@@ -222,11 +303,10 @@ struct twoWagers: View {
                             spreadString: returnSpreadString(game: game, betType: returnOppBetType(betType: betType))
                         )
                         
-                        
                         teamMiniView(
                             teamString: returnTeamString(game: game, betType: returnOppBetType(betType: betType)), challengeSender: false
                         )
-                    }
+                    }.frame(width: 345)
                     HStack(spacing: 7.5) {
                         riskMiniStruct(
                             game: game,
@@ -248,7 +328,7 @@ struct twoWagers: View {
                     }.frame(width: 345)
                 }
             }.padding(.top, 7.5)
-        //}/*.frame(height: 800)*/
+        
         
     }
 }
@@ -258,13 +338,13 @@ struct teamMiniView: View {
     let challengeSender: Bool
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Spacer()
-                Text("Team")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
-                    .foregroundColor(.white)
-                Spacer()
-            }.frame(height: 15).background(K.finalColor.tabSelectedBlue)
+//            HStack {
+//                Spacer()
+//                Text("Team")
+//                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+//                    .foregroundColor(.white)
+//                Spacer()
+//            }.frame(height: 15).background(K.finalColor.tabSelectedBlue)
             HStack {
                 Spacer()
                 Text("\(teamString)")
@@ -286,13 +366,13 @@ struct spreadMiniView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Spacer()
-                Text(betType == .over || betType == .under ? "Total" : "Spread")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
-                    .foregroundColor(.white)
-                Spacer()
-            }.frame(height: 15).background(K.finalColor.tabSelectedBlue)
+//            HStack {
+//                Spacer()
+//                Text(betType == .over || betType == .under ? "Total" : "Spread")
+//                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+//                    .foregroundColor(.white)
+//                Spacer()
+//            }.frame(height: 15).background(K.finalColor.tabSelectedBlue)
             HStack {
                 Spacer()
                 Text(spreadString)
@@ -301,7 +381,7 @@ struct spreadMiniView: View {
                     .lineLimit(3)
                 Spacer()
             }.frame(height: 50).background(K.finalColor.cardBlue)
-        }.frame(width: 65).cornerRadius(5)
+        }.cornerRadius(5)
     }
 }
 
@@ -310,13 +390,13 @@ struct oddsMiniView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Spacer()
-                Text("Odds")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
-                    .foregroundColor(.white)
-                Spacer()
-            }.frame(height: 15).background(K.finalColor.tabSelectedBlue)
+//            HStack {
+//                Spacer()
+//                Text("Odds")
+//                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+//                    .foregroundColor(.white)
+//                Spacer()
+//            }.frame(height: 15).background(K.finalColor.tabSelectedBlue)
             HStack {
                 Spacer()
                 Text(MLString)
@@ -325,7 +405,7 @@ struct oddsMiniView: View {
                     .lineLimit(3)
                 Spacer()
             }.frame(height: 50).background(K.finalColor.cardBlue)
-        }.frame(width: 65).cornerRadius(5)
+        }.cornerRadius(5)
 
     }
 }
@@ -400,40 +480,5 @@ struct rewardMiniStruct: View {
 }
 
 
-func returnOpponentWagerAmount(wagerAmount: Double, odds1: Int, odds2: Int, betType: BetType, game: Game) -> Double {
-    if odds1 >= -110 && odds1 <= -100 && odds2 >= -110 && odds2 <= -100 { // if -107/-103 or -105, -105, then just keep it simple and make users have same amount to potentially win
-        return wagerAmount
-    } else { // if something like -170 and +200, then make the potential winnings of the challenging users bets that that the wager that the receiving user must make
-        // -116, +105 --> 29 to win 25, 25 to win 26ish
-        return returnPotentialWinnings(wagerAmount: wagerAmount, MLOdds: odds1)
-    }
-}
-
-func returnOddsFromBetType(betType: BetType, game: Game) -> Int {
-    switch betType {
-    case .betHomeSpread:
-        return game.homeSpreadODDS
-    case .betAwaySpread:
-        return game.awaySpreadODDS
-    case .over:
-        return game.totalOverODDS
-    case .under:
-        return game.totalUnderODDS
-    case .betHomeML:
-        return game.homeML
-    case .betAwayML:
-        return game.awayML
-    case .None:
-        return -99
-    }
-}
-
-func returnPotentialWinnings(wagerAmount: Double, MLOdds: Int) -> Double {
-    if MLOdds > 0 {
-        return wagerAmount*Double(MLOdds)/100
-    } else {
-        return wagerAmount*(100/((-1)*Double(MLOdds)))
-    }
-}
 
 

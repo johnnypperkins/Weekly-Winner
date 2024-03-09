@@ -261,7 +261,7 @@ struct gameRowView: View {
         
         .popup(isPresented: $showingSheet) {
             screen2PopUp(game: game, betType: $betType, viewModel: viewModel, showingSheet: $showingSheet)
-                .frame(height: 800)
+                .frame(height: 700)
         } customize: {
             $0
                 .type (.toast)
@@ -376,7 +376,7 @@ struct screen2PopUp: View {
                 if onDailyChallenge {
                     dailyChallengeSubmitView(game: game, betType: $betType, viewModel: viewModel, showingSheet: $showingSheet)
                 } else {
-                    peer2peerSubmitPage(game: game, betType: betType, viewModel: viewModel)
+                    peer2peerSubmitPage(game: game, betType: betType)
                 }
             }
         }

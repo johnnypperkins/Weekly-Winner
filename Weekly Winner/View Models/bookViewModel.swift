@@ -230,3 +230,59 @@ func returnWagerStringFormat(betTypeOfButton: BetType, game: Game) -> String {
         }
     }
 }
+
+
+func returnOpponentWagerAmount(wagerAmount: Double, odds1: Int, odds2: Int, betType: BetType, game: Game) -> Double {
+    if odds1 >= -110 && odds1 <= -100 && odds2 >= -110 && odds2 <= -100 { // if -107/-103 or -105, -105, then just keep it simple and make users have same amount to potentially win
+        return wagerAmount
+    } else { // if something like -170 and +200, then make the potential winnings of the challenging users bets that that the wager that the receiving user must make
+        // -116, +105 --> 29 to win 25, 25 to win 26ish
+        return returnPotentialWinnings(wagerAmount: wagerAmount, MLOdds: odds1)
+    }
+}
+
+func returnOddsFromBetType(betType: BetType, game: Game) -> Int {
+    switch betType {
+    case .betHomeSpread:
+        return game.homeSpreadODDS
+    case .betAwaySpread:
+        return game.awaySpreadODDS
+    case .over:
+        return game.totalOverODDS
+    case .under:
+        return game.totalUnderODDS
+    case .betHomeML:
+        return game.homeML
+    case .betAwayML:
+        return game.awayML
+    case .None:
+        return -99
+    }
+}
+
+func returnSpreadFromBetType(betType: BetType, game: Game) -> Double {
+    switch betType {
+    case .betHomeSpread:
+        return game.homeSpread
+    case .betAwaySpread:
+        return game.awaySpread
+    case .over:
+        return game.totalOver
+    case .under:
+        return game.totalUnder
+    case .betHomeML:
+        return 0
+    case .betAwayML:
+        return 0
+    case .None:
+        return -99
+    }
+}
+
+func returnPotentialWinnings(wagerAmount: Double, MLOdds: Int) -> Double {
+    if MLOdds > 0 {
+        return wagerAmount*Double(MLOdds)/100
+    } else {
+        return wagerAmount*(100/((-1)*Double(MLOdds)))
+    }
+}

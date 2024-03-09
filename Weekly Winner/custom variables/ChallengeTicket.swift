@@ -25,8 +25,38 @@ struct ChallengeTicket {
     var gameIDs: [String]
     var gamesToPlay: Int
     var gamesPlayed: Int
+    
 }
 
+struct DirectChallengeTicket {
+    var customID: String
+    
+    var senderUsername: String
+    var senderID: String
+    var senderOdds: Int
+    var senderBetType: BetType
+    var senderWagerAmount: Double
+
+    
+    var receiverUsername: String
+    var receiverID: String
+    var receiverOdds: Int
+    var receiverBetType: BetType
+    var receiverWagerAmount: Double
+    
+    var dateCreated: Timestamp // will fix later
+    var currencyChosen: String
+    var status: String
+    var gameIDs: [String]
+    var challengeType: String
+
+}
+
+enum currencyType {
+    case poolBucks
+    case poolCoins
+    case null
+}
 
 
 enum challengeStatus: String, Codable {
