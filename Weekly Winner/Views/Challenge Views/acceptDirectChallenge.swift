@@ -11,12 +11,19 @@ import Kingfisher
 import Firebase
 
 struct acceptDirectChallenge: View {
-    let betType: BetType
-    @Binding var wagerAmount: Double
+    
     @ObservedObject var viewModel: challengeViewModel
     let directChallengeTicket: DirectChallengeTicket
     var senderProfileImageUrl: String? = nil
     let inAction: Bool
+    
+    var youAreSender: Bool {
+        if directChallengeTicket.senderID == StaticUserData.shared.currentUser.id { // sender id is same as yours
+            return true
+        } else {
+            return false
+        }
+    }
     
     @State var shouldNavigate = false
     
@@ -69,42 +76,32 @@ struct acceptDirectChallenge: View {
                         VStack(spacing: 7.5) {
                             HStack(spacing: 7.5) {
                                 if let game = viewModel.fetchedGame {
-                                    oddsMiniView(
-                                        MLString: returnMLString(game: game, betType: returnOppBetType(betType: betType))
-                                    )
+                                    oddsMiniViewAccepted(Moneyline: !youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds)
                                     
                                     spreadMiniView(
-                                        betType: returnOppBetType(betType: betType),
-                                        spreadString: returnSpreadString(game: game, betType: returnOppBetType(betType: betType))
+                                        betType: !youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType,
+                                        spreadString: returnSpreadString(game: game, betType: returnOppBetType(betType: !youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType))
                                     )
                                     
                                     teamMiniView(
-                                        teamString: returnTeamString(game: game, betType: returnOppBetType(betType: betType)), challengeSender: false
+                                        teamString: returnTeamString(game: game, betType: returnOppBetType(betType: !youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType)), challengeSender: !youAreSender
                                     )
                                 }
                                 
                             }.frame(width: 345)
                             HStack(spacing: 7.5) {
                                 if let game = viewModel.fetchedGame {
-                                    riskMiniStruct(
-                                        game: game,
-                                        betType: betType,
-                                        challengeSender: false,
-                                        challengerOdds: returnOddsFromBetType(betType: betType, game: game),
-                                        receiverOdds: returnOddsFromBetType(betType: returnOppBetType(betType: betType), game: game),
-                                        wagerAmount: $wagerAmount) // dont need here since you are one sending
+                                    riskMiniStructAccepted(
+                                        yourWager: false,
+                                        odds: !youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds,
+                                        wagerAmount: !youAreSender ? directChallengeTicket.senderWagerAmount : directChallengeTicket.receiverWagerAmount)
                                     
-                                    rewardMiniStruct(
-                                        game: game,
-                                        betType: betType,
-                                        challengeSender: false,
-                                        challengerOdds: returnOddsFromBetType(betType: betType, game: game),
-                                        receiverOdds: returnOddsFromBetType(betType: returnOppBetType(betType: betType), game: game),
-                                        wagerAmount: $wagerAmount) // dont need here since you are one sending)
+                                    rewardMiniStructAccepted(
+                                        yourWager: false,
+                                        odds: !youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds,
+                                        wagerAmount: !youAreSender ? directChallengeTicket.senderWagerAmount : directChallengeTicket.receiverWagerAmount)
+                                    
                                 }
-                                
-                                
-                                
                             }.frame(width: 345)
                         }
                     }
@@ -120,21 +117,29 @@ struct acceptDirectChallenge: View {
                         if let game = viewModel.fetchedGame {
                             VStack(spacing: 7.5) {
                                 HStack(spacing: 7.5) {
-                                    teamMiniView(teamString: returnTeamString(game: game, betType: betType), challengeSender: true)
-                                    spreadMiniView(betType: betType, spreadString: returnSpreadString(game: game, betType: betType))
-                                    oddsMiniView(MLString: returnMLString(game: game, betType: betType))
+                                    oddsMiniViewAccepted(Moneyline: youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds)
+                                    
+                                    spreadMiniView(
+                                        betType: youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType,
+                                        spreadString: returnSpreadString(game: game, betType: returnOppBetType(betType: youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType))
+                                    )
+                                    
+                                    teamMiniView(
+                                        teamString: returnTeamString(game: game, betType: returnOppBetType(betType: youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType)), challengeSender: !youAreSender
+                                    )
                                     
                                 }.frame(width: 345)
                                 HStack(spacing: 7.5) {
-                                    riskMiniStruct(game: game, betType: betType, challengeSender: true, challengerOdds: returnOddsFromBetType(betType: betType, game: game),
-                                                   receiverOdds: returnOddsFromBetType(betType: returnOppBetType(betType: betType), game: game), wagerAmount: $wagerAmount) // dont need here since you are one sending
-                                    rewardMiniStruct(
-                                        game: game,
-                                        betType: betType,
-                                        challengeSender: true,
-                                        challengerOdds: returnOddsFromBetType(betType: betType, game: game),
-                                        receiverOdds: returnOddsFromBetType(betType: returnOppBetType(betType: betType), game: game),
-                                        wagerAmount: $wagerAmount) // dont need here since you are one sending)
+                                    riskMiniStructAccepted(
+                                        yourWager: true,
+                                        odds: youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds,
+                                        wagerAmount: youAreSender ? directChallengeTicket.senderWagerAmount : directChallengeTicket.receiverWagerAmount)
+                                    
+                                    rewardMiniStructAccepted(
+                                        yourWager: true,
+                                        odds: youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds,
+                                        wagerAmount: youAreSender ? directChallengeTicket.senderWagerAmount : directChallengeTicket.receiverWagerAmount)
+                                    
                                 }.frame(width: 345)
                             }
                         }
@@ -178,7 +183,7 @@ struct acceptDirectChallenge: View {
                                         "groupNumber": 1,
                                         "betNumber": 0,
                                         "betType": directChallengeTicket.receiverBetType.rawValue,
-                                        "betLine": returnSpreadFromBetType(betType: betType, game: viewModel.fetchedGame!),
+                                        "betLine": returnSpreadFromBetType(betType: directChallengeTicket.receiverBetType, game: viewModel.fetchedGame!),
                                         "betOdds": MLtoPercentage(moneyline: betTypeToOdds(game: viewModel.fetchedGame!, betType: directChallengeTicket.receiverBetType)), // NEEDS TO BE ADJUSTED MLtoPercentage(moneyline: betTypeToOdds(game: game, betType: betType))
                                         "result": "notStarted",
                                         "gameID": directChallengeTicket.gameIDs[0],
@@ -234,5 +239,131 @@ struct acceptDirectChallenge: View {
             }.padding(.top, 20)
    
         }
+    }
+}
+
+struct teamMiniViewAccepted: View {
+    let teamString: String
+    let challengeSender: Bool
+    var body: some View {
+        VStack(spacing: 0) {
+//            HStack {
+//                Spacer()
+//                Text("Team")
+//                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+//                    .foregroundColor(.white)
+//                Spacer()
+//            }.frame(height: 15).background(K.finalColor.tabSelectedBlue)
+            HStack {
+                Spacer()
+                Text("\(teamString)")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: teamString.count < 25 ? 16 : 10))
+                    .foregroundColor(.white)
+                    .lineLimit(3)
+                Spacer()
+//                    .padding(challengeSender ? .leading : .trailing)
+                
+            }.frame(height: 50).background(K.finalColor.cardBlue)
+        }.frame(width: 200).cornerRadius(5)
+    }
+}
+
+struct spreadMiniViewAccepted: View {
+    let betType: BetType
+    let spreadString: String
+ 
+    
+    var body: some View {
+        VStack(spacing: 0) {
+//            HStack {
+//                Spacer()
+//                Text(betType == .over || betType == .under ? "Total" : "Spread")
+//                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+//                    .foregroundColor(.white)
+//                Spacer()
+//            }.frame(height: 15).background(K.finalColor.tabSelectedBlue)
+            HStack {
+                Spacer()
+                Text(spreadString)
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: spreadString.count < 6 ? 16 : 14))
+                    .foregroundColor(.white)
+                    .lineLimit(3)
+                Spacer()
+            }.frame(height: 50).background(K.finalColor.cardBlue)
+        }.cornerRadius(5)
+    }
+}
+
+struct oddsMiniViewAccepted: View {
+    let Moneyline: Int
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Spacer()
+                Text(Moneyline > 0 ? "+\(Moneyline)" : "\(Moneyline)")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: String(Moneyline).count < 6 ? 16 : 14))
+                    .foregroundColor(.white)
+                    .lineLimit(3)
+                Spacer()
+            }.frame(height: 50).background(K.finalColor.cardBlue)
+        }.cornerRadius(5)
+
+    }
+}
+
+
+struct riskMiniStructAccepted: View {
+    let yourWager: Bool
+    let odds: Int
+    let wagerAmount: Double
+    var body: some View {
+        VStack (spacing: 0) {
+            HStack {
+                Spacer()
+    
+                Text(yourWager ? "Your Risk Amount" : "Opponent Risk Amount")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                    .foregroundColor(.white)
+                Spacer()
+            }.frame(height: 15).background(K.finalColor.deleteRed)
+            HStack (spacing: 3){
+                Spacer()
+                Image("poolBuck")
+                    .resizable()
+                    .frame(width: 20, height: 20)
+                Text("\(String(format: "%.2f", wagerAmount))")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                    .foregroundColor(.white)
+                Spacer()
+            }.frame(height: 41.25).background(K.finalColor.cardBlue)
+        }.cornerRadius(7.5)
+    }
+}
+struct rewardMiniStructAccepted: View {
+    let yourWager: Bool
+    let odds: Int
+    let wagerAmount: Double
+     
+    var body: some View {
+        VStack (spacing: 0) {
+            HStack {
+                Spacer()
+                Text(yourWager ? "Your Reward" : "Opponent Reward")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                    .foregroundColor(.white)
+                Spacer()
+            }.frame(height: 15).background(K.finalColor.potentialOrange)
+            HStack (spacing: 3){
+                Spacer()
+                Image("poolBuck")
+                    .resizable()
+                    .frame(width: 20, height: 20)
+                Text("\(String(format: "%.2f", returnPotentialWinnings(wagerAmount: wagerAmount, MLOdds: odds)))")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                    .foregroundColor(.white)
+                Spacer()
+            }.frame(height: 41.25).background(K.finalColor.cardBlue)
+        }.cornerRadius(7.5)
     }
 }

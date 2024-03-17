@@ -48,8 +48,11 @@ struct completedCard: View { // inAction
     var body: some View {
         VStack {
             NavigationLink(destination: {
-                acceptDirectChallenge(betType: challenge.receiverBetType, wagerAmount: .constant(challenge.receiverWagerAmount), viewModel: viewModel, directChallengeTicket: challenge, inAction: true)
-                    .background(K.finalColor.backgroundBlue)
+                acceptDirectChallenge(
+                    viewModel: viewModel,
+                    directChallengeTicket: challenge,
+                    inAction: true)
+                .background(K.finalColor.backgroundBlue)
             }, label: {
                 VStack {
                     HStack {

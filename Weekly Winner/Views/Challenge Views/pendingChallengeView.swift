@@ -65,7 +65,7 @@ struct pendingOption1: View { // inAction
     var body: some View {
         VStack {
             NavigationLink(destination: {
-                acceptDirectChallenge(betType: challenge.receiverBetType, wagerAmount: .constant(challenge.receiverWagerAmount), viewModel: viewModel, directChallengeTicket: challenge, inAction: true)
+                acceptDirectChallenge(viewModel: viewModel, directChallengeTicket: challenge, inAction: true)
                     .background(K.finalColor.backgroundBlue)
             }, label: {
                 VStack {
@@ -197,7 +197,7 @@ struct pendingOption2: View { // awaiting your response
                         }
 
                         NavigationLink(destination: {
-                            acceptDirectChallenge(betType: challenge.receiverBetType, wagerAmount: .constant(challenge.receiverWagerAmount), viewModel: viewModel, directChallengeTicket: challenge, inAction: false)
+                            acceptDirectChallenge(viewModel: viewModel, directChallengeTicket: challenge, inAction: false)
                                 .background(K.finalColor.backgroundBlue)
                         }, label: {
                             HStack {

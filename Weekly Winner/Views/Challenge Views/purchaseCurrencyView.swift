@@ -244,8 +244,7 @@ struct uploadID: View {
                             .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                             .foregroundStyle(.white)
                         
-                    }
-                    else{
+                    } else{
                         Text("Upload or Take ID Photo")
                             .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                             .foregroundStyle(.white)
