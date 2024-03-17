@@ -148,7 +148,7 @@ struct purchaseCurrencyView: View {
                     
             } else {
                 VStack (spacing: 10) {
-                    Text("This page is either not available in your state or the location services are loading and give it a second...")
+                    Text("Deposit/Withdrawal Page Loading...")
                         .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                         .foregroundStyle(.white)
                     Text("Available States: AK, AZ, AR, CO, FL, GA, IL, IN, KS, KY, MD, MA, MI, MN, NE, NM, NY, NC, ND, OK, OR, RI, SC, SD, TX, UT, VT, VA, WI, WY, DC")
@@ -197,7 +197,7 @@ struct depositView: View {
 
 
         if value >= 100 && value < 99999 {
-            Link(destination: URL(string: "https://wppaypal-zuj4eapv2q-uc.a.run.app/?userID=\(StaticUserData.shared.currentUser.id!)&amount=\(value/100)")!) {
+            NavigationLink(destination: purchaseView(value: $value), label: {
                 VStack(spacing: 10) {
                     Image("venmoButton")
                         .resizable()
@@ -216,7 +216,27 @@ struct depositView: View {
                         .frame(width: 300)
                         .cornerRadius(5)
                 }
-            }
+            })
+//            Link(destination: URL(string: "https://wppaypal-zuj4eapv2q-uc.a.run.app/?userID=\(StaticUserData.shared.currentUser.id!)&amount=\(value/100)")!) {
+//                VStack(spacing: 10) {
+//                    Image("venmoButton")
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(width: 300)
+//                        .cornerRadius(10)
+//                    Image("paypalButton")
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(width: 300)
+//                        .cornerRadius(10)
+//                    
+//                    Image("withCardButton")
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(width: 300)
+//                        .cornerRadius(5)
+//                }
+//            }
         } else {
             VStack(spacing: 10) {
                 Image("venmoButton")
@@ -461,7 +481,7 @@ struct withdrawalConfirmation: View {
                         
                     })
                     
-                    NavigationLink(destination: tabBarView(selection: .profile), isActive: $shouldNavigate) {}
+                    NavigationLink(destination: tabBarView(selection: .dashboard), isActive: $shouldNavigate) {}
                 }
             }.navigationBarBackButtonHidden(true)
         }

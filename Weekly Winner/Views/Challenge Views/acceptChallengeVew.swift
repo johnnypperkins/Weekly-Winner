@@ -426,26 +426,6 @@ struct BetDetailsViewAcceptCHALLENGE: View {
                         }
                         
                     }.cornerRadius(10)
-                    
-//                    if betType == .betAwaySpread {
-//                        BetSliderView(whichSport: game.whichSport, teamName: game.awayTeam, originalSpread: game.awaySpread, parlaySize: betNumber <= ticketFormat.count && betNumber > 0 ? ticketFormat[betNumber-1] : 1, betType: .betAwaySpread, chosenSpread: $chosenSpread)
-//                            //.padding(.horizontal)
-//                    }
-//                    if betType == .betHomeSpread {
-//                        BetSliderView(whichSport: game.whichSport, teamName: game.homeTeam, originalSpread: game.homeSpread, parlaySize: betNumber <= ticketFormat.count && betNumber > 0 ? ticketFormat[betNumber-1] : 1, betType: .betHomeSpread, chosenSpread: $chosenSpread)
-//                            //.padding(.horizontal)
-//
-//                    }
-//                    if betType == .over {
-//                        BetSliderView(whichSport: game.whichSport, teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalOver, parlaySize: betNumber <= ticketFormat.count && betNumber > 0 ? ticketFormat[betNumber-1] : 1, betType: .over, chosenSpread: $chosenSpread)
-//                            //.padding(.horizontal)
-//
-//                    }
-//                    if betType == .under {
-//                        BetSliderView(whichSport: game.whichSport, teamName: "\(game.awayTeam) / \(game.homeTeam)", originalSpread: game.totalUnder, parlaySize: betNumber <= ticketFormat.count && betNumber > 0 ? ticketFormat[betNumber-1] : 1, betType: .under, chosenSpread: $chosenSpread)
-//                            //.padding(.horizontal)
-//
-//                    }
                 }
                 .background(K.finalColor.backgroundBlue)
                     
@@ -462,7 +442,7 @@ struct BetDetailsViewAcceptCHALLENGE: View {
                                                         betLine: Float(chosenSpread),
                                                         betOdds: Float(returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread), whichSport: game.whichSport)),
                                                         result: .notStarted,
-                                                        gameID: game.idd,
+                                                        gameID: game.idd!,
                                                         whichSport: game.whichSport,
                                                         timestamp: Timestamp(date: Date()),
                                                         points_bought: Int(chosenSpread-originalSpread))

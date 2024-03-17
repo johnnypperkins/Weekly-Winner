@@ -61,7 +61,7 @@ class peer2peerViewModel: ObservableObject {
                     "betNumber": self.selectedBet?.betNumber ?? 0,
                     "betType": self.selectedBet?.betType.rawValue ?? "",
                     "betLine": self.selectedBet?.betLine ?? 0,
-                    "betOdds": self.selectedBet?.betOdds ?? 0, // NEEDS TO BE ADJUSTED
+                    "betOdds": MLtoPercentage(moneyline: betTypeToOdds(game: game, betType: self.selectedBet?.betType ?? .None)), // NEEDS TO BE ADJUSTED MLtoPercentage(moneyline: betTypeToOdds(game: game, betType: betType))
                     "result": self.selectedBet?.result.rawValue ?? "",
                     "gameID": self.selectedBet?.gameID ?? "",
                     "groupID": customID,
@@ -79,11 +79,11 @@ class peer2peerViewModel: ObservableObject {
                     }
                 }
                     
-                receiverBetPath.addDocument(data: betData) { error in
-                    if let error = error {
-                        print("Error adding document: \(error)")
-                    }
-                }
+//                receiverBetPath.addDocument(data: betData) { error in
+//                    if let error = error {
+//                        print("Error adding document: \(error)")
+//                    }
+//                }
                 
                 // 2. Send challenge ticket to own user
                 let challengePath = self.db.collection("users").document(self.senderDirectTicket!.senderID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(customID)
@@ -99,8 +99,8 @@ class peer2peerViewModel: ObservableObject {
                         "senderBetType": self.senderDirectTicket?.senderBetType.rawValue, // Assuming BetType is an enum and you want to store its raw value
                         "senderWagerAmount": senderWagerAmount,
                         
-                        "receiverUsername": self.senderDirectTicket?.receiverID,
-                        "receiverID": self.senderDirectTicket?.receiverUsername,
+                        "receiverUsername": self.senderDirectTicket?.receiverUsername,
+                        "receiverID": self.senderDirectTicket?.receiverID,
                         "receiverOdds": self.senderDirectTicket?.receiverOdds,
                         "receiverBetType": self.senderDirectTicket?.receiverBetType.rawValue, // Assuming BetType is an enum and you want to store its raw value
                         "receiverWagerAmount": returnOpponentWagerAmount(
@@ -111,7 +111,7 @@ class peer2peerViewModel: ObservableObject {
                             game: game),
                         
                         "dateCreated": self.senderDirectTicket?.dateCreated, // Adjust based on how you're planning to fix this later
-                        "currencyChosen": self.senderDirectTicket?.currencyChosen,
+                        "currencyChosen": "poolBucks", // will adjust in future
                         "status": self.senderDirectTicket?.status,
                         "gameIDs": self.senderDirectTicket?.gameIDs,
                         "challengeType" : self.senderDirectTicket?.challengeType

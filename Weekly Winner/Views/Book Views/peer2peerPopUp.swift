@@ -10,9 +10,29 @@ import SwiftUI
 import Kingfisher
 import Firebase
 
+func returnTeamBetOn(betType: BetType, game: Game) -> String {
+    switch betType {
+    case .betHomeSpread:
+        return game.homeTeam
+    case .betAwaySpread:
+        return game.awayTeam
+    case .over:
+        return "\(game.homeTeam) / \(game.awayTeam)"
+    case .under:
+        return "\(game.homeTeam) / \(game.awayTeam)"
+    case .betHomeML:
+        return game.homeTeam
+    case .betAwayML:
+        return game.awayTeam
+    case .None:
+        return ""
+    }
+}
+
 struct peer2peerSubmitPage: View {
     let game: Game
     let betType: BetType
+    @Binding var showingSheet: Bool
     @State var wagerAmount = 0.0
     @State private var selectedUser: User? = nil
     
@@ -21,8 +41,8 @@ struct peer2peerSubmitPage: View {
 
     var body: some View {
         VStack {
-            twoWagers(game: game, parlaySize: 1, viewModel: viewModel, betType: betType, wagerAmount: $wagerAmount, selectedUser: $selectedUser)
-            peer2peerSlider(wagerAmount: $wagerAmount, selectedUser: $selectedUser, viewModel: viewModel, game: game)
+            twoWagers(game: game, viewModel: viewModel, betType: betType, wagerAmount: $wagerAmount, selectedUser: $selectedUser)
+            peer2peerSlider(wagerAmount: $wagerAmount, selectedUser: $selectedUser, viewModel: viewModel, game: game, showingSheet: $showingSheet)
             Spacer()
         }.onAppear() {
             viewModel.setSelectedBet(bet:
@@ -30,11 +50,11 @@ struct peer2peerSubmitPage: View {
                         groupID: "",
                         betNumber: 0,
                         betType: betType,
-                        teamBetOn: "afdasd", // make simple function to return team from bettype
+                        teamBetOn: returnTeamBetOn(betType: betType, game: game), // make simple function to return team from bettype
                         betLine: Float(returnSpreadFromBetType(betType: betType, game: game)),
                         betOdds: Float(returnOddsFromBetType(betType: betType, game: game)), // prob some function somewhere will find
                         result: .notStarted,
-                        gameID: game.idd,
+                        gameID: game.idd!,
                         whichSport: game.whichSport,
                         timestamp: Timestamp(date: Date()),
                         points_bought: 0))
@@ -56,7 +76,7 @@ struct peer2peerSubmitPage: View {
                 dateCreated: Timestamp(date: Date()),
                 currencyChosen: "poolBucks",
                 status: challengeStatus.pendingAcceptance.rawValue,
-                gameIDs: [game.idd],
+                gameIDs: [game.idd!],
                 challengeType: "straight1v1"
             ))
         }
@@ -68,6 +88,7 @@ struct peer2peerSlider: View {
     @Binding var selectedUser: User?
     @ObservedObject var viewModel: peer2peerViewModel
     let game: Game
+    @Binding var showingSheet: Bool
 
     var body: some View {
         VStack (spacing: 5){
@@ -131,7 +152,9 @@ struct peer2peerSlider: View {
 
                 if wagerAmount > 0 && selectedUser != nil{
                     Button(action: {
-                        viewModel.sendChallenge(receiverUser: selectedUser!, senderWagerAmount: Int(wagerAmount), game: game) {}
+                        viewModel.sendChallenge(receiverUser: selectedUser!, senderWagerAmount: Int(wagerAmount), game: game) {
+                            showingSheet = false
+                        }
                     }, label: {
                         HStack {
                             Spacer()
@@ -157,7 +180,6 @@ struct peer2peerSlider: View {
 
 struct twoWagers: View {
     let game: Game
-    var parlaySize: Int
     var viewModel: peer2peerViewModel
     var betType: BetType
     @Binding var wagerAmount: Double

@@ -10,13 +10,16 @@ import SwiftUI
 import WebKit
 
 struct purchaseView: View {
+    @Binding var value: Int
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
         NavigationStack {
-            Link("Open in Safari", destination: URL(string: "https://wppaypal-zuj4eapv2q-ue.a.run.app/?userID=fg57TZhmLmWH9TT3WCA3WuXT7dy2&amount=50")!)
-                .edgesIgnoringSafeArea(.all)
+//            Link("Open in Safari", destination: URL(string: "https://wppaypal-zuj4eapv2q-ue.a.run.app/?userID=fg57TZhmLmWH9TT3WCA3WuXT7dy2&amount=50")!)
+//                .edgesIgnoringSafeArea(.all)
+            CustomWebView(url:  URL(string: "https://wppaypal-zuj4eapv2q-uc.a.run.app/?userID=\(StaticUserData.shared.currentUser.id!)&amount=\(Double(value)/100)")!)
         }
+        
     }
 }
 

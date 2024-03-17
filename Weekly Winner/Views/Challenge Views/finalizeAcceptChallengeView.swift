@@ -34,7 +34,7 @@ struct finalizeAcceptChallengeView: View {
                 
                 payoutHeader(currencyChosen: $viewModel.currencyChosen, wagerAmount: $viewModel.wagerAmount)
                     
-                versusHeader(opponentUsername: viewModel.opponentUsername, opponentProfilePic: viewModel.opponentProfilePicURL)
+//                versusHeader(opponentUsername: viewModel.opponentUsername, opponentProfilePic: viewModel.opponentProfilePicURL)
                 
                 VStack{
                     challengeBetsDisplayAccept(uid: StaticUserData.shared.currentUser.id!, viewModel: viewModel)
@@ -65,7 +65,7 @@ struct finalizeAcceptChallengeView: View {
                     .padding(.bottom, 20)
                 })
                 .navigationDestination(isPresented: $shouldNavigate) {
-                    tabBarView(selection: .profile)
+                    tabBarView(selection: .challenges)
                 }
 
 

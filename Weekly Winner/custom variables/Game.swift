@@ -11,13 +11,13 @@ import FirebaseFirestoreSwift
 
 struct Game: Identifiable, Decodable, Hashable {
     @DocumentID var id: String?
-    var idd: String
+    var idd: String?
     var awaySpread: Double
     var awayTeam: String
     var homeSpread: Double
     var homeTeam: String
     var commenceTime: Timestamp
-    var completed: Bool
+    var completed: Bool?
     var totalOver: Double
     var totalUnder: Double
     var homeTeamScore: Int

@@ -28,16 +28,6 @@ struct groupsView: View {
     @State private var currentScreen: Int = 0 // 0 for Screen A, 1 for Screen B
     @State private var dragTranslation: CGFloat = 0
     
-   // @State var selectedGroupBar: Group?
-    //@State private var groupsFetched = false
-
-    init() {
-
-//        viewModel.fetchCurrentRankedTickets(groupID: "GlobalDaily", timeFrame: "daily") {
-//        }
- 
-    }
-    
     var body: some View {
         let keywordBinding = Binding<String> (
             get: {
@@ -67,8 +57,8 @@ struct groupsView: View {
                                     }
                                     
                                 }) {
-                                    Text("Daily")
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
+                                    Text("Leaderboard")
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
                                         .foregroundColor(.white)
                                         .frame(width: 150, height: 35, alignment: .center)
                                         .cornerRadius(5)
@@ -82,14 +72,13 @@ struct groupsView: View {
                                         timeFrame = "friends"
                                         viewModel.weekIndex = 0
                                         viewModel.dayIndex = 0
-                                        //                                        showingChat = false
                                         currentScreen = 1
                                                                             }
                                     }
 //                                    
                                 }) {
-                                    Text("Ticket")
-                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
+                                    Text("My Ticket")
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
                                         .foregroundColor(.white)
                                         .frame(width: 150, height: 35, alignment: .center)
                                         .cornerRadius(5)
@@ -104,9 +93,11 @@ struct groupsView: View {
                         }.padding(.top, 40)
                             .cornerRadius(7.5)
                         if timeFrame == "friends" {
-                            ticketView(username: "", uid: Auth.auth().currentUser!.uid, groupID: "", selectedWeek: "current", ticketFormatForGroups: [], ownTicket: true, onTicketPage: true, passedTimeFrame: "daily")
-                            
-                        } 
+                            VStack {
+                                ticketView(username: "", uid: Auth.auth().currentUser!.uid, groupID: "", selectedWeek: "current", ticketFormatForGroups: [], ownTicket: true, onTicketPage: true, passedTimeFrame: "daily")
+                                Spacer()
+                            }
+                        }
                         else { // not looking for group
                             VStack {
                                 HStack {

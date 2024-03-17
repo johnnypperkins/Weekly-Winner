@@ -96,7 +96,7 @@ struct dailyChallengeSubmitView: View {
                         betLine: chosenSpread,
                         betOdds: MLtoPercentage(moneyline: betTypeToOdds(game: game, betType: betType)),
                         betType: betType,
-                        gameID: game.idd,
+                        gameID: game.idd!,
                         whichSport: game.whichSport,
                         points_bought: Int(chosenSpread-originalSpread),
                         timeFrame: timeFrame)

@@ -83,14 +83,15 @@ struct profileView: View {
                                         Spacer()
                                         
                                         NavigationLink(destination: settingsView(), label: {
-                                            HStack {
-                                                Image(systemName: "gearshape")
+                                            
+                                                Image(systemName: "line.horizontal.3")
                                                     .resizable()
                                                     .frame(width: 20, height: 20)
                                                     .foregroundColor(.white)
                                                     .background(Color.red.padding(40)) // Add this line
-                                            }.frame(width: 50, height: 50)
-                                                .background(.clear)
+                                                    .frame(width: 40, height: 40)
+                                                    .background(K.finalColor.cardBlue)
+                                                    .cornerRadius(7.5)
                                         })
                                         .id(UUID())
 

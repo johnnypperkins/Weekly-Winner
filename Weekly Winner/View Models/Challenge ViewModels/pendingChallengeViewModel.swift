@@ -372,36 +372,36 @@ class pendingChallengeViewModel: ObservableObject {
             }
             
             db.runTransaction({ (transaction, errorPointer) -> Any? in
-                    do {
-                        // Read phase
-                        let challengerDoc = try transaction.getDocument(challengerRef)
+                do {
+                    // Read phase
+                    let challengerDoc = try transaction.getDocument(challengerRef)
 
-                        guard let challengerCurrency = challengerDoc.data()?["poolCoins"] as? Double,
+                    guard let challengerCurrency = challengerDoc.data()?["poolBucks"] as? Double,
 
-                              challengerCurrency >= challenge.wagerAmount else {
-                            let errorMessage = "Insufficient funds"
-                            errorPointer?.pointee = NSError(domain: "AppErrorDomain", code: 0, userInfo: [NSLocalizedDescriptionKey: errorMessage])
-                            return nil
-                        }
-
-                        // Write phase
-                        let newChallengerCurrency = challengerCurrency + challenge.wagerAmount
-
-                        transaction.updateData([challenge.currencyChosen: newChallengerCurrency], forDocument: challengerRef)
-
-
-                        return nil
-                    } catch let error as NSError {
-                        errorPointer?.pointee = error
+                          challengerCurrency >= challenge.wagerAmount else {
+                        let errorMessage = "Insufficient funds"
+                        errorPointer?.pointee = NSError(domain: "AppErrorDomain", code: 0, userInfo: [NSLocalizedDescriptionKey: errorMessage])
                         return nil
                     }
-                }, completion: { _, error in
-                    if let error = error {
-                        print("Currency deduction failed: \(error.localizedDescription)")
-                    } else {
-                        completion()
-                    }
-                })
+
+                    // Write phase
+                    let newChallengerCurrency = challengerCurrency + challenge.wagerAmount
+
+                    transaction.updateData([challenge.currencyChosen: newChallengerCurrency], forDocument: challengerRef)
+
+
+                    return nil
+                } catch let error as NSError {
+                    errorPointer?.pointee = error
+                    return nil
+                }
+            }, completion: { _, error in
+                if let error = error {
+                    print("Currency deduction failed: \(error.localizedDescription)")
+                } else {
+                    completion()
+                }
+            })
         }
     }
     

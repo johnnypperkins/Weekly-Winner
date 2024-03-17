@@ -505,15 +505,16 @@ class ticketViewModel: ObservableObject {
         }()
         
         var whichToInc = -1
-        if bet.betType.rawValue == "betHomeSpread" {
+        if bet.betType.rawValue == "betHomeSpread" || bet.betType.rawValue == "betHomeML" {
             whichToInc = 0
-        } else if bet.betType.rawValue == "betAwaySpread" {
+        } else if bet.betType.rawValue == "betAwaySpread" || bet.betType.rawValue == "betAwayML" {
             whichToInc = 2
         } else if bet.betType.rawValue == "over" {
             whichToInc = 4
         } else if bet.betType.rawValue == "under" {
             whichToInc = 6
         }
+        
         let ref2 = db.collection("Book").document(bet.whichSport).collection("games").document(bet.gameID)
 
         ref2.getDocument { (document, error) in

@@ -48,18 +48,7 @@ struct challengeView: View {
                     
                     Spacer()
 
-                    NavigationLink(destination: settingsView(), label: {
-                        
-                            Image(systemName: "line.horizontal.3")
-                                .resizable()
-                                .frame(width: 20, height: 20)
-                                .foregroundColor(.white)
-                                .background(Color.red.padding(40)) // Add this line
-                                .frame(width: 40, height: 40)
-                                .background(K.finalColor.cardBlue)
-                                .cornerRadius(7.5)
-                    })
-                    .id(UUID())
+           
                     
                 }.padding(.horizontal)
 
@@ -91,10 +80,10 @@ struct challengeView: View {
                 }.padding(.top, 40)
                  .cornerRadius(7.5)
                 if tabSelected == 0 {
-                    challengeCardView(viewModel: challengeVM, poolBucks: $poolBucks)
+                    challengeCardView(viewModel: challengeVM, poolBucks: $poolBucks) // what are challenges, etc.
                         .padding(.top, 20)
                 } else if tabSelected == 1 {
-                    pendingCardView(viewModel: challengeVM)
+                    pendingCardView(viewModel: challengeVM) // pending ones
                 } else if tabSelected == 2 {
                     finishedCardView(viewModel: challengeVM)
                 }
@@ -121,7 +110,7 @@ struct challengeCardView: View {
             VStack (spacing: 10) {
                 VStack {
                     HStack {
-                        NavigationLink(destination: {challengePage1(viewModel: viewModel)}, label: {
+                        NavigationLink(destination: {tabBarView(selection: .book)}, label: {
                             Text("Create a challenge +")
                                 .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
                                 .foregroundColor(.white)
@@ -558,7 +547,7 @@ struct gameBasedView: View {
                     ForEach(viewModel.allGames, id: \.idd) { game in
                         if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
                             if game.commenceTime.dateValue() > Date() {
-                                gameRowImages(game: game, viewModel: viewModel, isSelected: viewModel.isGameSelected(gameId: game.idd), searchTerm: $searchTerm)
+                                gameRowImages(game: game, viewModel: viewModel, isSelected: viewModel.isGameSelected(gameId: game.idd!), searchTerm: $searchTerm)
 
                             }
                         }

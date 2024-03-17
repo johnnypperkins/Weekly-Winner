@@ -23,6 +23,7 @@
 		3C8E5C912B3FEE1F0075B300 /* inAppPurchaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8E5C902B3FEE1E0075B300 /* inAppPurchaseView.swift */; };
 		3C8E5C932B43AA8A0075B300 /* challengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8E5C922B43AA8A0075B300 /* challengeView.swift */; };
 		3C8E5C952B43C28C0075B300 /* challengeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8E5C942B43C28C0075B300 /* challengeViewModel.swift */; };
+		3C913EAB2BA51B97001D2153 /* acceptDirectChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C913EAA2BA51B97001D2153 /* acceptDirectChallenge.swift */; };
 		3C91B6C62A58BA0E00398F53 /* UI Misc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C91B6C52A58BA0E00398F53 /* UI Misc.swift */; };
 		3C91B6C82A58BE6D00398F53 /* RoundingUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C91B6C72A58BE6D00398F53 /* RoundingUI.swift */; };
 		3C95678A2B90081E000A1A56 /* betPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C9567892B90081E000A1A56 /* betPopupView.swift */; };
@@ -148,6 +149,7 @@
 		3C8E5C902B3FEE1E0075B300 /* inAppPurchaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = inAppPurchaseView.swift; sourceTree = "<group>"; };
 		3C8E5C922B43AA8A0075B300 /* challengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = challengeView.swift; sourceTree = "<group>"; };
 		3C8E5C942B43C28C0075B300 /* challengeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = challengeViewModel.swift; sourceTree = "<group>"; };
+		3C913EAA2BA51B97001D2153 /* acceptDirectChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = acceptDirectChallenge.swift; sourceTree = "<group>"; };
 		3C91B6C52A58BA0E00398F53 /* UI Misc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UI Misc.swift"; sourceTree = "<group>"; };
 		3C91B6C72A58BE6D00398F53 /* RoundingUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundingUI.swift; sourceTree = "<group>"; };
 		3C9567892B90081E000A1A56 /* betPopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = betPopupView.swift; sourceTree = "<group>"; };
@@ -363,6 +365,7 @@
 				86E55C312B5B1CB3003164EE /* acceptChallengeVew.swift */,
 				869B67F32B5B248300F6CCDF /* finalizeAcceptChallengeView.swift */,
 				869B67FB2B5ED16500F6CCDF /* purchaseCurrencyView.swift */,
+				3C913EAA2BA51B97001D2153 /* acceptDirectChallenge.swift */,
 			);
 			path = "Challenge Views";
 			sourceTree = "<group>";
@@ -729,6 +732,7 @@
 				3CB799BC2B47501D00C7A9F0 /* challengeViewTwo.swift in Sources */,
 				86E55C322B5B1CB3003164EE /* acceptChallengeVew.swift in Sources */,
 				3C8E5C912B3FEE1F0075B300 /* inAppPurchaseView.swift in Sources */,
+				3C913EAB2BA51B97001D2153 /* acceptDirectChallenge.swift in Sources */,
 				3C8E5C952B43C28C0075B300 /* challengeViewModel.swift in Sources */,
 				867801842A213F90006FE479 /* screen2.swift in Sources */,
 				3C3DB73E2A7C7E3E000F6898 /* chatViewModel.swift in Sources */,

@@ -79,24 +79,24 @@ struct challengePage3: View {
                     Spacer()
                     
                     if viewModel.totalPotentialWon > 0 && !viewModel.totalBetArrays.contains(where: { $0.isEmpty }) {
-                        NavigationLink(destination: {
-                            challengePage4(viewModel: viewModel).background(K.finalColor.backgroundBlue)
-                                .onAppear() {
-                                    viewModel.canDeleteBets = false
-                                }
-                        }, label: {
-                            HStack{
-                                Spacer()
-                                Text("Finalize Challenge")
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
-                                    .foregroundColor(.white)
-                                Spacer()
-                            }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-                                .background(K.finalColor.winningGreen)
-                                .cornerRadius(10)
-                                .padding(.horizontal,16)
-                                .padding(.bottom,10)
-                        })
+//                        NavigationLink(destination: {
+//                            challengePage4(viewModel: viewModel).background(K.finalColor.backgroundBlue)
+//                                .onAppear() {
+//                                    viewModel.canDeleteBets = false
+//                                }
+//                        }, label: {
+//                            HStack{
+//                                Spacer()
+//                                Text("Finalize Challenge")
+//                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+//                                    .foregroundColor(.white)
+//                                Spacer()
+//                            }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
+//                                .background(K.finalColor.winningGreen)
+//                                .cornerRadius(10)
+//                                .padding(.horizontal,16)
+//                                .padding(.bottom,10)
+//                        })
                         
                         
                     } else {
@@ -462,7 +462,7 @@ struct BetDetailsViewCHALLENGE: View {
                                                         betLine: Float(chosenSpread),
                                                         betOdds: Float(returnOdds(betType: betType, ogSpr: Int(originalSpread), chsSpr: Int(chosenSpread), whichSport: game.whichSport)),
                                                         result: .notStarted,
-                                                        gameID: game.idd,
+                                                        gameID: game.idd!,
                                                         whichSport: game.whichSport,
                                                         timestamp: Timestamp(date: Date()),
                                                         points_bought: Int(chosenSpread-originalSpread))

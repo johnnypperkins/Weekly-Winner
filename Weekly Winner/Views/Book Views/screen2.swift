@@ -33,7 +33,7 @@ struct BettingAppView: View {
                     VStack(spacing: 5) {
                         // Displaying games
                         if 1 + 1 == 2 {
-                            ForEach(rankedCommence ? viewModel.allGames : viewModel.allPopularGames, id: \.self) { game in
+                            ForEach(rankedCommence ? viewModel.allGames : viewModel.allPopularGames, id: \.idd) { game in
                                 if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
                                     let now = Date() // Get the current date and time
                                     if game.commenceTime.dateValue() > now {
@@ -155,15 +155,20 @@ struct screen2HeaderView: View {
                 .foregroundColor(K.finalColor.textWhite)
                 .padding(.leading)
             Spacer()
-            HStack(spacing: 15) {
-                Text("Spr")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+            HStack(spacing: 0) {
+                Text("Spread")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
                     .foregroundColor(K.finalColor.textWhite)
                     .frame(width: 50, alignment: .center)
-                Text("Tot")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                Text("ML")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
                     .foregroundColor(K.finalColor.textWhite)
-                    .frame(width: 50, alignment: .center)
+                    .frame(width: 45, alignment: .center)
+                    .padding(.trailing, 9)
+                Text("Total")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                    .foregroundColor(K.finalColor.textWhite)
+                    .frame(width: 58, alignment: .center)
                     .padding(.trailing, 9)
             }
             
@@ -339,11 +344,13 @@ struct BettingAppView_Previews: PreviewProvider {
 
 
 struct screen2PopUp: View {
+    
     let game: Game
     @Binding var betType: BetType
     @ObservedObject var viewModel: bookViewModel
     @Binding var showingSheet: Bool
     @State var onDailyChallenge: Bool = true
+    
 
     
     var body: some View {
@@ -376,7 +383,7 @@ struct screen2PopUp: View {
                 if onDailyChallenge {
                     dailyChallengeSubmitView(game: game, betType: $betType, viewModel: viewModel, showingSheet: $showingSheet)
                 } else {
-                    peer2peerSubmitPage(game: game, betType: betType)
+                    peer2peerSubmitPage(game: game, betType: betType, showingSheet: $showingSheet)
                 }
             }
         }

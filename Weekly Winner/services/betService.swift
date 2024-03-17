@@ -81,15 +81,16 @@ class BetService {
         }()
         
         var whichToInc = -1
-        if bet.betType.rawValue == "betHomeSpread" {
+        if bet.betType.rawValue == "betHomeSpread" || bet.betType.rawValue == "betHomeML" {
             whichToInc = 0
-        } else if bet.betType.rawValue == "betAwaySpread" {
+        } else if bet.betType.rawValue == "betAwaySpread" || bet.betType.rawValue == "betAwayML" {
             whichToInc = 2
         } else if bet.betType.rawValue == "over" {
             whichToInc = 4
         } else if bet.betType.rawValue == "under" {
             whichToInc = 6
         }
+        
       
         //let db = Firestore.firestore()
         var ref: DocumentReference? = nil

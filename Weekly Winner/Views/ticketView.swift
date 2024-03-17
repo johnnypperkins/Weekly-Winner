@@ -113,7 +113,7 @@ struct ticketView: View {
                 }
                 
                 Spacer()
-            }.padding(.top, onTicketPage ? 75 : 0)
+            }
             //.background(K.finalColor.backgroundBlue)
                 .onAppear {
                     print("ticket format for groups " + "\(ticketFormatForGroups)" + "\(viewModel.totalBetArrays.count)")

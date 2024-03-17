@@ -14,6 +14,7 @@ enum Tab {
     case ticket
     case groups
     case profile
+    case challenges
 }
 
 struct tabBarView: View {
@@ -31,47 +32,44 @@ struct tabBarView: View {
                     
                     TabView (selection: $selection){
                         if let user = authViewModel.currUser {// the corresponding views go under this. Makes sense - Reid
+                            
                             UserProfileView(tab: $selection)
                                 .ignoresSafeArea(.all)
                                 .tabItem {
                                     CustomTabBarItem(index: 0, selectedTab: $selectedTab, item: TabItem(title: "Home", icon: Image(systemName: "house.fill"), color: .red))                                }
-                                //.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
                                 .tag(Tab.dashboard)
-                            //.background(K.veryLightBlue.opacity(0.5))
+                            
                             BettingAppView()
                                 .background(K.finalColor.backgroundBlue)
                                 .ignoresSafeArea(.all)
                                 .tabItem {
-                                    CustomTabBarItem(index: 1, selectedTab: $selectedTab, item: TabItem(title: "Bets", icon: Image(systemName: "dollarsign.circle.fill"), color: .green))
-                                    
+                                    CustomTabBarItem(index: 1, selectedTab: $selectedTab, item: TabItem(title: "Book", icon: Image(systemName: "dollarsign.circle.fill"), color: .green)) // change to book
                                 }.tag(Tab.book)
                             
                             
-//                            ticketView(username: "", uid: Auth.auth().currentUser!.uid, groupID: "", selectedWeek: "current", ticketFormatForGroups: [], ownTicket: true, onTicketPage: true, passedTimeFrame: "daily")
-                            profileView(user: authViewModel.currUser!)
-                                .ignoresSafeArea(.all)
-                                //.padding(.top)
-                                .tabItem {
-                                    CustomTabBarItem(index: 2, selectedTab: $selectedTab, item: TabItem(title: "Tickets", icon: Image(systemName: "ticket.fill"), color: .blue))
-                                }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
-                                                .tag(Tab.ticket)
+            
                             
                             groupsView()
                                 .ignoresSafeArea(.all)
                                 .tabItem {
-                                    CustomTabBarItem(index: 3, selectedTab: $selectedTab, item: TabItem(title: "Standings", icon: Image(systemName: "person.3.fill"), color: .purple))
-                                }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
-                                                .tag(Tab.groups)
+                                    CustomTabBarItem(index: 2, selectedTab: $selectedTab, item: TabItem(title: "Leaderboard", icon: Image(systemName: "person.3.fill"), color: .purple)) // 
+                                }.tag(Tab.groups)
                             
-//                            profileView(user: authViewModel.currUser!)
                             challengeView()
                                 .background(K.finalColor.cardBlue )
                                 .ignoresSafeArea(.all)
                                 .navigationBarHidden(true)
                                 .tabItem {
-                                    CustomTabBarItem(index: 4, selectedTab: $selectedTab, item: TabItem(title: "Challenge", icon: Image(systemName: "person.line.dotted.person.fill"), color: .orange))
-                                }//.toolbarBackground(K.finalColor.backgroundBlue, for: .tabBar)
-                                                .tag(Tab.profile)
+                                    CustomTabBarItem(index: 3, selectedTab: $selectedTab, item: TabItem(title: "Challenges", icon: Image(systemName: "person.line.dotted.person.fill"), color: .orange))
+                                }.tag(Tab.challenges)
+                            
+                            
+                            profileView(user: authViewModel.currUser!)
+                                .ignoresSafeArea(.all)
+                                .tabItem {
+                                    CustomTabBarItem(index: 4, selectedTab: $selectedTab, item: TabItem(title: "Profile", icon: Image(systemName: "ticket.fill"), color: .blue))
+                                }.tag(Tab.profile)
+                            
                         }
                         else {
                             EmptyView()
