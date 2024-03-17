@@ -8,6 +8,7 @@
 import SwiftUI
 import UIKit
 import CoreLocation
+import Firebase
 
 // Updated LocationViewModel
 class LocationViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
@@ -83,6 +84,7 @@ struct purchaseCurrencyView: View {
     
     @State var depositAmountString: String = ""
     @State var withdrawlAmount: Int = 0
+    @State var didUploadID: Bool = false
 
     var body: some View {
         
@@ -131,10 +133,12 @@ struct purchaseCurrencyView: View {
                             if StaticUserData.shared.currentUser.paymentVerified == "true" {
                                 withdrawalView()
                             } else {
-                                Text("Please DM @WagerPool on instagram to become verified for withdrawals. A more efficient solution will be released soon. Thank you for your patience.")
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
-                                    .foregroundColor(.white)
-                                    .padding()
+                                if didUploadID == true {
+                                    
+                                }else {
+                                    uploadID(uploaded: $didUploadID)
+                                }
+                           
                             }
                         }
 
@@ -157,7 +161,133 @@ struct purchaseCurrencyView: View {
                 }.padding(.horizontal, 16)
     
             }
+        }.onAppear{
+            checkCollectionExists()
         }
+    }
+    
+    func checkCollectionExists() {
+            let db = Firestore.firestore()
+        let collectionRef = db.collection("users").document(StaticUserData.shared.currentUser.id!).collection("ID")
+
+            collectionRef.limit(to: 1).getDocuments { snapshot, error in
+                if let error = error {
+                    // Handle any errors (e.g., network issues, permissions)
+                    print("Error checking collection: \(error.localizedDescription)")
+                    self.didUploadID = false
+                } else if let snapshot = snapshot, !snapshot.isEmpty {
+                    // Collection exists and is not empty
+                    self.didUploadID = true
+                } else {
+                    // Collection is empty or does not exist
+                    self.didUploadID = false
+                }
+            }
+        }
+}
+
+
+struct uploadID: View {
+    @Binding var uploaded: Bool
+    
+    @State private var showImagePicker = false
+    @State private var selectedImage: UIImage?
+    @State private var profileImage: Image?
+//    @ObservedObject var viewModel: authenticationViewModel
+    @State private var collegeName: String = ""
+    @State private var sourceType: UIImagePickerController.SourceType = .camera
+    
+    var body: some View {
+        VStack{
+            Text("Upload a photo of your government-issued ID")
+                .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                .foregroundColor(.white)
+                .padding()
+            
+            Text("Please ensure the your government-issued ID includes your face, legal name, and date of birth. ")
+                .font(.custom(K.customFonts.lexendDecaLight, size: 12))
+                .foregroundColor(.white)
+                .padding()
+            
+            VStack(alignment: .center) {
+                if let uiImage = profileImage {
+                    uiImage
+                        .resizable() // Make the image resizable
+                        .aspectRatio(contentMode: .fit) // Adjust the content mode
+                        .cornerRadius(12, corners: .allCorners)
+                }
+            }
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity ) // Specify a frame for the VStack or the Image
+            .clipShape(RoundedRectangle(cornerRadius: 12)) // Apply corner radius to the Image or VStack
+            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white, lineWidth: 0.5)) // Apply stroke to the RoundedRectangle shape
+
+            .padding()
+                .sheet(isPresented: $showImagePicker,
+                       onDismiss: loadImage) {
+                    imagePicker(image: $selectedImage)
+                }
+            
+            Button(action: {
+          
+                if let profileImage = profileImage {
+                    uploadProfileImage(selectedImage!)
+                    uploaded.toggle()
+                }
+                else{
+                    showImagePicker.toggle()
+                }
+                
+            }, label: {
+                HStack {
+                    if let profileImage = profileImage {
+                        Text("Submit for Verification")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                            .foregroundStyle(.white)
+                        
+                    }
+                    else{
+                        Text("Upload or Take ID Photo")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                            .foregroundStyle(.white)
+                    }
+                }
+                .frame(minWidth: 0, maxWidth: .infinity)
+                .frame(height: 50)
+                    .background(K.finalColor.titleBlue)
+                    .cornerRadius(7.5)
+                    .padding(.horizontal)
+            })
+        }
+    }
+    
+    func uploadProfileImage(_ image: UIImage) {
+        print("entered1")
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        print("entered01")
+        imageUploader.uploadImage2(use: "GovIDs", image: image) { (profileImageUrl, filename) in
+            print("entered2")
+            Firestore.firestore().collection("users").document(uid).collection("ID").document().setData([
+                "profileImageUrl": profileImageUrl,
+                "imageName": filename, // Store the filename in Firestore as well
+                "timestamp": FieldValue.serverTimestamp() // Adds the current server timestamp
+            ], merge: true) { error in
+                if let error = error {
+                    // Handle any errors here
+                    print("Error setting document: \(error.localizedDescription)")
+                } else {
+                    // Document was successfully set or updated
+                    print("Document successfully updated with image URL and filename")
+                    print("Image URL: \(profileImageUrl), Filename: \(filename)")
+                }
+            }
+            
+        }
+    }
+    
+
+    func loadImage() {
+        guard let selectedImage = selectedImage else {return}
+        profileImage = Image(uiImage: selectedImage)
     }
 }
 

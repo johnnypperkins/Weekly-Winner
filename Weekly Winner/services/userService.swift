@@ -67,20 +67,20 @@ struct userService {
             .document(uid)
             .updateData(["friends": FieldValue.arrayRemove([id])
                         ])
-        Firestore.firestore().collection("users")
-            .document(id)
-            .updateData(["friends": FieldValue.arrayRemove([uid])
-                        ])
+//        Firestore.firestore().collection("users")
+//            .document(id)
+//            .updateData(["friends": FieldValue.arrayRemove([uid])
+//                        ])
     }
     func Follow(uid: String, id: String){
         Firestore.firestore().collection("users")
             .document(uid)
             .updateData(["friends": FieldValue.arrayRemove([id])
                         ])
-        Firestore.firestore().collection("users")
-            .document(id)
-            .updateData(["friends": FieldValue.arrayRemove([uid])
-                        ])
+//        Firestore.firestore().collection("users")
+//            .document(id)
+//            .updateData(["friends": FieldValue.arrayRemove([uid])
+//                        ])
     }
    
     struct MyDocument: Codable {
