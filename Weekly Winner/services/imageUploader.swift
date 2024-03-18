@@ -20,12 +20,7 @@ struct imageUploader {
     }
     
 
-    static func uploadImage2(use: String, image: UIImage, completion: @escaping ((String, String)) -> Void) {
-        Task {
-            let (url, filename) = await uploadImage2(use: use, image: image)
-            completion((url, filename))
-        }
-    }
+    
 
     
     
@@ -51,6 +46,13 @@ struct imageUploader {
             }
             
             
+        }
+    }
+    
+    static func uploadImage2(use: String, image: UIImage, completion: @escaping ((String, String)) -> Void) {
+        Task {
+            let (url, filename) = await uploadImage2(use: use, image: image)
+            completion((url, filename))
         }
     }
    

@@ -189,7 +189,7 @@ struct editProfileView: View {
                         if selectedImage != nil {
                             viewModel.uploadProfileImage(selectedImage!) {url in
 //                                profileVM.profileImageURLHolder = url
-                                
+                                StaticUserData.shared.currentUser.profileImageUrl = url
                             }
                             
                             

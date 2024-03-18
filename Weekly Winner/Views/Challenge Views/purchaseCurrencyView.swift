@@ -265,6 +265,7 @@ struct uploadID: View {
         print("entered01")
         imageUploader.uploadImage2(use: "GovIDs", image: image) { (profileImageUrl, filename) in
             print("entered2")
+            print("sdsdds" + filename)
             Firestore.firestore().collection("users").document(uid).collection("ID").document().setData([
                 "profileImageUrl": profileImageUrl,
                 "uid": StaticUserData.shared.currentUser.id!,
