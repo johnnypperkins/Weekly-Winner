@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import Kingfisher
 import Firebase
+import Combine
 
 func returnTeamBetOn(betType: BetType, game: Game) -> String {
     switch betType {
@@ -153,7 +154,9 @@ struct peer2peerSlider: View {
                 if wagerAmount > 0 && selectedUser != nil{
                     Button(action: {
                         viewModel.sendChallenge(receiverUser: selectedUser!, senderWagerAmount: Int(wagerAmount), game: game) {
-                            showingSheet = false
+                            viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {
+                                showingSheet = false
+                            }
                         }
                     }, label: {
                         HStack {
@@ -180,7 +183,7 @@ struct peer2peerSlider: View {
 
 struct twoWagers: View {
     let game: Game
-    var viewModel: peer2peerViewModel
+    @ObservedObject var viewModel: peer2peerViewModel
     var betType: BetType
     @Binding var wagerAmount: Double
     
@@ -189,24 +192,29 @@ struct twoWagers: View {
     @Binding var selectedUser: User?
     
     var body: some View {
-        let keywordBinding = Binding<String> (
-            get: {
-                opponentUsername.lowercased()
-            },
-            set: {
-                opponentUsername = $0.lowercased()
-                viewModel.fetchUser(from: opponentUsername.lowercased())
-            }
-        )
+//        let keywordBinding = Binding<String> (
+//            get: {
+//                opponentUsername.lowercased()
+//            },
+//            set: {
+//                opponentUsername = $0.lowercased()
+//                viewModel.fetchUser(from: opponentUsername.lowercased())
+//            }
+//        )
         
         //ScrollView {
+        
+        
         VStack (spacing: 3){
             ZStack {
                 VStack {
-                    searchBarView(keyword: keywordBinding)
+                    searchBarView(keyword: $opponentUsername)
                         .frame(height: selectedUser == nil ? 44 : 0)
                         .disabled(selectedUser == nil ? false : true)
                         .opacity(selectedUser == nil ? 1 : 0)
+                        .onChange(of: opponentUsername) { newUsername in
+                            viewModel.fetchUser(from: opponentUsername.lowercased())
+                        }
                     
                     ScrollView {
                         VStack {
@@ -219,7 +227,7 @@ struct twoWagers: View {
                                 }
                             }
                         }
-                    }.frame(height: selectedUser == nil ? 70 : 0)
+                    }.frame(height: selectedUser == nil ? 50 : 0)
                         .padding(.bottom)
                 }
                 if selectedUser != nil {

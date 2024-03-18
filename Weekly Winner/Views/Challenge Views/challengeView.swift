@@ -663,7 +663,9 @@ struct searchBarView: View {
     
     var body: some View {
         HStack {
-            TextField("Search", text: withAnimation{$keyword})
+            
+            
+            TextField("Search", text: $keyword)
                 .onChange(of: keyword) { keywordd in
                     keyword = keywordd.lowercased()
                 }
@@ -674,10 +676,11 @@ struct searchBarView: View {
                 .foregroundColor(.white)
                 .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
                 .accentColor(.white)
-                .textInputAutocapitalization(.none)
-                .keyboardType(.URL)
+                .textInputAutocapitalization(.never)
+//                .keyboardType(.URL)
                 .disableAutocorrection(true)
                 
+            
             //.padding(.vertical, 5)
            
 //                .onChange(of: username) { newUsername in

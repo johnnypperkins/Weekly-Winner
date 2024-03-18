@@ -16,6 +16,11 @@ class peer2peerViewModel: ObservableObject {
     @Published var senderDirectTicket: DirectChallengeTicket? = nil
     @Published var queriedUsers: [User] = []
     
+    @Published var usernameSearch: String = ""
+    
+    var searchTask: DispatchWorkItem?
+
+    
     
     init() {
         //self.setCustomID()
@@ -50,7 +55,41 @@ class peer2peerViewModel: ObservableObject {
                 }
         }
     }
+    
+    func delayedFetchUser(from keyword: String) {
+        // Cancel the previous task if it exists
+        searchTask?.cancel()
 
+        // Create a new task
+        let task = DispatchWorkItem { [weak self] in
+            self?.fetchUser(from: keyword)
+        }
+
+        // Save the new task
+        searchTask = task
+
+        // Execute the task after 300 milliseconds
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8, execute: task)
+    }
+
+    func fetchUserCoinsAndBucks(userID: String, completion: @escaping () -> Void) {
+        let db = Firestore.firestore()
+        let userRef = db.collection("users").document(userID)
+        
+        userRef.getDocument { (document, error) in
+            if let document = document, document.exists {
+                let data = document.data()
+                let poolCoins = data?["poolCoins"] as? Double
+                let poolBucks = data?["poolBucks"] as? Double
+                StaticUserData.shared.currentUser.poolBucks = poolBucks ?? -99
+                StaticUserData.shared.currentUser.poolCoins = poolCoins ?? -99
+                completion()
+            } else {
+                print("Document does not exist or error fetching document: \(error?.localizedDescription ?? "Unknown error")")
+                completion()
+            }
+        }
+    }
     
     
     func sendChallenge(receiverUser: User, senderWagerAmount: Int, game: Game, completion: @escaping () -> Void) {

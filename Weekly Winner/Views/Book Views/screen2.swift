@@ -13,6 +13,7 @@ struct BettingAppView: View {
     @State private var showingSheet = false
     @State private var isShowing = false
     @State private var searchTerm: String = ""
+    @State private var poolBucks = StaticUserData.shared.currentUser.poolBucks
     
     @State private var rankedCommence = false
 
@@ -27,7 +28,7 @@ struct BettingAppView: View {
             }
             VStack {
                 
-                screen2HeaderView(isShowing: $isShowing, rankedCommence: $rankedCommence, searchTerm: $searchTerm, viewModel: viewModel)
+                screen2HeaderView(isShowing: $isShowing, rankedCommence: $rankedCommence, searchTerm: $searchTerm, viewModel: viewModel, poolBucks: $poolBucks)
 
                 ScrollView { // All the games to display
                     VStack(spacing: 5) {
@@ -38,9 +39,9 @@ struct BettingAppView: View {
                                     let now = Date() // Get the current date and time
                                     if game.commenceTime.dateValue() > now {
                                         if viewModel.selectedGameType == "All Games" {
-                                            gameRowView(game: game, isDisabled: false, viewModel: viewModel)
+                                            gameRowView(game: game, isDisabled: false, viewModel: viewModel, poolBucks: $poolBucks)
                                         } else if viewModel.selectedGameType == game.whichSport {
-                                            gameRowView(game: game, isDisabled: false, viewModel: viewModel)
+                                            gameRowView(game: game, isDisabled: false, viewModel: viewModel, poolBucks: $poolBucks)
                                         }
                                     }
                                 }
@@ -54,6 +55,7 @@ struct BettingAppView: View {
                         
                     }.padding(.bottom,40)
                 }.padding(EdgeInsets(top: 10, leading: 0, bottom: 30, trailing: 0))
+                Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(K.finalColor.backgroundBlue)
@@ -62,7 +64,7 @@ struct BettingAppView: View {
                 .offset(x:isShowing ? 300 : 0, y: isShowing ? 100 : 0)
                 .scaleEffect(isShowing ? 0.8 : 1)
         }.background(K.finalColor.backgroundBlue)
-            .padding(EdgeInsets(top: 80, leading: 0, bottom: 55, trailing: 0))
+            .padding(EdgeInsets(top: 60, leading: 0, bottom: 55, trailing: 0))
             .navigationBarHidden(false)
             .onAppear() {
                 rankedCommence = false
@@ -70,6 +72,9 @@ struct BettingAppView: View {
             .onDisappear() {
                 viewModel.getGamesCommenceTime() {}
             }
+//            .onChange(of: showingSheet) { _ in
+//                poolBucks = StaticUserData.shared.currentUser.poolBucks
+//            }
     }
     
 }
@@ -79,39 +84,54 @@ struct screen2HeaderView: View {
     @Binding var rankedCommence: Bool
     @Binding var searchTerm: String
     @ObservedObject var viewModel: bookViewModel
+    @Binding var poolBucks: Double
+
     
     var body: some View {
-        ZStack {
+        VStack {
             HStack {
-                Button(action: {
-                    withAnimation(.spring()) {
-                        isShowing.toggle()
-                    }
-                    searchTerm = ""
-                    rankedCommence = true
-                }, label: {
-                    HStack {
-                        Image(systemName: "line.horizontal.3")
-                            .imageScale(.large)
-                            .foregroundColor(.white)
-                    }
-                    .padding(10) // Add padding around the button
-                    .background(K.finalColor.cardBlue) // Set the background color
-                    .cornerRadius(5) // Optional: Add a corner radius if you want rounded corners
-                }).padding(.leading)
-
                 Spacer()
+                currencyView(poolCoins: StaticUserData.shared.currentUser.poolCoins, poolBucks: $poolBucks)
+                    .padding(.trailing)
             }
             
-            Text(viewModel.selectedGameType)
-                .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
-                .fontWeight(.bold)
-                .foregroundColor(K.finalColor.textWhite)
+            ZStack {
+                HStack {
+                    Button(action: {
+                        withAnimation(.spring()) {
+                            isShowing.toggle()
+                        }
+                        searchTerm = ""
+                        rankedCommence = true
+                    }, label: {
+                        HStack {
+                            Image(systemName: "line.horizontal.3")
+                                .imageScale(.large)
+                                .foregroundColor(.white)
+                        }
+                        .padding(10) // Add padding around the button
+                        .background(K.finalColor.cardBlue) // Set the background color
+                        .cornerRadius(5) // Optional: Add a corner radius if you want rounded corners
+                    }).padding(.leading)
+
+                    Spacer()
+                    
+                    
+
+                }
+                
+                Text(viewModel.selectedGameType)
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                    .fontWeight(.bold)
+                    .foregroundColor(K.finalColor.textWhite)
+                
+                HStack{
+                    Spacer()
+                }.padding(.trailing)
+            }.padding(.top, 3)
             
-            HStack{
-                Spacer()
-            }.padding(.trailing)
-        }.padding(.top, 3)
+        }
+        
         HStack {
             HStack {
                 TextField("Search", text: $searchTerm)
@@ -196,6 +216,7 @@ struct gameRowView: View {
     @State var titleStringH: String = ""
     @State var titleStringA: String = ""
     @ObservedObject var viewModel: bookViewModel
+    @Binding var poolBucks: Double
 
     
     var maxHeight = 100
@@ -265,7 +286,7 @@ struct gameRowView: View {
         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
         
         .popup(isPresented: $showingSheet) {
-            screen2PopUp(game: game, betType: $betType, viewModel: viewModel, showingSheet: $showingSheet)
+            screen2PopUp(game: game, betType: $betType, viewModel: viewModel, showingSheet: $showingSheet, poolBucks: $poolBucks)
                 .frame(height: 700)
         } customize: {
             $0
@@ -350,6 +371,7 @@ struct screen2PopUp: View {
     @ObservedObject var viewModel: bookViewModel
     @Binding var showingSheet: Bool
     @State var onDailyChallenge: Bool = true
+    @Binding var poolBucks: Double
     
 
     
@@ -386,6 +408,8 @@ struct screen2PopUp: View {
                     peer2peerSubmitPage(game: game, betType: betType, showingSheet: $showingSheet)
                 }
             }
+        }.onDisappear() {
+            poolBucks = StaticUserData.shared.currentUser.poolBucks
         }
     }
 }

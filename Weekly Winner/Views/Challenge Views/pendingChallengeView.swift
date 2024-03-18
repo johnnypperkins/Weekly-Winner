@@ -23,17 +23,20 @@ struct pendingCardView: View {
                     if challenge.status == "inAction" {// challenge has begun
                         pendingOption1(challenge: challenge, viewModel: viewModel)
                     } else if challenge.status == "pendingAcceptance" && challenge.senderID != StaticUserData.shared.currentUser.id {// someone sent to you
-                        pendingOption2(viewModel: viewModel, challenge: challenge)
+                        if let tenMinutesAfterChallenge = Calendar.current.date(byAdding: .minute, value: 10, to: challenge.dateCreated.dateValue()) {
+                            if Date() < tenMinutesAfterChallenge { // you sent to someone and hasnt expired yet
+                                pendingOption2(viewModel: viewModel, challenge: challenge)
+
+                            }
+                        }
                         
                     } else if challenge.status == "pendingAcceptance" && challenge.senderID == StaticUserData.shared.currentUser.id {// you sent to someone
                         if let tenMinutesAfterChallenge = Calendar.current.date(byAdding: .minute, value: 10, to: challenge.dateCreated.dateValue()) {
-//                            if Date() < tenMinutesAfterChallenge { // you sent to someone and hasnt expired yet
-//                                
-//                            } else { // you sent to someone and its past expiration date of 10 min
-//                                
-//                            }
-                            pendingOption3(challenge: challenge)
-                            
+                            if Date() < tenMinutesAfterChallenge { // you sent to someone and hasnt expired yet
+                                pendingOption3(challenge: challenge)
+                            } else { // you sent to someone and its past expiration date of 10 min
+                                pendingOption3Expired(challenge: challenge, viewModel: viewModel)
+                            }
                         }
                     }
                     
@@ -301,7 +304,7 @@ struct pendingOption3Expired: View { // didnt respond fast enough
                     .foregroundColor(.red)
             }
             Button(action: {
-                viewModel.reclaimFundFromExpiredChallenge(userID: StaticUserData.shared.currentUser.id!, opponentID: challenge.receiverID, challengeID: challenge.customID, reclaimAmount: challenge.senderWagerAmount) {
+                viewModel.reclaimFundFromExpiredChallenge(senderID: StaticUserData.shared.currentUser.id!, receiverID: challenge.receiverID, customID: challenge.customID, reclaimAmount: challenge.senderWagerAmount) {
                     viewModel.fetchChallenges {
                         viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {}
                     }

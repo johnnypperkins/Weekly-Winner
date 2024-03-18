@@ -464,12 +464,12 @@ class challengeViewModel: ObservableObject {
         })
     }
 
-    func reclaimFundFromExpiredChallenge(userID: String, opponentID: String, challengeID: String, reclaimAmount: Double,completion: @escaping () -> Void ) {
+    func reclaimFundFromExpiredChallenge(senderID: String, receiverID: String, customID: String, reclaimAmount: Double, completion: @escaping () -> Void ) {
         let db = Firestore.firestore()
         
         // Define the document references for the user's and opponent's challenge tickets
-        let userChallengeRef = db.collection("users").document(userID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challengeID)
-        let opponentChallengeRef = db.collection("users").document(opponentID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challengeID)
+        let userChallengeRef = db.collection("users").document(senderID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(customID)
+        let opponentChallengeRef = db.collection("users").document(receiverID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(customID)
         
         // Use a batch to perform both deletions as a single atomic operation
         let batch = db.batch()
@@ -479,6 +479,27 @@ class challengeViewModel: ObservableObject {
         
         // Delete the opponent's challenge document
         batch.deleteDocument(opponentChallengeRef)
+        
+        let betsCollectionRef = db.collection("users").document(senderID)
+            .collection("challenges").document("bets")
+            .collection("currentWeekBets")
+        
+        // Query the collection for documents where a specific field matches challenge.customID
+        betsCollectionRef.whereField("groupID", isEqualTo: customID).getDocuments { (querySnapshot, err) in
+            if let err = err { print("Error getting documents: \(err)") } else {
+                for document in querySnapshot!.documents {
+                    print("Document ID: \(document.documentID) will be deleted.")
+                    
+                    betsCollectionRef.document(document.documentID).delete() { error in
+                        if let error = error {
+                            print("Error deleting document: \(error)")
+                        } else {
+                            print("Document successfully deleted")
+                        }
+                    }
+                }
+            }
+        }
         
         // Commit the batch
         batch.commit { err in
@@ -490,7 +511,7 @@ class challengeViewModel: ObservableObject {
                 print("Challenge documents successfully deleted")
                 
                 // After successfully deleting the challenge documents, increment the user's poolBucks
-                let userRef = db.collection("users").document(userID)
+                let userRef = db.collection("users").document(senderID)
                 userRef.updateData([
                     "poolBucks": FieldValue.increment(reclaimAmount)
                 ]) { err in

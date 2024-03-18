@@ -57,9 +57,11 @@ class bookViewModel: ObservableObject {
             guard let self = self else { return }
             let now = Date() // Get the current date and time
             for game in games {
-                self.allGames.append(game) // Append game to allGames array
-                if game.total_plays > 0 {
-                    self.allPopularGames.append(game)
+                if !self.allGames.contains(where: ({$0.idd == game.idd})) {
+                    self.allGames.append(game) // Append game to allGames array
+                    if game.total_plays > 0 {
+                        self.allPopularGames.append(game)
+                    }
                 }
             }
             allPopularGames.sort { $0.total_plays > $1.total_plays }
@@ -98,6 +100,26 @@ class bookViewModel: ObservableObject {
             }
         }
     }
+    
+    func fetchUserCoinsAndBucks(userID: String, completion: @escaping () -> Void) {
+        let db = Firestore.firestore()
+        let userRef = db.collection("users").document(userID)
+        
+        userRef.getDocument { (document, error) in
+            if let document = document, document.exists {
+                let data = document.data()
+                let poolCoins = data?["poolCoins"] as? Double
+                let poolBucks = data?["poolBucks"] as? Double
+                StaticUserData.shared.currentUser.poolBucks = poolBucks ?? -99
+                StaticUserData.shared.currentUser.poolCoins = poolCoins ?? -99
+                completion()
+            } else {
+                print("Document does not exist or error fetching document: \(error?.localizedDescription ?? "Unknown error")")
+                completion()
+            }
+        }
+    }
+    
 }
 
 
