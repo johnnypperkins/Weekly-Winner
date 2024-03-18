@@ -449,7 +449,7 @@ struct riskMiniStruct: View {
             HStack {
                 Spacer()
     
-                Text(challengeSender ? "Your Risk Amount" : "Opponent Risk Amount")
+                Text(challengeSender ? "Your Risk" : "Opponent Risk")
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
                     .foregroundColor(.white)
                 Spacer()

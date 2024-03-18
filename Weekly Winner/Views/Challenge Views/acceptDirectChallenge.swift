@@ -17,11 +17,36 @@ struct acceptDirectChallenge: View {
     var senderProfileImageUrl: String? = nil
     let inAction: Bool
     
+    
     var youAreSender: Bool {
         if directChallengeTicket.senderID == StaticUserData.shared.currentUser.id { // sender id is same as yours
             return true
         } else {
             return false
+        }
+    }
+    
+    var challengeResult: String {
+        if directChallengeTicket.status == "win" {
+            return "win"
+        } else if directChallengeTicket.status == "loss" {
+            return "loss"
+        } else if directChallengeTicket.status == "push" {
+            return "push"
+        } else {
+            return ""
+        }
+    }
+    
+    var opponentChallengeResult: String {
+        if directChallengeTicket.status == "win" {
+            return "loss"
+        } else if directChallengeTicket.status == "loss" {
+            return "win"
+        } else if directChallengeTicket.status == "push" {
+            return "push"
+        } else {
+            return ""
         }
     }
     
@@ -76,15 +101,17 @@ struct acceptDirectChallenge: View {
                         VStack(spacing: 7.5) {
                             HStack(spacing: 7.5) {
                                 if let game = viewModel.fetchedGame {
-                                    oddsMiniViewAccepted(Moneyline: !youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds)
+                                    oddsMiniViewAccepted(
+                                        Moneyline: !youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds,
+                                        challengeResult: opponentChallengeResult)
                                     
-                                    spreadMiniView(
+                                    spreadMiniViewAccepted(
                                         betType: !youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType,
-                                        spreadString: returnSpreadString(game: game, betType: returnOppBetType(betType: !youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType))
+                                        spreadString: returnSpreadString(game: game, betType: returnOppBetType(betType: !youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType)), challengeResult: opponentChallengeResult
                                     )
                                     
-                                    teamMiniView(
-                                        teamString: returnTeamString(game: game, betType: returnOppBetType(betType: !youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType)), challengeSender: !youAreSender
+                                    teamMiniViewAccepted(
+                                        teamString: returnTeamString(game: game, betType: returnOppBetType(betType: !youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType)), challengeSender: !youAreSender, challengeResult: opponentChallengeResult
                                     )
                                 }
                                 
@@ -117,15 +144,15 @@ struct acceptDirectChallenge: View {
                         if let game = viewModel.fetchedGame {
                             VStack(spacing: 7.5) {
                                 HStack(spacing: 7.5) {
-                                    oddsMiniViewAccepted(Moneyline: youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds)
+                                    oddsMiniViewAccepted(Moneyline: youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds, challengeResult: challengeResult)
                                     
-                                    spreadMiniView(
+                                    spreadMiniViewAccepted(
                                         betType: youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType,
-                                        spreadString: returnSpreadString(game: game, betType: returnOppBetType(betType: youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType))
+                                        spreadString: returnSpreadString(game: game, betType: returnOppBetType(betType: youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType)), challengeResult: challengeResult
                                     )
                                     
-                                    teamMiniView(
-                                        teamString: returnTeamString(game: game, betType: returnOppBetType(betType: youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType)), challengeSender: !youAreSender
+                                    teamMiniViewAccepted(
+                                        teamString: returnTeamString(game: game, betType: returnOppBetType(betType: youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType)), challengeSender: !youAreSender, challengeResult: challengeResult
                                     )
                                     
                                 }.frame(width: 345)
@@ -160,14 +187,8 @@ struct acceptDirectChallenge: View {
                         
                         if let game = viewModel.fetchedGame {
                             HStack {
-                                Spacer()
-                                Text("\(viewModel.fetchedGame!.whichSport) | \(formatDateEMMMDHMM.format(date: viewModel.fetchedGame!.commenceTime.dateValue()))")
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 11))
-                                    .foregroundColor(K.finalColor.textWhite)
-                                Spacer()
-                            }.frame(width: 345, height: 40).background(K.finalColor.cardBlue).cornerRadius(7.5)
-
-                               
+                                gameFinalScore(game: game)
+                            }.frame(width: 345).background(K.finalColor.cardBlue).cornerRadius(7.5)
                         }
                     }
                     Spacer()
@@ -245,6 +266,20 @@ struct acceptDirectChallenge: View {
 struct teamMiniViewAccepted: View {
     let teamString: String
     let challengeSender: Bool
+    let challengeResult: String
+    
+    var color: Color {
+        if challengeResult == "win" {
+            return K.finalColor.winningGreen
+        } else if challengeResult == "loss" {
+            return K.finalColor.deleteRed
+        } else if challengeResult == "push" {
+            return K.averageGray
+        } else {
+            return K.finalColor.cardBlue
+        }
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
 //            HStack {
@@ -263,7 +298,7 @@ struct teamMiniViewAccepted: View {
                 Spacer()
 //                    .padding(challengeSender ? .leading : .trailing)
                 
-            }.frame(height: 50).background(K.finalColor.cardBlue)
+            }.frame(height: 50).background(color)
         }.frame(width: 200).cornerRadius(5)
     }
 }
@@ -271,7 +306,19 @@ struct teamMiniViewAccepted: View {
 struct spreadMiniViewAccepted: View {
     let betType: BetType
     let spreadString: String
- 
+    let challengeResult: String
+    
+    var color: Color {
+        if challengeResult == "win" {
+            return K.finalColor.winningGreen
+        } else if challengeResult == "loss" {
+            return K.finalColor.deleteRed
+        } else if challengeResult == "push" {
+            return K.averageGray
+        } else {
+            return K.finalColor.cardBlue
+        }
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -289,13 +336,26 @@ struct spreadMiniViewAccepted: View {
                     .foregroundColor(.white)
                     .lineLimit(3)
                 Spacer()
-            }.frame(height: 50).background(K.finalColor.cardBlue)
+            }.frame(height: 50).background(color)
         }.cornerRadius(5)
     }
 }
 
 struct oddsMiniViewAccepted: View {
     let Moneyline: Int
+    let challengeResult: String
+    
+    var color: Color {
+        if challengeResult == "win" {
+            return K.finalColor.winningGreen
+        } else if challengeResult == "loss" {
+            return K.finalColor.deleteRed
+        } else if challengeResult == "push" {
+            return K.averageGray
+        } else {
+            return K.finalColor.cardBlue
+        }
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -306,12 +366,11 @@ struct oddsMiniViewAccepted: View {
                     .foregroundColor(.white)
                     .lineLimit(3)
                 Spacer()
-            }.frame(height: 50).background(K.finalColor.cardBlue)
+            }.frame(height: 50).background(color)
         }.cornerRadius(5)
 
     }
 }
-
 
 struct riskMiniStructAccepted: View {
     let yourWager: Bool
@@ -322,7 +381,7 @@ struct riskMiniStructAccepted: View {
             HStack {
                 Spacer()
     
-                Text(yourWager ? "Your Risk Amount" : "Opponent Risk Amount")
+                Text(yourWager ? "Your Risk" : "Opponent Risk")
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
                     .foregroundColor(.white)
                 Spacer()
@@ -340,6 +399,7 @@ struct riskMiniStructAccepted: View {
         }.cornerRadius(7.5)
     }
 }
+
 struct rewardMiniStructAccepted: View {
     let yourWager: Bool
     let odds: Int
@@ -365,5 +425,55 @@ struct rewardMiniStructAccepted: View {
                 Spacer()
             }.frame(height: 41.25).background(K.finalColor.cardBlue)
         }.cornerRadius(7.5)
+    }
+}
+
+struct gameFinalScore: View {
+    let game: Game
+    var body: some View {
+        HStack {
+            VStack (spacing: 3){
+                HStack {
+                    VStack {
+                        HStack {
+                            Text("\(game.homeTeam)")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
+                                .foregroundColor(.white)
+                            Spacer()
+                        }
+                        HStack(spacing: 0) {
+                            Text("\(game.awayTeam)")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
+                                .foregroundColor(.white)
+                            Spacer()
+                        }
+                    }.frame(width: 220)
+                        .padding(.leading)
+                    Spacer()
+                    VStack {
+                        
+                        Text((game.status == "inAction" || game.status == "completed") ? "\(game.homeTeamScore)" : "")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                            .foregroundColor(.white)
+                            .frame(width: 30)
+                        Text((game.status == "inAction" || game.status == "completed") ? "\(game.awayTeamScore)" : "")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                            .foregroundColor(.white)
+                            .frame(width: 30)
+                    }.padding(.trailing)
+                    
+                }
+                
+                HStack {
+                    Spacer()
+                    Text("\(game.whichSport) | \(formatDateEMMMDHMM.format(date: game.commenceTime.dateValue()))")
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 10))
+                        .foregroundColor(K.finalColor.textWhite)
+                        
+                    Spacer()
+                }
+            }
+            
+        }.padding(EdgeInsets(top: 5, leading: 7.5, bottom: 5, trailing: 0))
     }
 }

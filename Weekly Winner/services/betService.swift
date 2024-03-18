@@ -44,13 +44,15 @@ class BetService {
                           let awaySpreadODDS = data["awaySpreadODDS"] as? Int,
                           let homeSpreadODDS = data["homeSpreadODDS"] as? Int,
                           let totalOverODDS = data["totalOverODDS"] as? Int,
-                          let totalUnderODDS = data["totalUnderODDS"] as? Int else {
+                          let totalUnderODDS = data["totalUnderODDS"] as? Int,
+                          let status = data["status"] as? String
+                            else {
                               return nil
                           }
                     
-                    let completed = data["completed"] as? Bool ?? false
+                   
                     
-                    return Game(id: nil, idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: completed, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays, awayML: awayML, homeML: homeML, awaySpreadODDS: awaySpreadODDS, homeSpreadODDS: homeSpreadODDS, totalOverODDS: totalOverODDS, totalUnderODDS: totalUnderODDS)
+                    return Game(id: nil, idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, status: status, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays, awayML: awayML, homeML: homeML, awaySpreadODDS: awaySpreadODDS, homeSpreadODDS: homeSpreadODDS, totalOverODDS: totalOverODDS, totalUnderODDS: totalUnderODDS)
                 }
                 
                 completion(games) // Call the completion handler once the games are populated

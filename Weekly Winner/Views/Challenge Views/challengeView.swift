@@ -674,11 +674,25 @@ struct searchBarView: View {
                 .foregroundColor(.white)
                 .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
                 .accentColor(.white)
-                .textInputAutocapitalization(.words)
+                .textInputAutocapitalization(.none)
+                .keyboardType(.URL)
                 .disableAutocorrection(true)
                 
             //.padding(.vertical, 5)
            
+//                .onChange(of: username) { newUsername in
+//                    username = newUsername.lowercased()
+//                    viewModel.checkUsernameAvailability(potentialUsername: username) {}
+//                    
+//                }
+//                .placeholder(when: username.isEmpty, placeholder: {
+//                    Text("Username").foregroundColor(.gray)
+//                })
+//                .foregroundColor(.white)
+//                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14))
+//                .accentColor(.white)
+//                .textInputAutocapitalization(.none)  // Consider changing this to .none if you always want lowercase
+//                .disableAutocorrection(true)
             
         }
         .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 15))

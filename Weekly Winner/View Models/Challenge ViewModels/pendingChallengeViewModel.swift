@@ -107,13 +107,14 @@ class pendingChallengeViewModel: ObservableObject {
                        let awaySpreadODDS = data["awaySpreadODDS"] as? Int,
                        let homeSpreadODDS = data["homeSpreadODDS"] as? Int,
                        let totalOverODDS = data["totalOverODDS"] as? Int,
-                       let totalUnderODDS = data["totalUnderODDS"] as? Int
+                       let totalUnderODDS = data["totalUnderODDS"] as? Int,
+                       let status = data["status"] as? String
                     {
                         // Ensure completed is correctly extracted or defaulted
-                        let completed = data["completed"] as? Bool ?? false
+                        
 
                         // Create the newGame instance with all fields
-                        let newGame = Game(id: nil, idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: completed, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays, awayML: awayML, homeML: homeML, awaySpreadODDS: awaySpreadODDS, homeSpreadODDS: homeSpreadODDS, totalOverODDS: totalOverODDS, totalUnderODDS: totalUnderODDS)
+                        let newGame = Game(id: nil, idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, status: status, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays, awayML: awayML, homeML: homeML, awaySpreadODDS: awaySpreadODDS, homeSpreadODDS: homeSpreadODDS, totalOverODDS: totalOverODDS, totalUnderODDS: totalUnderODDS)
                         
                         if !self.selectedGames.contains(where: { $0.idd == newGame.idd }) {
                             self.selectedGames.append(newGame)
@@ -264,13 +265,14 @@ class pendingChallengeViewModel: ObservableObject {
                                let awaySpreadODDS = data["awaySpreadODDS"] as? Int,
                                let homeSpreadODDS = data["homeSpreadODDS"] as? Int,
                                let totalOverODDS = data["totalOverODDS"] as? Int,
-                               let totalUnderODDS = data["totalUnderODDS"] as? Int
+                               let totalUnderODDS = data["totalUnderODDS"] as? Int,
+                               let status = data["status"] as? String
                             {
                                 // Ensure completed is correctly extracted or defaulted
-                                let completed = data["completed"] as? Bool ?? false
+                                
 
                                 // Create the newGame instance with all fields
-                                let newGame = Game(id: nil, idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, completed: completed, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays, awayML: awayML, homeML: homeML, awaySpreadODDS: awaySpreadODDS, homeSpreadODDS: homeSpreadODDS, totalOverODDS: totalOverODDS, totalUnderODDS: totalUnderODDS)
+                                let newGame = Game(id: nil, idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, status: status, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays, awayML: awayML, homeML: homeML, awaySpreadODDS: awaySpreadODDS, homeSpreadODDS: homeSpreadODDS, totalOverODDS: totalOverODDS, totalUnderODDS: totalUnderODDS)
                                 completion(newGame)
                             }
                             } catch let error {

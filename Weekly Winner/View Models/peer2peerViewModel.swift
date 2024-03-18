@@ -35,16 +35,22 @@ class peer2peerViewModel: ObservableObject {
     func setSenderDirectTicket(senderTicket: DirectChallengeTicket) {
         self.senderDirectTicket = senderTicket
     }
-    
     func fetchUser(from keyword: String) {
-        db.collection("users").whereField("keywordsForLookup", arrayContains: keyword).limit(to: 5).getDocuments { querySnapshot, error in
-            guard let documents = querySnapshot?.documents, error == nil else {return}
-            self.queriedUsers = documents.compactMap { queryDocumentSnapshot in
-                try? queryDocumentSnapshot.data(as: User.self)
-            }
+        // Calculate the end value for the query
+        if keyword != "" {
+            
+            db.collection("users")
+                .whereField("username", isEqualTo: keyword)
+                .limit(to: 1)
+                .getDocuments { querySnapshot, error in
+                    guard let documents = querySnapshot?.documents, error == nil else { return }
+                    self.queriedUsers = documents.compactMap { queryDocumentSnapshot in
+                        try? queryDocumentSnapshot.data(as: User.self)
+                    }
+                }
         }
     }
-    
+
     
     
     func sendChallenge(receiverUser: User, senderWagerAmount: Int, game: Game, completion: @escaping () -> Void) {

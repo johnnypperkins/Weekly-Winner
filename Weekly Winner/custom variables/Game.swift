@@ -17,7 +17,7 @@ struct Game: Identifiable, Decodable, Hashable {
     var homeSpread: Double
     var homeTeam: String
     var commenceTime: Timestamp
-    var completed: Bool?
+    var status: String
     var totalOver: Double
     var totalUnder: Double
     var homeTeamScore: Int
