@@ -272,7 +272,9 @@ struct uploadID: View {
             Firestore.firestore().collection("users").document(uid).collection("ID").document().setData([
                 "profileImageUrl": profileImageUrl,
                 "uid": StaticUserData.shared.currentUser.id!,
-                "filename": filename, // Store the filename in Firestore as well
+                "lastname": StaticUserData.shared.currentUser.lastName,
+                "firstname": StaticUserData.shared.currentUser.firstName,
+                "filename": filename,// Store the filename in Firestore as well
                 "timestamp": FieldValue.serverTimestamp() // Adds the current server timestamp
             ], merge: true) { error in
                 if let error = error {
