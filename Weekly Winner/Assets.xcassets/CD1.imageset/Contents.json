@@ -1,15 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Screenshot 2024-02-08 at 4.48.52 PM.png",
+      "filename" : "IMG_1664.jpg",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "IMG_1664 1.jpg",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "IMG_1664 2.jpg",
       "idiom" : "universal",
       "scale" : "3x"
     }
