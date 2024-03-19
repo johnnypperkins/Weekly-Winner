@@ -14,7 +14,7 @@ struct acceptDirectChallenge: View {
     
     @ObservedObject var viewModel: challengeViewModel
     let directChallengeTicket: DirectChallengeTicket
-    var senderProfileImageUrl: String? = nil
+    @State var opponentProfileImageURL: String? = nil
     let inAction: Bool
     
     
@@ -67,21 +67,25 @@ struct acceptDirectChallenge: View {
                         }
                         HStack {
                             Spacer()
-                            if viewModel.opponentProfilePicURL != "" {
-                                KFImage(URL(string: viewModel.opponentProfilePicURL))
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .clipShape(Circle())
-                                    .frame(width: 30, height: 30)
-                            } else {
-                                Image(systemName: "photo.circle.fill")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 30, height: 30)
-                                    .background(K.finalColor.tabSelectedBlue)
-                                    .clipShape(Circle())
+//                            if viewModel.opponentProfilePicURL != "" {
+//                                KFImage(URL(string: viewModel.opponentProfilePicURL))
+//                                    .resizable()
+//                                    .aspectRatio(contentMode: .fill)
+//                                    .clipShape(Circle())
+//                                    .frame(width: 30, height: 30)
+//                            } else {
+//                                Image(systemName: "photo.circle.fill")
+//                                    .resizable()
+//                                    .aspectRatio(contentMode: .fill)
+//                                    .frame(width: 30, height: 30)
+//                                    .background(K.finalColor.tabSelectedBlue)
+//                                    .clipShape(Circle())
+//                            }
+                            if opponentProfileImageURL != nil {
+                                profilePicDisplayView(dimension: 30, picURL: opponentProfileImageURL!)
                             }
-                            Text("\(directChallengeTicket.senderUsername)")
+                            
+                            Text("\(youAreSender ? directChallengeTicket.receiverUsername : directChallengeTicket.senderUsername)")
                                 .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
                                 .foregroundColor(.white)
                             Spacer()
@@ -258,7 +262,15 @@ struct acceptDirectChallenge: View {
                     
                 }
             }.padding(.top, 20)
-   
+            .onAppear() {
+                fetchUserProfilePic(uid: youAreSender ? directChallengeTicket.receiverID : directChallengeTicket.senderID) { (profileImageUrl, error) in
+                    if let error = error {
+                        print("Error fetching profile image URL: \(error)")
+                    } else if let profileImageUrl = profileImageUrl {
+                        self.opponentProfileImageURL = profileImageUrl
+                    }
+                }
+            }
         }
     }
 }
@@ -452,11 +464,11 @@ struct gameFinalScore: View {
                     Spacer()
                     VStack {
                         
-                        Text((game.status == "inAction" || game.status == "completed") ? "\(game.homeTeamScore)" : "")
+                        Text((game.status == "completed") ? "\(game.homeTeamScore)" : "")
                             .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                             .foregroundColor(.white)
                             .frame(width: 30)
-                        Text((game.status == "inAction" || game.status == "completed") ? "\(game.awayTeamScore)" : "")
+                        Text((game.status == "completed") ? "\(game.awayTeamScore)" : "")
                             .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                             .foregroundColor(.white)
                             .frame(width: 30)

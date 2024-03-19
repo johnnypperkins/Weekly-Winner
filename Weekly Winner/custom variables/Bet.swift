@@ -56,6 +56,7 @@ enum BetResult: String, Codable {
     case inAction
     case notStarted
     case forcedLoss
+    case push
 }
 
 struct MostPopularBet: Identifiable, Codable {

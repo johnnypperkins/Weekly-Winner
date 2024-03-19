@@ -160,6 +160,7 @@ extension Color {
         case .loss: return K.finalColor.deleteRed
         case .win: return K.finalColor.winningGreen
         case .forcedLoss: return K.lightRed
+        case .push: return K.averageGray
         // add other cases as needed
         }
     }

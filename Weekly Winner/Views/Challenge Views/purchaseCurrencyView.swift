@@ -132,13 +132,16 @@ struct purchaseCurrencyView: View {
                         } else {
                             if StaticUserData.shared.currentUser.paymentVerified == "true" {
                                 withdrawalView()
-                            } else {
-                                if didUploadID == true {
-                                    
-                                }else {
-                                    uploadID(uploaded: $didUploadID)
-                                }
-                           
+                            } else if StaticUserData.shared.currentUser.paymentVerified == "inReview" || didUploadID {
+                                Text("ID Under Review. Please give us 1-2 business days")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 22))
+                                    .multilineTextAlignment(.center)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(5)
+                                    .padding(.top, 30)
+                                    .padding(.horizontal, 15)
+                            } else if StaticUserData.shared.currentUser.paymentVerified == "false" {
+                                uploadID(uploaded: $didUploadID)
                             }
                         }
 
@@ -174,13 +177,13 @@ struct purchaseCurrencyView: View {
                 if let error = error {
                     // Handle any errors (e.g., network issues, permissions)
                     print("Error checking collection: \(error.localizedDescription)")
-                    self.didUploadID = false
+//                    self.didUploadID = false
                 } else if let snapshot = snapshot, !snapshot.isEmpty {
                     // Collection exists and is not empty
-                    self.didUploadID = true
+//                    self.didUploadID = true
                 } else {
                     // Collection is empty or does not exist
-                    self.didUploadID = false
+//                    self.didUploadID = false
                 }
             }
         }
@@ -279,6 +282,17 @@ struct uploadID: View {
                     // Document was successfully set or updated
                     print("Document successfully updated with image URL and filename")
                     print("Image URL: \(profileImageUrl), Filename: \(filename)")
+                    Firestore.firestore().collection("users").document(uid).setData([
+                        "paymentVerified" : "inReview"
+                    ], merge: true) { error in
+                        if let error = error {
+                            print("Error setting document: \(error.localizedDescription)")
+                        } else {
+                            StaticUserData.shared.currentUser.paymentVerified = "inReview"
+                            print("successfully set paymentVerififed field")
+                        }
+                    }
+                    
                 }
             }
             
@@ -330,11 +344,11 @@ struct depositView: View {
         if value >= 100 && value < 99999 {
             NavigationLink(destination: purchaseView(value: $value), label: {
                 VStack(spacing: 10) {
-                    Image("venmoButton")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 300)
-                        .cornerRadius(10)
+//                    Image("venmoButton")
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(width: 300)
+//                        .cornerRadius(10)
                     Image("paypalButton")
                         .resizable()
                         .scaledToFit()
@@ -370,11 +384,11 @@ struct depositView: View {
 //            }
         } else {
             VStack(spacing: 10) {
-                Image("venmoButton")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 300)
-                    .cornerRadius(10)
+//                Image("venmoButton")
+//                    .resizable()
+//                    .scaledToFit()
+//                    .frame(width: 300)
+//                    .cornerRadius(10)
                 Image("paypalButton")
                     .resizable()
                     .scaledToFit()
@@ -396,8 +410,9 @@ struct depositView: View {
                 .frame(width: 300)
                 .padding(.top, 10)
         }
-        Text("Should the deposit site buffer, please copy the link and paste it in your desktop browser.")
+        Text("Occasionally, the deposit page may take a moment to load.")
             .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+            .multilineTextAlignment(.center)
             .foregroundColor(K.finalColor.potentialOrange)
             .frame(width: 300)
             .padding(.top, 10)

@@ -282,24 +282,24 @@ struct groupsView: View {
                                     //                                        .presentationDetents([.fraction(0.75)])
                                     //                                }
                                     
-//                                    if StaticUserData.shared.weeklyTicket.groupID == "Global" {
-//                                        Button(action: {
-//                                            isGlobalPrizesShowing.toggle()
-//                                        }, label: {
-//                                            HStack {
-//                                                Text("Prizes")
-//                                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-//                                                    .foregroundStyle(.white)
-//                                                    .padding(5)
-//                                            }
-//                                            .background(K.finalColor.winningGreen)
-//                                            .cornerRadius(7.5)
-//                                        })
-//                                        .sheet(isPresented: $isGlobalPrizesShowing) {
-//                                            globalPrizesView(time: timeFrame, viewModel: prizesViewModel())
-//                                                .presentationDetents([.fraction(0.5)])
-//                                        }
-//                                    }
+                                    
+                                        Button(action: {
+                                            isGlobalPrizesShowing.toggle()
+                                        }, label: {
+                                            HStack {
+                                                Text("Prizes")
+                                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                                    .foregroundStyle(.white)
+                                                    .padding(5)
+                                            }
+                                            .background(K.finalColor.winningGreen)
+                                            .cornerRadius(7.5)
+                                        })
+                                        .sheet(isPresented: $isGlobalPrizesShowing) {
+                                            globalPrizesView(time: timeFrame, viewModel: prizesViewModel())
+                                                .presentationDetents([.fraction(0.5)])
+                                        }
+                                    
                                     
                                     if Auth.auth().currentUser?.uid == "fg57TZhmLmWH9TT3WCA3WuXT7dy2" || Auth.auth().currentUser?.uid == "y7iX6WkXW6fViIFW63SI4uziVpA2" { // reidbrown1 id
                                         Button(action: {
@@ -313,7 +313,7 @@ struct groupsView: View {
                                         }
 //                                        .sheet(isPresented: $isGroupSettingsViewPresented) {
 //                                            
-//                                            groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel, groupAdmin: StaticUserData.shared.weeklyTicket.groupAdmin, groupNum: 0,
+//                                            groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel, groupAdmin: "fg57TZhmLmWH9TT3WCA3WuXT7dy2", groupNum: 0,
 //                                                              ticketFormat: timeFrame == "weekly" ? StaticUserData.shared.weeklyTicket.ticketFormat : StaticUserData.shared.dailyTicket.ticketFormat, timeFrame: timeFrame)
 //                                            .presentationDetents([.fraction(0.75)])
 //                                        }
