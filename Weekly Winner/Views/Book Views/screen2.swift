@@ -33,7 +33,7 @@ struct BettingAppView: View {
                 ScrollView { // All the games to display
                     VStack(spacing: 5) {
                         // Displaying games
-                        if 1 + 1 == 2 {
+                        if viewModel.allGames != [] {
                             ForEach(rankedCommence ? viewModel.allGames : viewModel.allPopularGames, id: \.idd) { game in
                                 if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
                                     let now = Date() // Get the current date and time
@@ -47,8 +47,8 @@ struct BettingAppView: View {
                                 }
                             }.padding(.horizontal)
                         } else {
-                            Text("No Games Available")
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                            Text("Games Loading...")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                                 .foregroundColor(K.finalColor.textWhite)
                                 .padding()
                         }

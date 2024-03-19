@@ -308,7 +308,7 @@ struct chooseWagerBetDetailsView: View {
                     }.frame(height: 15).background(K.finalColor.deleteRed)
                     HStack {
                         Spacer()
-                        Text("$100")
+                        Text("100")
                             .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
                             .foregroundColor(.white)
                         Spacer()
@@ -325,7 +325,7 @@ struct chooseWagerBetDetailsView: View {
                     }.frame(height: 15).background(K.finalColor.potentialOrange)
                     HStack {
                         Spacer()
-                        Text("$" + percentageToTotalWin(percentage: MLtoPercentage(moneyline: betTypeToOdds(game: game, betType: betType))))
+                        Text("" + percentageToTotalWin(percentage: MLtoPercentage(moneyline: betTypeToOdds(game: game, betType: betType))))
                             .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
                             .foregroundColor(.white)
                         Spacer()
