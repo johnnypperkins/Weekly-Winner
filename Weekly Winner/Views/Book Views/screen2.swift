@@ -413,3 +413,29 @@ struct screen2PopUp: View {
         }
     }
 }
+
+struct CustomToggleStyle: ToggleStyle {
+    var onColor: Color
+    var offColor: Color
+    var knobColor: Color
+
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            configuration.label
+            Spacer()
+            Rectangle()
+                .foregroundColor(configuration.isOn ? onColor : offColor)
+                .frame(width: 50, height: 30)
+                .overlay(
+                    Circle()
+                        .foregroundColor(knobColor)
+                        .padding(.all, 3)
+                        .offset(x: configuration.isOn ? 10 : -10, y: 0)
+                        .animation(.easeInOut(duration: 0.2), value: configuration.isOn)
+                )
+                .cornerRadius(15)
+                .onTapGesture { configuration.isOn.toggle() }
+        }
+        .padding(.all, 10)
+    }
+}

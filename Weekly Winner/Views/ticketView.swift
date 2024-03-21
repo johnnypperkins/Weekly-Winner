@@ -62,7 +62,9 @@ struct ticketView: View {
         }
         
         viewModel.fetchUserInformation(uid: uid) {}
-        viewModel.fetchStats(uid: uid) {}
+//        viewModel.fetchStats(uid: uid) {}
+        viewModel.fetchUserBetsForStats(uid: uid) {}
+        viewModel.fetchUserticketsForStats(uid: uid) {}
         viewModel.fetchUserProfilePic(uid: uid) {}
     }
     
@@ -108,7 +110,7 @@ struct ticketView: View {
                             .padding(.top)
                     }
                 } else {
-                    groupStats(stat1: viewModel.stats?.totalBetsPlaced ?? 0, stat2: viewModel.stats?.totalBetsWon ?? 0, stat3: percentageToML(percentage: viewModel.stats?.avgOddsPlaced ?? 0), stat4: String(format: "%.1f",viewModel.stats?.betScore ?? 0))
+                    groupStats(allBets: viewModel.allDailyBets, allTickets: viewModel.allDailyTickets)
                         .padding()
                 }
                 

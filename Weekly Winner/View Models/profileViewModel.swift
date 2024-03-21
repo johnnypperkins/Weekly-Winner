@@ -17,6 +17,8 @@ class profileViewModel: ObservableObject {
     @Published var user: User
     @Published var stats: Stats? = nil
     @Published var profileImageURLHolder: String
+    @Published var allDailyBets: [Bet] = []
+    @Published var allDailyTickets: [Ticket] = []
     
     init(user: User) {
         //self.getCountOfStringsInArrayField(user1: user)
@@ -27,6 +29,9 @@ class profileViewModel: ObservableObject {
             self.stats = statistics
             print("sdfsdfsdfsdfsdfsdfsd \(statistics)")
         }
+        fetchUserBetsForStats(uid: user.id!) {}
+        fetchUserticketsForStats(uid: user.id!) {}
+        
         Task{
             await self.checkIfBlocked()
             await self.checkIfBlockedBy()
@@ -69,6 +74,110 @@ class profileViewModel: ObservableObject {
             }
     }
 
+    
+    func fetchUserBetsForStats(uid: String, completion: @escaping () -> Void) {
+        Firestore.firestore().collection("users").document(uid).collection("bets")
+            .document("day").collection("currentDayBets")
+            .getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    print("Error fetching stats: \(error.localizedDescription)")
+                    completion()
+                    return
+                }  
+                //var localUserBets: [Bet] = []
+                let documents = querySnapshot?.documents ?? []
+                
+                for doc in documents {
+                    do {
+                        if let bet = try doc.data(as: Bet?.self) {
+                            self.allDailyBets.append(bet)
+                        }
+                    } catch let error {
+                        print("Error decoding bet: \(error.localizedDescription)")
+                    }
+                }
+                
+                
+            }
+        
+        Firestore.firestore().collection("users").document(uid).collection("bets")
+            .document("day").collection("pastDayBets")
+            .getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    print("Error fetching stats: \(error.localizedDescription)")
+                    completion()
+                    return
+                }
+                var localUserBets: [Bet] = []
+                let documents = querySnapshot?.documents ?? []
+                
+                for doc in documents {
+                    do {
+                        if let bet = try doc.data(as: Bet?.self) {
+                            self.allDailyBets.append(bet)
+                        }
+                    } catch let error {
+                        print("Error decoding bet: \(error.localizedDescription)")
+                    }
+                }
+                
+                
+            }
+        completion()
+        
+    }
+    
+    func fetchUserticketsForStats(uid: String, completion: @escaping () -> Void) {
+        Firestore.firestore().collection("users").document(uid).collection("tickets")
+            .document("day").collection("currentDayTickets")
+            .getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    print("Error fetching stats: \(error.localizedDescription)")
+                    completion()
+                    return
+                }
+                //var localUserBets: [Bet] = []
+                let documents = querySnapshot?.documents ?? []
+                
+                for doc in documents {
+                    do {
+                        if let ticket = try doc.data(as: Ticket?.self) {
+                            self.allDailyTickets.append(ticket)
+                        }
+                    } catch let error {
+                        print("Error decoding bet: \(error.localizedDescription)")
+                    }
+                }
+                
+                
+            }
+        
+        Firestore.firestore().collection("users").document(uid).collection("tickets")
+            .document("day").collection("pastDayTickets")
+            .getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    print("Error fetching stats: \(error.localizedDescription)")
+                    completion()
+                    return
+                }
+                var localUserBets: [Bet] = []
+                let documents = querySnapshot?.documents ?? []
+                
+                for doc in documents {
+                    do {
+                        if let ticket = try doc.data(as: Ticket?.self) {
+                            self.allDailyTickets.append(ticket)
+                        }
+                    } catch let error {
+                        print("Error decoding bet: \(error.localizedDescription)")
+                    }
+                }
+                
+                
+            }
+        completion()
+        
+    }
 
 
     
@@ -127,44 +236,44 @@ class profileViewModel: ObservableObject {
     }
     
     func unblock() {
-        guard let currentUserUID = Auth.auth().currentUser?.uid,
-              let blockedUserID = user.id else {
-            return
-            return
-        }
-        isBlocked = false
-        let db = Firestore.firestore()
-        
-        // Reference to the blockedBy collection for the blocked user
-        let blockedByRef = db.collection("users").document(blockedUserID).collection("blockedBy")
-        
-        // Reference to the document in the blockedBy collection
-        let blockedByUserDoc = blockedByRef.document(currentUserUID)
-        
-        // Delete the document from the blockedBy collection
-        blockedByUserDoc.delete { error in
-            if let error = error {
-                print("Error unblocking user from blockedBy collection: \(error.localizedDescription)")
-            } else {
-                print("User with ID \(currentUserUID) unblocked by user with ID \(blockedUserID).")
+            guard let currentUserUID = Auth.auth().currentUser?.uid,
+                  let blockedUserID = user.id else {
+                return
+                return
+            }
+            isBlocked = false
+            let db = Firestore.firestore()
+            
+            // Reference to the blockedBy collection for the blocked user
+            let blockedByRef = db.collection("users").document(blockedUserID).collection("blockedBy")
+            
+            // Reference to the document in the blockedBy collection
+            let blockedByUserDoc = blockedByRef.document(currentUserUID)
+            
+            // Delete the document from the blockedBy collection
+            blockedByUserDoc.delete { error in
+                if let error = error {
+                    print("Error unblocking user from blockedBy collection: \(error.localizedDescription)")
+                } else {
+                    print("User with ID \(currentUserUID) unblocked by user with ID \(blockedUserID).")
+                }
+            }
+            
+            // Reference to the blockedUsers collection for the current user
+            let blockedUsersRef = db.collection("users").document(currentUserUID).collection("blockedUsers")
+            
+            // Reference to the document in the blockedUsers collection
+            let blockedUserDoc = blockedUsersRef.document(blockedUserID)
+            
+            // Delete the document from the blockedUsers collection
+            blockedUserDoc.delete { error in
+                if let error = error {
+                    print("Error removing user from blockedUsers collection: \(error.localizedDescription)")
+                } else {
+                    print("User with ID \(blockedUserID) removed from blockedUsers collection.")
+                }
             }
         }
-        
-        // Reference to the blockedUsers collection for the current user
-        let blockedUsersRef = db.collection("users").document(currentUserUID).collection("blockedUsers")
-        
-        // Reference to the document in the blockedUsers collection
-        let blockedUserDoc = blockedUsersRef.document(blockedUserID)
-        
-        // Delete the document from the blockedUsers collection
-        blockedUserDoc.delete { error in
-            if let error = error {
-                print("Error removing user from blockedUsers collection: \(error.localizedDescription)")
-            } else {
-                print("User with ID \(blockedUserID) removed from blockedUsers collection.")
-            }
-        }
-    }
     
     
     func block() {

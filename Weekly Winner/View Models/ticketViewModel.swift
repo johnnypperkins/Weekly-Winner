@@ -35,6 +35,8 @@ class ticketViewModel: ObservableObject {
     @Published var userInfo: User? = nil
     @Published var isFollow: Bool = false
     @Published var followerCount: Int = 0
+    @Published var allDailyTickets: [Ticket] = []
+    @Published var allDailyBets: [Bet] = []
     
     init() {
         Task{
@@ -650,6 +652,110 @@ class ticketViewModel: ObservableObject {
 
         totalWon = totalWonLocal
         totalPotentialWon = totalPotentialWonLocal
+    }
+    
+    func fetchUserBetsForStats(uid: String, completion: @escaping () -> Void) {
+        Firestore.firestore().collection("users").document(uid).collection("bets")
+            .document("day").collection("currentDayBets")
+            .getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    print("Error fetching stats: \(error.localizedDescription)")
+                    completion()
+                    return
+                }
+                //var localUserBets: [Bet] = []
+                let documents = querySnapshot?.documents ?? []
+                
+                for doc in documents {
+                    do {
+                        if let bet = try doc.data(as: Bet?.self) {
+                            self.allDailyBets.append(bet)
+                        }
+                    } catch let error {
+                        print("Error decoding bet: \(error.localizedDescription)")
+                    }
+                }
+                
+                
+            }
+        
+        Firestore.firestore().collection("users").document(uid).collection("bets")
+            .document("day").collection("pastDayBets")
+            .getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    print("Error fetching stats: \(error.localizedDescription)")
+                    completion()
+                    return
+                }
+                var localUserBets: [Bet] = []
+                let documents = querySnapshot?.documents ?? []
+                
+                for doc in documents {
+                    do {
+                        if let bet = try doc.data(as: Bet?.self) {
+                            self.allDailyBets.append(bet)
+                        }
+                    } catch let error {
+                        print("Error decoding bet: \(error.localizedDescription)")
+                    }
+                }
+                
+                
+            }
+        completion()
+        
+    }
+    
+    func fetchUserticketsForStats(uid: String, completion: @escaping () -> Void) {
+        Firestore.firestore().collection("users").document(uid).collection("tickets")
+            .document("day").collection("currentDayTickets")
+            .getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    print("Error fetching stats: \(error.localizedDescription)")
+                    completion()
+                    return
+                }
+                //var localUserBets: [Bet] = []
+                let documents = querySnapshot?.documents ?? []
+                
+                for doc in documents {
+                    do {
+                        if let ticket = try doc.data(as: Ticket?.self) {
+                            self.allDailyTickets.append(ticket)
+                        }
+                    } catch let error {
+                        print("Error decoding bet: \(error.localizedDescription)")
+                    }
+                }
+                
+                
+            }
+        
+        Firestore.firestore().collection("users").document(uid).collection("tickets")
+            .document("day").collection("pastDayTickets")
+            .getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    print("Error fetching stats: \(error.localizedDescription)")
+                    completion()
+                    return
+                }
+                var localUserBets: [Bet] = []
+                let documents = querySnapshot?.documents ?? []
+                
+                for doc in documents {
+                    do {
+                        if let ticket = try doc.data(as: Ticket?.self) {
+                            self.allDailyTickets.append(ticket)
+                        }
+                    } catch let error {
+                        print("Error decoding bet: \(error.localizedDescription)")
+                    }
+                }
+                
+                
+            }
+        completion()
+        
     }
     
 

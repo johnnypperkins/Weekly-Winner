@@ -117,7 +117,7 @@ struct profileView: View {
                                         .frame(minWidth: 0, maxWidth: .infinity)
                                         .padding(.horizontal)
                                         
-                                        groupStats(stat1: viewModel.stats?.totalBetsPlaced ?? 0, stat2: viewModel.stats?.totalBetsWon ?? 0, stat3: percentageToML(percentage: viewModel.stats?.avgOddsPlaced ?? 0), stat4: String(format: "%.1f",viewModel.stats?.betScore ?? 0))
+                                        groupStats(allBets: viewModel.allDailyBets, allTickets: viewModel.allDailyTickets)
                                             .padding(.all,16)
                                     }.padding(.bottom, 120)
                                 }
@@ -159,10 +159,22 @@ struct profileView: View {
 }
 
 struct groupStats: View {
-    let stat1: Int?
-    let stat2: Int?
-    let stat3: String
-    let stat4: String
+//    let stat1: Int?
+//    let stat2: Int?
+//    let stat3: String
+//    let stat4: String
+    let allBets: [Bet]
+    let allTickets: [Ticket]
+    var winsCount: Int {
+        var num = 0
+        for bet in allBets {
+            if bet.result == .win {
+                num = num + 1
+            }
+        }
+        return num
+    }
+
    // @ObservedObject var viewModel: profileViewModel
   var body: some View {
       VStack() {
@@ -173,7 +185,7 @@ struct groupStats: View {
             
             Spacer()
             
-            Text("\(stat1 ?? 0)")
+            Text("\(allBets.count)")
             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
             .foregroundColor(.white)
         }
@@ -194,8 +206,8 @@ struct groupStats: View {
               
               Spacer()
               
-            Text("\(stat2 ?? 0)")
-              .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+              Text("\(winsCount)")
+              .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
               .foregroundColor(.white)
           }
           .padding(.horizontal)
@@ -215,7 +227,7 @@ struct groupStats: View {
             
             Spacer()
             
-            Text("\(stat3)")
+            Text("\(!allBets.isEmpty ? percentageToML(percentage: allBets.map { Double($0.betOdds) }.reduce(0.0, +) / Double(allBets.count)) : "n/a")")
             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
             .foregroundColor(.white)
         }.padding(.horizontal)
@@ -234,7 +246,14 @@ struct groupStats: View {
             
             Spacer()
             
-          Text("\(stat4)")
+            /*
+             if (betData.result === "win") {
+                 totalBetsWon++;
+                 totalBetScore += ((1 / betData.betOdds)*100 - 100);
+             }
+             */
+            
+          Text("\(String(format: "%.2f", returnTotalBetScore(allBets: allBets)))")
                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
             .foregroundColor(.white)
         }.padding(.horizontal)
@@ -244,6 +263,20 @@ struct groupStats: View {
       .background(Color(red: 0.13, green: 0.14, blue: 0.34))
       .cornerRadius(10)
   }
+}
+
+func returnTotalBetScore(allBets: [Bet]) -> Double {
+    var totalBetScore: Double = 0.0
+    for bet in allBets {
+        if bet.result == .win {
+            totalBetScore = totalBetScore + (1 / Double(bet.betOdds)*100 - 100);
+        }
+    }
+    if !allBets.isEmpty {
+        return totalBetScore / Double(allBets.count)
+    } else {
+        return 0
+    }
 }
 
 struct Dropdown: View {
