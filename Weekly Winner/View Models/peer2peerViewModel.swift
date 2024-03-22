@@ -92,14 +92,13 @@ class peer2peerViewModel: ObservableObject {
     }
     
     
-    func sendChallenge(receiverUser: User, senderWagerAmount: Int, game: Game, completion: @escaping () -> Void) {
+    func sendChallenge(senderWagerAmount: Int, game: Game, sendingToPublic: Bool, completion: @escaping () -> Void) {
         let customID = generateRandomString(length: 20)
         
         // 1. Send bets to own user
         self.deductCurrencyFromUsers(challengeTicket: self.senderDirectTicket!, senderWagerAmount: Double(senderWagerAmount)) {
                 
             let senderBetPath = self.db.collection("users").document(self.senderDirectTicket!.senderID).collection("challenges").document("bets").collection("currentWeekBets")
-            let receiverBetPath = self.db.collection("users").document(self.senderDirectTicket!.receiverID).collection("challenges").document("bets").collection("currentWeekBets")
                 
                 var betData: [String: Any] = [
                     "groupNumber": self.selectedBet?.groupNumber ?? 0,
@@ -124,15 +123,8 @@ class peer2peerViewModel: ObservableObject {
                     }
                 }
                     
-//                receiverBetPath.addDocument(data: betData) { error in
-//                    if let error = error {
-//                        print("Error adding document: \(error)")
-//                    }
-//                }
-                
+
                 // 2. Send challenge ticket to own user
-                let challengePath = self.db.collection("users").document(self.senderDirectTicket!.senderID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(customID)
-                let challengePath2 = self.db.collection("users").document(self.senderDirectTicket!.receiverID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(customID)
                     
                     // YOUR TICKET
                     let senderTicketData: [String: Any] = [
@@ -144,8 +136,8 @@ class peer2peerViewModel: ObservableObject {
                         "senderBetType": self.senderDirectTicket?.senderBetType.rawValue, // Assuming BetType is an enum and you want to store its raw value
                         "senderWagerAmount": senderWagerAmount,
                         
-                        "receiverUsername": self.senderDirectTicket?.receiverUsername,
-                        "receiverID": self.senderDirectTicket?.receiverID,
+                        "receiverUsername": sendingToPublic ? "" : self.senderDirectTicket?.receiverUsername,
+                        "receiverID": sendingToPublic ? "" : self.senderDirectTicket?.receiverID,
                         "receiverOdds": self.senderDirectTicket?.receiverOdds,
                         "receiverBetType": self.senderDirectTicket?.receiverBetType.rawValue, // Assuming BetType is an enum and you want to store its raw value
                         "receiverWagerAmount": returnOpponentWagerAmount(
@@ -157,13 +149,13 @@ class peer2peerViewModel: ObservableObject {
                         
                         "dateCreated": self.senderDirectTicket?.dateCreated, // Adjust based on how you're planning to fix this later
                         "currencyChosen": "poolBucks", // will adjust in future
-                        "status": self.senderDirectTicket?.status,
+                        "status": sendingToPublic ? "pendingPublicAcceptance" : self.senderDirectTicket?.status,
                         "gameIDs": self.senderDirectTicket?.gameIDs,
                         "challengeType" : self.senderDirectTicket?.challengeType
                     ]
 
 
-                
+                let challengePath = self.db.collection("users").document(self.senderDirectTicket!.senderID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(customID)
                 challengePath.setData(senderTicketData) { error in
                     if let error = error {
                         print("Error writing document: \(error)")
@@ -171,14 +163,19 @@ class peer2peerViewModel: ObservableObject {
                         completion()
                     }
                 }
-                
-                challengePath2.setData(senderTicketData) { error in
-                    if let error = error {
-                        print("Error writing document: \(error)")
-                    } else {
-                        completion()
+            
+                if !sendingToPublic {
+                    let challengePath2 = self.db.collection("users").document(self.senderDirectTicket!.receiverID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(customID)
+
+                    challengePath2.setData(senderTicketData) { error in
+                        if let error = error {
+                            print("Error writing document: \(error)")
+                        } else {
+                            completion()
+                        }
                     }
                 }
+            
             }
         failure: { errorMessage in
             print("Currency deduction failed: \(errorMessage)")

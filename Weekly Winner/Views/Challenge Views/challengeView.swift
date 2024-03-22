@@ -106,13 +106,13 @@ struct challengeCardView: View {
     @State private var showRulesPage = false
     @Binding var poolBucks: Double
     var body: some View {
-        ScrollView {
-            VStack (spacing: 10) {
+        VStack {
+            HStack (spacing: 10) {
                 VStack {
                     HStack {
                         NavigationLink(destination: {tabBarView(selection: .book)}, label: {
                             Text("Create a challenge +")
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
                                 .foregroundColor(.white)
                         })
                     }
@@ -120,7 +120,6 @@ struct challengeCardView: View {
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 90, maxHeight: 90)
                 .background(K.finalColor.cardBlue)
                 .cornerRadius(7.5)
-                .padding(.horizontal,15)
                 
                 VStack {
                     Button {
@@ -128,20 +127,16 @@ struct challengeCardView: View {
                     } label: {
                         HStack {
                             Text("What are challenges?")
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
                                 .foregroundColor(.white)
                             
                         }
                     }
-
-                    
                 }
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 90, maxHeight: 90)
                 .background(K.finalColor.cardBlue)
                 .cornerRadius(7.5)
-                .padding(.horizontal,15)
                 
-  
                 VStack {
                     HStack {
                         NavigationLink {
@@ -153,15 +148,15 @@ struct challengeCardView: View {
                                     .resizable()
                                     .frame(width: 20, height: 20)
                                 Text("Deposit/Withdraw")
-                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
                                     .foregroundColor(.white)
                                 Image("poolBuck")
                                     .resizable()
                                     .frame(width: 20, height: 20)
-
-
+                                
+                                
                             }
-                      
+                            
                         }
                         
                     }
@@ -169,33 +164,62 @@ struct challengeCardView: View {
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 90, maxHeight: 90)
                 .background(K.finalColor.cardBlue)
                 .cornerRadius(7.5)
-                .padding(.horizontal,15)
+                
+                
+            }.padding(.horizontal,15)
+            HStack {
+                Spacer()
+                Text("Available Challenges")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
+                    .foregroundColor(.white)
+                Spacer()
             }
-        }.refreshable {
-            viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {
-                poolBucks = StaticUserData.shared.currentUser.poolBucks
-                }
-            }
-        .onAppear() {
-            viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {
-                poolBucks = StaticUserData.shared.currentUser.poolBucks
-                }
-            }        
-        .popup(isPresented: $showRulesPage) {
-            Text("The popup")
-            explanationView(pageSelected: 1)
-                .frame(height: 650)
+            ScrollView {
+                
+                VStack {
+                    
+                    ForEach(viewModel.currentChallenges, id: \.customID) { challenge in
 
-        } customize: {
-            $0
-                .type (.toast)
-                .position(.bottom)
+                        if challenge.status == "pendingPublicAcceptance" {// challenge has begun
+                            pendingOption2(viewModel: viewModel, challenge: challenge)
+                            Text("hello")
+                        }
+                        
+                    }
+                    
+                    
+                }
+            }.refreshable {
+                viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {
+                    poolBucks = StaticUserData.shared.currentUser.poolBucks
+                }
+            }
+            .onAppear() {
+                viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {
+                    poolBucks = StaticUserData.shared.currentUser.poolBucks
+                }
+                viewModel.fetchChallenges {
+    //                viewModel.fetchChallengeGames(matchingIDs: viewModel.gamesIDsInChallenges) { games in
+    //                    viewModel.gamesInChallenges = games ?? []
+    //                }
+                }
+            }
+            .popup(isPresented: $showRulesPage) {
+                Text("The popup")
+                explanationView(pageSelected: 1)
+                    .frame(height: 650)
+                
+            } customize: {
+                $0
+                    .type (.toast)
+                    .position(.bottom)
                 //.dragToDismiss(true)
-                .isOpaque(true)
-                .closeOnTap(false)
-                .closeOnTapOutside(true)
-                .backgroundColor(.black.opacity(0.4))
-
+                    .isOpaque(true)
+                    .closeOnTap(false)
+                    .closeOnTapOutside(true)
+                    .backgroundColor(.black.opacity(0.4))
+                
+            }
         }
     }
 }

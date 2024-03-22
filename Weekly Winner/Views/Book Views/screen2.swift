@@ -119,12 +119,18 @@ struct screen2HeaderView: View {
                     
 
                 }
-                
-                Text(viewModel.selectedGameType)
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
-                    .fontWeight(.bold)
-                    .foregroundColor(K.finalColor.textWhite)
-                
+                if viewModel.selectedGameType == "All Games" {
+                    Text(rankedCommence ? viewModel.selectedGameType : "Popular Games")
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                        .fontWeight(.bold)
+                        .foregroundColor(K.finalColor.textWhite)
+                } else {
+                    Text(viewModel.selectedGameType)
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                        .fontWeight(.bold)
+                        .foregroundColor(K.finalColor.textWhite)
+                }
+         
                 HStack{
                     Spacer()
                 }.padding(.trailing)
@@ -154,20 +160,23 @@ struct screen2HeaderView: View {
             .cornerRadius(7.5)
             .padding(EdgeInsets(top: 0, leading: 14, bottom: 0, trailing: 10))
             
-            Button(action: {
-                searchTerm = ""
-                rankedCommence.toggle()
-            }, label: {
-                HStack {
-                    Text("\(rankedCommence ? "Upcoming" : "Popular")")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
-                        .foregroundStyle(.white)
-                }
-                    .frame(width: 80, height: 40)
-                    .background(K.finalColor.titleBlue)
-                    .cornerRadius(7.5)
+//            Button(action: {
+//                searchTerm = ""
+//                rankedCommence.toggle()
+//            }, label: {
+//                HStack {
+//                    Text("\(rankedCommence ? "Upcoming" : "Popular")")
+//                        .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+//                        .foregroundStyle(.white)
+//                }
+//                    .frame(width: 80, height: 40)
+//                    .background(K.finalColor.titleBlue)
+//                    .cornerRadius(7.5)
+//                    .padding(.trailing, 14)
+//            })
+            Toggle("", isOn: $rankedCommence)
+                .toggleStyle(CustomToggleStyle(onColor: K.finalColor.titleBlue, offColor: .red, knobColor: .white))
                     .padding(.trailing, 14)
-            })
         }
         HStack{
             Text("Team Name") // team name
@@ -396,7 +405,7 @@ struct screen2PopUp: View {
                         onDailyChallenge = false
                     }, label: {
                         HStack {
-                            Text("Personal")
+                            Text("Peer to Peer")
                                 .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                                 .foregroundColor(.white)
                         }.frame(width: 150, height: 30).background(!onDailyChallenge ? K.finalColor.titleBlue : K.finalColor.cardBlue).cornerRadius(7.5)
@@ -421,8 +430,6 @@ struct CustomToggleStyle: ToggleStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         HStack {
-            configuration.label
-            Spacer()
             Rectangle()
                 .foregroundColor(configuration.isOn ? onColor : offColor)
                 .frame(width: 50, height: 30)
@@ -436,6 +443,6 @@ struct CustomToggleStyle: ToggleStyle {
                 .cornerRadius(15)
                 .onTapGesture { configuration.isOn.toggle() }
         }
-        .padding(.all, 10)
+        
     }
 }

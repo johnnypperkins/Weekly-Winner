@@ -533,57 +533,7 @@ struct countDown: View {
     }
     var body: some View {
         ZStack() {
-            VStack(alignment: .center) {
-                
-               
-                    //                    HStack (spacing: 0){
-                    ////                        Button(action: {
-                    ////                            //viewModel.canGetHistoricalData = false
-                    ////                            if timeFrame != "daily" {
-                    ////                                withAnimation {
-                    ////                                    timeFrame = "daily"
-                    //////                                    viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {
-                    //////                                    }
-                    //////                                    showingChat = false
-                    ////                                }
-                    ////                            }
-                    ////
-                    ////                        }) {
-                    ////                            //Text(viewModel.userTickets[self.selectedGroup-1].groupName)
-                    ////                            Text("Daily")
-                    ////                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                    ////                                .foregroundColor(.white)
-                    ////                                .frame(width: 100, height: 20, alignment: .center)
-                    ////                                //.background(timeFrame == "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                    ////                                .cornerRadius(5)
-                    ////                        }.scaleEffect(timeFrame == "daily" ? 1.0 : 1.0)
-                    //
-                    //                        Button(action: {
-                    //                            //viewModel.canGetHistoricalData = false
-                    //                            if timeFrame == "daily" {
-                    //
-                    //                                withAnimation {
-                    //                                    timeFrame = "weekly"
-                    //                                }
-                    //                            }
-                    //
-                    //                        }) {
-                    //                            Text("Weekly")
-                    //                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                    //                                .foregroundColor(.white)
-                    //                                .frame(width: 100, height: 20, alignment: .center)
-                    //                                //.background(timeFrame == "weekly" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                    //                                .cornerRadius(5)
-                    //                        }.scaleEffect(timeFrame == "weekly" ? 1.0 : 1.0)
-                    //                    }.padding(.top, 2)
-                    //                    Rectangle()
-                    //                        .fill(Color.white) // Sets the rectangle's fill color to white
-                    //                        .frame(width: 90, height: 3)
-                    //                        .cornerRadius(1) // Apply rounded corners
-                    //                        .offset(x: timeFrame == "daily" ? -50 : 50, y: 0)
-                    //                        .animation(.easeInOut(duration: 0.5))
-                    //                }
-                    
+            VStack(alignment: .center, spacing: 12) {
                     VStack(spacing: 0) {
                         if timeFrame == "daily" {
                             Text(countdownTimer.dayTimeRemaining)
@@ -591,12 +541,6 @@ struct countDown: View {
                                 .foregroundColor(.white)
                                 .padding(.vertical)
                         }
-                        //                    else if timeFrame == "weekly" {
-                        //                        Text(countdownTimer.weekTimeRemaining)
-                        //                            .font(.custom(K.customFonts.lexendDecaMedium, size: 22))
-                        //                            .foregroundColor(.white)
-                        //                            .padding(.vertical)
-                        //                    }
                     }
                     .frame(height: 20).padding(.top,3)
                     
@@ -607,21 +551,14 @@ struct countDown: View {
                                 Spacer()
                                 Image("poolBuck")
                                     .resizable()
-                                    .frame(width: 30, height: 30)
-                                if /*prizesVM.canViewPrizes == true &&*/ prizesVM.canViewDailyPrizes == true{
-//                                    if timeFrame != "daily" {
-//                                        Text("\(prizesVM.prizes[index])  ")
-//                                            .foregroundColor(.white)
-//                                            .font(.custom(K.customFonts.lexendDecaMedium, size: 22))
-//                                    }
-//                                    else {
-                                        Text("\(prizesVM.dailyPrizes[index])  ")
-                                            .foregroundColor(.white)
-                                            .font(.custom(K.customFonts.lexendDecaMedium, size: 22))
-//                                    }
+                                    .frame(width: 25, height: 25)
+                                if prizesVM.canViewDailyPrizes == true {
+                                    Text("\(prizesVM.dailyPrizes[index])  ")
+                                        .foregroundColor(.white)
+                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 25))
                                 }
                                 Spacer()
-                            }.frame(width: 100, height: 30)
+                            }.frame(width: 100, height: 40)
                                 .padding(3)
                                 .background(index == 0 ? CommodityColor.gold.linearGradient : (index == 1 ? CommodityColor.silver.linearGradient : CommodityColor.bronze.linearGradient))
                                 .cornerRadius(5)

@@ -36,14 +36,70 @@ struct peer2peerSubmitPage: View {
     @Binding var showingSheet: Bool
     @State var wagerAmount = 0.0
     @State private var selectedUser: User? = nil
+    @State private var whichTab = "friends"
     
     @ObservedObject var viewModel = peer2peerViewModel()
 
 
     var body: some View {
         VStack {
+            VStack (spacing: 1){
+                HStack (spacing: 0){
+                    Button(action: {
+                        whichTab = "friends"
+                        
+                    }) {
+                        Text("Friends")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
+                            .foregroundColor(.white)
+                            .frame(width: 100, height: 30, alignment: .center)
+                            .cornerRadius(5)
+                    }
+                    
+                    Button(action: {
+                        whichTab = "search"
+                    }) {
+                        Text("Search")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
+                            .foregroundColor(.white)
+                            .frame(width: 100, height: 30, alignment: .center)
+                            .cornerRadius(5)
+                    }
+                    Button(action: {
+                        whichTab = "public"
+                    }) {
+                        Text("Public")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
+                            .foregroundColor(.white)
+                            .frame(width: 100, height: 30, alignment: .center)
+                            .cornerRadius(5)
+                    }
+                    
+                }
+                Rectangle()
+                    .fill(Color.white) // Sets the rectangle's fill color to white
+                    .frame(width: 70, height: 1.5)
+                    .cornerRadius(1) // Apply rounded corners
+                    .offset(x: whichTab == "friends" ? -100 : (whichTab == "search" ? 0 : 100), y: 0)
+                    .animation(.easeInOut(duration: 0.35))
+            }.padding(.bottom,2)
+            if whichTab == "friends" {
+                
+            } else if whichTab == "search" {
+                searchUserView(game: game, viewModel: viewModel, betType: betType, wagerAmount: $wagerAmount, selectedUser: $selectedUser)
+            } else if whichTab == "public" {
+                VStack {
+                    HStack {
+                        Spacer()
+                        Text("Going to Public")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                            .foregroundColor(.white)
+                        Spacer()
+                    }.frame(height: 50).background(K.finalColor.cardBlue).cornerRadius(7.5)
+                }.frame(width: 345)
+            }
             twoWagers(game: game, viewModel: viewModel, betType: betType, wagerAmount: $wagerAmount, selectedUser: $selectedUser)
-            peer2peerSlider(wagerAmount: $wagerAmount, selectedUser: $selectedUser, viewModel: viewModel, game: game, showingSheet: $showingSheet)
+            peer2peerSlider(wagerAmount: $wagerAmount, selectedUser: $selectedUser, viewModel: viewModel, game: game, showingSheet: $showingSheet, whichTab: $whichTab)
             Spacer()
         }.onAppear() {
             viewModel.setSelectedBet(bet:
@@ -90,10 +146,11 @@ struct peer2peerSlider: View {
     @ObservedObject var viewModel: peer2peerViewModel
     let game: Game
     @Binding var showingSheet: Bool
+    @Binding var whichTab: String
 
     var body: some View {
         VStack (spacing: 5){
-            if selectedUser != nil {
+            if selectedUser != nil || whichTab == "public" {
                     HStack {
                         Text("Wager Amount")
                             .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
@@ -151,9 +208,9 @@ struct peer2peerSlider: View {
                         }.frame(height: 50).background(K.finalColor.cardBlue).cornerRadius(5)
                     }
 
-                if wagerAmount > 0 && selectedUser != nil{
+                if wagerAmount > 0 && (selectedUser != nil || whichTab == "public") {
                     Button(action: {
-                        viewModel.sendChallenge(receiverUser: selectedUser!, senderWagerAmount: Int(wagerAmount), game: game) {
+                        viewModel.sendChallenge(senderWagerAmount: Int(wagerAmount), game: game, sendingToPublic: whichTab == "public" ? true : false) {
                             viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {
                                 showingSheet = false
                             }
@@ -181,7 +238,7 @@ struct peer2peerSlider: View {
     }
 }
 
-struct twoWagers: View {
+struct searchUserView: View {
     let game: Game
     @ObservedObject var viewModel: peer2peerViewModel
     var betType: BetType
@@ -192,19 +249,6 @@ struct twoWagers: View {
     @Binding var selectedUser: User?
     
     var body: some View {
-//        let keywordBinding = Binding<String> (
-//            get: {
-//                opponentUsername.lowercased()
-//            },
-//            set: {
-//                opponentUsername = $0.lowercased()
-//                viewModel.fetchUser(from: opponentUsername.lowercased())
-//            }
-//        )
-        
-        //ScrollView {
-        
-        
         VStack (spacing: 3){
             ZStack {
                 VStack {
@@ -282,6 +326,20 @@ struct twoWagers: View {
                 viewModel.senderDirectTicket?.receiverUsername = selectedUser?.username ?? ""
             }
         }
+    }
+}
+
+struct twoWagers: View {
+    let game: Game
+    @ObservedObject var viewModel: peer2peerViewModel
+    var betType: BetType
+    @Binding var wagerAmount: Double
+    
+    @State private var opponentUsername: String = ""
+    @State private var selectedUserID: String = ""
+    @Binding var selectedUser: User?
+    
+    var body: some View {
             VStack  (spacing: 3){
                 HStack {
                     Text("Your Wager")
@@ -368,13 +426,6 @@ struct teamMiniView: View {
     let challengeSender: Bool
     var body: some View {
         VStack(spacing: 0) {
-//            HStack {
-//                Spacer()
-//                Text("Team")
-//                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
-//                    .foregroundColor(.white)
-//                Spacer()
-//            }.frame(height: 15).background(K.finalColor.tabSelectedBlue)
             HStack {
                 Spacer()
                 Text("\(teamString)")
@@ -382,8 +433,7 @@ struct teamMiniView: View {
                     .foregroundColor(.white)
                     .lineLimit(3)
                 Spacer()
-//                    .padding(challengeSender ? .leading : .trailing)
-                
+
             }.frame(height: 50).background(K.finalColor.cardBlue)
         }.frame(width: 200).cornerRadius(5)
     }
@@ -396,13 +446,6 @@ struct spreadMiniView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-//            HStack {
-//                Spacer()
-//                Text(betType == .over || betType == .under ? "Total" : "Spread")
-//                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
-//                    .foregroundColor(.white)
-//                Spacer()
-//            }.frame(height: 15).background(K.finalColor.tabSelectedBlue)
             HStack {
                 Spacer()
                 Text(spreadString)
@@ -420,13 +463,6 @@ struct oddsMiniView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-//            HStack {
-//                Spacer()
-//                Text("Odds")
-//                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
-//                    .foregroundColor(.white)
-//                Spacer()
-//            }.frame(height: 15).background(K.finalColor.tabSelectedBlue)
             HStack {
                 Spacer()
                 Text(MLString)

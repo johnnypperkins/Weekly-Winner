@@ -516,8 +516,8 @@ struct ticketView: View {
                 if bet.betLine == 0 {
                     return "ML"
                 } else {
-                    let roundedBetLine = round(bet.betLine)
-                    return "\(extra)\(Int(roundedBetLine))"
+                    
+                    return isWholeNumber(Double(bet.betLine)) ? "\(extra)\(String(format: "%.0f", bet.betLine))" : "\(extra)\(bet.betLine)"
                 }
             }
 

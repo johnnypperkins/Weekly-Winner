@@ -532,7 +532,7 @@ class challengeViewModel: ObservableObject {
 
     
     func fetchChallenges(completion: @escaping () -> Void) {
-        let statuses = ["pendingAcceptance", "inAction", "win", "loss", "push"] // Replace with your actual status values
+        let statuses = ["pendingPublicAcceptance", "pendingAcceptance", "inAction", "win", "loss", "push"] // Replace with your actual status values
 
         let query = self.db.collection("users").document(StaticUserData.shared.currentUser.id ?? "").collection("challenges").document("tickets").collection("currentChallengeTickets")
                     .whereField("status", in: statuses)
