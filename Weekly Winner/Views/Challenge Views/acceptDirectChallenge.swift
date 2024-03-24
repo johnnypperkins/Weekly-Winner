@@ -16,13 +16,18 @@ struct acceptDirectChallenge: View {
     let directChallengeTicket: DirectChallengeTicket
     @State var opponentProfileImageURL: String? = nil
     let inAction: Bool
+    let publicViewing: Bool
     
     
     var youAreSender: Bool {
-        if directChallengeTicket.senderID == StaticUserData.shared.currentUser.id { // sender id is same as yours
-            return true
+        if publicViewing {
+            return false 
         } else {
-            return false
+            if directChallengeTicket.senderID == StaticUserData.shared.currentUser.id { // sender id is same as yours
+                return true
+            } else {
+                return false
+            }
         }
     }
     
@@ -67,20 +72,6 @@ struct acceptDirectChallenge: View {
                         }
                         HStack {
                             Spacer()
-//                            if viewModel.opponentProfilePicURL != "" {
-//                                KFImage(URL(string: viewModel.opponentProfilePicURL))
-//                                    .resizable()
-//                                    .aspectRatio(contentMode: .fill)
-//                                    .clipShape(Circle())
-//                                    .frame(width: 30, height: 30)
-//                            } else {
-//                                Image(systemName: "photo.circle.fill")
-//                                    .resizable()
-//                                    .aspectRatio(contentMode: .fill)
-//                                    .frame(width: 30, height: 30)
-//                                    .background(K.finalColor.tabSelectedBlue)
-//                                    .clipShape(Circle())
-//                            }
                             if opponentProfileImageURL != nil {
                                 profilePicDisplayView(dimension: 30, picURL: opponentProfileImageURL!)
                             }
@@ -107,15 +98,15 @@ struct acceptDirectChallenge: View {
                                 if let game = viewModel.fetchedGame {
                                     oddsMiniViewAccepted(
                                         Moneyline: !youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds,
-                                        challengeResult: opponentChallengeResult)
+                                        challengeResult: opponentChallengeResult) // GOOD
                                     
                                     spreadMiniViewAccepted(
                                         betType: !youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType,
-                                        spreadString: returnSpreadString(game: game, betType: returnOppBetType(betType: !youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType)), challengeResult: opponentChallengeResult
+                                        spread: !youAreSender ? directChallengeTicket.senderBetLine : directChallengeTicket.receiverBetLine, challengeResult: opponentChallengeResult
                                     )
                                     
                                     teamMiniViewAccepted(
-                                        teamString: returnTeamString(game: game, betType: returnOppBetType(betType: !youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType)), challengeSender: !youAreSender, challengeResult: opponentChallengeResult
+                                        teamString: !youAreSender ? directChallengeTicket.senderTeamName : directChallengeTicket.receiverTeamName, challengeSender: !youAreSender, challengeResult: opponentChallengeResult
                                     )
                                 }
                                 
@@ -152,11 +143,11 @@ struct acceptDirectChallenge: View {
                                     
                                     spreadMiniViewAccepted(
                                         betType: youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType,
-                                        spreadString: returnSpreadString(game: game, betType: returnOppBetType(betType: youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType)), challengeResult: challengeResult
+                                        spread: youAreSender ? directChallengeTicket.senderBetLine : directChallengeTicket.receiverBetLine, challengeResult: challengeResult
                                     )
                                     
                                     teamMiniViewAccepted(
-                                        teamString: returnTeamString(game: game, betType: returnOppBetType(betType: youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType)), challengeSender: !youAreSender, challengeResult: challengeResult
+                                        teamString: youAreSender ? directChallengeTicket.senderTeamName : directChallengeTicket.receiverTeamName, challengeSender: !youAreSender, challengeResult: challengeResult
                                     )
                                     
                                 }.frame(width: 345)
@@ -203,7 +194,8 @@ struct acceptDirectChallenge: View {
                                 print("Button tapped")
                                 viewModel.respondToChallenge(
                                     acceptedChallenge: true,
-                                    challenge: directChallengeTicket,
+                                    challengeOG: directChallengeTicket,
+                                    publicChallenge: publicViewing ? true : false,
                                     receiverBet: [
                                         "groupNumber": 1,
                                         "betNumber": 0,
@@ -317,8 +309,28 @@ struct teamMiniViewAccepted: View {
 
 struct spreadMiniViewAccepted: View {
     let betType: BetType
-    let spreadString: String
+    let spread: Double
     let challengeResult: String
+    
+    var spreadString: String {
+        if spread == 0 {
+            return "ML"
+        } else {
+            if spread > 0 {
+                if isWholeNumber(spread) {
+                    return "+\(String(format: "%.0f", spread))"
+                } else {
+                    return "+\(String(format: "%.1f", spread))"
+                }
+            } else {
+                if isWholeNumber(spread) {
+                    return "\(String(format: "%.0f", spread))"
+                } else {
+                    return "\(String(format: "%.1f", spread))"
+                }
+            }
+        }
+    }
     
     var color: Color {
         if challengeResult == "win" {
@@ -334,13 +346,6 @@ struct spreadMiniViewAccepted: View {
     
     var body: some View {
         VStack(spacing: 0) {
-//            HStack {
-//                Spacer()
-//                Text(betType == .over || betType == .under ? "Total" : "Spread")
-//                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
-//                    .foregroundColor(.white)
-//                Spacer()
-//            }.frame(height: 15).background(K.finalColor.tabSelectedBlue)
             HStack {
                 Spacer()
                 Text(spreadString)

@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Kingfisher
+import Firebase
 
 struct pendingCardView: View {
     @ObservedObject var viewModel: challengeViewModel
@@ -23,25 +24,23 @@ struct pendingCardView: View {
                     if challenge.status == "inAction" {// challenge has begun
                         pendingOption1(challenge: challenge, viewModel: viewModel)
                     } else if challenge.status == "pendingAcceptance" && challenge.senderID != StaticUserData.shared.currentUser.id {// someone sent to you
-                        if let tenMinutesAfterChallenge = Calendar.current.date(byAdding: .minute, value: 10, to: challenge.dateCreated.dateValue()) {
-                            if Date() < tenMinutesAfterChallenge { // you sent to someone and hasnt expired yet
-                                pendingOption2(viewModel: viewModel, challenge: challenge)
-
-                            }
+                        if Date() < challenge.gameCommenceTime.dateValue() {
+                            pendingOption2(viewModel: viewModel, challenge: challenge)
                         }
-                        
                     } else if challenge.status == "pendingAcceptance" && challenge.senderID == StaticUserData.shared.currentUser.id {// you sent to someone
-                        if let tenMinutesAfterChallenge = Calendar.current.date(byAdding: .minute, value: 10, to: challenge.dateCreated.dateValue()) {
-                            if Date() < tenMinutesAfterChallenge { // you sent to someone and hasnt expired yet
-                                pendingOption3(challenge: challenge)
-                            } else { // you sent to someone and its past expiration date of 10 min
-                                pendingOption3Expired(challenge: challenge, viewModel: viewModel)
-                            }
+                        if Date() < challenge.gameCommenceTime.dateValue() {
+                            pendingOption3(challenge: challenge)
+                        } else { // you sent to someone and its past expiration date of 10 min
+                            pendingOption3Expired(challenge: challenge, viewModel: viewModel)
+                        }
+                    } else if challenge.status == "pendingPublicAcceptance" {
+                        if Date() < challenge.gameCommenceTime.dateValue() {
+                            pendingOption4(challenge: challenge, viewModel: viewModel)
+                        } else { // you sent to someone and its past expiration date of 10 min
+                            pendingOption4Expired(challenge: challenge, viewModel: viewModel)
                         }
                     }
-                    
                 }
-
             }.padding(.bottom, 75)
         }
         .onAppear() {
@@ -68,7 +67,7 @@ struct pendingOption1: View { // inAction
     var body: some View {
         VStack {
             NavigationLink(destination: {
-                acceptDirectChallenge(viewModel: viewModel, directChallengeTicket: challenge, inAction: true)
+                acceptDirectChallenge(viewModel: viewModel, directChallengeTicket: challenge, inAction: true, publicViewing: false)
                     .background(K.finalColor.backgroundBlue)
             }, label: {
                 VStack {
@@ -184,7 +183,7 @@ struct pendingOption2: View { // awaiting your response
                             })
                         } else {
                             Button(action: {
-                                viewModel.respondToChallenge(acceptedChallenge: false, challenge: challenge, receiverBet: ["":""]) {
+                                viewModel.respondToChallenge(acceptedChallenge: false, challengeOG: challenge, publicChallenge: false, receiverBet: ["":""]) {
                                     viewModel.fetchChallenges {}
                                 }
                             }, label: {
@@ -200,7 +199,7 @@ struct pendingOption2: View { // awaiting your response
                         }
 
                         NavigationLink(destination: {
-                            acceptDirectChallenge(viewModel: viewModel, directChallengeTicket: challenge, inAction: false)
+                            acceptDirectChallenge(viewModel: viewModel, directChallengeTicket: challenge, inAction: false, publicViewing: false)
                                 .background(K.finalColor.backgroundBlue)
                         }, label: {
                             HStack {
@@ -221,18 +220,19 @@ struct pendingOption2: View { // awaiting your response
             }
             HStack {
                 VStack {
-                    Spacer()
-                    Text("Expires: \(toHHMMSS(from:challenge.dateCreated.dateValue()))")
+                    Text("Expires: \(toHHMMSS(from:challenge.gameCommenceTime.dateValue()))")
                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 8))
-                        .foregroundColor(K.finalColor.potentialOrange)
-                        .padding(.leading, 4)
-                        .padding(.bottom, 4)
+                        .foregroundColor(.white)
+                        .padding(4)
+                        .background(K.finalColor.deleteRed)
+                        .cornerRadius(5, corners: .bottomRight)
+                    Spacer()
                 }
                 Spacer()
             }
             
         }
-        .padding(.vertical, 10)
+        
         .frame(height: 100)
         .background(K.finalColor.cardBlue)
         .cornerRadius(10)
@@ -277,12 +277,13 @@ struct pendingOption3: View { // awaiting other persons response
             
             HStack {
                 VStack {
-                    Spacer()
-                    Text("Expires: \(toHHMMSS(from:challenge.dateCreated.dateValue()))")
+                    Text("Expires: \(toHHMMSS(from:challenge.gameCommenceTime.dateValue()))")
                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 8))
-                        .foregroundColor(K.finalColor.potentialOrange)
-                        .padding(.leading, 4)
-                        .padding(.bottom, 4)
+                        .foregroundColor(.white)
+                        .padding(4)
+                        .background(K.finalColor.deleteRed)
+                        .cornerRadius(5, corners: .bottomRight)
+                    Spacer()
                 }
                 Spacer()
             }
@@ -304,7 +305,75 @@ struct pendingOption3Expired: View { // didnt respond fast enough
                     .foregroundColor(.red)
             }
             Button(action: {
-                viewModel.reclaimFundFromExpiredChallenge(senderID: StaticUserData.shared.currentUser.id!, receiverID: challenge.receiverID, customID: challenge.customID, reclaimAmount: challenge.senderWagerAmount) {
+                viewModel.reclaimFundFromExpiredChallenge(senderID: StaticUserData.shared.currentUser.id!, receiverID: challenge.receiverID, customID: challenge.customID, reclaimAmount: challenge.senderWagerAmount, sentToPublic: false) {
+                    viewModel.fetchChallenges {
+                        viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {}
+                    }
+                }
+            }, label: {
+                HStack {
+                    Text("Reclaim Funds")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                        .foregroundColor(.white)
+                }
+                .frame(width: 160, height: 40)
+                .background(K.finalColor.potentialOrange)
+                .cornerRadius(7.5)
+            })
+            
+        }.padding(.vertical, 10)
+        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 100, maxHeight: 100)
+        .background(K.finalColor.cardBlue)
+        .cornerRadius(10)
+        .padding(.horizontal, 15)
+    }
+}
+
+struct pendingOption4: View { // didnt get response from public
+    let challenge: DirectChallengeTicket
+    let viewModel: challengeViewModel
+    var body: some View {
+        ZStack {
+            VStack {
+                HStack(spacing: 5) {
+                    Text("Pending Public Acceptance")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                        .foregroundColor(.white)
+                }
+                
+            }.padding(.vertical, 10)
+            
+            HStack {
+                VStack {
+                    Text("Expires: \(toHHMMSS(from:challenge.gameCommenceTime.dateValue()))")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 8))
+                        .foregroundColor(.white)
+                        .padding(4)
+                        .background(K.finalColor.deleteRed)
+                        .cornerRadius(5, corners: .bottomRight)
+                    Spacer()
+                }
+                Spacer()
+            }
+        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 100, maxHeight: 100)
+            .background(K.finalColor.cardBlue)
+            .cornerRadius(10)
+            .padding(.horizontal, 15)
+    }
+}
+
+struct pendingOption4Expired: View { // didnt get response from public
+    let challenge: DirectChallengeTicket
+    let viewModel: challengeViewModel
+    var body: some View {
+        VStack {
+            HStack(spacing: 5) {
+                Text("Challenge with public expired.")
+                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                    .foregroundColor(.red)
+            }
+            Button(action: {
+                viewModel.reclaimFundFromExpiredChallenge(senderID: StaticUserData.shared.currentUser.id!, receiverID: challenge.receiverID, customID: challenge.customID, reclaimAmount: challenge.senderWagerAmount, sentToPublic: true) {
                     viewModel.fetchChallenges {
                         viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {}
                     }
@@ -329,19 +398,182 @@ struct pendingOption3Expired: View { // didnt respond fast enough
 }
 
 
+
+struct publicWager: View { // public challenges you can accept
+    @ObservedObject var viewModel: challengeViewModel
+
+    let challenge: DirectChallengeTicket
+    @State private var selfProfileImageURL = ""
+    @State private var opponentProfileImageURL = ""
+    @State var showingSheet = false
+    
+    @State var declineConfirm: Bool = false
+    
+    var betLineFormatted: String {
+        var extra = ""
+        if challenge.receiverBetType == .over {
+            extra = "o"
+        } else if challenge.receiverBetType == .under {
+            extra = "u"
+        } else if challenge.receiverBetLine > 0 {
+            extra = "+"
+        }
+        
+        if challenge.receiverBetLine == 0 {
+            return "ML"
+        } else {
+            if isWholeNumber(challenge.receiverBetLine) {
+                return "\(extra)\(String(format: "%.0f", challenge.receiverBetLine))"
+            } else {
+                return "\(extra)\(String(format: "%.1f", challenge.receiverBetLine))"
+            }
+        }
+        
+    }
+    
+    var body: some View {
+        if challenge.senderID != StaticUserData.shared.currentUser.id {
+            NavigationLink(destination: {
+                acceptDirectChallenge(viewModel: viewModel, directChallengeTicket: challenge, inAction: false, publicViewing: false)
+                    .background(K.finalColor.backgroundBlue)
+            }, label: {
+                ZStack {
+                    HStack {
+                        Spacer()
+                        
+                        VStack(spacing: 7.5) {
+                            HStack (spacing: 4){
+                                Text("\(challenge.receiverTeamName) \(betLineFormatted) (\(challenge.receiverOdds))")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                    .foregroundColor(.white)
+                            }
+                            HStack {
+                                currencyImage(currency: "poolBucks", dimension: 25)
+                                
+                                Text("\(String(format: "%.2f", challenge.receiverWagerAmount)) : \(String(format: "%.2f", returnPotentialWinnings(wagerAmount: challenge.receiverWagerAmount, MLOdds: challenge.receiverOdds)))") // NEED TO FIX
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                    .foregroundColor(.white)
+                                
+                                VStack (spacing: 7.5) {
+                                    
+                                }
+                            }
+                        }
+                        Spacer()
+                    }
+                        
+                    HStack {
+                        VStack {
+                            Text("Expires: \(toHHMMSS(from:challenge.gameCommenceTime.dateValue()))")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 8))
+                                .foregroundColor(.white)
+                                .padding(4)
+                                .background(K.finalColor.deleteRed)
+                                .cornerRadius(5, corners: .bottomRight)
+                            Spacer()
+                                
+                        }
+                        Spacer()
+                    }
+                    
+                }
+                .frame(height: 100)
+                .background(K.finalColor.cardBlue)
+                .cornerRadius(10)
+                .padding(.horizontal, 15)
+                .padding(.bottom, 10)
+            })
+        } else {
+            ZStack {
+                HStack {
+                    Spacer()
+                    
+                    VStack(spacing: 7.5) {
+                        HStack (spacing: 4){
+                            Text("\(challenge.receiverTeamName) \(betLineFormatted) (\(challenge.receiverOdds))")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                .foregroundColor(.white)
+                        }
+                        HStack {
+                            currencyImage(currency: "poolBucks", dimension: 25)
+                            
+                            Text("\(String(format: "%.2f", challenge.receiverWagerAmount)) : \(String(format: "%.2f", returnPotentialWinnings(wagerAmount: challenge.receiverWagerAmount, MLOdds: challenge.receiverOdds)))") // NEED TO FIX
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                .foregroundColor(.white)
+                            
+                            VStack (spacing: 7.5) {
+                                
+                            }
+                        }
+                    }
+                    Spacer()
+                }
+                    
+                VStack {
+                    HStack {
+                        Text("Expires: \(toHHMMSS(from:challenge.gameCommenceTime.dateValue()))")
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 8))
+                            .foregroundColor(.white)
+                            .padding(4)
+                            .background(K.finalColor.deleteRed)
+                            .cornerRadius(5, corners: .bottomRight)
+                        Spacer()
+                        
+                        
+                        Text("Your Challenge")
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 8))
+                            .foregroundColor(.white)
+                            .padding(4)
+                            .background(K.finalColor.potentialOrange)
+                            .cornerRadius(5, corners: .bottomLeft)
+                    }
+                    Spacer()
+                }
+                
+            }
+            .frame(height: 100)
+            .background(K.finalColor.cardBlue)
+            .cornerRadius(10)
+            .padding(.horizontal, 15)
+            .padding(.bottom, 10)
+        }
+        
+    }
+}
+
+
+struct currencyImage: View {
+    let currency: String
+    let dimension: Int
+    var body: some View {
+        if currency == "poolBucks" {
+            Image("poolBuck")
+                .resizable()
+                .foregroundStyle(.green)
+                .frame(width: CGFloat(dimension), height: CGFloat(dimension))
+        } else {
+            Image("poolCoin")
+                .resizable()
+                .foregroundStyle(.green)
+                .frame(width: CGFloat(dimension), height: CGFloat(dimension))
+        }
+    }
+}
+
 func toHHMMSS(from timestamp: Date) -> String {
     let calendar = Calendar.current
-        // Add 5 minutes to the timestamp
-        guard let futureDate = calendar.date(byAdding: .minute, value: 10, to: timestamp) else {
-            // Handle the case where the date couldn't be created
-            return "Error creating future date"
-        }
+    
+    guard let futureDate = calendar.date(byAdding: .minute, value: 0, to: timestamp) else {
+        // Handle the case where the date couldn't be created
+        return "Error creating future date"
+    }
 
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = TimeZone.current // Adjust if needed
-        dateFormatter.dateFormat = "hh:mm:ss a" // 12-hour format with AM/PM
-        return dateFormatter.string(from: futureDate)
+    let dateFormatter = DateFormatter()
+    dateFormatter.timeZone = TimeZone.current // Adjust if needed
+    dateFormatter.dateFormat = "MM/dd/yy hh:mm:ss a" // Include date in the format
+    return dateFormatter.string(from: futureDate)
 }
+
 
 
 struct profilePicDisplayView: View {
@@ -363,25 +595,6 @@ struct profilePicDisplayView: View {
                 .frame(width: CGFloat(dimension), height: CGFloat(dimension))
                 .background(K.finalColor.tabSelectedBlue)
                 .clipShape(Circle())
-        }
-    }
-}
-
-
-struct currencyImage: View {
-    let currency: String
-    let dimension: Int
-    var body: some View {
-        if currency == "poolBucks" {
-            Image("poolBuck")
-                .resizable()
-                .foregroundStyle(.green)
-                .frame(width: CGFloat(dimension), height: CGFloat(dimension))
-        } else {
-            Image("poolCoin")
-                .resizable()
-                .foregroundStyle(.green)
-                .frame(width: CGFloat(dimension), height: CGFloat(dimension))
         }
     }
 }

@@ -303,7 +303,7 @@ struct announcementView: View {
                                         VStack {
                                             HStack {
                                                 Spacer()
-                                                Text("\(formatDateMMDDYY(from: announcement.timestamp))")
+                                                Text("\(toHHMMSS(from: announcement.timestamp.dateValue()))")
                                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 10))
                                                     .foregroundColor(.white)
                                                     .padding(.top,3)

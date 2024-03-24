@@ -91,7 +91,7 @@ struct peer2peerSubmitPage: View {
                 VStack {
                     HStack {
                         Spacer()
-                        Text("Going to Public")
+                        Text("Send to Public")
                             .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
                             .foregroundColor(.white)
                         Spacer()
@@ -122,20 +122,30 @@ struct peer2peerSubmitPage: View {
                 senderID: StaticUserData.shared.currentUser.id!,
                 senderOdds: returnOddsFromBetType(betType: betType, game: game),
                 senderBetType: betType,
+                
+                senderBetLine: returnSpreadFromBetType(betType: betType, game: game),
+                senderTeamName: returnTeamString(game: game, betType: betType),
+                
                 senderWagerAmount: -99, // WILL ADJUST
 
                 receiverUsername: "", // WILL ADJUST
                 receiverID: "", // WILL ADJUST
                 receiverOdds: returnOddsFromBetType(betType: returnOppBetType(betType: betType), game: game),
                 receiverBetType: returnOppBetType(betType: betType),
+                
+                receiverBetLine: returnSpreadFromBetType(betType: returnOppBetType(betType: betType), game: game),
+                receiverTeamName: returnTeamString(game: game, betType: returnOppBetType(betType: betType)),
+                
                 receiverWagerAmount: -99, // WILL ADJUST
 
                 dateCreated: Timestamp(date: Date()),
                 currencyChosen: "poolBucks",
                 status: challengeStatus.pendingAcceptance.rawValue,
                 gameIDs: [game.idd!],
+                gameCommenceTime: game.commenceTime,
                 challengeType: "straight1v1"
             ))
+            
         }
     }
 }

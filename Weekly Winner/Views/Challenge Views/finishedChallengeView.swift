@@ -51,7 +51,8 @@ struct completedCard: View { // inAction
                 acceptDirectChallenge(
                     viewModel: viewModel,
                     directChallengeTicket: challenge,
-                    inAction: true)
+                    inAction: true,
+                    publicViewing: false)
                 .background(K.finalColor.backgroundBlue)
             }, label: {
                 VStack {

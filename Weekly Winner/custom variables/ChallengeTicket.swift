@@ -35,21 +35,50 @@ struct DirectChallengeTicket {
     var senderID: String
     var senderOdds: Int
     var senderBetType: BetType
+    var senderBetLine: Double
+    var senderTeamName: String
     var senderWagerAmount: Double
 
-    
     var receiverUsername: String
     var receiverID: String
     var receiverOdds: Int
     var receiverBetType: BetType
+    var receiverBetLine: Double
+    var receiverTeamName: String
     var receiverWagerAmount: Double
     
-    var dateCreated: Timestamp // will fix later
+    var dateCreated: Timestamp // Firestore Timestamp
     var currencyChosen: String
     var status: String
     var gameIDs: [String]
+    var gameCommenceTime: Timestamp
     var challengeType: String
+    
 
+    func toDictionary() -> [String: Any] {
+        return [
+            "customID": customID,
+            "senderUsername": senderUsername,
+            "senderID": senderID,
+            "senderOdds": senderOdds,
+            "senderBetType": senderBetType.rawValue, // Assuming BetType is an enum
+            "senderBetLine": senderBetLine,
+            "senderTeamName": senderTeamName,
+            "senderWagerAmount": senderWagerAmount,
+            "receiverUsername": receiverUsername,
+            "receiverID": receiverID,
+            "receiverOdds": receiverOdds,
+            "receiverBetType": receiverBetType.rawValue, // Assuming BetType is an enum
+            "receiverBetLine": receiverBetLine,
+            "receiverTeamName": receiverTeamName,
+            "receiverWagerAmount": receiverWagerAmount,
+            "dateCreated": dateCreated,
+            "currencyChosen": currencyChosen,
+            "status": status,
+            "gameIDs": gameIDs,
+            "challengeType": challengeType
+        ]
+    }
 }
 
 enum currencyType {

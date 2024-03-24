@@ -25,6 +25,7 @@ class challengeViewModel: ObservableObject {
     @Published var opponentChallenges: [DirectChallengeTicket] = []
     @Published var gamesInChallenges: [Game] = []
     @Published var gamesIDsInChallenges: [String] = []
+    @Published var publicPendingChallenges: [DirectChallengeTicket] = []
     
     @Published var fetchedGame: Game?
 
@@ -464,21 +465,20 @@ class challengeViewModel: ObservableObject {
         })
     }
 
-    func reclaimFundFromExpiredChallenge(senderID: String, receiverID: String, customID: String, reclaimAmount: Double, completion: @escaping () -> Void ) {
+    func reclaimFundFromExpiredChallenge(senderID: String, receiverID: String, customID: String, reclaimAmount: Double, sentToPublic: Bool, completion: @escaping () -> Void ) {
         let db = Firestore.firestore()
         
-        // Define the document references for the user's and opponent's challenge tickets
         let userChallengeRef = db.collection("users").document(senderID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(customID)
-        let opponentChallengeRef = db.collection("users").document(receiverID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(customID)
         
-        // Use a batch to perform both deletions as a single atomic operation
         let batch = db.batch()
         
-        // Delete the user's challenge document
         batch.deleteDocument(userChallengeRef)
-        
-        // Delete the opponent's challenge document
-        batch.deleteDocument(opponentChallengeRef)
+                
+        if !sentToPublic {
+            let opponentChallengeRef = db.collection("users").document(receiverID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(customID)
+            batch.deleteDocument(opponentChallengeRef)
+            
+        }
         
         let betsCollectionRef = db.collection("users").document(senderID)
             .collection("challenges").document("bets")
@@ -558,16 +558,29 @@ class challengeViewModel: ObservableObject {
             for document in documents {
                 let data = document.data()
                 if let customID = data["customID"] as? String,
+                   
+                    
                    let senderUsername = data["senderUsername"] as? String,
                    let senderID = data["senderID"] as? String,
                    let senderOdds = data["senderOdds"] as? Int,
                    let senderBetTypeRaw = data["senderBetType"] as? String, // Assuming BetType can be initialized from a String
+                   
                    let senderWagerAmount = data["senderWagerAmount"] as? Double,
+                   
+           
+                    
                    let receiverUsername = data["receiverUsername"] as? String,
                    let receiverID = data["receiverID"] as? String,
                    let receiverOdds = data["receiverOdds"] as? Int,
+                   
+             
+//                   
+
+//                    
                    let receiverBetTypeRaw = data["receiverBetType"] as? String, // Assuming BetType can be initialized from a String
                    let receiverWagerAmount = data["receiverWagerAmount"] as? Double,
+                   
+                    
                    let dateCreated = data["dateCreated"] as? Timestamp, // You will adjust this conversion later
                    let currencyChosen = data["currencyChosen"] as? String,
                    let status = data["status"] as? String,
@@ -576,24 +589,44 @@ class challengeViewModel: ObservableObject {
                 {
                     let senderBetType = BetType(rawValue: senderBetTypeRaw) // Adjust this based on how BetType is defined
                     let receiverBetType = BetType(rawValue: receiverBetTypeRaw) // Adjust this
+                    
+                    let senderTeamName = data["senderTeamName"] as? String ?? ""
+                    let senderBetLine = data["senderBetLine"] as? Double ?? -99
+                    let receiverBetLine = data["receiverBetLine"] as? Double ?? -99
+                    let receiverTeamName = data["receiverTeamName"] as? String ?? ""
+//                    let gameCommenceTime = data["gameCommenceTime"] as? Timestamp ?? Timestamp(date: Date())
+                    let gameCommenceTime = data["gameCommenceTime"] as? Timestamp ?? Timestamp(date: Calendar.current.date(from: DateComponents(year: 2002, month: 6, day: 7))!)
+
+
 
                     if let senderBetType = senderBetType, let receiverBetType = receiverBetType {
                         let directChallengeTicket = DirectChallengeTicket(
                             customID: customID,
+                            
                             senderUsername: senderUsername,
                             senderID: senderID,
                             senderOdds: senderOdds,
                             senderBetType: senderBetType,
+                            
+                            senderBetLine: senderBetLine,
+                            senderTeamName: senderTeamName,
+                            
                             senderWagerAmount: senderWagerAmount,
+                            
                             receiverUsername: receiverUsername,
                             receiverID: receiverID,
                             receiverOdds: receiverOdds,
                             receiverBetType: receiverBetType,
+                            
+                            receiverBetLine: receiverBetLine,
+                            receiverTeamName: receiverTeamName,
+                            
                             receiverWagerAmount: receiverWagerAmount,
                             dateCreated: dateCreated, // Adjust as necessary for your timestamp conversion
                             currencyChosen: currencyChosen,
                             status: status,
                             gameIDs: gameIDs,
+                            gameCommenceTime: gameCommenceTime,
                             challengeType: challengeType
                         )
                         self.currentChallenges.append(directChallengeTicket)
@@ -612,230 +645,165 @@ class challengeViewModel: ObservableObject {
         }
     }
     
-    
+    func fetchPublicChallenges(completion: @escaping () -> Void) {
+        let statuses = ["pendingPublicAcceptance"] // Replace with your actual status values
 
-    func fetchAllOpponentChallenges(userID: String, completion: @escaping () -> Void) {
-        let db = Firestore.firestore()
-        let group = DispatchGroup()
-        var opponentChallengesLocal: [DirectChallengeTicket] = []
-        self.opponentChallenges.removeAll()
-        
-        // Query for documents where challengerID matches
-        group.enter()
-        db.collectionGroup("currentChallengeTickets")
-            .whereField("senderID", isEqualTo: userID)
-            .getDocuments { (querySnapshot, error) in
-
-                if let error = error {
-                    print("Error getting documents: \(error)")
-                    completion()
-                    return
-                }
-                
-                guard let documents = querySnapshot?.documents else {
-                    print("No documents found for query")
-                    return
-                }
-                
-//                for document in documents {
-//                    let data = document.data()
-//                    if let customID = data["customID"] as? String,
-//                       let username = data["username"] as? String,
-//                       let opponentUsername = data["opponentUsername"] as? String,
-//                       let dateCreated = data["dateCreated"] as? Timestamp,
-//                       let wagerAmount = data["wagerAmount"] as? Double,
-//                       let currencyChosen = data["currencyChosen"] as? String,
-//                       let totalPotentialWon = data["totalPotentialWon"] as? Double,
-//                       let totalWon = data["totalWon"] as? Double,
-//                       let status = data["status"] as? String,
-//                       let challengerID = data["challengerID"] as? String,
-//                       let receiverIDs = data["receiverIDs"] as? [String],
-//                       let ticketFormat = data["ticketFormat"] as? [Int],
-//                       let gameIDs = data["gameIDs"] as? [String],
-//                       let gamesToPlay = data["gamesToPlay"] as? Int,
-//                       let gamesPlayed = data["gamesPlayed"] as? Int
-//                        
-//
-//                         
-//                    {
-//                        
-//                        let challengeTicket = ChallengeTicket(
-//                            customID: customID,
-//                            username: username,
-//                            opponentUsername: opponentUsername,
-//                            dateCreated: dateCreated,
-//                            wagerAmount: wagerAmount,
-//                            currencyChosen: currencyChosen,
-//                            totalPotentialWon: totalPotentialWon,
-//                            totalWon: totalWon,
-//                            status: status,
-//                            challengerID: challengerID,
-//                            receiverIDs: receiverIDs,
-//                            ticketFormat: ticketFormat,
-//                            gameIDs: gameIDs,
-//                            gamesToPlay: gamesToPlay,
-//                            gamesPlayed: gamesPlayed
-//                        )
-//                        if challengeTicket.username != StaticUserData.shared.currentUser.username {
-//                            opponentChallengesLocal.append(challengeTicket)
-//                        }
-//                    } else {
-//                        print(" FETCH OPP CHALL PART1 Document data is incomplete or of incorrect type for document: \(document.documentID)")
-//                    }
-//                }
-                
-                for document in documents {
-                    let data = document.data()
-                    if let customID = data["customID"] as? String,
-                       let senderUsername = data["senderUsername"] as? String,
-                       let senderID = data["senderID"] as? String,
-                       let senderOdds = data["senderOdds"] as? Int,
-                       let senderBetTypeRaw = data["senderBetType"] as? String, // Assuming BetType can be initialized from a String
-                       let senderWagerAmount = data["senderWagerAmount"] as? Double,
-                       let receiverUsername = data["receiverUsername"] as? String,
-                       let receiverID = data["receiverID"] as? String,
-                       let receiverOdds = data["receiverOdds"] as? Int,
-                       let receiverBetTypeRaw = data["receiverBetType"] as? String, // Assuming BetType can be initialized from a String
-                       let receiverWagerAmount = data["receiverWagerAmount"] as? Double,
-                       let dateCreated = data["dateCreated"] as? Timestamp, // You will adjust this conversion later
-                       let currencyChosen = data["currencyChosen"] as? String,
-                       let status = data["status"] as? String,
-                       let gameIDs = data["gameIDs"] as? [String],
-                       let challengeType = data["challengeType"] as? String
-                    {
-                        let senderBetType = BetType(rawValue: senderBetTypeRaw) // Adjust this based on how BetType is defined
-                        let receiverBetType = BetType(rawValue: receiverBetTypeRaw) // Adjust this
-
-                        if let senderBetType = senderBetType, let receiverBetType = receiverBetType {
-                            let directChallengeTicket = DirectChallengeTicket(
-                                customID: customID,
-                                senderUsername: senderUsername,
-                                senderID: senderID,
-                                senderOdds: senderOdds,
-                                senderBetType: senderBetType,
-                                senderWagerAmount: senderWagerAmount,
-                                receiverUsername: receiverUsername,
-                                receiverID: receiverID,
-                                receiverOdds: receiverOdds,
-                                receiverBetType: receiverBetType,
-                                receiverWagerAmount: receiverWagerAmount,
-                                dateCreated: dateCreated, // Adjust as necessary for your timestamp conversion
-                                currencyChosen: currencyChosen,
-                                status: status,
-                                gameIDs: gameIDs,
-                                challengeType: challengeType
-                            )
-                            if directChallengeTicket.senderUsername != StaticUserData.shared.currentUser.username {
-                                opponentChallengesLocal.append(directChallengeTicket)
-                            }
-                        } else {
-                            print("FETCH CHALLENGES: Error initializing BetType for document: \(document.documentID)")
-                        }
-                    } else {
-                        print("FETCH CHALLENGES Document data is incomplete or of incorrect type for document: \(document.documentID)")
-                    }
-                }
-                
-                //group.leave()
+        let query = db.collectionGroup("currentChallengeTickets")
+            .whereField("status", isEqualTo: "pendingPublicAcceptance")
+            .order(by: "dateCreated", descending: true).getDocuments { querySnapshot, error in
+                    
+            if let error = error {
+                print("Error getting documents: \(error)")
+                completion()
+                return
             }
-        
-        // Query for documents where receiverIDs array contains a certain value
-      //  group.enter()
-        db.collectionGroup("currentChallengeTickets")
-            .whereField("receiverID", isEqualTo: userID)
-            .getDocuments { (querySnapshot, error) in
 
-                if let error = error {
-                    print("Error getting documents: \(error)")
-                    completion()
-                    return
-                }
-                
-                guard let documents = querySnapshot?.documents else {
-                    print("No documents found for query")
-                    return
-                }
-                
-                for document in documents {
-                    let data = document.data()
-                    if let customID = data["customID"] as? String,
-                       let senderUsername = data["senderUsername"] as? String,
-                       let senderID = data["senderID"] as? String,
-                       let senderOdds = data["senderOdds"] as? Int,
-                       let senderBetTypeRaw = data["senderBetType"] as? String, // Assuming BetType can be initialized from a String
-                       let senderWagerAmount = data["senderWagerAmount"] as? Double,
-                       let receiverUsername = data["receiverUsername"] as? String,
-                       let receiverID = data["receiverID"] as? String,
-                       let receiverOdds = data["receiverOdds"] as? Int,
-                       let receiverBetTypeRaw = data["receiverBetType"] as? String, // Assuming BetType can be initialized from a String
-                       let receiverWagerAmount = data["receiverWagerAmount"] as? Double,
-                       let dateCreated = data["dateCreated"] as? Timestamp, // You will adjust this conversion later
-                       let currencyChosen = data["currencyChosen"] as? String,
-                       let status = data["status"] as? String,
-                       let gameIDs = data["gameIDs"] as? [String],
-                       let challengeType = data["challengeType"] as? String
-                    {
-                        let senderBetType = BetType(rawValue: senderBetTypeRaw) // Adjust this based on how BetType is defined
-                        let receiverBetType = BetType(rawValue: receiverBetTypeRaw) // Adjust this
-
-                        if let senderBetType = senderBetType, let receiverBetType = receiverBetType {
-                            let directChallengeTicket = DirectChallengeTicket(
-                                customID: customID,
-                                senderUsername: senderUsername,
-                                senderID: senderID,
-                                senderOdds: senderOdds,
-                                senderBetType: senderBetType,
-                                senderWagerAmount: senderWagerAmount,
-                                receiverUsername: receiverUsername,
-                                receiverID: receiverID,
-                                receiverOdds: receiverOdds,
-                                receiverBetType: receiverBetType,
-                                receiverWagerAmount: receiverWagerAmount,
-                                dateCreated: dateCreated, // Adjust as necessary for your timestamp conversion
-                                currencyChosen: currencyChosen,
-                                status: status,
-                                gameIDs: gameIDs,
-                                challengeType: challengeType
-                            )
-                            if directChallengeTicket.senderUsername != StaticUserData.shared.currentUser.username {
-                                opponentChallengesLocal.append(directChallengeTicket)
-                            }
-                        } else {
-                            print("FETCH CHALLENGES: Error initializing BetType for document: \(document.documentID)")
-                        }
-                    } else {
-                        print("FETCH CHALLENGES Document data is incomplete or of incorrect type for document: \(document.documentID)")
-                    }
-                }
-                
-                group.leave()
+            guard let documents = querySnapshot?.documents else {
+                print("No documents found for query")
+                completion()
+                return
             }
-        
-        // Completion handler
-        group.notify(queue: .main) {
-            self.opponentChallenges = opponentChallengesLocal
+
+            print("Found \(documents.count) documents")
+
+            self.publicPendingChallenges.removeAll()
+            for document in documents {
+                let data = document.data()
+                if let customID = data["customID"] as? String,
+                   
+                    
+                   let senderUsername = data["senderUsername"] as? String,
+                   let senderID = data["senderID"] as? String,
+                   let senderOdds = data["senderOdds"] as? Int,
+                   let senderBetTypeRaw = data["senderBetType"] as? String, // Assuming BetType can be initialized from a String
+                   
+                   let senderWagerAmount = data["senderWagerAmount"] as? Double,
+                   
+           
+                    
+                   let receiverUsername = data["receiverUsername"] as? String,
+                   let receiverID = data["receiverID"] as? String,
+                   let receiverOdds = data["receiverOdds"] as? Int,
+
+                   let receiverBetTypeRaw = data["receiverBetType"] as? String, // Assuming BetType can be initialized from a String
+                   let receiverWagerAmount = data["receiverWagerAmount"] as? Double,
+                   
+                    
+                   let dateCreated = data["dateCreated"] as? Timestamp, // You will adjust this conversion later
+                   let currencyChosen = data["currencyChosen"] as? String,
+                   let status = data["status"] as? String,
+                   let gameIDs = data["gameIDs"] as? [String],
+                   let challengeType = data["challengeType"] as? String
+                {
+                    let senderBetType = BetType(rawValue: senderBetTypeRaw) // Adjust this based on how BetType is defined
+                    let receiverBetType = BetType(rawValue: receiverBetTypeRaw) // Adjust this
+                    
+                    let senderTeamName = data["senderTeamName"] as? String ?? ""
+                    let senderBetLine = data["senderBetLine"] as? Double ?? -99
+                    let receiverBetLine = data["receiverBetLine"] as? Double ?? -99
+                    let receiverTeamName = data["receiverTeamName"] as? String ?? ""
+                    let gameCommenceTime = data["gameCommenceTime"] as? Timestamp ?? Timestamp(date: Calendar.current.date(from: DateComponents(year: 2002, month: 6, day: 7))!)
+
+
+                    if let senderBetType = senderBetType, let receiverBetType = receiverBetType {
+                        let directChallengeTicket = DirectChallengeTicket(
+                            customID: customID,
+                            
+                            senderUsername: senderUsername,
+                            senderID: senderID,
+                            senderOdds: senderOdds,
+                            senderBetType: senderBetType,
+                            
+                            senderBetLine: senderBetLine,
+                            senderTeamName: senderTeamName,
+                            
+                            senderWagerAmount: senderWagerAmount,
+                            
+                            receiverUsername: receiverUsername,
+                            receiverID: receiverID,
+                            receiverOdds: receiverOdds,
+                            receiverBetType: receiverBetType,
+                            
+                            receiverBetLine: receiverBetLine,
+                            receiverTeamName: receiverTeamName,
+                            
+                            receiverWagerAmount: receiverWagerAmount,
+                            dateCreated: dateCreated, // Adjust as necessary for your timestamp conversion
+                            currencyChosen: currencyChosen,
+                            status: status,
+                            gameIDs: gameIDs,
+                            gameCommenceTime: gameCommenceTime,
+                            challengeType: challengeType
+                        )
+                        self.publicPendingChallenges.append(directChallengeTicket)
+                    } else {
+                        print("FETCH CHALLENGES: Error initializing BetType for document: \(document.documentID)")
+                    }
+                } else {
+                    print("FETCH CHALLENGES Document data is incomplete or of incorrect type for document: \(document.documentID)")
+                }
+            }
+
+            print("Completed processing \(self.publicPendingChallenges.count) challenges")
             completion()
         }
     }
 
-
     
-    func respondToChallenge(acceptedChallenge: Bool, challenge: DirectChallengeTicket, receiverBet: [String: Any], completion: @escaping () -> Void) {
+    func respondToChallenge(acceptedChallenge: Bool, challengeOG: DirectChallengeTicket, publicChallenge: Bool, receiverBet: [String: Any], completion: @escaping () -> Void) {
+        var challenge: DirectChallengeTicket = challengeOG
+//        if publicChallenge {
+//            challenge.receiverID = StaticUserData.shared.currentUser.id!
+//            challenge.receiverUsername = StaticUserData.shared.currentUser.username
+//        }
+        print("here1")
         let senderUserID = challenge.senderID
         let senderRef = db.collection("users").document(senderUserID)
-        let receiverUserID = challenge.receiverID // Assuming only one opponent
+        print("here2")
+        var receiverUserID = StaticUserData.shared.currentUser.id!
+//        if publicChallenge {
+//            receiverUserID =
+//        } else {
+//            receiverUserID = challenge.receiverID // Assuming only one opponent
+//        }
         let receiverRef = db.collection("users").document(receiverUserID)
+        print("here3")
         
         if acceptedChallenge {
             // Update the status field of the challenge in the current user's collection
             print("challenge accepted")
-            self.db.collection("users").document(receiverUserID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).updateData(["status": "inAction"]) { error in
+            self.db.collection("users").document(senderUserID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).updateData(["status": "inAction", "receiverID": StaticUserData.shared.currentUser.id!, "receiverUsername":StaticUserData.shared.currentUser.username]) { error in
                 if let error = error {
                     print("Error updating challenge status: \(error)")
                 } else {
-                    print("Challenge status updated for current user")
-                                // Update the status field of the challenge in the receiver's collection
-                    self.db.collection("users").document(challenge.senderID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).updateData(["status": "inAction"]) { error in
+                    
+                    self.db.collection("users").document(receiverUserID)
+                        .collection("challenges").document("tickets")
+                        .collection("currentChallengeTickets").document(challenge.customID)
+                        .setData([
+                            "customID": challenge.customID,
+                            "senderUsername": challenge.senderUsername,
+                            "senderID": challenge.senderID,
+                            "senderOdds": challenge.senderOdds,
+                            "senderBetType": challenge.senderBetType.rawValue, // Assuming BetType is an enum
+                            "senderBetLine": challenge.senderBetLine,
+                            "senderTeamName": challenge.senderTeamName,
+                            "senderWagerAmount": challenge.senderWagerAmount,
+                            "receiverUsername": StaticUserData.shared.currentUser.username,
+                            "receiverID": StaticUserData.shared.currentUser.id!,
+                            "receiverOdds": challenge.receiverOdds,
+                            "receiverBetType": challenge.receiverBetType.rawValue, // Assuming BetType is an enum
+                            "receiverBetLine": challenge.receiverBetLine,
+                            "receiverTeamName": challenge.receiverTeamName,
+                            "receiverWagerAmount": challenge.receiverWagerAmount,
+                            "dateCreated": challenge.dateCreated,
+                            "currencyChosen": challenge.currencyChosen,
+                            "status": "inAction",
+                            "gameIDs": challenge.gameIDs,
+                            "challengeType": challenge.challengeType
+                        ], merge: true) { error in
+                            
+                            
                         if let error = error {
                             print("Error updating challenge status for challenger: \(error)")
                         } else {
@@ -861,9 +829,10 @@ class challengeViewModel: ObservableObject {
                     }
                 }
             }
-            
-            
             completion()
+            
+            
+            
         } else { // if denied
             self.db.collection("users").document(challenge.senderID).collection("challenges").document("tickets").collection("currentChallengeTickets").document(challenge.customID).delete { error in
                 if let error = error {

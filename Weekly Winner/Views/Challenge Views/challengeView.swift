@@ -144,15 +144,15 @@ struct challengeCardView: View {
                                 .background(K.finalColor.backgroundBlue)
                         } label: {
                             HStack (spacing: 7.5){
-                                Image("poolBuck")
-                                    .resizable()
-                                    .frame(width: 20, height: 20)
+//                                Image("poolBuck")
+//                                    .resizable()
+//                                    .frame(width: 20, height: 20)
                                 Text("Deposit/Withdraw")
                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
                                     .foregroundColor(.white)
-                                Image("poolBuck")
-                                    .resizable()
-                                    .frame(width: 20, height: 20)
+//                                Image("poolBuck")
+//                                    .resizable()
+//                                    .frame(width: 20, height: 20)
                                 
                                 
                             }
@@ -169,26 +169,24 @@ struct challengeCardView: View {
             }.padding(.horizontal,15)
             HStack {
                 Spacer()
-                Text("Available Challenges")
+                Text("Public Challenges Available")
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
                     .foregroundColor(.white)
+                    .padding(.top)
                 Spacer()
             }
             ScrollView {
-                
-                VStack {
-                    
-                    ForEach(viewModel.currentChallenges, id: \.customID) { challenge in
-
-                        if challenge.status == "pendingPublicAcceptance" {// challenge has begun
-                            pendingOption2(viewModel: viewModel, challenge: challenge)
-                            Text("hello")
-                        }
-                        
+                VStack(spacing: 0){
+                    ForEach(viewModel.publicPendingChallenges, id: \.customID) { challenge in
+//                        if challenge.senderID != StaticUserData.shared.currentUser.id {
+                            if challenge.status == "pendingPublicAcceptance" {// challenge has begun
+                                if Date() < challenge.gameCommenceTime.dateValue() {
+                                    publicWager(viewModel: viewModel, challenge: challenge)
+                                }
+                            }
+//                        }
                     }
-                    
-                    
-                }
+                }.padding(.bottom, 40)
             }.refreshable {
                 viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {
                     poolBucks = StaticUserData.shared.currentUser.poolBucks
@@ -198,7 +196,7 @@ struct challengeCardView: View {
                 viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {
                     poolBucks = StaticUserData.shared.currentUser.poolBucks
                 }
-                viewModel.fetchChallenges {
+                viewModel.fetchPublicChallenges {
     //                viewModel.fetchChallengeGames(matchingIDs: viewModel.gamesIDsInChallenges) { games in
     //                    viewModel.gamesInChallenges = games ?? []
     //                }
@@ -223,6 +221,7 @@ struct challengeCardView: View {
         }
     }
 }
+
 
 
 

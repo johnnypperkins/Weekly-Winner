@@ -134,12 +134,20 @@ class peer2peerViewModel: ObservableObject {
                         "senderID": self.senderDirectTicket?.senderID,
                         "senderOdds": self.senderDirectTicket?.senderOdds,
                         "senderBetType": self.senderDirectTicket?.senderBetType.rawValue, // Assuming BetType is an enum and you want to store its raw value
+                        
+                        "senderBetLine": self.senderDirectTicket?.senderBetLine,
+                        "senderTeamName": self.senderDirectTicket?.senderTeamName,
+                        
+                        
                         "senderWagerAmount": senderWagerAmount,
                         
                         "receiverUsername": sendingToPublic ? "" : self.senderDirectTicket?.receiverUsername,
                         "receiverID": sendingToPublic ? "" : self.senderDirectTicket?.receiverID,
                         "receiverOdds": self.senderDirectTicket?.receiverOdds,
                         "receiverBetType": self.senderDirectTicket?.receiverBetType.rawValue, // Assuming BetType is an enum and you want to store its raw value
+                        "receiverBetLine": self.senderDirectTicket?.receiverBetLine,
+                        "receiverTeamName": self.senderDirectTicket?.receiverTeamName,
+                        
                         "receiverWagerAmount": returnOpponentWagerAmount(
                             wagerAmount: Double(senderWagerAmount),
                             odds1: self.senderDirectTicket!.senderOdds,
@@ -151,6 +159,7 @@ class peer2peerViewModel: ObservableObject {
                         "currencyChosen": "poolBucks", // will adjust in future
                         "status": sendingToPublic ? "pendingPublicAcceptance" : self.senderDirectTicket?.status,
                         "gameIDs": self.senderDirectTicket?.gameIDs,
+                        "gameCommenceTime": self.senderDirectTicket?.gameCommenceTime,
                         "challengeType" : self.senderDirectTicket?.challengeType
                     ]
 

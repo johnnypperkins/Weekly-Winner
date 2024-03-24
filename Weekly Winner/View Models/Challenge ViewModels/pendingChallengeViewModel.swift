@@ -287,6 +287,8 @@ class pendingChallengeViewModel: ObservableObject {
         }
     }
     
+    
+    //. DO NOT TOUCH
     func respondToChallenge(acceptedChallenge: Bool, challenge: ChallengeTicket, completion: @escaping () -> Void) {
         let challengerUserId = challenge.challengerID
             let challengerRef = db.collection("users").document(challengerUserId)
