@@ -61,6 +61,8 @@ class StaticUserData: ObservableObject {
     @Published var weeklyTicket: Ticket
     @Published var dailyRankedTickets: [Ticket]
     @Published var weeklyRankedTickets: [Ticket]
+    
+    
 
     init(username: String, currentUser: User, dailyTicket: Ticket, weeklyTicket: Ticket, dailyRankedTickets: [Ticket], weeklyRankedTickets: [Ticket]) {
         self.username = username
@@ -79,5 +81,7 @@ class StaticUserData: ObservableObject {
         weeklyTicket: Ticket(id: "", username: "", uid: "", groupID: "", groupNumber: -99, dateCreated: Timestamp(date:Date()), totalWon: 0, totalPotentialWon: 0, groupName: "", rank: "", isEnabled: false, groupAdmin: "", ticketFormat: [0]),
         dailyRankedTickets: [Ticket(id: "", username: "", uid: "", groupID: "", groupNumber: -99, dateCreated: Timestamp(date:Date()), totalWon: 0, totalPotentialWon: 0, groupName: "", rank: "", isEnabled: false, groupAdmin: "", ticketFormat: [0])],
         weeklyRankedTickets: [Ticket(id: "", username: "", uid: "", groupID: "", groupNumber: -99, dateCreated: Timestamp(date:Date()), totalWon: 0, totalPotentialWon: 0, groupName: "", rank: "", isEnabled: false, groupAdmin: "", ticketFormat: [0])])
+    
+    static var fcmToken: String = ""
     
 }

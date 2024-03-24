@@ -33,8 +33,8 @@ class screen1ViewModel: ObservableObject {
     init() {
         self.userSession = Auth.auth().currentUser
         self.setStaticUser {
+            
             self.fetchUserCoinsAndBucks(userID: Auth.auth().currentUser?.uid ?? "") {}
-
         }
         self.fetchUserGroups {}
         
@@ -45,6 +45,30 @@ class screen1ViewModel: ObservableObject {
 
 
     }
+    
+    
+
+    func setUserFCM(userID: String, completion: @escaping () -> Void) {
+        let db = Firestore.firestore()
+        let userRef = db.collection("users").document(userID)
+        print("this is fcmToken: \(StaticUserData.fcmToken)")
+        if StaticUserData.fcmToken != "" {
+            print("this is fcm token: \(StaticUserData.fcmToken)")
+            userRef.setData(["fcmToken": StaticUserData.fcmToken], merge: true) { error in
+                if let error = error {
+                    print("Error setting user FCM token: \(error.localizedDescription)")
+                    completion()
+                } else {
+                    print("User FCM token successfully set.")
+                    completion()
+                }
+            }
+        } else {
+            print("cant set sorry")
+        }
+        
+    }
+
     
     func fetchUserAnnouncements(userID: String, completion: @escaping () -> Void) {
         self.userAnnouncements.removeAll()

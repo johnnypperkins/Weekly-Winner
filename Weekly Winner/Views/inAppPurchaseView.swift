@@ -19,7 +19,6 @@ struct purchaseView: View {
 //                .edgesIgnoringSafeArea(.all)
             CustomWebView(url:  URL(string: "https://wppaypal-zuj4eapv2q-uc.a.run.app/?userID=\(StaticUserData.shared.currentUser.id!)&amount=\(Double(value)/100)")!)
         }
-        
     }
 }
 

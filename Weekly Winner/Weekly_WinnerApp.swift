@@ -63,8 +63,12 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
 extension AppDelegate: MessagingDelegate {
     @objc func messaging(_: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         print("Firebase token: \(String(describing: fcmToken))")
+        print("Firebase token: \(fcmToken ?? "")")
+        StaticUserData.fcmToken = fcmToken ?? ""
+        print("Is this working \(StaticUserData.fcmToken)")
     }
 }
+
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(

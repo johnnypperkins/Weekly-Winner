@@ -56,6 +56,10 @@ struct UserProfileView: View {
                     }
                 }
             }
+            if StaticUserData.shared.currentUser.id! != "" && StaticUserData.shared.currentUser.id! != nil {
+                screen1VM.setUserFCM(userID: StaticUserData.shared.currentUser.id!) {}
+            }
+
         }.padding(.top, 35)
     }
 }
