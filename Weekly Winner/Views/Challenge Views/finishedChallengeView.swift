@@ -41,10 +41,26 @@ struct finishedCardView: View {
     }
 }
 
-struct completedCard: View { // inAction
+struct GlowEffect: ViewModifier {
+    var color: Color
+    @State private var isAnimating = false
+    
+    func body(content: Content) -> some View {
+        content
+            .shadow(color: color.opacity(0.5), radius: isAnimating ? 20 : 10, x: 0, y: 0)
+            .animation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true), value: isAnimating)
+            .onAppear() {
+                isAnimating = true
+            }
+    }
+}
+
+
+struct completedCard: View {
     let challenge: DirectChallengeTicket
     @State private var opponentProfileImageURL = ""
     @ObservedObject var viewModel: challengeViewModel
+    
     var body: some View {
         VStack {
             NavigationLink(destination: {
@@ -53,7 +69,7 @@ struct completedCard: View { // inAction
                     directChallengeTicket: challenge,
                     inAction: true,
                     publicViewing: false)
-                .background(K.finalColor.backgroundBlue)
+                    .background(K.finalColor.backgroundBlue)
             }, label: {
                 VStack {
                     HStack {
@@ -73,24 +89,34 @@ struct completedCard: View { // inAction
                             .foregroundColor(.white)
                             .padding(.trailing)
                     }
-                    
                 }.padding(.vertical, 10)
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 70, maxHeight: 70)
-                    .background(challenge.status == "win" ? K.finalColor.winningGreen : (challenge.status == "loss" ? K.finalColor.deleteRed : K.averageGray))
-                    .cornerRadius(7.5)
-                    .padding(.horizontal,15)
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 70, maxHeight: 70)
+                .background(challenge.status == "win" ? K.finalColor.winningGreen : (challenge.status == "loss" ? K.finalColor.deleteRed : K.averageGray))
+                .cornerRadius(7.5)
+                .padding(.horizontal,15)
+                // Apply the GlowEffect here
+                .modifier(GlowEffect(color: glowColorForStatus(challenge.status)))
             })
         }.onAppear() {
             fetchUserProfilePic(uid: challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.receiverID : challenge.senderID) { (profileImageUrl, error) in
                 if let error = error {
                     print("Error fetching profile image URL: \(error)")
-                   
                 } else if let profileImageUrl = profileImageUrl {
                     self.opponentProfileImageURL = profileImageUrl
                 }
             }
         }
-        
+    }
+    
+    private func glowColorForStatus(_ status: String) -> Color {
+        switch status {
+        case "win":
+            return K.finalColor.winningGreen
+        case "loss":
+            return K.finalColor.deleteRed
+        default:
+            return K.averageGray
+        }
     }
 }
 

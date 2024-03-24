@@ -8,6 +8,12 @@
 import Foundation
 import Firebase
 
+struct Friend: Identifiable, Equatable {
+    let id: String
+    let username: String
+    let profileImageURL: String
+}
+
 class peer2peerViewModel: ObservableObject {
     let db = Firestore.firestore()
     
@@ -15,6 +21,7 @@ class peer2peerViewModel: ObservableObject {
     @Published var customID: String? = nil
     @Published var senderDirectTicket: DirectChallengeTicket? = nil
     @Published var queriedUsers: [User] = []
+    @Published var friends: [Friend] = []
     
     @Published var usernameSearch: String = ""
     
@@ -24,8 +31,33 @@ class peer2peerViewModel: ObservableObject {
     
     init() {
         //self.setCustomID()
+        fetchFriends()
     }
-
+    
+    
+    
+    func fetchFriends() {
+            let db = Firestore.firestore()
+            
+        db.collection("users").document(StaticUserData.shared.currentUser.id!).collection("friends").getDocuments { (snapshot, error) in
+                if let error = error {
+                    print("Error getting friends: \(error)")
+                } else {
+                    // Temporary array to hold fetched friends
+                    var fetchedFriends: [Friend] = []
+                    
+                    // Extracting friend data
+                    for document in snapshot?.documents ?? [] {
+                        let username = document.data()["username"] as? String ?? "Unknown"
+                        let profileImageURL = document.data()["profileImageURL"] as? String ?? ""
+                        fetchedFriends.append(Friend(id: document.documentID, username: username, profileImageURL: profileImageURL))
+                    }
+                    
+                    // Sorting the friends array alphabetically by username
+                    self.friends = fetchedFriends.sorted { $0.username < $1.username }
+                }
+            }
+        }
     
 
     
@@ -92,7 +124,7 @@ class peer2peerViewModel: ObservableObject {
     }
     
     
-    func sendChallenge(senderWagerAmount: Int, game: Game, sendingToPublic: Bool, completion: @escaping () -> Void) {
+    func sendChallenge(senderWagerAmount: Int, game: Game, sendingToPublic: Bool, sendingToFriends: Bool, completion: @escaping () -> Void) {
         let customID = generateRandomString(length: 20)
         
         // 1. Send bets to own user
@@ -157,7 +189,7 @@ class peer2peerViewModel: ObservableObject {
                         
                         "dateCreated": self.senderDirectTicket?.dateCreated, // Adjust based on how you're planning to fix this later
                         "currencyChosen": "poolBucks", // will adjust in future
-                        "status": sendingToPublic ? "pendingPublicAcceptance" : self.senderDirectTicket?.status,
+                        "status": sendingToPublic ? (sendingToFriends ? "pendingFriendsAcceptance" : "pendingPublicAcceptance") : self.senderDirectTicket?.status,
                         "gameIDs": self.senderDirectTicket?.gameIDs,
                         "gameCommenceTime": self.senderDirectTicket?.gameCommenceTime,
                         "challengeType" : self.senderDirectTicket?.challengeType

@@ -24,64 +24,32 @@ struct userService {
             }
         }
     }
-    
-    
-    func isFollowed (id: String) async -> Bool {
-        var iss = true
+ 
+    func unfollow(uid: String, friendId: String) {
         let db = Firestore.firestore()
         
-        // Get a reference to the document to be read
-        let docRef = db.collection("users").document(Auth.auth().currentUser!.uid)
-        
-        try await docRef.getDocument { (document, error) in
-            if let document = document, document.exists {
-                let data = document.data()
-                guard let array = data?["friends"] as? [String]
-                else {docRef.setData(["friends": []], merge: true) { error in
-                    if let error = error {
-                        print("Error creating array field: \(error)")
-                    } else {
-                        print("Array field created successfully.")
-                    }
-                    
-                }
-                    return
-                }
-                
-                
-                // Check if the string is in the array field
-                if array.contains(id) {
-                    print("The string is in the array.")
-                    iss = true
-                } else {
-                    print("The string is not in the array.")
-                    iss = false
-                }
+        db.collection("users").document(uid).collection("friends").document(friendId).delete() { error in
+            if let error = error {
+                print("Error removing friend: \(error)")
+            } else {
+                print("Friend successfully removed.")
             }
         }
+    }
+
+    func follow(uid: String, friendId: String, username: String, url: String) {
+        let db = Firestore.firestore()
         
-        return iss
+        // Now includes the username in the document
+        db.collection("users").document(uid).collection("friends").document(friendId).setData(["username": username, "profileImageURL": url]) { error in
+            if let error = error {
+                print("Error adding friend: \(error)")
+            } else {
+                print("Friend successfully added.")
+            }
+        }
     }
-    func unfollow(uid: String, id: String){
-        Firestore.firestore().collection("users")
-            .document(uid)
-            .updateData(["friends": FieldValue.arrayRemove([id])
-                        ])
-//        Firestore.firestore().collection("users")
-//            .document(id)
-//            .updateData(["friends": FieldValue.arrayRemove([uid])
-//                        ])
-    }
-    func Follow(uid: String, id: String){
-        Firestore.firestore().collection("users")
-            .document(uid)
-            .updateData(["friends": FieldValue.arrayRemove([id])
-                        ])
-//        Firestore.firestore().collection("users")
-//            .document(id)
-//            .updateData(["friends": FieldValue.arrayRemove([uid])
-//                        ])
-    }
+
    
     struct MyDocument: Codable {
         var myArray: [String]?

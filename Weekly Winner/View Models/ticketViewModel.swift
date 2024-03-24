@@ -40,50 +40,40 @@ class ticketViewModel: ObservableObject {
     
     init() {
         Task{
-            await self.isFollowedd(id: StaticUserData.shared.currentUser.id!)
+            await self.isFriend(id: StaticUserData.shared.currentUser.id!)
         }
     }
     
     
-    func isFollowedd (id: String) async  {
-        var iss = true
+    func isFriend(id: String) async {
         let db = Firestore.firestore()
         
-        // Get a reference to the document to be read
-        let docRef = db.collection("users").document(Auth.auth().currentUser!.uid)
-        Task{
-            try await docRef.getDocument { (document, error) in
-                if let document = document, document.exists {
-                    let data = document.data()
-                    guard let array = data?["friends"] as? [String]
-                    else {docRef.setData(["friends": []], merge: true) { error in
-                        if let error = error {
-                            print("Error creating array field: \(error)")
-                        } else {
-                            print("Array field created successfully.")
-                        }
-                        
-                    }
-                        return
-                    }
-                    
-                    
-                    // Check if the string is in the array field
-                    if array.contains(id) {
-                        print("The string is in the array.")
-                        self.isFollow = true
-                    } else {
-                        print("The string is not in the array.")
-                        self.isFollow = false
-                    }
-                }
+        // Assuming the current user is authenticated
+        guard let currentUserID = Auth.auth().currentUser?.uid else {
+            print("Current user is not authenticated.")
+            return
+        }
+        
+        // Reference to the potential friend document under the current user's 'friends' collection
+        let friendDocRef = db.collection("users").document(currentUserID).collection("friends").document(id)
+        
+        do {
+            let document = try await friendDocRef.getDocument()
+            if document.exists {
+                print("The user is a friend.")
+                self.isFollow = true
+            } else {
+                print("The user is not a friend.")
+                self.isFollow = false
             }
-            
+        } catch {
+            print("Error fetching document: \(error)")
+            self.isFollow = false
         }
     }
     
     func follow () {
-        uService.Follow(uid: Auth.auth().currentUser?.uid ?? "", id: userInfo!.id!)
+        uService.follow(uid: Auth.auth().currentUser?.uid ?? "", friendId: userInfo!.id!, username: userInfo!.username, url: userInfo?.profileImageUrl ?? "")
         isFollow = true
         Task{
             await getCountOfStringsInArrayField(user1: StaticUserData.shared.currentUser)
@@ -91,7 +81,7 @@ class ticketViewModel: ObservableObject {
     }
     
     func unfollow () {
-        uService.unfollow(uid: Auth.auth().currentUser?.uid ?? "", id: userInfo!.id!)
+        uService.unfollow(uid: Auth.auth().currentUser?.uid ?? "", friendId: userInfo!.id!)
         isFollow = false
         Task{
             await getCountOfStringsInArrayField(user1: StaticUserData.shared.currentUser)

@@ -35,8 +35,12 @@ struct peer2peerSubmitPage: View {
     let betType: BetType
     @Binding var showingSheet: Bool
     @State var wagerAmount = 0.0
-    @State private var selectedUser: User? = nil
+    @State  var selectedUser: User? = nil
+    @State  var selectedFriend: Friend? = nil
     @State private var whichTab = "friends"
+    @State var selectedUserID = ""
+    @State var opponentUsername = ""
+    @State var sendToFriends = false
     
     @ObservedObject var viewModel = peer2peerViewModel()
 
@@ -56,15 +60,15 @@ struct peer2peerSubmitPage: View {
                             .cornerRadius(5)
                     }
                     
-                    Button(action: {
-                        whichTab = "search"
-                    }) {
-                        Text("Search")
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
-                            .foregroundColor(.white)
-                            .frame(width: 100, height: 30, alignment: .center)
-                            .cornerRadius(5)
-                    }
+//                    Button(action: {
+//                        whichTab = "search"
+//                    }) {
+//                        Text("Search")
+//                            .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
+//                            .foregroundColor(.white)
+//                            .frame(width: 100, height: 30, alignment: .center)
+//                            .cornerRadius(5)
+//                    }
                     Button(action: {
                         whichTab = "public"
                     }) {
@@ -85,23 +89,51 @@ struct peer2peerSubmitPage: View {
             }.padding(.bottom,2)
             if whichTab == "friends" {
                 
-            } else if whichTab == "search" {
-                searchUserView(game: game, viewModel: viewModel, betType: betType, wagerAmount: $wagerAmount, selectedUser: $selectedUser)
-            } else if whichTab == "public" {
+                ForEach(viewModel.friends, id: \.id) { friend in
+                    if friend.id != StaticUserData.shared.currentUser.id! {
+                        
+//
+                        userBioFriend(friend: friend, selectedUserID: $selectedUserID, selectedFriend: $selectedFriend)
+                    }
+                }
+                
+            } 
+//            else if whichTab == "search" {
+//                searchUserView(game: game, viewModel: viewModel, betType: betType, wagerAmount: $wagerAmount, selectedUser: $selectedUser)
+//            } 
+            else if whichTab == "public" {
                 VStack {
-                    HStack {
-                        Spacer()
-                        Text("Send to Public")
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
-                            .foregroundColor(.white)
-                        Spacer()
-                    }.frame(height: 50).background(K.finalColor.cardBlue).cornerRadius(7.5)
-                }.frame(width: 345)
+                            HStack {
+                        
+                                Text(sendToFriends ? "Send to All Friends" : "Send to Public")
+                                    .font(Font.custom("LexendDeca-Medium", size: 18))
+                                    .foregroundColor(.white)
+                                    .transition(.opacity)
+                                    .animation(.easeInOut, value: sendToFriends)
+                                Spacer()
+                                Toggle("", isOn: $sendToFriends)
+                                    .labelsHidden()
+                                    .toggleStyle(SwitchToggleStyle(tint: .white))
+                                     // Adjust padding as needed
+                            }.padding(.horizontal)
+                            .frame(height: 50)
+                            .background(sendToFriends ? Color.green : K.finalColor.cardBlue) // Change colors as needed
+                            .cornerRadius(7.5)
+                            
+                                
+                            
+                        }
+                        .frame(width: 345)
+                        .animation(.easeInOut, value: sendToFriends)
             }
-            twoWagers(game: game, viewModel: viewModel, betType: betType, wagerAmount: $wagerAmount, selectedUser: $selectedUser)
-            peer2peerSlider(wagerAmount: $wagerAmount, selectedUser: $selectedUser, viewModel: viewModel, game: game, showingSheet: $showingSheet, whichTab: $whichTab)
+            twoWagers(game: game, viewModel: viewModel, betType: betType, wagerAmount: $wagerAmount, selectedFriend: $selectedFriend)
+            peer2peerSlider(wagerAmount: $wagerAmount, selectedFriend: $selectedFriend, viewModel: viewModel, game: game, showingSheet: $showingSheet, whichTab: $whichTab, sendToFriends: $sendToFriends)
             Spacer()
-        }.onAppear() {
+        }.onChange(of: selectedFriend) { _ in
+            viewModel.senderDirectTicket?.receiverID = selectedFriend?.id ?? ""
+            viewModel.senderDirectTicket?.receiverUsername = selectedFriend?.username ?? ""
+        }
+        .onAppear() {
             viewModel.setSelectedBet(bet:
                     Bet(groupNumber: 1,
                         groupID: "",
@@ -150,17 +182,103 @@ struct peer2peerSubmitPage: View {
     }
 }
 
+struct userBioFriend: View {
+    var friend: Friend
+    
+    @State var checked = false
+    @Binding var selectedUserID: String
+    @Binding var selectedFriend: Friend?
+    
+    
+    var body: some View {
+        Button {
+            
+            if selectedUserID == friend.id {
+                selectedUserID = ""
+                selectedFriend = nil
+            }
+            else {
+                selectedFriend = friend
+                selectedUserID = friend.id
+            }
+          
+        } label: {
+            ZStack {
+                VStack (spacing: 10) {
+                    HStack {
+                        HStack(spacing: 11) {
+                            HStack(spacing: 0) {
+                                
+                                
+                                HStack(spacing: 5) {
+                                    if friend.profileImageURL != "" {
+                                        KFImage(URL(string: friend.profileImageURL))
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .clipShape(Circle())
+                                            .frame(width: 24, height: 24)
+                                    } else {
+                                        Image(systemName: "photo.circle.fill")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 24, height: 24)
+                                            .background(K.finalColor.tabSelectedBlue)
+                                            .clipShape(Circle())
+                                        
+                                    }
+                                    HStack(spacing: 0){
+                                        Text("\(friend.username) ")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                                            .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
+                                        
+                                    }
+                                }
+                                .frame(maxHeight: .infinity)
+                            }
+                            .frame(height: 24)
+                            
+                            Spacer()
+                            
+                            
+                            
+                            // Arrow
+                            
+                                Image(systemName: selectedUserID == friend.id ? "checkmark.square" : "square")
+                                    .resizable()
+                                    .frame(width: 15, height: 15)
+                                    .foregroundColor(.white)
+                                
+                                
+                            }.padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
+                            //.padding(.bottom,10)
+                            
+                        }
+                    }
+                    .padding(.vertical, 10)
+                    .frame(width: 345, height: 44)
+                    .background(selectedUserID == friend.id ? K.finalColor.otherPurple.opacity(0.35) : K.finalColor.cardBlue)
+                    .cornerRadius(10)
+            }
+//            .onTapGesture {
+//                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+//                print("tapped also")
+//            }
+        }
+    }
+}
+
 struct peer2peerSlider: View {
     @Binding var wagerAmount: Double
-    @Binding var selectedUser: User?
+    @Binding var selectedFriend: Friend?
     @ObservedObject var viewModel: peer2peerViewModel
     let game: Game
     @Binding var showingSheet: Bool
     @Binding var whichTab: String
+    @Binding var sendToFriends: Bool
 
     var body: some View {
         VStack (spacing: 5){
-            if selectedUser != nil || whichTab == "public" {
+            if selectedFriend != nil || whichTab == "public" {
                     HStack {
                         Text("Wager Amount")
                             .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
@@ -218,9 +336,9 @@ struct peer2peerSlider: View {
                         }.frame(height: 50).background(K.finalColor.cardBlue).cornerRadius(5)
                     }
 
-                if wagerAmount > 0 && (selectedUser != nil || whichTab == "public") {
+                if wagerAmount > 0 && (selectedFriend != nil || whichTab == "public") {
                     Button(action: {
-                        viewModel.sendChallenge(senderWagerAmount: Int(wagerAmount), game: game, sendingToPublic: whichTab == "public" ? true : false) {
+                        viewModel.sendChallenge(senderWagerAmount: Int(wagerAmount), game: game, sendingToPublic: whichTab == "public" ? true : false, sendingToFriends: sendToFriends) {
                             viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {
                                 showingSheet = false
                             }
@@ -347,7 +465,7 @@ struct twoWagers: View {
     
     @State private var opponentUsername: String = ""
     @State private var selectedUserID: String = ""
-    @Binding var selectedUser: User?
+    @Binding var selectedFriend: Friend?
     
     var body: some View {
             VStack  (spacing: 3){

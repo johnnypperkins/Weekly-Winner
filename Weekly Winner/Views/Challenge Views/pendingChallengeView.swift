@@ -83,11 +83,53 @@ struct pendingOption1: View { // inAction
                         
                         currencyImage(currency: challenge.currencyChosen, dimension: 25)
                         
-                        Text("\(String(format: "%.2f", challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderWagerAmount : challenge.receiverWagerAmount)) : \(String(format: "%.2f", returnPotentialWinnings(wagerAmount: challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderWagerAmount : challenge.receiverWagerAmount, MLOdds: challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderOdds : challenge.receiverOdds)))")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
-                            .foregroundColor(.white)
-                            .padding(.trailing)
+                        VStack (alignment: .leading){
+                            Text("Wager: ")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                .foregroundColor(.white)
+                                .padding(.trailing)
+                            
+                            Text("Win: ")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                .foregroundColor(.white)
+                                .padding(.trailing)
+                        }
+                        VStack (alignment: .leading){
+                            Text("\(String(format: "%.2f", challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderWagerAmount : challenge.receiverWagerAmount))")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                .foregroundColor(.white)
+                                .padding(.trailing)
+                            
+                            Text("\(String(format: "%.2f", returnPotentialWinnings(wagerAmount: challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderWagerAmount : challenge.receiverWagerAmount, MLOdds: challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderOdds : challenge.receiverOdds)))")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                .foregroundColor(.white)
+                                .padding(.trailing)
+                        }
+                        
                     }
+                    HStack{
+                        Spacer()
+                        if challenge.senderID == StaticUserData.shared.currentUser.id && challenge.senderBetLine > 0 {
+                            Text("\(challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderTeamName : challenge.receiverTeamName)  +\(String(format: "%.1f", challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderBetLine : challenge.receiverBetLine))")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                                .foregroundColor(.white)
+                                .padding(.horizontal)
+                        }
+                        else if challenge.senderID != StaticUserData.shared.currentUser.id && challenge.receiverBetLine > 0 {
+                            Text("\(challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderTeamName : challenge.receiverTeamName)  +\(String(format: "%.1f", challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderBetLine : challenge.receiverBetLine))")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                                .foregroundColor(.white)
+                                .padding(.horizontal)
+                        }
+                        else {
+                            Text("\(challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderTeamName : challenge.receiverTeamName)  \(String(format: "%.1f", challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderBetLine : challenge.receiverBetLine))")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                                .foregroundColor(.white)
+                                .padding(.horizontal)
+                        }
+                        
+                    }
+                        
                     
                 }.padding(.vertical, 10)
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 70, maxHeight: 70)
@@ -104,6 +146,7 @@ struct pendingOption1: View { // inAction
                     self.opponentProfileImageURL = profileImageUrl
                 }
             }
+            print(challenge)
         }
         
     }

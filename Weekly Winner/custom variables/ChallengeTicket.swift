@@ -54,6 +54,7 @@ struct DirectChallengeTicket {
     var gameCommenceTime: Timestamp
     var challengeType: String
     
+    
 
     func toDictionary() -> [String: Any] {
         return [
