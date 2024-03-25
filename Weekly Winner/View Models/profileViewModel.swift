@@ -20,8 +20,12 @@ class profileViewModel: ObservableObject {
     @Published var allDailyBets: [Bet] = []
     @Published var allDailyTickets: [Ticket] = []
     
+    @Published var friendsUIDS: [String] = []
+    @Published var friends: [User] = []
+    
     init(user: User) {
         //self.getCountOfStringsInArrayField(user1: user)
+        
         self.user = user
         self.profileImageURLHolder = user.profileImageUrl
         //self.isFollow = uService.isFollowed(id: user.id!)
@@ -31,6 +35,7 @@ class profileViewModel: ObservableObject {
         }
         fetchUserBetsForStats(uid: user.id!) {}
         fetchUserticketsForStats(uid: user.id!) {}
+        self.importFriends()
         
         Task{
             await self.checkIfBlocked()
@@ -39,6 +44,64 @@ class profileViewModel: ObservableObject {
         print(user.isCurrentUser)
         //self.fetchLikedTweets()
     }
+    
+    func importFriends() {
+        // Clear any existing data in friends
+        self.friendsUIDS.removeAll()
+        
+        // Initialize Firestore reference
+        let db = Firestore.firestore()
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        // Access the 'friends' subcollection for the user
+        let friendsCollection = db.collection("users").document(uid).collection("friends")
+        
+        // Fetch all documents within the 'friends' subcollection
+        friendsCollection.getDocuments { (querySnapshot, error) in
+            guard let querySnapshot = querySnapshot, error == nil else {
+                print("Error fetching friends documents: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+            
+            // Extract the UIDs of the friends from the document IDs
+            let friendUIDs = querySnapshot.documents.map { $0.documentID }
+            
+            // Guard against an empty friends list
+            guard !friendUIDs.isEmpty else { return }
+            
+            // Prepare a group to handle asynchronous fetches
+            let fetchGroup = DispatchGroup()
+            
+            // Temporary storage for fetched friends' user data
+            var fetchedUserFriends: [User] = []
+            
+            // Loop through the UIDs and fetch the corresponding user document for each
+            for uid in friendUIDs {
+                fetchGroup.enter() // Enter the group before starting the async task
+                let userDocRef = db.collection("users").document(uid)
+                userDocRef.getDocument { (document, error) in
+                    if let document = document, document.exists {
+                        do {
+                            if let user = try document.data(as: User?.self) {
+                                fetchedUserFriends.append(user)
+                            }
+                        } catch {
+                            print("Error decoding user: \(error)")
+                        }
+                    } else {
+                        print("Document does not exist")
+                    }
+                    fetchGroup.leave() // Leave the group once the async task is complete
+                }
+            }
+            
+            // After all asynchronous fetches are done
+            fetchGroup.notify(queue: .main) {
+                self.friends = fetchedUserFriends
+                
+            }
+        }
+    }
+
     
     func fetchStats(uid: String, completion: @escaping (Stats?) -> Void) {
         Firestore.firestore().collection("users").document(uid).collection("Misc")

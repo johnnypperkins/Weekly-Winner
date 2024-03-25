@@ -56,7 +56,7 @@ struct peer2peerSubmitPage: View {
                         Text("Friends")
                             .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
                             .foregroundColor(.white)
-                            .frame(width: 100, height: 30, alignment: .center)
+                            .frame(width: 200, height: 30, alignment: .center)
                             .cornerRadius(5)
                     }
                     
@@ -75,7 +75,7 @@ struct peer2peerSubmitPage: View {
                         Text("Public")
                             .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
                             .foregroundColor(.white)
-                            .frame(width: 100, height: 30, alignment: .center)
+                            .frame(width: 200, height: 30, alignment: .center)
                             .cornerRadius(5)
                     }
                     
@@ -88,39 +88,73 @@ struct peer2peerSubmitPage: View {
                     .animation(.easeInOut(duration: 0.35))
             }.padding(.bottom,2)
             if whichTab == "friends" {
-                
-                ForEach(viewModel.friends, id: \.id) { friend in
-                    if friend.id != StaticUserData.shared.currentUser.id! {
-                        
-//
-                        userBioFriend(friend: friend, selectedUserID: $selectedUserID, selectedFriend: $selectedFriend)
+                ScrollView{
+                    VStack{
+                        ForEach(viewModel.friends, id: \.id) { friend in
+                            if friend.id != StaticUserData.shared.currentUser.id! {
+                                
+                                //
+                                userBioFriend(friend: friend, selectedUserID: $selectedUserID, selectedFriend: $selectedFriend)
+                            }
+                            if viewModel.friends.isEmpty{
+                                NavigationLink {
+                                    addFriendsView()
+                                } label: {
+                                    HStack{
+                                        Image(systemName: "person.badge.plus.fill")
+                                            .foregroundStyle(.white)
+                                            .frame(width: 25, height: 25)
+                                            .padding()
+                                        
+                                        Text("Add New Friends")
+                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 18).weight(.light))
+                                            .foregroundColor(.white)
+                                        
+                                    }.frame(maxWidth: .infinity)
+                                        .frame(maxHeight: 40)
+                                        .padding(.horizontal)
+                                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                        .cornerRadius(10)
+                                    
+                                }.id(UUID())
+                                    .padding(.horizontal)
+                                    .padding(.top)
+                            }
+                        }
                     }
-                }
-                
-            } 
+                    
+                }.frame(maxHeight: 150)
+            }
 //            else if whichTab == "search" {
 //                searchUserView(game: game, viewModel: viewModel, betType: betType, wagerAmount: $wagerAmount, selectedUser: $selectedUser)
 //            } 
             else if whichTab == "public" {
                 VStack {
-                            HStack {
-                        
-                                Text(sendToFriends ? "Send to All Friends" : "Send to Public")
-                                    .font(Font.custom("LexendDeca-Medium", size: 18))
-                                    .foregroundColor(.white)
-                                    .transition(.opacity)
-                                    .animation(.easeInOut, value: sendToFriends)
-                                Spacer()
-                                Toggle("", isOn: $sendToFriends)
-                                    .labelsHidden()
-                                    .toggleStyle(SwitchToggleStyle(tint: .white))
-                                     // Adjust padding as needed
-                            }.padding(.horizontal)
-                            .frame(height: 50)
-                            .background(sendToFriends ? Color.green : K.finalColor.cardBlue) // Change colors as needed
-                            .cornerRadius(7.5)
-                            
-                                
+//                            HStack {
+//                        
+//                                Text(sendToFriends ? "Send to All Friends" : "Send to Public")
+//                                    .font(Font.custom("LexendDeca-Medium", size: 18))
+//                                    .foregroundColor(.white)
+//                                    .transition(.opacity)
+//                                    .animation(.easeInOut, value: sendToFriends)
+//                                Spacer()
+//                                Toggle("", isOn: $sendToFriends)
+//                                    .labelsHidden()
+//                                    .toggleStyle(SwitchToggleStyle(tint: .white))
+//                                     // Adjust padding as needed
+//                            }.padding(.horizontal)
+//                            .frame(height: 50)
+//                            .background(sendToFriends ? Color.green : K.finalColor.cardBlue) // Change colors as needed
+//                            .cornerRadius(7.5)
+//                            
+//                                
+                    HStack{
+                        Text("Send to Public")
+                            .font(Font.custom("LexendDeca-Medium", size: 18))
+                            .foregroundColor(.white)
+                            .transition(.opacity)
+                            .animation(.easeInOut, value: sendToFriends)
+                    }
                             
                         }
                         .frame(width: 345)

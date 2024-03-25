@@ -148,15 +148,63 @@ struct testView: View {
 struct weeklyGlobalLeaders: View {
     @StateObject var screen1VM: screen1ViewModel
     @Binding var timeFrame: String
+    @State var whichTab = "global"
     
     var body: some View {
         ZStack() {
             VStack(alignment: .center) {
             
-                Text("Daily Leaders")
+                Text("Leaders")
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 24).weight(.medium))
                     .foregroundColor(.white)
-                if timeFrame == "daily" {
+                    .padding(.bottom,-10)
+                
+                VStack (spacing: 1){
+                    HStack (spacing: 0){
+                        Button(action: {
+                            withAnimation{
+                                whichTab = "friends"
+                            }
+                            
+                        }) {
+                            Text("Friends")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                .foregroundColor(.white)
+                                .frame(width: 200, height: 30, alignment: .center)
+                                .cornerRadius(5)
+                        }
+                        
+    //                    Button(action: {
+    //                        whichTab = "search"
+    //                    }) {
+    //                        Text("Search")
+    //                            .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
+    //                            .foregroundColor(.white)
+    //                            .frame(width: 100, height: 30, alignment: .center)
+    //                            .cornerRadius(5)
+    //                    }
+                        Button(action: {
+                            withAnimation{
+                                whichTab = "global"
+                            }
+                        }) {
+                            Text("Global")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                .foregroundColor(.white)
+                                .frame(width: 200, height: 30, alignment: .center)
+                                .cornerRadius(5)
+                        }
+                        
+                    }
+                    Rectangle()
+                        .fill(Color.white) // Sets the rectangle's fill color to white
+                        .frame(width: 80, height: 1.5)
+                        .cornerRadius(1) // Apply rounded corners
+                        .offset(x: whichTab == "friends" ? -100 : (whichTab == "search" ? 0 : 100), y: 0)
+                        .animation(.easeInOut(duration: 0.35))
+                }.padding(.bottom,2)
+                
+                if whichTab == "global" {
                     if screen1VM.canFetchDailyRankedTickets {
                         ForEach(0..<min(3, StaticUserData.shared.dailyRankedTickets.count), id: \.self) { index in
                             let ticket = StaticUserData.shared.dailyRankedTickets[index]
@@ -168,6 +216,51 @@ struct weeklyGlobalLeaders: View {
                                 currentWeek: true,
                                 homePage: true
                             ).padding(EdgeInsets(top: 0, leading: 8, bottom: 5, trailing: 8))
+                        }
+                    }
+                }
+                else if whichTab == "friends" {
+                    if screen1VM.canFetchDailyRankedTickets {
+                        let ticketsFromFriends = StaticUserData.shared.dailyRankedTickets.filter { ticket in
+                            screen1VM.friendsUIDS.contains(ticket.uid)
+                        }
+                        if ticketsFromFriends.isEmpty {
+                            NavigationLink {
+                                addFriendsView()
+                            } label: {
+                                HStack{
+                                    Image(systemName: "person.badge.plus.fill")
+                                        .foregroundStyle(.white)
+                                        .frame(width: 25, height: 25)
+                                        .padding()
+                                    
+                                    Text("Add New Friends")
+                                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 18).weight(.light))
+                                        .foregroundColor(.white)
+                                    
+                                }.frame(maxWidth: .infinity)
+                                    .frame(maxHeight: 40)
+                                    .padding(.horizontal)
+                          .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                          .cornerRadius(10)
+                            
+                            }.id(UUID())
+                            .padding(.horizontal)
+                                .padding(.top)
+                            Spacer()
+                        }
+                        else{
+                            ForEach(0..<min(3, ticketsFromFriends.count), id: \.self) { index in
+                                let ticket = ticketsFromFriends[index]
+                                BetCard(
+                                    ticket: ticket,
+                                    rank: ticket.rank,
+                                    ownCard: false,
+                                    currentWeek: true,
+                                    homePage: true
+                                ).padding(EdgeInsets(top: 0, leading: 8, bottom: 5, trailing: 8))
+                            }
+                            Spacer()
                         }
                     }
                 }

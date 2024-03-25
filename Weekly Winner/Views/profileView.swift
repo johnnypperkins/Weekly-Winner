@@ -63,6 +63,77 @@ struct profileView: View {
                             ProfileStatsView(viewModel: viewModel, user: user)
                                 .padding(.vertical)
                                 .padding(.horizontal,20.5)
+                            HStack{
+                                NavigationLink(destination: {friendsList(friends: viewModel.friends)}, label: {
+                                VStack{
+                                    Text("Friends")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                        .foregroundColor(.white)
+                                    
+                                
+                                        Text("\(viewModel.friends.count)")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18).weight(.medium))
+                                            .foregroundColor(.white)
+                                    
+                                }.padding(.horizontal)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 13)
+                                                   }).id(UUID())
+                                Rectangle()
+                                  .foregroundColor(.clear)
+                                  .frame(minWidth: 0,maxWidth: 0.5, minHeight: 0, maxHeight: .infinity)
+                                  .overlay(Rectangle()
+                                  .stroke(.white, lineWidth: 0.4))
+                                  .padding(.horizontal)
+                                  .padding(.vertical)
+                                NavigationLink(destination: {friendsList(friends: viewModel.friends)}, label: {
+                                VStack{
+                                    Text("Challenges")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                        .foregroundColor(.white)
+                                    
+                                
+                                        Text("\(viewModel.friends.count)")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18).weight(.medium))
+                                            .foregroundColor(.white)
+                                    
+                                }.padding(.horizontal)
+                                    
+                                    .padding(.vertical, 13)
+                                                   }).id(UUID())
+                            }
+                                .frame(maxWidth: 300)
+                                .frame(maxHeight: 60)
+                                .padding(.horizontal)
+                      .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                      .cornerRadius(10)
+                            
+                            NavigationLink {
+                                addFriendsView()
+                            } label: {
+                                HStack{
+                                    Image(systemName: "person.badge.plus.fill")
+                                        .foregroundStyle(.white)
+                                        .frame(width: 25, height: 25)
+                                        .padding()
+                                    
+                                    Text("Add New Friends")
+                                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 18).weight(.light))
+                                        .foregroundColor(.white)
+                                    
+                                }.frame(maxWidth: 300)
+                                    .frame(maxHeight: 40)
+                                    .padding(.horizontal)
+                          .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                          .cornerRadius(10)
+                            
+                            }.id(UUID())
+                            .padding(.horizontal)
+                                .padding(.top)
+
+                            
+                        
+                            
                             Spacer()
                             
                             
@@ -97,6 +168,81 @@ struct profileView: View {
         //}
     }
     
+}
+
+struct friendsList: View {
+    var friends: [User]
+    @Environment(\.dismiss) private var dismiss
+    var body: some View {
+        VStack{
+            HStack {
+                Button {
+                    // 2
+                    dismiss()
+                    
+                } label: {
+                    HStack {
+                        Image(systemName: "chevron.backward")
+                            .resizable()
+                            .foregroundColor(.white)
+              
+                            .frame(width: 10,height: 15)
+                    }.padding(.leading)
+                }
+                Spacer()
+            }.padding()
+            ScrollView {
+                if friends == [] {
+                   
+                }
+                ForEach(friends, id: \.id) { user in
+                    NavigationLink(destination: {profileView(user: user)}, label: {
+                            profileBarView(user: user)
+                            
+                    }).id(UUID())
+                }
+            }.navigationBarBackButtonHidden(true)
+        }.background(Color(red: 0.02, green: 0.05, blue: 0.26))
+    }
+}
+
+struct profileBarView: View {
+    
+    var user: User
+    var body: some View {
+        ZStack{
+            Rectangle()
+                .foregroundColor(Color.gray.opacity(0.2))
+            HStack{
+                KFImage(URL(string: user.profileImageUrl))
+                    .resizable()
+                    .cornerRadius(25)
+                    .frame(width: 50, height: 50, alignment: .leading)
+                    
+                
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text("\(user.firstName)")
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
+                            .foregroundColor(.white).padding(.trailing,1)
+                        
+                        Text("\(user.lastName)")
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
+                            .foregroundColor(.white)
+                    }
+                    Text("@\(user.username)")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
+                        .foregroundColor(.white)
+                }
+                Spacer()
+            }
+            .frame(alignment: .leading)
+            .padding(.horizontal)
+        }.background(K.finalColor.cardBlue)
+        .frame(maxWidth: .infinity, minHeight: 80)
+        .cornerRadius(13)
+        .padding(.horizontal)
+    }
 }
 
 struct groupStats: View {

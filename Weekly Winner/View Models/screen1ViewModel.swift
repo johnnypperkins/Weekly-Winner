@@ -26,6 +26,8 @@ class screen1ViewModel: ObservableObject {
     
     @Published var canFetchDailyRankedTickets = false
     @Published var canFetchWeeklyRankedTickets = false
+    
+    @Published var friendsUIDS: [String] = []
 
     @Published var userAnnouncements: [Announcement] = []
 
@@ -42,11 +44,34 @@ class screen1ViewModel: ObservableObject {
             self.fetchCurrentRankedTickets(groupID: "GlobalDaily", timeFrame: "daily") {
             }
         }
+        self.importFriends()
 
 
     }
     
     
+    func importFriends() {
+        // Clear any existing data in friends
+        self.friendsUIDS.removeAll()
+        
+        // Initialize Firestore reference
+        let db = Firestore.firestore()
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        // Access the 'friends' subcollection for the user
+        let friendsCollection = db.collection("users").document(uid).collection("friends")
+        
+        // Fetch all documents within the 'friends' subcollection
+        friendsCollection.getDocuments { (querySnapshot, error) in
+            guard let querySnapshot = querySnapshot, error == nil else {
+                print("Error fetching friends documents: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+            
+            // Extract the UIDs of the friends from the document IDs
+            let friendUIDs = querySnapshot.documents.map { $0.documentID }
+            self.friendsUIDS = friendUIDs
+        }
+    }
 
     func setUserFCM(userID: String, completion: @escaping () -> Void) {
         let db = Firestore.firestore()

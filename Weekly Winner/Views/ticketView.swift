@@ -256,32 +256,33 @@ struct ticketView: View {
                     }
                     Spacer()
                 }.padding(.top, 6)
-                Button(action: {
-                    if viewModel.isFollow == true {
-                        viewModel.unfollow()
-                    } else {
-                        viewModel.follow()
-                    }
-                }, label: {
-                    HStack {
-                        Text(viewModel.isFollow ? "Unfollow" : "Follow")
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
-                            .foregroundColor(viewModel.isFollow ? K.finalColor.cardBlue : K.finalColor.titleBlue)
-                            .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
-                    }
-                    .frame(width: 200, height: 40) // Adjusted for a more typical pill shape
-                    .background(viewModel.isFollow ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                    .cornerRadius(20) // Use 20 or adjust as needed for the pill shape, or better yet, use .clipShape(Capsule()) as shown below
-                    .clipShape(Capsule())
-                    .overlay(
-                        Capsule()
-                            .stroke(Color.white, lineWidth: 2)
-                    )
-                    .shadow(color: .gray.opacity(0.5), radius: 1, x: 2, y: 2)
-                    .shadow(color: .white.opacity(0.5), radius: 1, x: -2, y: -2)
-                })
-                .padding()
-                
+                if viewModel.userInfo?.isCurrentUser != true {
+                    Button(action: {
+                        if viewModel.isFollow == true {
+                            viewModel.unfollow()
+                        } else {
+                            viewModel.follow()
+                        }
+                    }, label: {
+                        HStack {
+                            Text(viewModel.isFollow ? "Unfollow" : "Follow")
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                .foregroundColor(viewModel.isFollow ? K.finalColor.cardBlue : K.finalColor.titleBlue)
+                                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                        }
+                        .frame(width: 150, height: 40) // Adjusted for a more typical pill shape
+                        .background(viewModel.isFollow ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                        .cornerRadius(20) // Use 20 or adjust as needed for the pill shape, or better yet, use .clipShape(Capsule()) as shown below
+                        .clipShape(Capsule())
+                        .overlay(
+                            Capsule()
+                                .stroke(Color.white, lineWidth: 1)
+                        )
+                        .shadow(color: .gray.opacity(0.5), radius: 1, x: 2, y: 2)
+                        .shadow(color: .white.opacity(0.5), radius: 1, x: -2, y: -2)
+                    })
+                    .padding()
+                }
                 HStack (spacing: 5){
                     Button(action: {
                         ticketShowing = true
