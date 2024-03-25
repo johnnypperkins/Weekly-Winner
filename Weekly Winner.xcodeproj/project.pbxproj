@@ -115,6 +115,7 @@
 		86E989C32B58577E000B2DB4 /* challengeDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E989C22B58577E000B2DB4 /* challengeDetails.swift */; };
 		86F03BBE2BB1B00C009169AC /* addFriendsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86F03BBD2BB1B00C009169AC /* addFriendsView.swift */; };
 		86F03BC02BB1B059009169AC /* addFriendsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86F03BBF2BB1B059009169AC /* addFriendsViewModel.swift */; };
+		86F03BC32BB20DA6009169AC /* Pow in Frameworks */ = {isa = PBXBuildFile; productRef = 86F03BC22BB20DA6009169AC /* Pow */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -251,6 +252,7 @@
 				3C9D85C02B63551F001E702C /* PopupView in Frameworks */,
 				8603AD0C2B1099C500B3B6BD /* FirebaseFunctions in Frameworks */,
 				8603AD172B109A0E00B3B6BD /* Kingfisher in Frameworks */,
+				86F03BC32BB20DA6009169AC /* Pow in Frameworks */,
 				8603AD0A2B1099C500B3B6BD /* FirebaseFirestoreSwift in Frameworks */,
 				8603AD082B1099C500B3B6BD /* FirebaseFirestoreCombine-Community in Frameworks */,
 				8603AD062B1099C500B3B6BD /* FirebaseFirestore in Frameworks */,
@@ -549,6 +551,7 @@
 				8642C2132B249D0E00BB96AD /* GoogleSignIn */,
 				8642C2152B249D0E00BB96AD /* GoogleSignInSwift */,
 				3C9D85BF2B63551F001E702C /* PopupView */,
+				86F03BC22BB20DA6009169AC /* Pow */,
 			);
 			productName = "Weekly Winner";
 			productReference = 867801512A213010006FE479 /* Weekly Winner.app */;
@@ -627,6 +630,7 @@
 				8603AD152B109A0E00B3B6BD /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				8642C2122B249D0D00BB96AD /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				3C9D85BE2B63551F001E702C /* XCRemoteSwiftPackageReference "PopupView" */,
+				86F03BC12BB20DA6009169AC /* XCRemoteSwiftPackageReference "Pow" */,
 			);
 			productRefGroup = 867801522A213010006FE479 /* Products */;
 			projectDirPath = "";
@@ -1177,6 +1181,14 @@
 				minimumVersion = 7.0.0;
 			};
 		};
+		86F03BC12BB20DA6009169AC /* XCRemoteSwiftPackageReference "Pow" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/EmergeTools/Pow";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1259,6 +1271,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8642C2122B249D0D00BB96AD /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		86F03BC22BB20DA6009169AC /* Pow */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 86F03BC12BB20DA6009169AC /* XCRemoteSwiftPackageReference "Pow" */;
+			productName = Pow;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

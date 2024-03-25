@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Firebase
+import Pow
 
 // the pop up thing
 
@@ -35,6 +36,7 @@ struct dailyChallengeSubmitView: View {
     
     @State private var timeFrame = "daily"
     @Binding var showingSheet: Bool
+    @State var isFavorited = false
     
 
     let midnightTimestamp = Timestamp(date: Calendar.current.startOfDay(for: Calendar.current.date(byAdding: .hour, value: -5, to: Date())!))
@@ -88,6 +90,11 @@ struct dailyChallengeSubmitView: View {
                     checkTeamTaken: checkTeamTaken)
                 Spacer()
                 Button(action: {
+                    
+                    withAnimation {
+                            isFavorited.toggle()
+                          }
+                    
                     viewModel.uploadBet(
                         groupNumber: groupNumber,
                         groupID: timeFrame == "daily" ? StaticUserData.shared.dailyTicket.groupID : StaticUserData.shared.weeklyTicket.groupID,
@@ -108,24 +115,48 @@ struct dailyChallengeSubmitView: View {
                             ticketVM.fetchUserTickets(timeFrame: timeFrame) {}
                         }
                     }
-                    withAnimation {
-                        showingSheet = false
-                        betType = .None
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                        withAnimation {
+                            showingSheet = false
+                            betType = .None
+                        }
                     }
+
                     
                 }, label: {
-                    HStack {
+                    if isFavorited {
+                        HStack {
+                            
+                            Text(uploadText)
+                                .foregroundColor(.white)
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                .padding(.horizontal)
+                            
+                        }.frame(height: 50).background(placeBetColor).cornerRadius(7.5)
+                            .padding(.bottom, 20)
+                            .transition(
+                                .movingParts.pop(.green)
+                            )
+                    }
+                    else {
+                        HStack {
+                            Text(uploadText)
+                                .foregroundColor(.white)
+                                .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
+                                .padding(.horizontal)
+                            
+                        }.frame(height: 50).background(placeBetColor).cornerRadius(7.5)
+                            .padding(.bottom, 20)
+                            .transition(.identity)
+                    }
+                }).changeEffect(
+                    .spray(origin: UnitPoint(x: 0.25, y: 0.5)) {
+                      Image("poolBuck")
+                            .resizable()
+                            .frame(width: 30, height: 30)
                         
-                        Text(uploadText)
-                            .foregroundColor(.white)
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 24))
-                            .padding(.horizontal)
                         
-                    }.frame(height: 50).background(placeBetColor).cornerRadius(7.5)
-                        .padding(.bottom, 20)
-
-                 
-                })
+                    }, value: isFavorited)
                 .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) || (game.commenceTime.seconds > (midnightTimestamp.seconds + 86400) && timeFrame == "daily"))
                 .padding(.horizontal)
                 

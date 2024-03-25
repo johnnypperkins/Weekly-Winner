@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import Pow
 
 struct BettingAppView: View {
     @StateObject private var viewModel = bookViewModel()
@@ -16,6 +17,7 @@ struct BettingAppView: View {
     @State private var poolBucks = StaticUserData.shared.currentUser.poolBucks
     
     @State private var rankedCommence = false
+    @State var isOn = true
 
     func shouldAppear(search: String, input: String) -> Bool {
         return input.lowercased().contains(search.lowercased())
@@ -40,8 +42,10 @@ struct BettingAppView: View {
                                     if game.commenceTime.dateValue() > now {
                                         if viewModel.selectedGameType == "All Games" {
                                             gameRowView(game: game, isDisabled: false, viewModel: viewModel, poolBucks: $poolBucks)
+                                
                                         } else if viewModel.selectedGameType == game.whichSport {
                                             gameRowView(game: game, isDisabled: false, viewModel: viewModel, poolBucks: $poolBucks)
+
                                         }
                                     }
                                 }

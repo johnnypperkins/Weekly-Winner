@@ -3,6 +3,7 @@ import Firebase
 import Kingfisher
 import SafariServices
 
+
 struct ticketView: View {
     @ObservedObject var viewModel = ticketViewModel()
     @State private var selectedGroup = 0 // Variable to track the selected group

@@ -11,6 +11,7 @@ import Kingfisher
 import SafariServices
 import WebKit
 import PopupView
+import Pow
 
 struct UserProfileView: View {
     @ObservedObject private var screen1VM = screen1ViewModel()
@@ -764,6 +765,9 @@ struct yourGroups: View {
                                         .cornerRadius(7.5)
                                         .padding(.trailing, -15)
                                         .padding(.top, -15)
+                                        
+                                                    .changeEffect(.pulse(shape: Circle(), count: 3), value: 10)
+                                              
                                 }
                                 Spacer()
                             }
