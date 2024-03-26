@@ -115,7 +115,7 @@ struct dailyChallengeSubmitView: View {
                             ticketVM.fetchUserTickets(timeFrame: timeFrame) {}
                         }
                     }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
                         withAnimation {
                             showingSheet = false
                             betType = .None

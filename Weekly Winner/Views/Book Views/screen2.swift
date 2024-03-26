@@ -181,6 +181,13 @@ struct screen2HeaderView: View {
             Toggle("", isOn: $rankedCommence)
                 .toggleStyle(CustomToggleStyle(onColor: K.finalColor.titleBlue, offColor: .red, knobColor: .white))
                     .padding(.trailing, 14)
+                    .conditionalEffect(
+                              .repeat(
+                                .glow(color: .red, radius: 25),
+                                every: 1.5
+                              ),
+                              condition: rankedCommence
+                          )
         }
         HStack{
             Text("Team Name") // team name

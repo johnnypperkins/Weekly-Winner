@@ -23,6 +23,11 @@ class profileViewModel: ObservableObject {
     @Published var friendsUIDS: [String] = []
     @Published var friends: [User] = []
     
+    @Published var pastDayTicketsCount = 0
+    @Published var isFollow: Bool = false
+    
+    private let uService = userService()
+    
     init(user: User) {
         //self.getCountOfStringsInArrayField(user1: user)
         
@@ -35,7 +40,9 @@ class profileViewModel: ObservableObject {
         }
         fetchUserBetsForStats(uid: user.id!) {}
         fetchUserticketsForStats(uid: user.id!) {}
-        self.importFriends()
+        Task{
+            await self.isFriend(id: user.id!)
+        }
         
         Task{
             await self.checkIfBlocked()
@@ -45,15 +52,77 @@ class profileViewModel: ObservableObject {
         //self.fetchLikedTweets()
     }
     
+    func isFriend(id: String) async {
+        let db = Firestore.firestore()
+        
+        // Assuming the current user is authenticated
+        guard let currentUserID = Auth.auth().currentUser?.uid else {
+            print("Current user is not authenticated.")
+            return
+        }
+        
+        // Reference to the potential friend document under the current user's 'friends' collection
+        let friendDocRef = db.collection("users").document(currentUserID).collection("friends").document(id)
+        
+        do {
+            let document = try await friendDocRef.getDocument()
+            if document.exists {
+                print("The user is a friend.")
+                self.isFollow = true
+            } else {
+                print("The user is not a friend.")
+                self.isFollow = false
+            }
+        } catch {
+            print("Error fetching document: \(error)")
+            self.isFollow = false
+        }
+    }
+    
+    func follow () {
+        uService.follow(uid: Auth.auth().currentUser?.uid ?? "", friendId: user.id!, username: user.username, url: user.profileImageUrl ?? "")
+        isFollow = true
+//        Task{
+//            await getCountOfStringsInArrayField(user1: StaticUserData.shared.currentUser)
+//        }
+    }
+    
+    func unfollow () {
+        uService.unfollow(uid: Auth.auth().currentUser?.uid ?? "", friendId: user.id!)
+        isFollow = false
+//        Task{
+//            await getCountOfStringsInArrayField(user1: StaticUserData.shared.currentUser)
+//        }
+    }
+    
+    func countPastDayTickets() {
+            let db = Firestore.firestore()
+      
+            
+        let collectionPath = db.collection("users").document(user.id!).collection("tickets").document("day").collection("pastDayTickets")
+            
+            collectionPath.getDocuments { snapshot, error in
+                if let error = error {
+                    print("Error getting documents: \(error)")
+                } else {
+                    if let snapshot = snapshot {
+                        DispatchQueue.main.async {
+                            // Update the published property with the count of documents
+                            self.pastDayTicketsCount = snapshot.documents.count
+                        }
+                    }
+                }
+            }
+        }
+    
     func importFriends() {
         // Clear any existing data in friends
         self.friendsUIDS.removeAll()
         
         // Initialize Firestore reference
         let db = Firestore.firestore()
-        guard let uid = Auth.auth().currentUser?.uid else { return }
         // Access the 'friends' subcollection for the user
-        let friendsCollection = db.collection("users").document(uid).collection("friends")
+        let friendsCollection = db.collection("users").document(user.id!).collection("friends")
         
         // Fetch all documents within the 'friends' subcollection
         friendsCollection.getDocuments { (querySnapshot, error) in

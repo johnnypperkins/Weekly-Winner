@@ -36,15 +36,16 @@ struct profileView: View {
                 VStack {
                     NavigationStack{
                         VStack{
-                            ZStack {
-                                Text("My Profile")
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
-                                    .foregroundColor(.white)
-                                HStack{
-                                    Spacer()
-                                    
-                                    NavigationLink(destination: settingsView(), label: {
+                            if user.id! == StaticUserData.shared.currentUser.id {
+                                ZStack {
+                                    Text("My Profile")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
+                                        .foregroundColor(.white)
+                                    HStack{
+                                        Spacer()
                                         
+                                        NavigationLink(destination: settingsView(), label: {
+                                            
                                             Image(systemName: "line.horizontal.3")
                                                 .resizable()
                                                 .frame(width: 20, height: 20)
@@ -53,13 +54,32 @@ struct profileView: View {
                                                 .frame(width: 40, height: 40)
                                                 .background(K.finalColor.cardBlue)
                                                 .cornerRadius(7.5)
-                                    })
-                                    .id(UUID())
-
-                                    
-                                }
-                            }.padding(.top, 50).padding(.horizontal) // has to be at least 50 so doesnt interfere with safe area
-                            
+                                        })
+                                        .id(UUID())
+                                        
+                                        
+                                    }
+                                }.padding(.top, 50).padding(.horizontal) // has to be at least 50 so doesnt interfere with safe area
+                            }
+                            else{
+                                HStack {
+                                    Button {
+                                        // 2
+                                        dismiss()
+                                        
+                                    } label: {
+                                        HStack {
+                                            Image(systemName: "chevron.backward")
+                                            
+                                                .resizable()
+                                                .foregroundColor(.white)
+                                                .frame(width: 10,height: 15)
+                                        }   .padding(.leading)
+                                    }
+                                    Spacer()
+                                }.padding()
+                            }
+                        
                             ProfileStatsView(viewModel: viewModel, user: user)
                                 .padding(.vertical)
                                 .padding(.horizontal,20.5)
@@ -67,7 +87,7 @@ struct profileView: View {
                                 NavigationLink(destination: {friendsList(friends: viewModel.friends)}, label: {
                                 VStack{
                                     Text("Friends")
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 15).weight(.medium))
                                         .foregroundColor(.white)
                                     
                                 
@@ -75,7 +95,7 @@ struct profileView: View {
                                             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18).weight(.medium))
                                             .foregroundColor(.white)
                                     
-                                }.padding(.horizontal)
+                                }
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 13)
                                                    }).id(UUID())
@@ -86,52 +106,79 @@ struct profileView: View {
                                   .stroke(.white, lineWidth: 0.4))
                                   .padding(.horizontal)
                                   .padding(.vertical)
-                                NavigationLink(destination: {friendsList(friends: viewModel.friends)}, label: {
+//                                NavigationLink(destination: {friendsList(friends: viewModel.friends)}, label: {
                                 VStack{
-                                    Text("Challenges")
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
+                                    Text("Past Tickets")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 15).weight(.medium))
                                         .foregroundColor(.white)
                                     
                                 
-                                        Text("\(viewModel.friends.count)")
+                                        Text("\(viewModel.pastDayTicketsCount)")
                                             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18).weight(.medium))
                                             .foregroundColor(.white)
                                     
-                                }.padding(.horizontal)
+                                }.frame(maxWidth: .infinity)
                                     
                                     .padding(.vertical, 13)
-                                                   }).id(UUID())
+//                                                   }).id(UUID())
                             }
                                 .frame(maxWidth: 300)
                                 .frame(maxHeight: 60)
                                 .padding(.horizontal)
                       .background(Color(red: 0.13, green: 0.14, blue: 0.34))
                       .cornerRadius(10)
-                            
-                            NavigationLink {
-                                addFriendsView()
-                            } label: {
-                                HStack{
-                                    Image(systemName: "person.badge.plus.fill")
-                                        .foregroundStyle(.white)
-                                        .frame(width: 25, height: 25)
-                                        .padding()
+                            if user.id! == StaticUserData.shared.currentUser.id {
+                                NavigationLink {
+                                    addFriendsView()
+                                } label: {
+                                    HStack{
+                                        Image(systemName: "person.badge.plus.fill")
+                                            .foregroundStyle(.white)
+                                            .frame(width: 25, height: 25)
+                                            .padding()
+                                        
+                                        Text("Add New Friends")
+                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 18).weight(.light))
+                                            .foregroundColor(.white)
+                                        
+                                    }.frame(maxWidth: 300)
+                                        .frame(maxHeight: 40)
+                                        .padding(.horizontal)
+                                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                        .cornerRadius(10)
                                     
-                                    Text("Add New Friends")
-                                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 18).weight(.light))
-                                        .foregroundColor(.white)
-                                    
-                                }.frame(maxWidth: 300)
-                                    .frame(maxHeight: 40)
+                                }.id(UUID())
                                     .padding(.horizontal)
-                          .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                          .cornerRadius(10)
-                            
-                            }.id(UUID())
-                            .padding(.horizontal)
-                                .padding(.top)
-
-                            
+                                    .padding(.top)
+                                
+                            }
+                            else{
+                                Button(action: {
+                                    if viewModel.isFollow == true {
+                                        viewModel.unfollow()
+                                    } else {
+                                        viewModel.follow()
+                                    }
+                                }, label: {
+                                    HStack {
+                                        Text(viewModel.isFollow ? "Unfollow" : "Follow")
+                                            .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                            .foregroundColor(viewModel.isFollow ? K.finalColor.cardBlue : K.finalColor.titleBlue)
+                                            .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                    }
+                                    .frame(width: 150, height: 40) // Adjusted for a more typical pill shape
+                                    .background(viewModel.isFollow ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                                    .cornerRadius(20) // Use 20 or adjust as needed for the pill shape, or better yet, use .clipShape(Capsule()) as shown below
+                                    .clipShape(Capsule())
+                                    .overlay(
+                                        Capsule()
+                                            .stroke(Color.white, lineWidth: 1)
+                                    )
+                                    .shadow(color: .gray.opacity(0.5), radius: 1, x: 2, y: 2)
+                                    .shadow(color: .white.opacity(0.5), radius: 1, x: -2, y: -2)
+                                })
+                                .padding()
+                            }
                         
                             
                             Spacer()
@@ -161,9 +208,11 @@ struct profileView: View {
                 .background(Color(red: 0.02, green: 0.05, blue: 0.26))
                 .onAppear() {
                     viewModel.fetchUser()
+                    viewModel.countPastDayTickets()
+                    viewModel.importFriends()
                     //viewModel = profileViewModel(user: user)
                 }
-            }
+        }.navigationBarBackButtonHidden()
             .background(Color(red: 0.02, green: 0.05, blue: 0.26))
         //}
     }

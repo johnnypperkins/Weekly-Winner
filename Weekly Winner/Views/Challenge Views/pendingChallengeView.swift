@@ -340,6 +340,7 @@ struct pendingOption3: View { // awaiting other persons response
 struct pendingOption3Expired: View { // didnt respond fast enough
     let challenge: DirectChallengeTicket
     let viewModel: challengeViewModel
+    @State var isTapped = false
     var body: some View {
         VStack {
             HStack(spacing: 5) {
@@ -348,27 +349,55 @@ struct pendingOption3Expired: View { // didnt respond fast enough
                     .foregroundColor(.red)
             }
             Button(action: {
-                viewModel.reclaimFundFromExpiredChallenge(senderID: StaticUserData.shared.currentUser.id!, receiverID: challenge.receiverID, customID: challenge.customID, reclaimAmount: challenge.senderWagerAmount, sentToPublic: false) {
-                    viewModel.fetchChallenges {
-                        viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {}
+                isTapped.toggle()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                    withAnimation {
+                        viewModel.reclaimFundFromExpiredChallenge(senderID: StaticUserData.shared.currentUser.id!, receiverID: challenge.receiverID, customID: challenge.customID, reclaimAmount: challenge.senderWagerAmount, sentToPublic: false) {
+                            viewModel.fetchChallenges {
+                                viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {}
+                            }
+                        }
                     }
                 }
             }, label: {
-                HStack {
-                    Text("Reclaim Funds")
-                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-                        .foregroundColor(.white)
+                if isTapped {
+                    HStack {
+                        Text("Reclaim Funds")
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                            .foregroundColor(.white)
+                    }
+                    .frame(width: 160, height: 40)
+                    .background(K.finalColor.potentialOrange)
+                    .cornerRadius(7.5)
+                    .transition(
+                        .movingParts.pop(.orange)
+                    )
                 }
-                .frame(width: 160, height: 40)
-                .background(K.finalColor.potentialOrange)
-                .cornerRadius(7.5)
-            })
+                else {
+                    HStack {
+                        Text("Reclaim Funds")
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                            .foregroundColor(.white)
+                    }
+                    .frame(width: 160, height: 40)
+                    .background(K.finalColor.potentialOrange)
+                    .cornerRadius(7.5)
+                }
+            }).changeEffect(
+                .spray(origin: UnitPoint(x: 0.25, y: 0.5)) {
+                  Image("poolBuck")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                    
+                    
+                }, value: isTapped)
             
         }.padding(.vertical, 10)
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 100, maxHeight: 100)
         .background(K.finalColor.cardBlue)
         .cornerRadius(10)
         .padding(.horizontal, 15)
+        
     }
 }
 
