@@ -88,42 +88,77 @@ struct peer2peerSubmitPage: View {
                     .animation(.easeInOut(duration: 0.35))
             }.padding(.bottom,2)
             if whichTab == "friends" {
-                ScrollView{
-                    VStack{
-                        ForEach(viewModel.friends, id: \.id) { friend in
-                            if friend.id != StaticUserData.shared.currentUser.id! {
-                                
-                                //
-                                userBioFriend(friend: friend, selectedUserID: $selectedUserID, selectedFriend: $selectedFriend)
-                            }
-                            if viewModel.friends.isEmpty{
-                                NavigationLink {
-                                    addFriendsView()
-                                } label: {
-                                    HStack{
-                                        Image(systemName: "person.badge.plus.fill")
-                                            .foregroundStyle(.white)
-                                            .frame(width: 25, height: 25)
-                                            .padding()
+                ZStack {
+                    ScrollView{
+                        VStack{
+                            ForEach(viewModel.friends, id: \.id) { friend in
+                                if friend.id != StaticUserData.shared.currentUser.id! {
+                                    userBioFriend(friend: friend, selectedUserID: $selectedUserID, selectedFriend: $selectedFriend)
+                                }
+                                if viewModel.friends.isEmpty{
+                                    NavigationLink {
+                                        addFriendsView()
+                                    } label: {
+                                        HStack{
+                                            Image(systemName: "person.badge.plus.fill")
+                                                .foregroundStyle(.white)
+                                                .frame(width: 25, height: 25)
+                                                .padding()
+                                            
+                                            Text("Add New Friends")
+                                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 18).weight(.light))
+                                                .foregroundColor(.white)
+                                            
+                                        }.frame(maxWidth: .infinity)
+                                            .frame(maxHeight: 40)
+                                            .padding(.horizontal)
+                                            .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                            .cornerRadius(10)
                                         
-                                        Text("Add New Friends")
-                                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 18).weight(.light))
-                                            .foregroundColor(.white)
-                                        
-                                    }.frame(maxWidth: .infinity)
-                                        .frame(maxHeight: 40)
+                                    }.id(UUID())
                                         .padding(.horizontal)
-                                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                                        .cornerRadius(10)
-                                    
-                                }.id(UUID())
-                                    .padding(.horizontal)
-                                    .padding(.top)
+                                        .padding(.top)
+                                }
+                                
                             }
                         }
-                    }
+                        
+                    }.frame(height: selectedFriend == nil ? 90 : 0)
+                        .padding(.bottom)
                     
-                }.frame(maxHeight: 150)
+                    if selectedFriend != nil {
+                        VStack {
+                            HStack {
+                                Text("Selected Opponent")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                                    .foregroundColor(.white)
+                                    .padding(.leading,3)
+                                Spacer()
+                                Button(action: {
+                                    selectedFriend = nil
+                                    selectedUserID = ""
+                                }, label: {
+                                    HStack {
+                                        Text("Change")
+                                            .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                                            .foregroundColor(.white)
+                                            .padding(EdgeInsets(top: 3, leading: 5, bottom: 3, trailing: 5))
+                                    }.background(K.finalColor.potentialOrange).cornerRadius(5)
+                                })
+                            }
+                            HStack {
+                                Spacer()
+                                profilePicDisplayView(dimension: 30, picURL: selectedFriend!.profileImageURL)
+                                Text("\(selectedFriend?.username ?? "")")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                    .foregroundColor(.white)
+                                Spacer()
+                            }.frame(height: 50).background(K.finalColor.cardBlue).cornerRadius(7.5)
+                        }.frame(width: 345)
+                            
+                    }
+                }
+                
             }
 //            else if whichTab == "search" {
 //                searchUserView(game: game, viewModel: viewModel, betType: betType, wagerAmount: $wagerAmount, selectedUser: $selectedUser)
@@ -154,11 +189,13 @@ struct peer2peerSubmitPage: View {
                             .foregroundColor(.white)
                             .transition(.opacity)
                             .animation(.easeInOut, value: sendToFriends)
+                            .padding()
                     }
-                            
-                        }
-                        .frame(width: 345)
-                        .animation(.easeInOut, value: sendToFriends)
+                }
+                .frame(width: 345)
+                .background(K.finalColor.cardBlue)
+                .cornerRadius(7.5)
+                .animation(.easeInOut, value: sendToFriends)
             }
             twoWagers(game: game, viewModel: viewModel, betType: betType, wagerAmount: $wagerAmount, selectedFriend: $selectedFriend)
             peer2peerSlider(wagerAmount: $wagerAmount, selectedFriend: $selectedFriend, viewModel: viewModel, game: game, showingSheet: $showingSheet, whichTab: $whichTab, sendToFriends: $sendToFriends)
@@ -245,21 +282,22 @@ struct userBioFriend: View {
                                 
                                 
                                 HStack(spacing: 5) {
-                                    if friend.profileImageURL != "" {
-                                        KFImage(URL(string: friend.profileImageURL))
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .clipShape(Circle())
-                                            .frame(width: 24, height: 24)
-                                    } else {
-                                        Image(systemName: "photo.circle.fill")
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 24, height: 24)
-                                            .background(K.finalColor.tabSelectedBlue)
-                                            .clipShape(Circle())
-                                        
-                                    }
+                                    profilePicDisplayView(dimension: 24, picURL: friend.profileImageURL)
+//                                    if friend.profileImageURL != "" {
+//                                        KFImage(URL(string: friend.profileImageURL))
+//                                            .resizable()
+//                                            .aspectRatio(contentMode: .fill)
+//                                            .clipShape(Circle())
+//                                            .frame(width: 24, height: 24)
+//                                    } else {
+//                                        Image(systemName: "photo.circle.fill")
+//                                            .resizable()
+//                                            .aspectRatio(contentMode: .fill)
+//                                            .frame(width: 24, height: 24)
+//                                            .background(K.finalColor.tabSelectedBlue)
+//                                            .clipShape(Circle())
+//                                        
+//                                    }
                                     HStack(spacing: 0){
                                         Text("\(friend.username) ")
                                             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
@@ -272,10 +310,6 @@ struct userBioFriend: View {
                             .frame(height: 24)
                             
                             Spacer()
-                            
-                            
-                            
-                            // Arrow
                             
                                 Image(systemName: selectedUserID == friend.id ? "checkmark.square" : "square")
                                     .resizable()
@@ -293,10 +327,6 @@ struct userBioFriend: View {
                     .background(selectedUserID == friend.id ? K.finalColor.otherPurple.opacity(0.35) : K.finalColor.cardBlue)
                     .cornerRadius(10)
             }
-//            .onTapGesture {
-//                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-//                print("tapped also")
-//            }
         }
     }
 }
@@ -673,6 +703,7 @@ struct riskMiniStruct: View {
         }.cornerRadius(7.5)
     }
 }
+
 struct rewardMiniStruct: View {
     let game: Game
     let betType: BetType

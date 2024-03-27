@@ -250,40 +250,39 @@ struct ticketView: View {
                     //Text(viewModel.userTickets[0].groupName).font(.custom(K.customFonts.lexendDecaMedium, size: 20)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
                     VStack (alignment: .leading, spacing: 0){
                         Text(viewModel.userInfo?.username ?? "").font(.custom(K.customFonts.lexendDecaMedium, size: 28)).foregroundColor(K.finalColor.textWhite)//.padding(.bottom)
+                        
                         Text("Joined: " + formatDateMMDDYY(from: viewModel.userInfo?.dateJoined ?? Timestamp(date: Date())))
                             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.medium))
                             .foregroundColor(.white.opacity(0.75))
                             .padding(.leading, 1)
+                  
+                        if viewModel.userInfo?.isCurrentUser != true {
+                            Button(action: {
+                                if viewModel.isFollow == true {
+                                    viewModel.unfollow()
+                                } else {
+                                    viewModel.follow()
+                                }
+                            }, label: {
+                                HStack {
+                                    Text(viewModel.isFollow ? "Friends" : "Add Friend")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.medium))
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 2.5)
+                                        .padding(.vertical, 1)
+                                    
+                                }
+                                .background(viewModel.isFollow ? K.finalColor.winningGreen : K.finalColor.potentialOrange)
+                                .cornerRadius(2.5)
+                                .padding(.top, 3)
+                            })
+                            
+                        }
+                        
                     }
                     Spacer()
                 }.padding(.top, 6)
-                if viewModel.userInfo?.isCurrentUser != true {
-                    Button(action: {
-                        if viewModel.isFollow == true {
-                            viewModel.unfollow()
-                        } else {
-                            viewModel.follow()
-                        }
-                    }, label: {
-                        HStack {
-                            Text(viewModel.isFollow ? "Unfollow" : "Follow")
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
-                                .foregroundColor(viewModel.isFollow ? K.finalColor.cardBlue : K.finalColor.titleBlue)
-                                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
-                        }
-                        .frame(width: 150, height: 40) // Adjusted for a more typical pill shape
-                        .background(viewModel.isFollow ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                        .cornerRadius(20) // Use 20 or adjust as needed for the pill shape, or better yet, use .clipShape(Capsule()) as shown below
-                        .clipShape(Capsule())
-                        .overlay(
-                            Capsule()
-                                .stroke(Color.white, lineWidth: 1)
-                        )
-                        .shadow(color: .gray.opacity(0.5), radius: 1, x: 2, y: 2)
-                        .shadow(color: .white.opacity(0.5), radius: 1, x: -2, y: -2)
-                    })
-                    .padding()
-                }
+                
                 HStack (spacing: 5){
                     Button(action: {
                         ticketShowing = true

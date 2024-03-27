@@ -70,69 +70,66 @@ struct pendingOption1: View { // inAction
                 acceptDirectChallenge(viewModel: viewModel, directChallengeTicket: challenge, inAction: true, publicViewing: false)
                     .background(K.finalColor.backgroundBlue)
             }, label: {
-                VStack {
-                    HStack {
-                        profilePicDisplayView(dimension: 30, picURL: opponentProfileImageURL)
-                            .padding(.leading)
-                        
-                        Text("\(challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.receiverUsername : challenge.senderUsername)")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
-                            .foregroundColor(.white)
+
+                HStack {
+                    VStack (spacing: 3){
+                        HStack {
+                            profilePicDisplayView(dimension: 30, picURL: opponentProfileImageURL)
+                                .padding(.leading)
                             
-                        Spacer()
-                        
-                        currencyImage(currency: challenge.currencyChosen, dimension: 25)
-                        
-                        VStack (alignment: .leading){
-                            Text("Wager: ")
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                            Text("\(challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.receiverUsername : challenge.senderUsername)")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
                                 .foregroundColor(.white)
-                                .padding(.trailing)
                             
-                            Text("Win: ")
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                .foregroundColor(.white)
-                                .padding(.trailing)
+                            Spacer()
+                            
+                            VStack (spacing: 0){
+                                HStack {
+                                    Text("Risk:")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                        .foregroundColor(.white)
+                                        .padding(.trailing)
+                                    currencyImage(currency: challenge.currencyChosen, dimension: 16)
+                                        .padding(.trailing, 2)
+                                    Text("\(String(format: "%.2f", challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderWagerAmount : challenge.receiverWagerAmount))")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                        .foregroundColor(.white)
+                                        .padding(.trailing)
+                                }
+                                HStack {
+                                    Text("Win:")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                        .foregroundColor(.white)
+                                        .padding(.trailing)
+                                    currencyImage(currency: challenge.currencyChosen, dimension: 16)
+                                        .padding(.trailing, 2)
+                                    Text("\(String(format: "%.2f", returnPotentialWinnings(wagerAmount: challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderWagerAmount : challenge.receiverWagerAmount, MLOdds: challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderOdds : challenge.receiverOdds)))")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                                        .foregroundColor(.white)
+                                        .padding(.trailing)
+                                }
+                                
+                                
+                                
+                            }
                         }
-                        VStack (alignment: .leading){
-                            Text("\(String(format: "%.2f", challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderWagerAmount : challenge.receiverWagerAmount))")
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                        
+                        Rectangle().fill(Color.white).frame(width: 250, height: 1)
+                        
+                        HStack {
+                            Spacer()
+                            Text("\(challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderTeamName : challenge.receiverTeamName) \(returnSpreadStringStatic(betType: challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderBetType : challenge.receiverBetType, spread: challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderBetLine : challenge.receiverBetLine))")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
                                 .foregroundColor(.white)
-                                .padding(.trailing)
-                            
-                            Text("\(String(format: "%.2f", returnPotentialWinnings(wagerAmount: challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderWagerAmount : challenge.receiverWagerAmount, MLOdds: challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderOdds : challenge.receiverOdds)))")
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-                                .foregroundColor(.white)
-                                .padding(.trailing)
+                                .padding(.vertical, 2)
+                            Spacer()
                         }
+                        
                         
                     }
-                    HStack{
-                        Spacer()
-                        if challenge.senderID == StaticUserData.shared.currentUser.id && challenge.senderBetLine > 0 {
-                            Text("\(challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderTeamName : challenge.receiverTeamName)  +\(String(format: "%.1f", challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderBetLine : challenge.receiverBetLine))")
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
-                                .foregroundColor(.white)
-                                .padding(.horizontal)
-                        }
-                        else if challenge.senderID != StaticUserData.shared.currentUser.id && challenge.receiverBetLine > 0 {
-                            Text("\(challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderTeamName : challenge.receiverTeamName)  +\(String(format: "%.1f", challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderBetLine : challenge.receiverBetLine))")
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
-                                .foregroundColor(.white)
-                                .padding(.horizontal)
-                        }
-                        else {
-                            Text("\(challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderTeamName : challenge.receiverTeamName)  \(String(format: "%.1f", challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderBetLine : challenge.receiverBetLine))")
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
-                                .foregroundColor(.white)
-                                .padding(.horizontal)
-                        }
-                        
-                    }
-                        
                     
-                }.padding(.vertical, 10)
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 70, maxHeight: 70)
+                }
+                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 75, maxHeight: 75)
                     .background(K.finalColor.cardBlue)
                     .cornerRadius(7.5)
                     .padding(.horizontal,15)
@@ -315,8 +312,16 @@ struct pendingOption3: View { // awaiting other persons response
                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
                         .foregroundColor(.white)
                 }
+                Rectangle().fill(Color.white).frame(width: 250, height: 1)
                 
-            }.padding(.vertical, 10)
+                HStack {
+                    Spacer()
+                    Text("\(challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderTeamName : challenge.receiverTeamName) \(returnSpreadStringStatic(betType: challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderBetType : challenge.receiverBetType, spread: challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderBetLine : challenge.receiverBetLine))")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                    Spacer()
+                }
+            }.padding(.top, 22)
             
             HStack {
                 VStack {
@@ -406,14 +411,25 @@ struct pendingOption4: View { // didnt get response from public
     let viewModel: challengeViewModel
     var body: some View {
         ZStack {
-            VStack {
+            VStack(spacing: 4){
                 HStack(spacing: 5) {
                     Text("Pending Public Acceptance")
                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
                         .foregroundColor(.white)
                 }
                 
-            }.padding(.vertical, 10)
+                Rectangle().fill(Color.white).frame(width: 250, height: 1)
+                
+                HStack {
+                    Spacer()
+                    Text("\(challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderTeamName : challenge.receiverTeamName) \(returnSpreadStringStatic(betType: challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderBetType : challenge.receiverBetType, spread: challenge.senderID == StaticUserData.shared.currentUser.id ? challenge.senderBetLine : challenge.receiverBetLine))")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
+                        .foregroundColor(.white)
+                        .padding(.vertical, 2)
+                    Spacer()
+                }
+                
+            }.padding(.top, 22)
             
             HStack {
                 VStack {
@@ -513,23 +529,35 @@ struct publicWager: View { // public challenges you can accept
                     HStack {
                         Spacer()
                         
-                        VStack(spacing: 7.5) {
+                        VStack(spacing: 5) {
                             HStack (spacing: 4){
                                 Text("\(challenge.receiverTeamName) \(betLineFormatted) (\(challenge.receiverOdds))")
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
                                     .foregroundColor(.white)
+                                    .padding(.top, 22).padding(.horizontal)
                             }
-                            HStack {
-                                currencyImage(currency: "poolBucks", dimension: 25)
+                            Rectangle().fill(Color.white).frame(width: 250, height: 1)
+
                                 
-                                Text("\(String(format: "%.2f", challenge.receiverWagerAmount)) : \(String(format: "%.2f", returnPotentialWinnings(wagerAmount: challenge.receiverWagerAmount, MLOdds: challenge.receiverOdds)))") // NEED TO FIX
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
-                                    .foregroundColor(.white)
-                                
-                                VStack (spacing: 7.5) {
-                                    
-                                }
-                            }
+                            HStack (alignment: .bottom, spacing: 0){
+                                    currencyImage(currency: "poolBucks", dimension: 20)
+                                        .padding(.trailing, 2)
+                                    Text("\(String(format: "%.2f", challenge.receiverWagerAmount))") // NEED TO FIX
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                        .foregroundColor(.white)  
+                                        .padding(.trailing, 4)
+
+                                    Text("to win") // NEED TO FIX
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 9))
+                                        .foregroundColor(K.veryLightGray)
+                                        .padding(.trailing, 4)
+                                    currencyImage(currency: "poolBucks", dimension: 20)
+                                        .padding(.trailing, 2)
+                                    Text("\(String(format: "%.2f", returnPotentialWinnings(wagerAmount: challenge.receiverWagerAmount, MLOdds: challenge.receiverOdds)))") // NEED TO FIX
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                        .foregroundColor(.white)
+                            }.padding(.bottom, 3)
+                            //}.padding(.bottom)
                         }
                         Spacer()
                     }
@@ -549,7 +577,6 @@ struct publicWager: View { // public challenges you can accept
                     }
                     
                 }
-                .frame(height: 100)
                 .background(K.finalColor.cardBlue)
                 .cornerRadius(10)
                 .padding(.horizontal, 15)
@@ -560,23 +587,35 @@ struct publicWager: View { // public challenges you can accept
                 HStack {
                     Spacer()
                     
-                    VStack(spacing: 7.5) {
+                    VStack(spacing: 5) {
                         HStack (spacing: 4){
                             Text("\(challenge.receiverTeamName) \(betLineFormatted) (\(challenge.receiverOdds))")
                                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
                                 .foregroundColor(.white)
+                                .padding(.top, 22).padding(.horizontal)
                         }
-                        HStack {
-                            currencyImage(currency: "poolBucks", dimension: 25)
+                        Rectangle().fill(Color.white).frame(width: 250, height: 1)
+
                             
-                            Text("\(String(format: "%.2f", challenge.receiverWagerAmount)) : \(String(format: "%.2f", returnPotentialWinnings(wagerAmount: challenge.receiverWagerAmount, MLOdds: challenge.receiverOdds)))") // NEED TO FIX
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
-                                .foregroundColor(.white)
-                            
-                            VStack (spacing: 7.5) {
-                                
-                            }
-                        }
+                        HStack (alignment: .bottom, spacing: 0){
+                                currencyImage(currency: "poolBucks", dimension: 20)
+                                    .padding(.trailing, 2)
+                                Text("\(String(format: "%.2f", challenge.receiverWagerAmount))") // NEED TO FIX
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                    .foregroundColor(.white)
+                                    .padding(.trailing, 4)
+
+                                Text("to win") // NEED TO FIX
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 9))
+                                    .foregroundColor(K.veryLightGray)
+                                    .padding(.trailing, 4)
+                                currencyImage(currency: "poolBucks", dimension: 20)
+                                    .padding(.trailing, 2)
+                                Text("\(String(format: "%.2f", returnPotentialWinnings(wagerAmount: challenge.receiverWagerAmount, MLOdds: challenge.receiverOdds)))") // NEED TO FIX
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                    .foregroundColor(.white)
+                        }.padding(.bottom, 3)
+                        //}.padding(.bottom)
                     }
                     Spacer()
                 }
@@ -590,24 +629,24 @@ struct publicWager: View { // public challenges you can accept
                             .background(K.finalColor.deleteRed)
                             .cornerRadius(5, corners: .bottomRight)
                         Spacer()
-                        
-                        
                         Text("Your Challenge")
                             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 8))
                             .foregroundColor(.white)
                             .padding(4)
                             .background(K.finalColor.potentialOrange)
                             .cornerRadius(5, corners: .bottomLeft)
+                            
                     }
                     Spacer()
                 }
                 
             }
-            .frame(height: 100)
             .background(K.finalColor.cardBlue)
             .cornerRadius(10)
             .padding(.horizontal, 15)
             .padding(.bottom, 10)
+            
+
         }
         
     }

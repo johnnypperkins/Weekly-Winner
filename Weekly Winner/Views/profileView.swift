@@ -106,7 +106,6 @@ struct profileView: View {
                                   .stroke(.white, lineWidth: 0.4))
                                   .padding(.horizontal)
                                   .padding(.vertical)
-//                                NavigationLink(destination: {friendsList(friends: viewModel.friends)}, label: {
                                 VStack{
                                     Text("Past Tickets")
                                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 15).weight(.medium))
@@ -152,33 +151,33 @@ struct profileView: View {
                                     .padding(.top)
                                 
                             }
-                            else{
-                                Button(action: {
-                                    if viewModel.isFollow == true {
-                                        viewModel.unfollow()
-                                    } else {
-                                        viewModel.follow()
-                                    }
-                                }, label: {
-                                    HStack {
-                                        Text(viewModel.isFollow ? "Unfollow" : "Follow")
-                                            .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
-                                            .foregroundColor(viewModel.isFollow ? K.finalColor.cardBlue : K.finalColor.titleBlue)
-                                            .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
-                                    }
-                                    .frame(width: 150, height: 40) // Adjusted for a more typical pill shape
-                                    .background(viewModel.isFollow ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                                    .cornerRadius(20) // Use 20 or adjust as needed for the pill shape, or better yet, use .clipShape(Capsule()) as shown below
-                                    .clipShape(Capsule())
-                                    .overlay(
-                                        Capsule()
-                                            .stroke(Color.white, lineWidth: 1)
-                                    )
-                                    .shadow(color: .gray.opacity(0.5), radius: 1, x: 2, y: 2)
-                                    .shadow(color: .white.opacity(0.5), radius: 1, x: -2, y: -2)
-                                })
-                                .padding()
-                            }
+//                            else{
+//                                Button(action: {
+//                                    if viewModel.isFollow == true {
+//                                        viewModel.unfollow()
+//                                    } else {
+//                                        viewModel.follow()
+//                                    }
+//                                }, label: {
+//                                    HStack {
+//                                        Text(viewModel.isFollow ? "Unfollow" : "Follow")
+//                                            .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+//                                            .foregroundColor(viewModel.isFollow ? K.finalColor.cardBlue : K.finalColor.titleBlue)
+//                                            .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+//                                    }
+//                                    .frame(width: 150, height: 40) // Adjusted for a more typical pill shape
+//                                    .background(viewModel.isFollow ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+//                                    .cornerRadius(20) // Use 20 or adjust as needed for the pill shape, or better yet, use .clipShape(Capsule()) as shown below
+//                                    .clipShape(Capsule())
+//                                    .overlay(
+//                                        Capsule()
+//                                            .stroke(Color.white, lineWidth: 1)
+//                                    )
+//                                    .shadow(color: .gray.opacity(0.5), radius: 1, x: 2, y: 2)
+//                                    .shadow(color: .white.opacity(0.5), radius: 1, x: -2, y: -2)
+//                                })
+//                                .padding()
+//                            }
                         
                             
                             Spacer()
@@ -197,7 +196,8 @@ struct profileView: View {
                                     .padding(.horizontal)
                                     
                                     groupStats(allBets: viewModel.allDailyBets, allTickets: viewModel.allDailyTickets)
-                                        .padding(.all,16)
+                                        .padding(.horizontal,16)
+                                        .padding(.vertical, 10)
                                 }.padding(.bottom, 75)
                             
                         }
@@ -263,10 +263,11 @@ struct profileBarView: View {
             Rectangle()
                 .foregroundColor(Color.gray.opacity(0.2))
             HStack{
-                KFImage(URL(string: user.profileImageUrl))
-                    .resizable()
-                    .cornerRadius(25)
-                    .frame(width: 50, height: 50, alignment: .leading)
+                profilePicDisplayView(dimension: 50, picURL: user.profileImageUrl)
+//                KFImage(URL(string: user.profileImageUrl))
+//                    .resizable()
+//                    .cornerRadius(25)
+//                    .frame(width: 50, height: 50, alignment: .leading)
                     
                 
                 VStack(alignment: .leading) {
@@ -406,6 +407,8 @@ func returnTotalBetScore(allBets: [Bet]) -> Double {
     for bet in allBets {
         if bet.result == .win {
             totalBetScore = totalBetScore + (1 / Double(bet.betOdds)*100 - 100);
+        } else if bet.result == .loss {
+            totalBetScore = totalBetScore - 100;
         }
     }
     if !allBets.isEmpty {
@@ -491,18 +494,34 @@ struct ProfileStatsView: View {
             profilePicDisplayView(dimension: 80, picURL: viewModel.profileImageURLHolder)
             VStack(alignment: .leading, spacing: 0) {
                 
-                    Text(user.username)
-                        .font(Font.custom(K.customFonts.lexendDecaSB, size: 20))
-                        .foregroundColor(.white)
-                    
+                Text(user.username)
+                    .font(Font.custom(K.customFonts.lexendDecaSB, size: 20))
+                    .foregroundColor(.white)
                 
-                    
-                    Text("Joined: " + formatDateMMDDYY(from: user.dateJoined))
-                        .font(Font.custom(K.customFonts.lexendDecaSB, size: 12))
-                        .foregroundColor(.gray)
-                    
-                
-                
+                Text("Joined: " + formatDateMMDDYY(from: user.dateJoined))
+                    .font(Font.custom(K.customFonts.lexendDecaSB, size: 12))
+                    .foregroundColor(.gray)
+                if viewModel.user.id != StaticUserData.shared.currentUser.id {
+                    Button(action: {
+                        if viewModel.isFollow == true {
+                            viewModel.unfollow()
+                        } else {
+                            viewModel.follow()
+                        }
+                    }, label: {
+                        HStack {
+                            Text(viewModel.isFollow ? "Friends" : "Add Friend")
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.medium))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 2.5)
+                                .padding(.vertical, 1)
+                            
+                        }
+                        .background(viewModel.isFollow ? K.finalColor.winningGreen : K.finalColor.potentialOrange)
+                        .cornerRadius(2.5)
+                        .padding(.top, 3)
+                    })
+                }
             }
             Spacer()
         }

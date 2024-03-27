@@ -52,7 +52,7 @@ struct tabBarView: View {
                             groupsView()
                                 .ignoresSafeArea(.all)
                                 .tabItem {
-                                    CustomTabBarItem(index: 2, selectedTab: $selectedTab, item: TabItem(title: "Leaderboard", icon: Image(systemName: "person.3.fill"), color: .purple)) // 
+                                    CustomTabBarItem(index: 2, selectedTab: $selectedTab, item: TabItem(title: "Rankings", icon: Image(systemName: "person.3.fill"), color: .purple)) // 
                                 }.tag(Tab.groups)
                             
                             challengeView()
@@ -60,7 +60,7 @@ struct tabBarView: View {
                                 .ignoresSafeArea(.all)
                                 .navigationBarHidden(true)
                                 .tabItem {
-                                    CustomTabBarItem(index: 3, selectedTab: $selectedTab, item: TabItem(title: "Challenges", icon: Image(systemName: "person.line.dotted.person.fill"), color: .orange))
+                                    CustomTabBarItem(index: 3, selectedTab: $selectedTab, item: TabItem(title: "P2P", icon: Image(systemName: "person.line.dotted.person.fill"), color: .orange))
                                 }.tag(Tab.challenges)
                             
                             

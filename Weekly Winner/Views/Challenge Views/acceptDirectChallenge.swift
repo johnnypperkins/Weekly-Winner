@@ -307,6 +307,38 @@ struct teamMiniViewAccepted: View {
     }
 }
 
+func returnSpreadStringStatic(betType: BetType, spread: Double) -> String {
+    if spread == 0 {
+        return "ML"
+    } else {
+        if betType == .under {
+            if isWholeNumber(spread) {
+                return "u\(String(format: "%.0f", spread))"
+            } else {
+                return "u\(String(format: "%.1f", spread))"
+            }
+        } else if betType == .over {
+            if isWholeNumber(spread) {
+                return "o\(String(format: "%.0f", spread))"
+            } else {
+                return "o\(String(format: "%.1f", spread))"
+            }
+        } else if spread > 0 {
+            if isWholeNumber(spread) {
+                return "+\(String(format: "%.0f", spread))"
+            } else {
+                return "+\(String(format: "%.1f", spread))"
+            }
+        } else {
+            if isWholeNumber(spread) {
+                return "\(String(format: "%.0f", spread))"
+            } else {
+                return "\(String(format: "%.1f", spread))"
+            }
+        }
+    }
+}
+
 struct spreadMiniViewAccepted: View {
     let betType: BetType
     let spread: Double
@@ -316,7 +348,19 @@ struct spreadMiniViewAccepted: View {
         if spread == 0 {
             return "ML"
         } else {
-            if spread > 0 {
+            if betType == .under {
+                if isWholeNumber(spread) {
+                    return "u\(String(format: "%.0f", spread))"
+                } else {
+                    return "u\(String(format: "%.1f", spread))"
+                }
+            } else if betType == .over {
+                if isWholeNumber(spread) {
+                    return "o\(String(format: "%.0f", spread))"
+                } else {
+                    return "o\(String(format: "%.1f", spread))"
+                }
+            } else if spread > 0 {
                 if isWholeNumber(spread) {
                     return "+\(String(format: "%.0f", spread))"
                 } else {
