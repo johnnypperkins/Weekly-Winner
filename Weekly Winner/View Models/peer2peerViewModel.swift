@@ -212,7 +212,11 @@ class peer2peerViewModel: ObservableObject {
                         if let error = error {
                             print("Error writing document: \(error)")
                         } else {
-                            completion()
+                            fetchUserFCMToken(uid: self.senderDirectTicket!.receiverID) { token in
+                                staticSendNotification(token: token ?? "", message: "\(StaticUserData.shared.currentUser.username) has sent you a challenge!") {
+                                    completion()
+                                }
+                            }
                         }
                     }
                 }

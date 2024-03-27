@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import Firebase
 import FirebaseAuth
+import FirebaseFunctions
 
 
 class screen1ViewModel: ObservableObject {
@@ -301,6 +302,56 @@ func fetchUserProfilePic(uid: String, completion: @escaping (String?, Error?) ->
         } else {
             let profileImageUrl = documentSnapshot?.data()?["profileImageUrl"] as? String
             completion(profileImageUrl, nil)
+        }
+    }
+}
+
+
+func staticSendNotification(token: String, message: String, completion: @escaping () -> Void) {
+    let functions = Functions.functions()
+    functions.httpsCallable("sendUserNotification").call(["token": token, "message": message]) { result, error in
+        if let error = error as NSError? {
+            if error.domain == FunctionsErrorDomain {
+                let code = FunctionsErrorCode(rawValue: error.code)
+                let message = error.localizedDescription
+                let details = error.userInfo[FunctionsErrorDetailsKey]
+                print("Error: \(code) \(message) \(String(describing: details))")
+            }
+            // Handle the error
+            print("Function call failed: \(error.localizedDescription)")
+            return
+        }
+        // If we have a result, process it here
+        print("Function result: \(String(describing: result?.data))")
+    }
+}
+
+//func staticfetchUser(uid: String, completion: @escaping (String?) -> Void) {
+//    Firestore.firestore().collection("users").document(uid).getDocument { snapshot, error in
+//        guard let snapshot = snapshot else {
+//            completion(nil) // Return false if there's an issue with document retrieval
+//            return
+//        }
+//        
+//        if let user = try? snapshot.data(as: User.self) {
+//            completion(user) // Return true and the user object if successfully retrieved
+//        } else {
+//            completion(nil) // Return false if there's an issue converting data to User
+//        }
+//    }
+//}
+
+func fetchUserFCMToken(uid: String, completion: @escaping (String?) -> Void) {
+    Firestore.firestore().collection("users").document(uid).getDocument { snapshot, error in
+        guard let snapshot = snapshot, snapshot.exists else {
+            completion(nil) // Return nil if there's an issue with document retrieval or it doesn't exist
+            return
+        }
+
+        if let fcmToken = snapshot.get("fcmToken") as? String {
+            completion(fcmToken) // Return the fcmToken if successfully retrieved
+        } else {
+            completion(nil) // Return nil if the fcmToken field is missing or not a string
         }
     }
 }

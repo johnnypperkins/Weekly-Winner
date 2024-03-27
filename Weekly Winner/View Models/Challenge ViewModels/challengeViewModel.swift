@@ -825,6 +825,12 @@ class challengeViewModel: ObservableObject {
                             } else {
                                 print("Invalid Currency")
                             }
+                            
+                            fetchUserFCMToken(uid: challenge.senderID) { token in
+                                staticSendNotification(token: token ?? "", message: "\(StaticUserData.shared.currentUser.username) has accepted your challenge!") {
+                                    completion()
+                                }
+                            }
                         }
                     }
                 }
@@ -887,6 +893,11 @@ class challengeViewModel: ObservableObject {
                 if let error = error {
                     print("Currency deduction failed: \(error.localizedDescription)")
                 } else {
+                    fetchUserFCMToken(uid: challenge.senderID) { token in
+                        staticSendNotification(token: token ?? "", message: "\(StaticUserData.shared.currentUser.username) has declined your challenge!") {
+                            completion()
+                        }
+                    }
                     completion()
                 }
             })
