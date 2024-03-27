@@ -55,8 +55,10 @@ struct SignupIntro: View {
                         .tag(0)
                     Intro2(pageIndex: $pageIndex)
                         .tag(1)
-                    Intro3(pageIndex: $pageIndex)
+                    Intro4(pageIndex: $pageIndex)
                         .tag(2)
+                    Intro3(pageIndex: $pageIndex)
+                        .tag(3)
                     //                ForEach(colors.indices, id: \.self) { index in
                     //
                     //                    Text("Hello world")
@@ -67,7 +69,7 @@ struct SignupIntro: View {
                     .indexViewStyle(.page(backgroundDisplayMode: .interactive))
                 HStack{
                     Spacer()
-                    if pageIndex < 2 {
+                    if pageIndex < 3 {
                         Button {
                             withAnimation{
                                 pageIndex += 1
@@ -121,6 +123,55 @@ struct SignupIntro: View {
     
 }
 
+struct Intro4: View {
+    @Binding var pageIndex: Int
+    @State private var isGlowing = false
+    var body: some View {
+        
+        VStack{
+            Image("challengesImage")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 300)
+                .padding(.top, 10)
+//                .overlay(
+//                                    Circle()
+//                                        .stroke(Color.blue, lineWidth: 3) // Customize the color and width of the outline
+//                                        .frame(width: 30, height: 30) // Adjust the size of the circle as needed
+//                                        .offset(x: 2, y: 0) // Adjust the offset to position the circle in the top-left corner
+//                                        .blur(radius:isGlowing ? 2.0 : 0)
+//                                        .opacity(isGlowing ? 1.0 : 0.3)
+//                                    ,alignment: .topLeading
+//                                    // Opacity for the glow effect
+//
+//                                )
+//                .onAppear() {
+//                    withAnimation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+//                                        self.isGlowing.toggle()
+//                                    }
+//                                }
+            HStack{
+                Text("Challenge Real People")
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 25))
+                    .foregroundColor(K.finalColor.textWhite)
+                    .padding(.top,15)
+                
+            }.padding(.horizontal,15)
+            
+            Text("Tired of losing to the house? Bet against real people with challenges! Look at the global open challenges to accept a head to head battle. Don't see the game you wanted to bet on, create your own open bet and watch an opponent take the other side of your bet. ")
+                .font(.custom(K.customFonts.lexendDecaLight, size: 15))
+                .foregroundColor(K.finalColor.textWhite)
+                .padding(.top,20)
+                .padding(.horizontal,15)
+            Spacer()
+        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+            .background(K.finalColor.cardBlue)
+            .cornerRadius(30)
+        
+        
+    }
+}
+
 struct Intro2: View {
     @Binding var pageIndex: Int
     @State private var isGlowing = false
@@ -149,14 +200,14 @@ struct Intro2: View {
 //                                    }
 //                                }
             HStack{
-                Text("Compete Daily and Weekly")
+                Text("Compete Daily")
                     .font(.custom(K.customFonts.lexendDecaMedium, size: 25))
                     .foregroundColor(K.finalColor.textWhite)
                     .padding(.top,15)
                 
             }.padding(.horizontal,15)
             
-            Text("There is only one thing more valuable than money: bragging rights (but money is nice too). Compete against other sports enthusiasts in your daily and weekly cards to see who is the best at sports betting. The top players win REAL PRIZES!")
+            Text("There is only one thing more valuable than money: bragging rights (but money is nice too). Compete against other sports enthusiasts in your daily card to see who is the best at sports betting. The top players win REAL PRIZES!")
                 .font(.custom(K.customFonts.lexendDecaLight, size: 15))
                 .foregroundColor(K.finalColor.textWhite)
                 .padding(.top,20)
@@ -188,7 +239,7 @@ struct Intro1: View {
                 
             }.padding(.horizontal,15)
             
-            Text("Complete your daily and weekly tickets with customized FREE TO PLACE bets from the book page. Bet on your favorite teams across many different sports! Tailor your bet odds using the slider to fit your risk tolerance. ")
+            Text("Complete your daily tickets with customized FREE TO PLACE bets from the book page. Bet on your favorite teams across many different sports! Want to challenge a friend or create a open public bet, make a challenge. ")
                 .font(.custom(K.customFonts.lexendDecaLight, size: 15))
                 .foregroundColor(K.finalColor.textWhite)
                 .padding(.top,20)

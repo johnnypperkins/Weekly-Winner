@@ -510,15 +510,15 @@ struct ProfileStatsView: View {
                         }
                     }, label: {
                         HStack {
-                            Text(viewModel.isFollow ? "Friends" : "Add Friend")
+                            Text(viewModel.isFollow ? "Unfriend" : "Add Friend")
                                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12).weight(.medium))
                                 .foregroundColor(.white)
                                 .padding(.horizontal, 2.5)
-                                .padding(.vertical, 1)
+                                .padding(.vertical, 1.5)
                             
                         }
-                        .background(viewModel.isFollow ? K.finalColor.winningGreen : K.finalColor.potentialOrange)
-                        .cornerRadius(2.5)
+                        .background(viewModel.isFollow ? K.finalColor.potentialOrange : K.finalColor.winningGreen)
+                        .cornerRadius(3)
                         .padding(.top, 3)
                     })
                 }
