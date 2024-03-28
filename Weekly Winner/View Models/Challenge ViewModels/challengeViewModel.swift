@@ -650,7 +650,7 @@ class challengeViewModel: ObservableObject {
 
         let query = db.collectionGroup("currentChallengeTickets")
             .whereField("status", isEqualTo: "pendingPublicAcceptance")
-            .order(by: "dateCreated", descending: true).getDocuments { querySnapshot, error in
+            .order(by: "gameCommenceTime", descending: false).getDocuments { querySnapshot, error in
                     
             if let error = error {
                 print("Error getting documents: \(error)")

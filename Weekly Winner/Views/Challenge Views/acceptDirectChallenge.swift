@@ -56,172 +56,215 @@ struct acceptDirectChallenge: View {
     }
     
     @State var shouldNavigate = false
+    @State var shouldNavigate2 = false
     
     var body: some View {
         NavigationStack {
             ZStack {
                 K.finalColor.backgroundBlue.ignoresSafeArea(.all)
-                VStack {
+                if !shouldNavigate {
                     VStack {
-                        HStack {
-                            Text("Opponent")
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
-                                .foregroundColor(.white)
-                                .padding(.leading,3)
-                            Spacer()
-                        }
-                        HStack {
-                            Spacer()
-                            if opponentProfileImageURL != nil {
-                                profilePicDisplayView(dimension: 30, picURL: opponentProfileImageURL!)
+                        VStack {
+                            HStack {
+                                Text("Opponent")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                                    .foregroundColor(.white)
+                                    .padding(.leading,3)
+                                Spacer()
                             }
-                            
-                            Text("\(youAreSender ? directChallengeTicket.receiverUsername : directChallengeTicket.senderUsername)")
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
-                                .foregroundColor(.white)
-                            Spacer()
-                        }.frame(height: 50).background(K.finalColor.cardBlue).cornerRadius(7.5)
-                    }.frame(width: 345)
-                        .padding(.top)
-                    
-                    VStack (spacing: 3){
-                        HStack {
-                            Spacer()
-                            Text("Opponent Wager")
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
-                                .foregroundColor(.white)
-                                .padding(.trailing, 2)
-                        }.frame(width: 345)
-                        
-                        VStack(spacing: 7.5) {
-                            HStack(spacing: 7.5) {
-                                if let game = viewModel.fetchedGame {
-                                    oddsMiniViewAccepted(
-                                        Moneyline: !youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds,
-                                        challengeResult: opponentChallengeResult) // GOOD
-                                    
-                                    spreadMiniViewAccepted(
-                                        betType: !youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType,
-                                        spread: !youAreSender ? directChallengeTicket.senderBetLine : directChallengeTicket.receiverBetLine, challengeResult: opponentChallengeResult
-                                    )
-                                    
-                                    teamMiniViewAccepted(
-                                        teamString: !youAreSender ? directChallengeTicket.senderTeamName : directChallengeTicket.receiverTeamName, challengeSender: !youAreSender, challengeResult: opponentChallengeResult
-                                    )
+                            HStack {
+                                Spacer()
+                                if opponentProfileImageURL != nil {
+                                    profilePicDisplayView(dimension: 30, picURL: opponentProfileImageURL!)
                                 }
                                 
-                            }.frame(width: 345)
-                            HStack(spacing: 7.5) {
-                                if let game = viewModel.fetchedGame {
-                                    riskMiniStructAccepted(
-                                        yourWager: false,
-                                        odds: !youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds,
-                                        wagerAmount: !youAreSender ? directChallengeTicket.senderWagerAmount : directChallengeTicket.receiverWagerAmount)
-                                    
-                                    rewardMiniStructAccepted(
-                                        yourWager: false,
-                                        odds: !youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds,
-                                        wagerAmount: !youAreSender ? directChallengeTicket.senderWagerAmount : directChallengeTicket.receiverWagerAmount)
-                                    
-                                }
-                            }.frame(width: 345)
-                        }
-                    }
-                    
-                    VStack  (spacing: 3){
-                        HStack {
-                            Text("Your Wager")
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
-                                .foregroundColor(.white)
-                                .padding(.leading, 2)
-                            Spacer()
+                                Text("\(youAreSender ? directChallengeTicket.receiverUsername : directChallengeTicket.senderUsername)")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 18))
+                                    .foregroundColor(.white)
+                                Spacer()
+                            }.frame(height: 50).background(K.finalColor.cardBlue).cornerRadius(7.5)
                         }.frame(width: 345)
-                        if let game = viewModel.fetchedGame {
+                            .padding(.top)
+                        
+                        VStack (spacing: 3){
+                            HStack {
+                                Spacer()
+                                Text("Opponent Wager")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                                    .foregroundColor(.white)
+                                    .padding(.trailing, 2)
+                            }.frame(width: 345)
+                            
                             VStack(spacing: 7.5) {
                                 HStack(spacing: 7.5) {
-                                    oddsMiniViewAccepted(Moneyline: youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds, challengeResult: challengeResult)
-                                    
-                                    spreadMiniViewAccepted(
-                                        betType: youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType,
-                                        spread: youAreSender ? directChallengeTicket.senderBetLine : directChallengeTicket.receiverBetLine, challengeResult: challengeResult
-                                    )
-                                    
-                                    teamMiniViewAccepted(
-                                        teamString: youAreSender ? directChallengeTicket.senderTeamName : directChallengeTicket.receiverTeamName, challengeSender: !youAreSender, challengeResult: challengeResult
-                                    )
+                                    if let game = viewModel.fetchedGame {
+                                        oddsMiniViewAccepted(
+                                            Moneyline: !youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds,
+                                            challengeResult: opponentChallengeResult) // GOOD
+                                        
+                                        spreadMiniViewAccepted(
+                                            betType: !youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType,
+                                            spread: !youAreSender ? directChallengeTicket.senderBetLine : directChallengeTicket.receiverBetLine, challengeResult: opponentChallengeResult
+                                        )
+                                        
+                                        teamMiniViewAccepted(
+                                            teamString: !youAreSender ? directChallengeTicket.senderTeamName : directChallengeTicket.receiverTeamName, challengeSender: !youAreSender, challengeResult: opponentChallengeResult
+                                        )
+                                    }
                                     
                                 }.frame(width: 345)
                                 HStack(spacing: 7.5) {
-                                    riskMiniStructAccepted(
-                                        yourWager: true,
-                                        odds: youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds,
-                                        wagerAmount: youAreSender ? directChallengeTicket.senderWagerAmount : directChallengeTicket.receiverWagerAmount)
-                                    
-                                    rewardMiniStructAccepted(
-                                        yourWager: true,
-                                        odds: youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds,
-                                        wagerAmount: youAreSender ? directChallengeTicket.senderWagerAmount : directChallengeTicket.receiverWagerAmount)
-                                    
+                                    if let game = viewModel.fetchedGame {
+                                        riskMiniStructAccepted(
+                                            yourWager: false,
+                                            odds: !youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds,
+                                            wagerAmount: !youAreSender ? directChallengeTicket.senderWagerAmount : directChallengeTicket.receiverWagerAmount)
+                                        
+                                        rewardMiniStructAccepted(
+                                            yourWager: false,
+                                            odds: !youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds,
+                                            wagerAmount: !youAreSender ? directChallengeTicket.senderWagerAmount : directChallengeTicket.receiverWagerAmount)
+                                        
+                                    }
                                 }.frame(width: 345)
                             }
                         }
-                    }.padding(.top, 7.5)
-                        .onAppear() {
-                            viewModel.fetchChallengeGames(matchingID: directChallengeTicket.gameIDs[0]) {}
-                            viewModel.fetchUserProfilePic(uid: directChallengeTicket.senderID) { }
-                        }
-                    VStack {
                         
+                        VStack  (spacing: 3){
+                            HStack {
+                                Text("Your Wager")
+                                    .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                                    .foregroundColor(.white)
+                                    .padding(.leading, 2)
+                                Spacer()
+                            }.frame(width: 345)
+                            if let game = viewModel.fetchedGame {
+                                VStack(spacing: 7.5) {
+                                    HStack(spacing: 7.5) {
+                                        oddsMiniViewAccepted(Moneyline: youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds, challengeResult: challengeResult)
+                                        
+                                        spreadMiniViewAccepted(
+                                            betType: youAreSender ? directChallengeTicket.senderBetType : directChallengeTicket.receiverBetType,
+                                            spread: youAreSender ? directChallengeTicket.senderBetLine : directChallengeTicket.receiverBetLine, challengeResult: challengeResult
+                                        )
+                                        
+                                        teamMiniViewAccepted(
+                                            teamString: youAreSender ? directChallengeTicket.senderTeamName : directChallengeTicket.receiverTeamName, challengeSender: !youAreSender, challengeResult: challengeResult
+                                        )
+                                        
+                                    }.frame(width: 345)
+                                    HStack(spacing: 7.5) {
+                                        riskMiniStructAccepted(
+                                            yourWager: true,
+                                            odds: youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds,
+                                            wagerAmount: youAreSender ? directChallengeTicket.senderWagerAmount : directChallengeTicket.receiverWagerAmount)
+                                        
+                                        rewardMiniStructAccepted(
+                                            yourWager: true,
+                                            odds: youAreSender ? directChallengeTicket.senderOdds : directChallengeTicket.receiverOdds,
+                                            wagerAmount: youAreSender ? directChallengeTicket.senderWagerAmount : directChallengeTicket.receiverWagerAmount)
+                                        
+                                    }.frame(width: 345)
+                                }
+                            }
+                        }.padding(.top, 7.5)
+                            .onAppear() {
+                                viewModel.fetchChallengeGames(matchingID: directChallengeTicket.gameIDs[0]) {}
+                                viewModel.fetchUserProfilePic(uid: directChallengeTicket.senderID) { }
+                            }
+                        VStack {
+                            
                             
                             Rectangle().foregroundColor(.white).frame(width: 300, height: 1)
-//                            Text("Game Details")
-//                                .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
-//                                .foregroundColor(.white)
-//                                .padding(.leading, 2)
+                            //                            Text("Game Details")
+                            //                                .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                            //                                .foregroundColor(.white)
+                            //                                .padding(.leading, 2)
                             
-                        
-                        if let game = viewModel.fetchedGame {
-                            HStack {
-                                gameFinalScore(game: game)
-                            }.frame(width: 345).background(K.finalColor.cardBlue).cornerRadius(7.5)
+                            
+                            if let game = viewModel.fetchedGame {
+                                HStack {
+                                    gameFinalScore(game: game)
+                                }.frame(width: 345).background(K.finalColor.cardBlue).cornerRadius(7.5)
+                            }
                         }
-                    }
-                    Spacer()
-                    
-                    if !inAction {
-                        if StaticUserData.shared.currentUser.poolBucks >= directChallengeTicket.receiverWagerAmount {
-                            Button(action: {
-                                print("Button tapped")
-                                viewModel.respondToChallenge(
-                                    acceptedChallenge: true,
-                                    challengeOG: directChallengeTicket,
-                                    publicChallenge: publicViewing ? true : false,
-                                    receiverBet: [
-                                        "groupNumber": 1,
-                                        "betNumber": 0,
-                                        "betType": directChallengeTicket.receiverBetType.rawValue,
-                                        "betLine": returnSpreadFromBetType(betType: directChallengeTicket.receiverBetType, game: viewModel.fetchedGame!),
-                                        "betOdds": MLtoPercentage(moneyline: betTypeToOdds(game: viewModel.fetchedGame!, betType: directChallengeTicket.receiverBetType)), // NEEDS TO BE ADJUSTED MLtoPercentage(moneyline: betTypeToOdds(game: game, betType: betType))
-                                        "result": "notStarted",
-                                        "gameID": directChallengeTicket.gameIDs[0],
-                                        "groupID": directChallengeTicket.customID,
-                                        "whichSport": viewModel.fetchedGame!.whichSport,
-                                        "timestamp": Timestamp(date: Date.now),
-                                        "teamBetOn": returnTeamBetOn(betType: directChallengeTicket.receiverBetType, game: viewModel.fetchedGame!), // NEEDS TO BE ADJUSTED
-                                        "points_bought": 0,
-                                        "timeFrame": ""
-                                    ]
-                                ) {
-                                    viewModel.fetchChallenges {
-                                        print("Toggling shouldNavigate")
-                                        shouldNavigate.toggle()
-                                        viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {}
+                        Spacer()
+                        
+                        if !inAction {
+                            if StaticUserData.shared.currentUser.poolBucks >= directChallengeTicket.receiverWagerAmount {
+                                Button(action: {
+                                    print("Button tapped")
+                                    viewModel.respondToChallenge(
+                                        acceptedChallenge: true,
+                                        challengeOG: directChallengeTicket,
+                                        publicChallenge: publicViewing ? true : false,
+                                        receiverBet: [
+                                            "groupNumber": 1,
+                                            "betNumber": 0,
+                                            "betType": directChallengeTicket.receiverBetType.rawValue,
+                                            "betLine": returnSpreadFromBetType(betType: directChallengeTicket.receiverBetType, game: viewModel.fetchedGame!),
+                                            "betOdds": MLtoPercentage(moneyline: betTypeToOdds(game: viewModel.fetchedGame!, betType: directChallengeTicket.receiverBetType)), // NEEDS TO BE ADJUSTED MLtoPercentage(moneyline: betTypeToOdds(game: game, betType: betType))
+                                            "result": "notStarted",
+                                            "gameID": directChallengeTicket.gameIDs[0],
+                                            "groupID": directChallengeTicket.customID,
+                                            "whichSport": viewModel.fetchedGame!.whichSport,
+                                            "timestamp": Timestamp(date: Date.now),
+                                            "teamBetOn": returnTeamBetOn(betType: directChallengeTicket.receiverBetType, game: viewModel.fetchedGame!), // NEEDS TO BE ADJUSTED
+                                            "points_bought": 0,
+                                            "timeFrame": ""
+                                        ]
+                                    ) {
+                                        viewModel.fetchChallenges {
+                                            print("Toggling shouldNavigate")
+                                            shouldNavigate.toggle()
+                                            viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {}
+                                        }
                                     }
-                                }
-                            }, label: {
+                                }, label: {
+                                    HStack {
+                                        Spacer()
+                                        Text("Accept Challenge")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                            .foregroundColor(.white)
+                                        Spacer()
+                                    }
+                                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 56, maxHeight: 56)
+                                    .background(K.finalColor.winningGreen)
+                                    .cornerRadius(10)
+                                    .padding(.horizontal, 16)
+                                    .padding(.bottom, 20)
+                                })
+                       
+                            } else {
                                 HStack {
                                     Spacer()
-                                    Text("Accept Challenge")
+                                    Text("Insufficient PoolBucks")
+                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                                        .foregroundColor(.white)
+                                    Spacer()
+                                }
+                                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 56, maxHeight: 56)
+                                .background(K.finalColor.potentialOrange)
+                                .cornerRadius(10)
+                                .padding(.horizontal, 16)
+                                .padding(.bottom, 20)
+                            }
+                            
+                        }
+                        
+                    }
+                } else {
+                    VStack {
+                        Text("Challenge Begun!")
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
+                            .foregroundColor(.white)
+                        Button(action: {
+                            shouldNavigate2 = true
+                        }, label: {
+                            HStack {
+                                HStack {
+                                    Spacer()
+                                    Text("Return")
                                         .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
                                         .foregroundColor(.white)
                                     Spacer()
@@ -229,30 +272,17 @@ struct acceptDirectChallenge: View {
                                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 56, maxHeight: 56)
                                 .background(K.finalColor.winningGreen)
                                 .cornerRadius(10)
-                                .padding(.horizontal, 16)
+                                .padding(.horizontal, 40)
                                 .padding(.bottom, 20)
-                            })
-                            .navigationDestination(isPresented: $shouldNavigate) {
-                                tabBarView(selection: .challenges)
                             }
-                        } else {
-                            HStack {
-                                Spacer()
-                                Text("Insufficient PoolBucks")
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20))
-                                    .foregroundColor(.white)
-                                Spacer()
-                            }
-                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 56, maxHeight: 56)
-                            .background(K.finalColor.potentialOrange)
-                            .cornerRadius(10)
-                            .padding(.horizontal, 16)
-                            .padding(.bottom, 20)
-                        }
-           
+                        })
                     }
-                    
+                    .navigationDestination(isPresented: $shouldNavigate2) {
+                        tabBarView(selection: .challenges)
+                    }
                 }
+                
+                
             }.padding(.top, 20)
             .onAppear() {
                 fetchUserProfilePic(uid: youAreSender ? directChallengeTicket.receiverID : directChallengeTicket.senderID) { (profileImageUrl, error) in

@@ -45,9 +45,9 @@ class authenticationViewModel: ObservableObject {
     @Published var promoCode: String = ""
     
     @Published var usernameTaken = false
-    @Published var updateURL: String = ""
+    @Published var updateURL: String? = nil
     
-    @Published var currentVersion = "2.1.0"
+    @Published var currentVersion = "2.1.1"
     
     fileprivate var currentNonce: String?
 
@@ -76,6 +76,7 @@ class authenticationViewModel: ObservableObject {
     init() {
         self.userSession = Auth.auth().currentUser
         self.fetchUser() {}
+        self.forceUpdate {}
         
     }
     
@@ -121,6 +122,7 @@ class authenticationViewModel: ObservableObject {
                 self.updateURL = updateURL2
                 completion()
             } else {
+                self.updateURL = ""
                 completion()
             }
         }

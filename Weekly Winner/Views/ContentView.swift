@@ -15,7 +15,7 @@ struct ContentView: View {
         NavigationStack {
             VStack {
                 if viewModel.userSession != nil {
-                    if viewModel.currUser?.username == nil {
+                    if viewModel.currUser?.username == nil || viewModel.updateURL == nil{
                        // if !shouldTransitionToTabBarView {
                             viewTest()
                                 .onAppear {
@@ -25,6 +25,8 @@ struct ContentView: View {
                                     }
                                 }
                         //}
+                    } else if viewModel.updateURL != "" {
+                        updateViewPage()
                     } else if viewModel.currUser?.username == "" {
                         profilePhotoSelectorView(model: viewModel)
                     } else if shouldTransitionToTabBarView {
@@ -59,6 +61,33 @@ struct viewTest: View {
             Text("Loading...")
                 .font(Font.custom(K.customFonts.lexendDecaSB, size: 30).weight(.semibold))
                 .foregroundColor(K.finalColor.titleBlue)
+        }
+    }
+}
+
+struct updateViewPage: View {
+    @State var showWebpage = false
+    
+    var body: some View {
+        VStack {
+            Button(action: {
+                showWebpage = true
+            }, label: {
+                HStack {
+                    Spacer()
+                    Text("Click to update WagerPool")
+                        .font(Font.custom(K.customFonts.lexendDecaSB, size: 30).weight(.semibold))
+                        .foregroundColor(K.finalColor.titleBlue)
+                        .padding()
+                    Spacer()
+                }.background(K.finalColor.cardBlue).cornerRadius(7.5)
+                    .padding(.horizontal)
+
+            })
+            
+        }
+        .sheet(isPresented: $showWebpage) {
+            SafariView(url: URL(string: "https://apps.apple.com/us/app/wagerpool/id6461645537")!)
         }
     }
 }

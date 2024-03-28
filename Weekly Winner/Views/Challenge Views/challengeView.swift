@@ -42,14 +42,11 @@ struct challengeView: View {
     var body: some View {
         ZStack {
             K.finalColor.backgroundBlue
-            VStack(alignment: .trailing){
+            VStack(alignment: .leading){
                 HStack{
+//                    Spacer()
                     currencyView(poolCoins: StaticUserData.shared.currentUser.poolCoins, poolBucks: $poolBucks)
-                    
                     Spacer()
-
-           
-                    
                 }.padding(.horizontal)
 
                 Spacer()
@@ -87,10 +84,8 @@ struct challengeView: View {
                 } else if tabSelected == 2 {
                     finishedCardView(viewModel: challengeVM)
                 }
-                
-                
                 Spacer()
-            }/*.background(K.finalColor.backgroundBlue)*/
+            }
             .padding(.top,30)
         }
         
@@ -144,17 +139,9 @@ struct challengeCardView: View {
                                 .background(K.finalColor.backgroundBlue)
                         } label: {
                             HStack (spacing: 7.5){
-//                                Image("poolBuck")
-//                                    .resizable()
-//                                    .frame(width: 20, height: 20)
                                 Text("Deposit/Withdraw")
                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
                                     .foregroundColor(.white)
-//                                Image("poolBuck")
-//                                    .resizable()
-//                                    .frame(width: 20, height: 20)
-                                
-                                
                             }
                             
                         }
@@ -178,18 +165,19 @@ struct challengeCardView: View {
             ScrollView {
                 VStack(spacing: 0){
                     ForEach(viewModel.publicPendingChallenges, id: \.customID) { challenge in
-//                        if challenge.senderID != StaticUserData.shared.currentUser.id {
-                            if challenge.status == "pendingPublicAcceptance" {// challenge has begun
-                                if Date() < challenge.gameCommenceTime.dateValue() {
-                                    publicWager(viewModel: viewModel, challenge: challenge)
-                                }
+                        if challenge.status == "pendingPublicAcceptance" {// challenge has begun
+                            if Date() < challenge.gameCommenceTime.dateValue() {
+                                publicWager(viewModel: viewModel, challenge: challenge)
                             }
-//                        }
+                        }
+
                     }
-                }.padding(.bottom, 40)
+                }.padding(.bottom, 75)
             }.refreshable {
                 viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {
                     poolBucks = StaticUserData.shared.currentUser.poolBucks
+                }
+                viewModel.fetchPublicChallenges {
                 }
             }
             .onAppear() {
@@ -816,7 +804,6 @@ struct currencyView: View {
     @Binding var poolBucks: Double
     var body: some View {
         Rectangle()
-        
             .frame(minWidth: 175, maxWidth: 175, minHeight: 40, maxHeight: 40)
             .foregroundStyle(K.finalColor.cardBlue)
             .clipShape(RoundedRectangle(cornerSize: CGSize(width: 10, height: 10)))

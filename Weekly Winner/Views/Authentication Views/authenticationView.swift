@@ -161,7 +161,7 @@ struct LoginView: View {
                             }
                         }
                     }.sheet(isPresented: $showWebpage) {
-                        SafariView(url: URL(string: viewModel.updateURL)!)
+                        SafariView(url: URL(string: "https://apps.apple.com/us/app/wagerpool/id6461645537")!)
                     }
                    
                     

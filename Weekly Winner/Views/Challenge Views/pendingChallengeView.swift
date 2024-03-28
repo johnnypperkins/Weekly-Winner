@@ -497,6 +497,26 @@ struct publicWager: View { // public challenges you can accept
     
     @State var declineConfirm: Bool = false
     
+
+    
+    var body: some View {
+        if challenge.senderID != StaticUserData.shared.currentUser.id {
+            NavigationLink(destination: {
+                acceptDirectChallenge(viewModel: viewModel, directChallengeTicket: challenge, inAction: false, publicViewing: false)
+                    .background(K.finalColor.backgroundBlue)
+            }, label: {
+                publicWagerDetails(challenge: challenge, yourTicket: false)
+            })
+        } else {
+            publicWagerDetails(challenge: challenge, yourTicket: true)
+        }
+        
+    }
+}
+
+struct publicWagerDetails: View {
+    let challenge: DirectChallengeTicket
+    let yourTicket: Bool
     var betLineFormatted: String {
         var extra = ""
         if challenge.receiverBetType == .over {
@@ -520,135 +540,94 @@ struct publicWager: View { // public challenges you can accept
     }
     
     var body: some View {
-        if challenge.senderID != StaticUserData.shared.currentUser.id {
-            NavigationLink(destination: {
-                acceptDirectChallenge(viewModel: viewModel, directChallengeTicket: challenge, inAction: false, publicViewing: false)
-                    .background(K.finalColor.backgroundBlue)
-            }, label: {
-                ZStack {
-                    HStack {
-                        Spacer()
-                        
-                        VStack(spacing: 5) {
-                            HStack (spacing: 4){
-                                Text("\(challenge.receiverTeamName) \(betLineFormatted) (\(challenge.receiverOdds))")
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+        ZStack {
+            HStack {
+                
+                    HStack (spacing: 4){
+                        Text("\(challenge.receiverTeamName) \(betLineFormatted) (\(challenge.receiverOdds > 0 ? "+" : "")\(challenge.receiverOdds))")
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                            .foregroundColor(.white)
+                    }.frame(width: 200)
+                
+                
+               
+                Spacer()
+                HStack (spacing: 0){
+                    Rectangle()
+                        .foregroundColor(.clear)
+                        .frame(minWidth: 0,maxWidth: 0.5, minHeight: 0, maxHeight: .infinity)
+                        .overlay(Rectangle()
+                            .stroke(.white, lineWidth: 0.4))
+                        .padding(.horizontal,1)
+                        .padding(.vertical, 4)
+                    
+                    VStack (spacing: 0){
+                        HStack (spacing: 0){
+                            HStack {
+                                Spacer()
+                                Text("Risk:")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 15))
                                     .foregroundColor(.white)
-                                    .padding(.top, 22).padding(.horizontal)
-                            }
-                            Rectangle().fill(Color.white).frame(width: 250, height: 1)
-
-                                
-                            HStack (alignment: .bottom, spacing: 0){
-                                    currencyImage(currency: "poolBucks", dimension: 20)
-                                        .padding(.trailing, 2)
-                                    Text("\(String(format: "%.2f", challenge.receiverWagerAmount))") // NEED TO FIX
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
-                                        .foregroundColor(.white)  
-                                        .padding(.trailing, 4)
-
-                                    Text("to win") // NEED TO FIX
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 9))
-                                        .foregroundColor(K.veryLightGray)
-                                        .padding(.trailing, 4)
-                                    currencyImage(currency: "poolBucks", dimension: 20)
-                                        .padding(.trailing, 2)
-                                    Text("\(String(format: "%.2f", returnPotentialWinnings(wagerAmount: challenge.receiverWagerAmount, MLOdds: challenge.receiverOdds)))") // NEED TO FIX
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
-                                        .foregroundColor(.white)
-                            }.padding(.bottom, 3)
-                            //}.padding(.bottom)
-                        }
-                        Spacer()
-                    }
-                        
-                    HStack {
-                        VStack {
-                            Text("Expires: \(toHHMMSS(from:challenge.gameCommenceTime.dateValue()))")
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 8))
-                                .foregroundColor(.white)
-                                .padding(4)
-                                .background(K.finalColor.deleteRed)
-                                .cornerRadius(5, corners: .bottomRight)
-                            Spacer()
-                                
-                        }
-                        Spacer()
-                    }
-                    
-                }
-                .background(K.finalColor.cardBlue)
-                .cornerRadius(10)
-                .padding(.horizontal, 15)
-                .padding(.bottom, 10)
-            })
-        } else {
-            ZStack {
-                HStack {
-                    Spacer()
-                    
-                    VStack(spacing: 5) {
-                        HStack (spacing: 4){
-                            Text("\(challenge.receiverTeamName) \(betLineFormatted) (\(challenge.receiverOdds))")
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
-                                .foregroundColor(.white)
-                                .padding(.top, 22).padding(.horizontal)
-                        }
-                        Rectangle().fill(Color.white).frame(width: 250, height: 1)
-
+                                    .padding(.trailing, 3)
+                                currencyImage(currency: challenge.currencyChosen, dimension: 16)
+                                    .padding(.trailing, 3)
+                            }.frame(width: 77)
                             
-                        HStack (alignment: .bottom, spacing: 0){
-                                currencyImage(currency: "poolBucks", dimension: 20)
-                                    .padding(.trailing, 2)
-                                Text("\(String(format: "%.2f", challenge.receiverWagerAmount))") // NEED TO FIX
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
+                            
+                            Text("\(String(format: "%.2f", challenge.receiverWagerAmount))") // NEED TO FIX
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 15))
+                                .foregroundColor(.white)
+                                
+                            Spacer()
+                        }
+                        HStack (spacing: 0){
+                            HStack {
+                                Spacer()
+                                Text("Win:")
+                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 15))
                                     .foregroundColor(.white)
-                                    .padding(.trailing, 4)
-
-                                Text("to win") // NEED TO FIX
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 9))
-                                    .foregroundColor(K.veryLightGray)
-                                    .padding(.trailing, 4)
-                                currencyImage(currency: "poolBucks", dimension: 20)
-                                    .padding(.trailing, 2)
-                                Text("\(String(format: "%.2f", returnPotentialWinnings(wagerAmount: challenge.receiverWagerAmount, MLOdds: challenge.receiverOdds)))") // NEED TO FIX
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18))
-                                    .foregroundColor(.white)
-                        }.padding(.bottom, 3)
-                        //}.padding(.bottom)
+                                    .padding(.trailing, 3)
+                                currencyImage(currency: challenge.currencyChosen, dimension: 16)
+                                    .padding(.trailing, 3)
+                            }.frame(width: 77)
+                            
+                            Text("\(String(format: "%.2f", returnPotentialWinnings(wagerAmount: challenge.receiverWagerAmount, MLOdds: challenge.receiverOdds)))") // NEED TO FIX
+                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 15))
+                                .foregroundColor(.white)
+                                
+                            Spacer()
+                        }
                     }
+                }.frame(width: 140)
+            }.padding(.top, 22).padding(.horizontal, 6).padding(.bottom,6)
+
+            VStack {
+                HStack {
+                    Text("Expires: \(toHHMMSS(from:challenge.gameCommenceTime.dateValue()))")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 7))
+                        .foregroundColor(.white)
+                        .padding(2.5)
+                        .background(K.finalColor.deleteRed)
+                        .cornerRadius(5, corners: .bottomRight)
                     Spacer()
-                }
-                    
-                VStack {
-                    HStack {
-                        Text("Expires: \(toHHMMSS(from:challenge.gameCommenceTime.dateValue()))")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 8))
-                            .foregroundColor(.white)
-                            .padding(4)
-                            .background(K.finalColor.deleteRed)
-                            .cornerRadius(5, corners: .bottomRight)
-                        Spacer()
+                    if yourTicket {
                         Text("Your Challenge")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 8))
+                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 7))
                             .foregroundColor(.white)
-                            .padding(4)
+                            .padding(2.5)
                             .background(K.finalColor.potentialOrange)
                             .cornerRadius(5, corners: .bottomLeft)
-                            
                     }
-                    Spacer()
+                        
                 }
-                
+                Spacer()
             }
-            .background(K.finalColor.cardBlue)
-            .cornerRadius(10)
-            .padding(.horizontal, 15)
-            .padding(.bottom, 10)
             
-
         }
-        
+        .background(K.finalColor.cardBlue)
+        .cornerRadius(10)
+        .padding(.horizontal, 15)
+        .padding(.bottom, 10)
     }
 }
 
