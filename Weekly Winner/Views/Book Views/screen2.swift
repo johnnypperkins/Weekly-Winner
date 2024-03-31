@@ -16,7 +16,7 @@ struct BettingAppView: View {
     @State private var searchTerm: String = ""
     @State private var poolBucks = StaticUserData.shared.currentUser.poolBucks
     
-    @State private var rankedCommence = false
+    @State private var rankedCommence = true
     @State var isOn = true
 
     func shouldAppear(search: String, input: String) -> Bool {

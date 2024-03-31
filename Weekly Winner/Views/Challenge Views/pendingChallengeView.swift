@@ -543,14 +543,13 @@ struct publicWagerDetails: View {
         ZStack {
             HStack {
                 
-                    HStack (spacing: 4){
-                        Text("\(challenge.receiverTeamName) \(betLineFormatted) (\(challenge.receiverOdds > 0 ? "+" : "")\(challenge.receiverOdds))")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-                            .foregroundColor(.white)
-                    }.frame(width: 200)
+                HStack (spacing: 4){
+                    Text("\(challenge.receiverTeamName) \(betLineFormatted) (\(challenge.receiverOdds > 0 ? "+" : "")\(challenge.receiverOdds))")
+                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 3)
+                }
                 
-                
-               
                 Spacer()
                 HStack (spacing: 0){
                     Rectangle()
@@ -563,15 +562,15 @@ struct publicWagerDetails: View {
                     
                     VStack (spacing: 0){
                         HStack (spacing: 0){
-                            HStack {
-                                Spacer()
+                            
+                                
                                 Text("Risk:")
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 15))
                                     .foregroundColor(.white)
-                                    .padding(.trailing, 3)
+                                    .padding(.horizontal, 5)
                                 currencyImage(currency: challenge.currencyChosen, dimension: 16)
                                     .padding(.trailing, 3)
-                            }.frame(width: 77)
+                            
                             
                             
                             Text("\(String(format: "%.2f", challenge.receiverWagerAmount))") // NEED TO FIX
@@ -581,15 +580,15 @@ struct publicWagerDetails: View {
                             Spacer()
                         }
                         HStack (spacing: 0){
-                            HStack {
-                                Spacer()
-                                Text("Win:")
+                            
+                                
+                                Text("Win: ")
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 15))
                                     .foregroundColor(.white)
-                                    .padding(.trailing, 3)
+                                    .padding(.horizontal, 5)
                                 currencyImage(currency: challenge.currencyChosen, dimension: 16)
                                     .padding(.trailing, 3)
-                            }.frame(width: 77)
+                            
                             
                             Text("\(String(format: "%.2f", returnPotentialWinnings(wagerAmount: challenge.receiverWagerAmount, MLOdds: challenge.receiverOdds)))") // NEED TO FIX
                                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 15))
@@ -597,8 +596,8 @@ struct publicWagerDetails: View {
                                 
                             Spacer()
                         }
-                    }
-                }.frame(width: 140)
+                    }.frame(width: 120).padding(.trailing,5)
+                }
             }.padding(.top, 22).padding(.horizontal, 6).padding(.bottom,6)
 
             VStack {
