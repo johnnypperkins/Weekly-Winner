@@ -164,20 +164,32 @@ struct challengeCardView: View {
             }
             ScrollView {
                 VStack(spacing: 0){
-                    ForEach(viewModel.publicPendingChallenges, id: \.customID) { challenge in
-                        if challenge.status == "pendingPublicAcceptance" {// challenge has begun
-                            if Date() < challenge.gameCommenceTime.dateValue() {
-                                publicWager(viewModel: viewModel, challenge: challenge)
-                            }
-                        }
-
-                    }
+//                    ForEach(viewModel.publicPendingChallenges, id: \.customID) { challenge in
+//                        if challenge.status == "pendingPublicAcceptance" {// challenge has begun
+//                            if Date() < challenge.gameCommenceTime.dateValue() {
+//                                publicWager(viewModel: viewModel, challenge: challenge)
+//                            }
+//                        }
+//
+//                    }
+                    ForEach(viewModel.sportsWithChallenges.keys.sorted(), id: \.self) { sportKey in
+                        SportSectionView(viewModel: viewModel, challenges: Binding(get: {
+                                                              viewModel.sportsWithChallenges[sportKey] ?? []
+                                                          }, set: { _ in }),
+                                                         isExpanded: Binding(get: {
+                                                              viewModel.expandedSections[sportKey] ?? false
+                                                          }, set: { newValue in
+                                                              viewModel.expandedSections[sportKey] = newValue
+                                                          }),
+                                                         sportName: sportKey)
+                                    }
                 }.padding(.bottom, 75)
             }.refreshable {
                 viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {
                     poolBucks = StaticUserData.shared.currentUser.poolBucks
                 }
                 viewModel.fetchPublicChallenges {
+                    viewModel.populateSportsChallenges()
                 }
             }
             .onAppear() {
@@ -188,6 +200,7 @@ struct challengeCardView: View {
     //                viewModel.fetchChallengeGames(matchingIDs: viewModel.gamesIDsInChallenges) { games in
     //                    viewModel.gamesInChallenges = games ?? []
     //                }
+                    viewModel.populateSportsChallenges()
                 }
             }
             .popup(isPresented: $showRulesPage) {
@@ -207,6 +220,53 @@ struct challengeCardView: View {
                 
             }
         }
+    }
+}
+
+
+struct SportSectionView: View {
+    @ObservedObject var viewModel: challengeViewModel
+    @Binding var challenges: [DirectChallengeTicket] // Challenges for this sport
+    @Binding var isExpanded: Bool // Binding to the expanded state of this section
+    var sportName: String
+    
+    var body: some View {
+        VStack {
+            HStack {
+                Text(sportName)
+                    .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                    .foregroundColor(.white)
+                Spacer()
+                Image(systemName: isExpanded ? "chevron.up" : "chevron.down").foregroundStyle(.white) // Dropdown icon
+                    .onTapGesture {
+                        // Toggle expanded state when the icon is tapped
+                        withAnimation{
+                            isExpanded.toggle()
+                        }
+                    }
+            }.padding()
+            
+            if isExpanded {
+                ForEach(challenges, id: \.customID) { challenge in
+                    // Replace `ChallengeView` with whatever view you use to display each challenge
+                    if challenge.status == "pendingPublicAcceptance" {
+                        if Date() < challenge.gameCommenceTime.dateValue() {
+                            publicWager(viewModel: viewModel, challenge: challenge)
+                                .padding(.horizontal,-10)
+                        }
+                    }
+                }
+            }
+        }
+        .background(K.finalColor.backgroundBlue)
+        .cornerRadius(8)
+        .shadow(radius: 2)
+        
+        .overlay(
+            RoundedRectangle(cornerRadius: 8) // Match cornerRadius with the VStack's cornerRadius
+                .stroke(K.finalColor.blueGray, lineWidth: 1) // White line as border
+        )
+        .padding(.horizontal)
     }
 }
 

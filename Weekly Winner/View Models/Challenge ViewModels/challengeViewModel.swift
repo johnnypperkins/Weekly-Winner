@@ -45,16 +45,67 @@ class challengeViewModel: ObservableObject {
     @Published var poolCoins: Double = StaticUserData.shared.currentUser.poolCoins
     @Published var poolBucks: Double = StaticUserData.shared.currentUser.poolBucks
     
-
+    
+  
+    @Published var sportsWithChallenges: [String: [DirectChallengeTicket]] = [
+            "NCAAB": [], // Example initial value, should be populated with actual challenges
+            "NBA": [],
+            "NHL": []
+        ]
+    
+    @Published var expandedSections: [String: Bool] = [
+            "NCAAB": false,
+            "NBA": false,
+            "NHL": false
+        ]
 
 
     init() {
         self.fetchAllGames() {
             self.fetchTimeGames(amountTime: 1) {
                 
+                
             }
         }
     }
+    
+    func populateSportsChallenges() {
+        // Assuming `allChallenges` is an array of all your challenges
+        let allChallenges: [DirectChallengeTicket] = publicPendingChallenges // Populate this with your challenges
+
+        // Temporary storage for organizing challenges by sport
+        var tempSportsWithChallenges: [String: [DirectChallengeTicket]] = [
+            "NCAAB": [],
+            "NBA": [],
+            "NHL": []
+        ]
+
+        // Use a dispatch group to manage asynchronous fetches
+        let fetchGroup = DispatchGroup()
+
+        for challenge in allChallenges {
+            fetchGroup.enter()
+            fetchGameDocument(byID: challenge.gameIDs[0]) { gameOptional in
+                defer { fetchGroup.leave() }
+
+                guard let game = gameOptional else { return }
+                    
+                    // Use game.whichSport directly since it's non-optional
+                    if tempSportsWithChallenges.keys.contains(game.whichSport) {
+                        tempSportsWithChallenges[game.whichSport, default: []].append(challenge)
+                    }
+            }
+        }
+
+        // Once all game data has been fetched and challenges categorized
+        fetchGroup.notify(queue: .main) {
+            // Update the main sportsWithChallenges dictionary
+            self.sportsWithChallenges = tempSportsWithChallenges
+            // Update the UI by notifying observers of the change
+            self.objectWillChange.send()
+        }
+    }
+    
     
     func uploadChallengeBet(bet: Bet) {
         // stays local
