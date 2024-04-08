@@ -53,6 +53,8 @@
 		8603AD122B1099C500B3B6BD /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = 8603AD112B1099C500B3B6BD /* FirebasePerformance */; };
 		8603AD142B1099C500B3B6BD /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 8603AD132B1099C500B3B6BD /* FirebaseStorage */; };
 		8603AD172B109A0E00B3B6BD /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 8603AD162B109A0E00B3B6BD /* Kingfisher */; };
+		862095952BBB511100D98163 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 862095942BBB511100D98163 /* GoogleMobileAds */; };
+		862095972BBB556000D98163 /* rewardAdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 862095962BBB556000D98163 /* rewardAdView.swift */; };
 		863FC0512A41176400405F2A /* ticketViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863FC0502A41176400405F2A /* ticketViewModel.swift */; };
 		863FC0532A466FD500405F2A /* groupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863FC0522A466FD500405F2A /* groupService.swift */; };
 		863FF91D2A5B0FA200942CE7 /* sportsSelecterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863FF91C2A5B0FA200942CE7 /* sportsSelecterView.swift */; };
@@ -168,6 +170,7 @@
 		3CFD81C32B6C64E600DB3E7C /* paymentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = paymentViewModel.swift; sourceTree = "<group>"; };
 		3CFEC4892B4E517800C11B5C /* challengeTicketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = challengeTicketView.swift; sourceTree = "<group>"; };
 		3CFEC48B2B4E716000C11B5C /* finalizeChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = finalizeChallengeView.swift; sourceTree = "<group>"; };
+		862095962BBB556000D98163 /* rewardAdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = rewardAdView.swift; sourceTree = "<group>"; };
 		863FC0502A41176400405F2A /* ticketViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ticketViewModel.swift; sourceTree = "<group>"; };
 		863FC0522A466FD500405F2A /* groupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = groupService.swift; sourceTree = "<group>"; };
 		863FF91C2A5B0FA200942CE7 /* sportsSelecterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sportsSelecterView.swift; sourceTree = "<group>"; };
@@ -253,6 +256,7 @@
 				8603AD0C2B1099C500B3B6BD /* FirebaseFunctions in Frameworks */,
 				8603AD172B109A0E00B3B6BD /* Kingfisher in Frameworks */,
 				86F03BC32BB20DA6009169AC /* Pow in Frameworks */,
+				862095952BBB511100D98163 /* GoogleMobileAds in Frameworks */,
 				8603AD0A2B1099C500B3B6BD /* FirebaseFirestoreSwift in Frameworks */,
 				8603AD082B1099C500B3B6BD /* FirebaseFirestoreCombine-Community in Frameworks */,
 				8603AD062B1099C500B3B6BD /* FirebaseFirestore in Frameworks */,
@@ -309,6 +313,7 @@
 				8688C58F2AFFDCBD007EED78 /* GifImage.swift */,
 				868FDA8A2A8AD4BC0092E3C5 /* splashScreenView.swift */,
 				867801562A213010006FE479 /* ContentView.swift */,
+				862095962BBB556000D98163 /* rewardAdView.swift */,
 				867801812A213F83006FE479 /* screen1.swift */,
 				867801872A213FA5006FE479 /* ticketView.swift */,
 				863FF91C2A5B0FA200942CE7 /* sportsSelecterView.swift */,
@@ -552,6 +557,7 @@
 				8642C2152B249D0E00BB96AD /* GoogleSignInSwift */,
 				3C9D85BF2B63551F001E702C /* PopupView */,
 				86F03BC22BB20DA6009169AC /* Pow */,
+				862095942BBB511100D98163 /* GoogleMobileAds */,
 			);
 			productName = "Weekly Winner";
 			productReference = 867801512A213010006FE479 /* Weekly Winner.app */;
@@ -631,6 +637,7 @@
 				8642C2122B249D0D00BB96AD /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 				3C9D85BE2B63551F001E702C /* XCRemoteSwiftPackageReference "PopupView" */,
 				86F03BC12BB20DA6009169AC /* XCRemoteSwiftPackageReference "Pow" */,
+				862095932BBB511100D98163 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 			);
 			productRefGroup = 867801522A213010006FE479 /* Products */;
 			projectDirPath = "";
@@ -736,6 +743,7 @@
 				3C95678A2B90081E000A1A56 /* betPopupView.swift in Sources */,
 				86F03BBE2BB1B00C009169AC /* addFriendsView.swift in Sources */,
 				868FDA8D2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift in Sources */,
+				862095972BBB556000D98163 /* rewardAdView.swift in Sources */,
 				866251102A3E862400708495 /* Ticket.swift in Sources */,
 				866251122A3E892E00708495 /* Bet.swift in Sources */,
 				3C972C8A2B2FC07100671D0F /* screen1ViewModel.swift in Sources */,
@@ -946,6 +954,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[arch=*]" = "-ObjC";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
 				MARKETING_VERSION = 2.1.1;
@@ -1173,6 +1182,14 @@
 				minimumVersion = 7.0.0;
 			};
 		};
+		862095932BBB511100D98163 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.2.0;
+			};
+		};
 		8642C2122B249D0D00BB96AD /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
@@ -1261,6 +1278,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8603AD152B109A0E00B3B6BD /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		862095942BBB511100D98163 /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 862095932BBB511100D98163 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
 		};
 		8642C2132B249D0E00BB96AD /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;

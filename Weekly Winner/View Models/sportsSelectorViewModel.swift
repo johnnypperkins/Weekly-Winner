@@ -15,6 +15,9 @@ enum sportsSelecterViewModel: Int, CaseIterable {
     case NBA
     case NCAAB
     case NHL
+    case MLB
+    case EPL
+    
     
     var title: String {
         switch self {
@@ -24,6 +27,8 @@ enum sportsSelecterViewModel: Int, CaseIterable {
             case .NBA: return "NBA"
             case .NCAAB: return "NCAAB"
             case .NHL: return "NHL"
+            case .MLB: return "MLB"
+            case .EPL: return "EPL"
         }
     }
         
@@ -36,6 +41,8 @@ enum sportsSelecterViewModel: Int, CaseIterable {
             case .NBA: return "basketball.fill"
             case .NCAAB: return "basketball.fill"
             case .NHL: return "figure.hockey"
+            case .MLB: return "figure.baseball"
+            case .EPL: return "figure.soccer"
         }
     }
     

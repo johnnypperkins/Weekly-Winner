@@ -37,6 +37,8 @@ class bookViewModel: ObservableObject {
         case NBA = "NBA"
         case NCAAB = "NCAAB"
         case NHL = "NHL"
+        case MLB = "MLB"
+        case EPL = "EPL"
     }
     
 

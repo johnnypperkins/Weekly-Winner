@@ -6,16 +6,21 @@ import FirebaseAuth
 import FirebaseMessaging
 import UserNotifications
 import FirebaseAnalytics
+import GoogleMobileAds
 
 // Log a test event
 
 import SwiftUI
 
 final class AppDelegate: NSObject, UIApplicationDelegate {
+    
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
+        
+        GADMobileAds.sharedInstance().start(completionHandler: nil)
+        
         FirebaseApp.configure()
         Analytics.logEvent("test_event", parameters: [
             "name": "test_name" as NSObject,
@@ -96,7 +101,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
 @main
  struct Weekly_WinnerApp: App {
+     @Environment(\.scenePhase) private var scenePhase
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     var body: some Scene {
         WindowGroup {
             splashScreenView()
@@ -113,6 +120,15 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 standardAppearance.compactInlineLayoutAppearance = itemAppearance
                 UITabBar.appearance().standardAppearance = standardAppearance
             }
+        }.onChange(of: scenePhase) { (newScenePhase) in
+            if case .active = newScenePhase {
+                initMobileAds()
+            }
         }
     }
+     func initMobileAds() {
+             GADMobileAds.sharedInstance().start(completionHandler: nil)
+             // comment this if you want SDK Crash Reporting:
+             GADMobileAds.sharedInstance().disableSDKCrashReporting()
+         }
 }

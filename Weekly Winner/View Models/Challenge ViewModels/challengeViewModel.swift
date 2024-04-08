@@ -50,13 +50,17 @@ class challengeViewModel: ObservableObject {
     @Published var sportsWithChallenges: [String: [DirectChallengeTicket]] = [
             "NCAAB": [], // Example initial value, should be populated with actual challenges
             "NBA": [],
-            "NHL": []
+            "NHL": [],
+            "MLB": [],
+            "EPL": []
         ]
     
     @Published var expandedSections: [String: Bool] = [
             "NCAAB": false,
             "NBA": false,
-            "NHL": false
+            "NHL": false,
+            "MLB": false,
+            "EPL": false
         ]
 
 
@@ -77,7 +81,9 @@ class challengeViewModel: ObservableObject {
         var tempSportsWithChallenges: [String: [DirectChallengeTicket]] = [
             "NCAAB": [],
             "NBA": [],
-            "NHL": []
+            "NHL": [],
+            "MLB": [],
+            "EPL": []
         ]
 
         // Use a dispatch group to manage asynchronous fetches

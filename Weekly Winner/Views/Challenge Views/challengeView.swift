@@ -93,13 +93,169 @@ struct challengeView: View {
         
 }
 
+struct FilterSheetView: View {
+    @Binding var selectedSport: String
+    @Binding var maxWagerAmount: Double
+    @Binding var showOnlyFriends: Bool
+    @Binding var filtered: [DirectChallengeTicket]
+    @ObservedObject var viewModel: challengeViewModel
+    @State var isExpanded = false
+    
+    @Environment(\.dismiss) private var dismiss
+    
+    var friendUIDs: [String]
+    
+    var body: some View {
+        VStack {VStack{
+            Text("Filter Challenges")
+                .font(.custom(K.customFonts.lexendDecaSB, size: 20))
+                .foregroundColor(K.finalColor.titleBlue)
+                .padding(.vertical)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 5) {
+                    Button(action: {
+                        selectedSport = "All"
+                    }) {
+                        Text("All")
+                            .font(.custom("LexendDeca-Medium", size: 18))
+                            .foregroundColor(.white)
+                            .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                            .frame(width: 80, height: 30)
+                            .background(selectedSport == "All" ? K.finalColor.titleBlue : Color.gray)
+                            .cornerRadius(5)
+                    }
+                    ForEach(viewModel.sportsWithChallenges.keys.sorted(), id: \.self) { sport in
+                        Button(action: {
+                            selectedSport = sport
+                        }) {
+                            Text(sport)
+                                .font(.custom("LexendDeca-Medium", size: 18))
+                                .foregroundColor(.white)
+                                .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                                .frame(width: 80, height: 30)
+                                .background(selectedSport == sport ? K.finalColor.titleBlue : Color.gray)
+                                .cornerRadius(5)
+                        }
+                    }
+                }.padding(.bottom, 6)
+            }
+            //                Section(header: Text("Sport")) {
+            //                    Picker("Select Sport", selection: $selectedSport) {
+            //                        Text("All").tag("All")
+            //                        ForEach(viewModel.sportsWithChallenges.keys.sorted(), id: \.self) { key in
+            //                            Text(key).tag(key)
+            //                        }
+            //                    }
+            //                }
+            
+            
+            
+                
+                HStack {
+                    Text("Wager Amount: ")
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                        .foregroundColor(.white)
+                    if maxWagerAmount != 0 {
+                        Text("\(maxWagerAmount, specifier: "%.0f")")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                            .foregroundStyle(.white)
+                    }
+                    else {
+                        Text("N/A")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                            .foregroundStyle(.white)
+                    }
+                    Spacer()
+                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down").foregroundStyle(.white) // Dropdown icon
+                        .onTapGesture {
+                            // Toggle expanded state when the icon is tapped
+                            withAnimation{
+                                isExpanded.toggle()
+                            }
+                        }
+                }.padding()
+            VStack {
+                if isExpanded {
+                    // Display the current value of the slider
+               
+                    
+                    // Slider
+                    Slider(value: $maxWagerAmount, in: 0...1000)
+                        .accentColor(K.finalColor.titleBlue)
+                        .foregroundStyle(.white)
+                    
+                    
+                    HStack {
+                        Text("0") // Min value
+                            .foregroundStyle(.white)
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                        Spacer()
+                        Text("\(StaticUserData.shared.currentUser.poolBucks, specifier: "%.0f")") // Max value
+                            .foregroundStyle(.white)
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
+                    }
+                }
+                
+            } // Adjust range as needed
+            
+            
+            
+            
+            
+            Button(action: {
+                // Call your filterChallenges function
+                filterChallenges()
+                // Dismiss the current view or sheet
+                withAnimation{
+                    dismiss()
+                }
+            }, label: {
+                Text("Apply Filter")
+                    .fontWeight(.semibold) // Adjust the font weight as needed
+                    .foregroundColor(.white) // Text color
+                    .padding(.vertical, 10) // Vertical padding inside the button
+                    .padding(.horizontal, 40) // Horizontal padding to increase button width
+            })
+            .frame(minWidth: 0, maxWidth: .infinity) // Make the button width flexible
+            .background(K.finalColor.titleBlue) // Button background color
+            .cornerRadius(25) // Adjust the corner radius to get the pill shape
+            .padding()
+            .padding(.bottom,50)
+        }.padding(.horizontal)
+        }.background(K.finalColor.cardBlue)
+    }
+    func filterChallenges() {
+        if selectedSport == "All" {
+            filtered = viewModel.publicPendingChallenges.filter { challenge in
+                let wagerAmountCheck = maxWagerAmount > 0 ? challenge.receiverWagerAmount <= maxWagerAmount : true
+                return wagerAmountCheck &&
+                       (!showOnlyFriends || friendUIDs.contains(challenge.senderID))
+            }
+        } else {
+            filtered = viewModel.sportsWithChallenges[selectedSport]?.filter { challenge in
+                let wagerAmountCheck = maxWagerAmount > 0 ? challenge.receiverWagerAmount <= maxWagerAmount : true
+                return wagerAmountCheck &&
+                       (!showOnlyFriends || friendUIDs.contains(challenge.senderID))
+            } ?? viewModel.publicPendingChallenges
+        }
+        // Update your view model's state based on 'filtered' results
+    }
+}
 
 
 
 struct challengeCardView: View {
     @ObservedObject var viewModel: challengeViewModel
     @State private var showRulesPage = false
+    @State private var showFilterView = false
     @Binding var poolBucks: Double
+    
+    @State var selectedSport: String = "All"
+    @State var maxWagerAmount: Double = 0
+    @State var showOnlyFriends: Bool = false
+    @State var filtered: [DirectChallengeTicket] = []
+    
     var body: some View {
         VStack {
             HStack (spacing: 10) {
@@ -154,13 +310,26 @@ struct challengeCardView: View {
                 
                 
             }.padding(.horizontal,15)
-            HStack {
-                Spacer()
-                Text("Public Challenges Available")
-                    .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
-                    .foregroundColor(.white)
-                    .padding(.top)
-                Spacer()
+            ZStack{
+                HStack {
+                    Spacer()
+                    Text("Public Challenges Available")
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
+                        .foregroundColor(.white)
+                        .padding(.top)
+                    Spacer()
+                }
+                HStack{
+                    Spacer()
+                    Button(action: {showFilterView.toggle()}, label: {
+                        Image(systemName: "line.3.horizontal.decrease")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundColor(.white)
+                            .padding()
+                    })
+                    
+                }
             }
             ScrollView {
                 VStack(spacing: 0){
@@ -172,17 +341,26 @@ struct challengeCardView: View {
 //                        }
 //
 //                    }
-                    ForEach(viewModel.sportsWithChallenges.keys.sorted(), id: \.self) { sportKey in
-                        SportSectionView(viewModel: viewModel, challenges: Binding(get: {
-                                                              viewModel.sportsWithChallenges[sportKey] ?? []
-                                                          }, set: { _ in }),
-                                                         isExpanded: Binding(get: {
-                                                              viewModel.expandedSections[sportKey] ?? false
-                                                          }, set: { newValue in
-                                                              viewModel.expandedSections[sportKey] = newValue
-                                                          }),
-                                                         sportName: sportKey)
-                                    }
+//                    ForEach(viewModel.sportsWithChallenges.keys.sorted(), id: \.self) { sportKey in
+//                        SportSectionView(viewModel: viewModel, challenges: Binding(get: {
+//                                                              viewModel.sportsWithChallenges[sportKey] ?? []
+//                                                          }, set: { _ in }),
+//                                                         isExpanded: Binding(get: {
+//                                                              viewModel.expandedSections[sportKey] ?? false
+//                                                          }, set: { newValue in
+//                                                              viewModel.expandedSections[sportKey] = newValue
+//                                                          }),
+//                                                         sportName: sportKey)
+//                                    }
+                    ForEach(filtered, id: \.customID) { challenge in
+                        // Replace `ChallengeView` with whatever view you use to display each challenge
+                        if challenge.status == "pendingPublicAcceptance" {
+                            if Date() < challenge.gameCommenceTime.dateValue() {
+                                publicWager(viewModel: viewModel, challenge: challenge)
+                                    .padding(.horizontal,-10)
+                            }
+                        }
+                    }
                 }.padding(.bottom, 75)
             }.refreshable {
                 viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {
@@ -200,13 +378,30 @@ struct challengeCardView: View {
     //                viewModel.fetchChallengeGames(matchingIDs: viewModel.gamesIDsInChallenges) { games in
     //                    viewModel.gamesInChallenges = games ?? []
     //                }
+                    filtered = viewModel.publicPendingChallenges
                     viewModel.populateSportsChallenges()
                 }
             }
             .popup(isPresented: $showRulesPage) {
                 Text("The popup")
                 explanationView(pageSelected: 1)
-                    .frame(height: 650)
+                    .frame(height: 600)
+                
+            } customize: {
+                $0
+                    .type (.toast)
+                    .position(.bottom)
+                //.dragToDismiss(true)
+                    .isOpaque(true)
+                    .closeOnTap(false)
+                    .closeOnTapOutside(true)
+                    .backgroundColor(.black.opacity(0.4))
+                
+            }
+            .popup(isPresented: $showFilterView) {
+                Text("The popup")
+                FilterSheetView(selectedSport: $selectedSport, maxWagerAmount: $maxWagerAmount, showOnlyFriends: $showOnlyFriends, filtered: $filtered, viewModel: viewModel, friendUIDs: [])
+//                    .frame(height: 800)
                 
             } customize: {
                 $0

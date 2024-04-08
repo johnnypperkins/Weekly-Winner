@@ -74,7 +74,7 @@ func returnOdds(betType: BetType, ogSpr: Int, chsSpr: Int, whichSport: String) -
         return NFL_and_NCAAF_Odds(chosenSpread: chsSpr, originalSpread: ogSpr, betType: betType)
     } else if whichSport == "NBA" {
         return NBAOdds(chosenSpread: chsSpr, originalSpread: ogSpr, betType: betType)
-    } else if whichSport == "NCAAB" {
+    } else if whichSport == "NCAAB" || whichSport == "MLB" || whichSport == "EPL" {
         return NCAABOdds(chosenSpread: chsSpr, originalSpread: ogSpr, betType: betType)
     }
     return 0.5
