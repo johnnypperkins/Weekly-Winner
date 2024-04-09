@@ -14,6 +14,9 @@ import FirebaseFirestore
 class ticketViewModel: ObservableObject {
     
     @Published var totalBetArrays = [[Bet]]()
+    
+    @Published var currentUserDailyBets: [Bet] = []
+    
     @Published var currentTicketFormat: [Int] = [1,1,1,1,1]
     @Published var totalWon: Double = 0.0
     @Published var totalPotentialWon: Double = 0.0
@@ -405,56 +408,29 @@ class ticketViewModel: ObservableObject {
     }
     
     func fetchBets(uid: String, for groupNumber: Int, ticketFormat: [Int], timeFrame: String, completion: @escaping () -> Void) {
-        // totalBetArrats
-        // availableBetsArray
-        let documentLoc:String = {
-            if timeFrame == "weekly" {
-                return "week"
-            } else {
-                return "day"
-            }
-        }()
+
+        let documentLoc = "day"
+        let collectionLoc = "currentDayBets"
         
-        let collectionLoc:String = {
-            if timeFrame == "weekly" {
-                return "currentWeekBets"
-            } else {
-                return "currentDayBets"
-            }
-        }()
-        
-            let query = self.db.collection("users").document(uid).collection("bets").document(documentLoc).collection(collectionLoc)
-                .whereField("groupNumber", isEqualTo: groupNumber)
-        query.getDocuments { (querySnapshot, error) in
+        let query = self.db.collection("users").document(uid).collection("bets").document(documentLoc).collection(collectionLoc)
+            .whereField("groupNumber", isEqualTo: groupNumber)
+            .order(by: "timestamp") // Could also order by status
+            query.getDocuments { (querySnapshot, error) in
             DispatchQueue.main.async {
                 guard let documents = querySnapshot?.documents else {
                     print("No documents")
                     return
                 }
-                self.totalBetArrays.removeAll() // Clear previous data
-                for (index, parlayMax) in ticketFormat.enumerated() {
-                    let betTempArr = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
-                        return try? queryDocumentSnapshot.data(as: Bet.self)
-                    }.filter { $0.betNumber == index+1 }.prefix(parlayMax))
-                    self.totalBetArrays.append(betTempArr)
-                }
- 
-                self.availableBetsArray.removeAll()
-                for (index, parlayMax) in ticketFormat.enumerated() {
-                    let betArray = self.totalBetArrays[index]
-                    if betArray.filter({ $0.groupNumber == groupNumber }).count >= parlayMax {
-                        //print("Appending betNumber:", parlayIndex + 1) // Debug print
-                        self.availableBetsArray.append(-1)
-                    } else {
-                        if betArray.contains(where: { $0.result == .loss }) {
-                            self.availableBetsArray.append(-1)
-                        } else {
-                            self.availableBetsArray.append(index+1)
-                        }
-                    }
-                }
                 
-                self.calculateTotals(for: groupNumber, ticketFormat: ticketFormat)
+                let localDailyUserBets = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
+                    return try? queryDocumentSnapshot.data(as: Bet.self)
+                })
+                print("THIS IS LOCAL BLAH: \(localDailyUserBets)")
+                if localDailyUserBets.isEmpty {
+                    self.currentUserDailyBets = []
+                } else {
+                    self.currentUserDailyBets = localDailyUserBets
+                }
 
                 if let error = error {
                     print(error)
@@ -462,13 +438,49 @@ class ticketViewModel: ObservableObject {
                     self.currentTicketFormat = ticketFormat
                     self.isBetsLoaded = true
                     self.isTFLoaded = true
+                    completion()
                 }
-
-                // Call completion handler
-                completion()
+                
             }
         }
     }
+    
+    func calculateTotals(for groupNumber: Int, ticketFormat: [Int]) {
+
+        var totalWonLocal: Double = 0.0
+        var totalPotentialWonLocal: Double = 0.0
+
+        // Helper function to avoid code duplication
+        func calculateForBetArray(_ betArray: [Bet], count: Int) {
+            if betArray.count == count {
+                let product = betArray.reduce(1.0, { $0 * $1.betOdds })
+                let toWin = percentageToTotalWin(percentage: Double(product))
+                let potentialWin = Double(toWin.replacingOccurrences(of: "$", with: "")) ?? 0.0
+
+                if betArray.filter({ $0.groupNumber == groupNumber }).allSatisfy({ $0.result == .win }) {
+                    totalWonLocal += potentialWin
+                }
+                
+                if betArray.filter({ $0.groupNumber == groupNumber }).contains(where: ({ $0.result == .loss })) {
+                    totalWonLocal -= 100
+                }
+
+                // check if not all elements in the array are a win
+                if !betArray.filter({ $0.groupNumber == groupNumber }).allSatisfy({ $0.result == .win }) &&
+                    !betArray.filter({ $0.groupNumber == groupNumber }).contains(where: { $0.result == .loss }) {
+                    totalPotentialWonLocal += potentialWin
+                }
+            }
+        }
+        for index in 0..<totalBetArrays.count {
+            let betArray = totalBetArrays[index]
+            calculateForBetArray(betArray, count: ticketFormat[index])
+        }
+
+        totalWon = totalWonLocal
+        totalPotentialWon = totalPotentialWonLocal
+    }
+    
     
     func deleteBet(bet: Bet, timeFrame: String) {
         
@@ -608,41 +620,7 @@ class ticketViewModel: ObservableObject {
         }
     }
 
-    func calculateTotals(for groupNumber: Int, ticketFormat: [Int]) {
 
-        var totalWonLocal: Double = 0.0
-        var totalPotentialWonLocal: Double = 0.0
-
-        // Helper function to avoid code duplication
-        func calculateForBetArray(_ betArray: [Bet], count: Int) {
-            if betArray.count == count {
-                let product = betArray.reduce(1.0, { $0 * $1.betOdds })
-                let toWin = percentageToTotalWin(percentage: Double(product))
-                let potentialWin = Double(toWin.replacingOccurrences(of: "$", with: "")) ?? 0.0
-
-                if betArray.filter({ $0.groupNumber == groupNumber }).allSatisfy({ $0.result == .win }) {
-                    totalWonLocal += potentialWin
-                }
-                
-                if betArray.filter({ $0.groupNumber == groupNumber }).contains(where: ({ $0.result == .loss })) {
-                    totalWonLocal -= 100
-                }
-
-                // check if not all elements in the array are a win
-                if !betArray.filter({ $0.groupNumber == groupNumber }).allSatisfy({ $0.result == .win }) &&
-                    !betArray.filter({ $0.groupNumber == groupNumber }).contains(where: { $0.result == .loss }) {
-                    totalPotentialWonLocal += potentialWin
-                }
-            }
-        }
-        for index in 0..<totalBetArrays.count {
-            let betArray = totalBetArrays[index]
-            calculateForBetArray(betArray, count: ticketFormat[index])
-        }
-
-        totalWon = totalWonLocal
-        totalPotentialWon = totalPotentialWonLocal
-    }
     
     func fetchUserBetsForStats(uid: String, completion: @escaping () -> Void) {
         Firestore.firestore().collection("users").document(uid).collection("bets")
@@ -750,13 +728,13 @@ class ticketViewModel: ObservableObject {
     
 
     func isTeamAvailable(_ team: String,_ groupNumber: Int, _ betType: BetType) -> Bool {
-        for betArray in totalBetArrays {
-            for bet in betArray {
-                if bet.teamBetOn == team && bet.groupNumber == groupNumber {
-                    return false
-                }
+        
+        for bet in currentUserDailyBets {
+            if bet.teamBetOn == team && bet.groupNumber == groupNumber {
+                return false
             }
         }
+        
         return true
     }
     

@@ -70,9 +70,9 @@ struct BettingAppView: View {
         }.background(K.finalColor.backgroundBlue)
             .padding(EdgeInsets(top: 60, leading: 0, bottom: 55, trailing: 0))
             .navigationBarHidden(false)
-            .onAppear() {
-                rankedCommence = false
-            }
+//            .onAppear() {
+//                rankedCommence = false
+//            }
             .onDisappear() {
                 viewModel.getGamesCommenceTime() {}
             }

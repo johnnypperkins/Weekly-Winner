@@ -43,51 +43,41 @@ struct dailyChallengeSubmitView: View {
     
     func checkTeamTaken() {
         if timeFrame == "daily" {
-            if betNumber < 0 {
-                uploadText = "Ticket Complete"
+            if game.commenceTime.seconds > (midnightTimestamp.seconds + 86400) {
+                uploadText = "Not Today"
                 placeBetOpacity = 0.6
-                placeBetColor = K.finalColor.titleBlue.opacity(0.6)
+                placeBetColor = K.finalColor.deleteRed.opacity(0.6)
             } else {
-                if game.commenceTime.seconds > (midnightTimestamp.seconds + 86400) {
-                    uploadText = "Not Today"
-                    placeBetOpacity = 0.6
-                    placeBetColor = K.finalColor.deleteRed.opacity(0.6)
+                if ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) {
+                    uploadText = "Add to Ticket"
+                    placeBetOpacity = 1
+                    placeBetColor = K.finalColor.winningGreen
+                    
                 } else {
-                    if ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) {
-                        uploadText = "Place Bet"
-                        placeBetOpacity = 1
-                        placeBetColor = K.finalColor.winningGreen
-                        
-                    } else {
-                        uploadText = "Team Taken"
-                        placeBetOpacity = 0.6
-                        placeBetColor = K.finalColor.titleBlue.opacity(0.6)
-                        
-                    }
+                    uploadText = "Team Taken"
+                    placeBetOpacity = 0.6
+                    placeBetColor = K.finalColor.titleBlue.opacity(0.6)
                 }
             }
         }
-        
     }
     
     var body: some View {
             
         ZStack {
-//            K.finalColor.backgroundBlue.cornerRadius(40, corners: [.topLeft, .topRight])
-            
             VStack {
 
                 BetSliderView(game: game, parlaySize: betNumber <= ticketVM.currentTicketFormat.count && betNumber > 0 ? ticketVM.currentTicketFormat[betNumber-1] : 1, betType: betType, chosenSpread: $chosenSpread)
-                
-                chooseWagerBetDetailsView(
-                    viewModel: viewModel,
-                    ticketVM: ticketVM,
-                    timeFrame: $timeFrame,
-                    betNumber: $betNumber,
-                    chosenSpread: $chosenSpread,
-                    betType: $betType,
-                    game: game,
-                    checkTeamTaken: checkTeamTaken)
+//                
+//                chooseWagerBetDetailsView(
+//                    viewModel: viewModel,
+//                    ticketVM: ticketVM,
+//                    timeFrame: $timeFrame,
+//                    betNumber: $betNumber,
+//                    chosenSpread: $chosenSpread,
+//                    betType: $betType,
+//                    game: game,
+//                    checkTeamTaken: checkTeamTaken)
                 Spacer()
                 Button(action: {
                     
@@ -98,7 +88,7 @@ struct dailyChallengeSubmitView: View {
                     viewModel.uploadBet(
                         groupNumber: groupNumber,
                         groupID: timeFrame == "daily" ? StaticUserData.shared.dailyTicket.groupID : StaticUserData.shared.weeklyTicket.groupID,
-                        betNumber: betNumber,
+                        betNumber: ticketVM.currentUserDailyBets.isEmpty ? 1 : ticketVM.currentUserDailyBets.count,
                         team: whichTeam,
                         betLine: chosenSpread,
                         betOdds: MLtoPercentage(moneyline: betTypeToOdds(game: game, betType: betType)),
@@ -111,7 +101,7 @@ struct dailyChallengeSubmitView: View {
                     { _ in
                         ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat, timeFrame: timeFrame) {
                             let groupServe = groupService()
-                            groupServe.setPotentialToWin(potential: Int(ticketVM.totalPotentialWon), groupNumber: groupNumber, timeFrame: timeFrame, completion: {_ in })
+                            groupServe.setPotentialToWin(potential: Int(returnPotentialFromAllStraights(bets: ticketVM.currentUserDailyBets)), groupNumber: groupNumber, timeFrame: timeFrame, completion: {_ in })
                             ticketVM.fetchUserTickets(timeFrame: timeFrame) {}
                         }
                     }
@@ -157,7 +147,7 @@ struct dailyChallengeSubmitView: View {
                         
                         
                     }, value: isFavorited)
-                .disabled(betNumber < 0 || !ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) || (game.commenceTime.seconds > (midnightTimestamp.seconds + 86400) && timeFrame == "daily"))
+                .disabled(!ticketVM.isTeamAvailable(whichTeam, groupNumber, betType) || (game.commenceTime.seconds > (midnightTimestamp.seconds + 86400) && timeFrame == "daily"))
                 .padding(.horizontal)
                 
                 
@@ -221,13 +211,50 @@ struct BetSliderView: View {
     @Binding var chosenSpread: Double
     
     var body: some View {
-        
-        HStack(spacing: 7.5) {
-            teamMiniView(teamString: returnTeamString(game: game, betType: betType), challengeSender: true)
-            spreadMiniView(betType: betType, spreadString: returnSpreadString(game: game, betType: betType))
-            oddsMiniView(MLString: returnMLString(game: game, betType: betType))
-        }.frame(width: 345)
-        
+        VStack (spacing: 7.5){
+            HStack(spacing: 7.5) {
+                teamMiniView(teamString: returnTeamString(game: game, betType: betType), challengeSender: true)
+                spreadMiniView(betType: betType, spreadString: returnSpreadString(game: game, betType: betType))
+                oddsMiniView(MLString: returnMLString(game: game, betType: betType))
+            }.frame(width: 345)
+            HStack(spacing: 7.5) {
+                VStack (spacing: 0) {
+                    HStack {
+                        Spacer()
+                        Text("Risk")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                            .foregroundColor(.white)
+                        Spacer()
+                    }.frame(height: 15).background(K.finalColor.deleteRed)
+                    HStack {
+                        Spacer()
+                        Text("100")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                            .foregroundColor(.white)
+                        Spacer()
+                    }.frame(height: 41.25).background(K.finalColor.cardBlue)
+                }.cornerRadius(7.5)
+                
+                VStack (spacing: 0) {
+                    HStack {
+                        Spacer()
+                        Text("Potential Win")
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
+                            .foregroundColor(.white)
+                        Spacer()
+                    }.frame(height: 15).background(K.finalColor.potentialOrange)
+                    HStack {
+                        Spacer()
+                        Text("" + percentageToTotalWin(percentage: MLtoPercentage(moneyline: betTypeToOdds(game: game, betType: betType))))
+                            .font(.custom(K.customFonts.lexendDecaMedium, size: 20))
+                            .foregroundColor(.white)
+                        Spacer()
+                    }.frame(height: 41.25).background(K.finalColor.cardBlue)
+                }.cornerRadius(7.5)
+            }.frame(width: 345)
+
+         
+        }
     }
 }
 

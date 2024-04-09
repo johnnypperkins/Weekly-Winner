@@ -173,52 +173,16 @@ struct ticketView: View {
         var body: some View {
             VStack (spacing: 4){
                 HStack (spacing: 0){
-//                    Button(action: {
-//                        //viewModel.canGetHistoricalData = false
-//                        if timeFrame != "daily" {
-//                            timeFrame = "daily"
-//                            viewModel.isBetsLoaded = false
-//                            viewModel.isTFLoaded = false
-//
-//                            viewModel.fetchBets(uid: uid, for: 0, ticketFormat: StaticUserData.shared.dailyTicket.ticketFormat, timeFrame: timeFrame, completion: {})
-//                        }
-//                        
-//                    }) {
-                        //Text(viewModel.userTickets[self.selectedGroup-1].groupName)
-                        Text("Daily Ticket")
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 40))
-                            .foregroundColor(.white)
-                            .frame(width: 300, height: 50, alignment: .center)
-                            //.background(timeFrame == "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
-                            .cornerRadius(5)
-//                    }
-//                    
-//                    Button(action: {
-//                        //viewModel.canGetHistoricalData = false
-//                        if timeFrame == "daily" {
-//                            
-//                            timeFrame = "weekly"
-//                            viewModel.isBetsLoaded = false
-//                            viewModel.isTFLoaded = false
-//
-//                            viewModel.fetchBets(uid: uid, for: 0, ticketFormat: StaticUserData.shared.weeklyTicket.ticketFormat, timeFrame: timeFrame, completion: {})
-//
-//                        }
-//                        
-//                    }) {
-//                        Text("Weekly")
-//                            .font(.custom(K.customFonts.lexendDecaMedium, size: 32))
-//                            .foregroundColor(.white)
-//                            .frame(width: 150, height: 35, alignment: .center)
-//                            .cornerRadius(5)
-//                    }
+
+                    Text("Daily Ticket")
+                        .font(.custom(K.customFonts.lexendDecaMedium, size: 40))
+                        .foregroundColor(.white)
+                        .frame(width: 300, height: 50, alignment: .center)
+                        //.background(timeFrame == "daily" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
+                        .cornerRadius(5)
+
                 }
-//                Rectangle()
-//                    .fill(Color.white) // Sets the rectangle's fill color to white
-//                    .frame(width: 120, height: 3)
-//                    .cornerRadius(1) // Apply rounded corners
-//                    .offset(x: timeFrame == "daily" ? -75 : 75, y: 0)
-//                    .animation(.easeInOut(duration: 0.35))
+
             }.padding(.top, 23)
         }
     }
@@ -334,7 +298,7 @@ struct ticketView: View {
                 HStack (spacing: 0) {
                     Text("Pending").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
                     Spacer()
-                    Text("\(String(format: "%.0f", viewModel.totalPotentialWon))")
+                    Text("\(Int(returnPotentialFromAllStraights(bets: viewModel.currentUserDailyBets)))")
                         .font(.custom("Futura", size: 20))
                         .foregroundColor(K.finalColor.potentialOrange)
                 }.padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
@@ -346,7 +310,7 @@ struct ticketView: View {
                 HStack (spacing: 0){
                     Text("Balance").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
                     Spacer()
-                    Text("\(String(format: "%.0f", viewModel.totalWon))")
+                    Text("\(Int(returnWinningsFromAllStraights(bets: viewModel.currentUserDailyBets)))")
                         .font(.custom("Futura", size: 20))
                         .foregroundColor(viewModel.totalWon >= 0 ? K.finalColor.winningGreen : K.finalColor.deleteRed)
                 }
@@ -363,16 +327,17 @@ struct ticketView: View {
                 VStack {
                     VStack {
                         if selectedWeek == "current" {
-                            ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
-                                if viewModel.currentTicketFormat.count > 0 && viewModel.isTFLoaded == true && viewModel.totalBetArrays.count == viewModel.currentTicketFormat.count {
-                                    if viewModel.isBetsLoaded {
-                                        SectionTitle(title: parlayTitle(ticketFormat: viewModel.currentTicketFormat, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: viewModel.currentTicketFormat[parlayIndex], uid: Auth.auth().currentUser?.uid ?? "", selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, timeFrame: $timeFrame, viewModel: viewModel)
-                                    }
+                            ForEach(0..<viewModel.currentUserDailyBets.count, id: \.self) { parlayIndex in
+                                if viewModel.currentTicketFormat.count > 0
+                                    && viewModel.isTFLoaded == true
+                                    && viewModel.isBetsLoaded {
+                                    SectionTitle(index: parlayIndex, betArray: viewModel.currentUserDailyBets, maxBetsPlaced: 1, uid: Auth.auth().currentUser?.uid ?? "", selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, timeFrame: $timeFrame, viewModel: viewModel)
+                                    
                                 }
                             }
                         } else {
                             ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
-                                SectionTitle(title: parlayTitle(ticketFormat: ticketFormatForGroups, index: parlayIndex), betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: ticketFormatForGroups[parlayIndex], uid: uid, selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, timeFrame: $timeFrame, viewModel: viewModel)
+                                SectionTitle(index: parlayIndex,betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: ticketFormatForGroups[parlayIndex], uid: uid, selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, timeFrame: $timeFrame, viewModel: viewModel)
                             }
                         }
                         
@@ -388,7 +353,7 @@ struct ticketView: View {
     }
     
     struct SectionTitle: View {
-        let title: String
+        let index: Int
         let betArray: [Bet]
         let maxBetsPlaced: Int
         let uid: String
@@ -443,7 +408,7 @@ struct ticketView: View {
                 VStack (alignment: .leading) {
                     HStack() {
                         
-                        Text("\(title) | \(percentageToTotalWin(percentage: totalOdds))")
+                        Text("Straight \(index+1) | \(percentageToTotalWin(percentage: totalOdds))")
                             .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
                             .foregroundColor(.white.opacity(0.9))
                         Spacer()
@@ -456,25 +421,9 @@ struct ticketView: View {
                         .foregroundColor(K.finalColor.textWhite.opacity(0.9))
                     
                     VStack(alignment: .center) {
-                        let emptyBoxesCount = max(0, maxBetsPlaced - betArray.count)
-                        let totalBetsCount = betArray.count + emptyBoxesCount
-
-                        ForEach(0..<totalBetsCount, id: \.self) { index in
-                            VStack(alignment: .center, spacing: 0) {
-                                if index < betArray.count {
-                                    BetCard(bet: betArray[index], uid: uid, selectedWeek: selectedWeek, ownCard: ownTicket, onTicketPage: onTicketPage, ticketVM: viewModel, timeFrame: $timeFrame, viewModel: viewModel)
-                   
-                                } else {
-                                    EmptyBetCard(betArray: betArray)
-                                }
-                                if index != totalBetsCount - 1 {
-                                    Divider()
-                                }
-                            }
-                        }
+                        BetCard(bet: betArray[index], uid: uid, selectedWeek: selectedWeek, ownCard: ownTicket, onTicketPage: onTicketPage, ticketVM: viewModel, timeFrame: $timeFrame, viewModel: viewModel)
                     }
 
-                    //.padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10))
                     .frame(width: 311) // Removed the height: 35 constraint
                     .background(.clear)
                     //.cornerRadius(10)
@@ -501,8 +450,6 @@ struct ticketView: View {
             @State private var game: Game? = nil
             @State var expand = false
             @Binding var timeFrame: String
-            
-            //let ownBets: Bool
             
 
             @ObservedObject var viewModel: ticketViewModel
@@ -539,22 +486,17 @@ struct ticketView: View {
                             if bet.result == .forcedLoss {
                                 Text("-")
                             } else {
-                                //Spacer()
                                 Text(percentageToML(percentage: Double(bet.betOdds)))
                                     .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
                                     .foregroundColor(.white.opacity(0.9))
                                     .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 10))
-                                //.background(Color.backgroundForBetResult(bet.result))
-                                //.background(K.gra)
-                                //.cornerRadius(7.5)
+                 
                                 Rectangle()
                                     .fill(Color.white) // Color of the separator
                                     .frame(width: 1, height: 20) // Adjust height as needed
-                                //Spacer()
                                 Text("\(bet.teamBetOn ?? "Null Team") \(lineFinal)")
                                     .font(.custom(K.customFonts.lexendDecaMedium, size:
                                                     bet.teamBetOn?.count ?? 10 < 20 ? 16 : 13))
-                                //   (bet.teamBetOn?.count ?? 10 > 35 ? 9: 11)))
                                 
                                     .foregroundColor(.white.opacity(0.9))
                                     .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 5))
@@ -679,32 +621,6 @@ struct ticketView: View {
             
         }
 
-        struct EmptyBetCard: View {
-            var betArray: [Bet]
-            var body: some View {
-                if betArray.contains(where: { $0.result.rawValue == "loss" }) {
-                    Rectangle()
-                        .fill(K.finalColor.deleteRed)
-                        .frame(width: 320, height: 35)
-                        .overlay(
-                            Text("Forced Loss")
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
-                                .foregroundColor(.white)
-                        ).cornerRadius(7.5)
-
-                } else {
-                    Rectangle()
-                        .fill(Color(red: 0.13, green: 0.14, blue: 0.34))
-                        .frame(width: 291, height: 30)
-                        .overlay(
-                            Text("Empty Bet")
-                                .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
-                                .foregroundColor(.white)
-                        ).cornerRadius(5)
-                }
-            }
-        }
-
     }
 }
 
@@ -714,3 +630,29 @@ struct ticketView_Previews: PreviewProvider {
     }
 }
 
+
+
+func returnWinningsFromAllStraights(bets: [Bet]) -> Double {
+    var winnings = 0.0
+    for bet in bets {
+        if bet.result == .win {
+            winnings += percentageToTotalWinDouble(percentage: Double(bet.betOdds))
+        } else if bet.result == .loss {
+            winnings -= 100
+        }
+    }
+    return winnings
+}
+
+
+func returnPotentialFromAllStraights(bets: [Bet]) -> Double {
+    var potential = 0.0
+    for bet in bets {
+        if bet.result == .inAction || bet.result == .notStarted {
+            potential += percentageToTotalWinDouble(percentage: Double(bet.betOdds))
+            print("THIS IS BET \(bet)")
+            print("THIS IS potential \(potential)")
+        }
+    }
+    return potential
+}

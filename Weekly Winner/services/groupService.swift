@@ -602,21 +602,8 @@ class groupService {
     
     func setPotentialToWin(potential potentialToWin: Int, groupNumber: Int, timeFrame: String, completion: @escaping (Error?) -> Void) {
         
-        let documentLoc:String = {
-            if timeFrame == "weekly" {
-                return "week"
-            } else {
-                return "day"
-            }
-        }()
-        
-        let collectionGroupLoc:String = {
-            if timeFrame == "weekly" {
-                return "currentWeekTickets"
-            } else {
-                return "currentDayTickets"
-            }
-        }()
+        let documentLoc:String = "day"
+        let collectionGroupLoc = "currentDayTickets"
         
         
         guard let userID = Auth.auth().currentUser?.uid else {
@@ -652,6 +639,7 @@ class groupService {
                 }
             }
     }
+    
     func setChallengePotentialToWin(potential potentialToWin: Int, id: String, timeFrame: String, completion: @escaping (Error?) -> Void) {
         
         

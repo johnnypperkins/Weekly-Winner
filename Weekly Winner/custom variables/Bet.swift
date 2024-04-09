@@ -527,7 +527,7 @@ func percentageToTotalWin(percentage: Double) -> String {
 func percentageToTotalWinDouble(percentage: Double) -> Double {
     var toWin: Double
     if percentage < 1 && percentage > 0 {
-        toWin = (1-percentage) / percentage
+        toWin = (1-percentage) / percentage * 100
         return toWin
     } else {
         return -99

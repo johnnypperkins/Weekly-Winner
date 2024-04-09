@@ -156,74 +156,35 @@ class BetService {
             }
         }
         
-
-            
-        
-        if timeFrame == "weekly" {
-            let ticketsCollectionRef = db.collection("users").document(userID).collection("tickets").document("week").collection("currentWeekTickets")
-            let ref3 = db.collection("users").document(Auth.auth().currentUser!.uid).collection("tickets").document("week").collection("currentWeekTickets")
-            ref3.whereField("groupID", isEqualTo: "Global").getDocuments { (querySnapshot, err) in
-                if let err = err {
-                    print("Error getting documents: \(err)")
-                } else {
-                    for document in querySnapshot!.documents {
-                        let docRef = ticketsCollectionRef.document(document.documentID)
-                        docRef.getDocument { (document, error) in
-                            if let document = document, document.exists {
-                                var isEnabled = document.get("isEnabled") as? Bool ?? false
-                                if !isEnabled {
-                                    docRef.updateData([
-                                        "isEnabled": true
-                                    ]) { err in
-                                        if let err = err {
-                                            print("Error updating document: \(err)")
-                                        } else {
-                                            print("Document successfully updated")
-                                        }
+        let ticketsCollectionRef = db.collection("users").document(userID).collection("tickets").document("day").collection("currentDayTickets")
+        let ref3 = db.collection("users").document(Auth.auth().currentUser!.uid).collection("tickets").document("day").collection("currentDayTickets")
+        ref3.whereField("groupID", isEqualTo: "GlobalDaily").getDocuments { (querySnapshot, err) in
+            if let err = err {
+                print("Error getting documents: \(err)")
+            } else {
+                for document in querySnapshot!.documents {
+                    let docRef = ticketsCollectionRef.document(document.documentID)
+                    docRef.getDocument { (document, error) in
+                        if let document = document, document.exists {
+                            var isEnabled = document.get("isEnabled") as? Bool ?? false
+                            if !isEnabled {
+                                docRef.updateData([
+                                    "isEnabled": true
+                                ]) { err in
+                                    if let err = err {
+                                        print("Error updating document: \(err)")
+                                    } else {
+                                        print("Document successfully updated")
                                     }
                                 }
-                            } else if let err = error {
-                                print("Error getting document: \(err)")
                             }
-                        }
-                    }
-                }
-            }
-        } else if timeFrame == "daily" {
-            let ticketsCollectionRef = db.collection("users").document(userID).collection("tickets").document("day").collection("currentDayTickets")
-            let ref3 = db.collection("users").document(Auth.auth().currentUser!.uid).collection("tickets").document("day").collection("currentDayTickets")
-            ref3.whereField("groupID", isEqualTo: "GlobalDaily").getDocuments { (querySnapshot, err) in
-                if let err = err {
-                    print("Error getting documents: \(err)")
-                } else {
-                    for document in querySnapshot!.documents {
-                        let docRef = ticketsCollectionRef.document(document.documentID)
-                        docRef.getDocument { (document, error) in
-                            if let document = document, document.exists {
-                                var isEnabled = document.get("isEnabled") as? Bool ?? false
-                                if !isEnabled {
-                                    docRef.updateData([
-                                        "isEnabled": true
-                                    ]) { err in
-                                        if let err = err {
-                                            print("Error updating document: \(err)")
-                                        } else {
-                                            print("Document successfully updated")
-                                        }
-                                    }
-                                }
-                            } else if let err = error {
-                                print("Error getting document: \(err)")
-                            }
+                        } else if let err = error {
+                            print("Error getting document: \(err)")
                         }
                     }
                 }
             }
         }
-        
-        
-        
-        
     }
     
     func fetchPopularBets(completion: @escaping ([MostPopularBet]?, Error?) -> Void) {
