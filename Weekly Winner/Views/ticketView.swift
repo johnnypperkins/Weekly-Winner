@@ -64,7 +64,6 @@ struct ticketView: View {
         }
         
         viewModel.fetchUserInformation(uid: uid) {}
-//        viewModel.fetchStats(uid: uid) {}
         viewModel.fetchUserBetsForStats(uid: uid) {}
         viewModel.fetchUserticketsForStats(uid: uid) {}
         viewModel.fetchUserProfilePic(uid: uid) {}
@@ -117,49 +116,40 @@ struct ticketView: View {
                 }
                 
                 Spacer()
-            }
-            //.background(K.finalColor.backgroundBlue)
-                .onAppear {
-                    Task{
-                        await viewModel.isFriend(id: uid)
-                    }
-                    print("ticket format for groups " + "\(ticketFormatForGroups)" + "\(viewModel.totalBetArrays.count)")
-                    selectedGroup = 0
-                    let currentTicketFormat = {
-                        if timeFrame == "daily" {
-                            return StaticUserData.shared.dailyTicket.ticketFormat
-                        } else {
-                            return StaticUserData.shared.weeklyTicket.ticketFormat
-
-                        }
-                    }()
-                    
-                    
-                    if !onTicketPage {
-                        if selectedWeek == "current" {
-                            viewModel.fetchFriendTicket(uid: uid, with: groupID, timeFrame: timeFrame) {_ in
-                                viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: currentTicketFormat, timeFrame: timeFrame, completion: {}) // usertickets is set to only one ticket here
-                            }
-                        } else {
-                            viewModel.fetchPastFriendTicket(uid: uid, with: groupID, timeFrame: timeFrame) {_ in
-                                viewModel.fetchPastBets(uid: uid, for: 0, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, timeFrame: timeFrame, completion: {})
-                            }
-                        }
-                        
-                        
-                        
+            }.onAppear {
+                Task{
+                    await viewModel.isFriend(id: uid)
+                }
+                print("ticket format for groups " + "\(ticketFormatForGroups)" + "\(viewModel.totalBetArrays.count)")
+                selectedGroup = 0
+                let currentTicketFormat = {
+                    if timeFrame == "daily" {
+                        return StaticUserData.shared.dailyTicket.ticketFormat
                     } else {
-                        //viewModel.fetchUserTickets(timeFrame: "weekly") { // CHANGE FROM TOP
-                            viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: currentTicketFormat, timeFrame: timeFrame, completion: {}) // Fetch bets for selected group on view appear.
-                      //      viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: currentTicketFormat, timeFrame: timeFrame, completion: {}) // Fetch bets for selected group on view appear.
-                            
-                        //}
+                        return StaticUserData.shared.weeklyTicket.ticketFormat
+                        
                     }
+                }()
+                
+                if !onTicketPage {
+                    if selectedWeek == "current" {
+                        viewModel.fetchFriendTicket(uid: uid, with: groupID, timeFrame: timeFrame) {_ in
+                            viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: currentTicketFormat, currentWeek: true, selectedWeek: selectedWeek) {}
+                        }
+                    } else {
+                        viewModel.fetchPastFriendTicket(uid: uid, with: groupID, timeFrame: timeFrame) {_ in
+//                            viewModel.fetchPastBets(uid: uid, for: 0, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, timeFrame: timeFrame, completion: {})
+                            viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: currentTicketFormat, currentWeek: false, selectedWeek: selectedWeek) {}
+                        }
+                    }
+                } else {
+                    viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: currentTicketFormat, currentWeek: true, selectedWeek: selectedWeek) {}
                 }
-                .onDisappear {
-                    selectedGroup = 0
-                    viewModel.stopListening() // Stop listening when view disappears
-                }
+            }
+            .onDisappear {
+                selectedGroup = 0
+                viewModel.stopListening() // Stop listening when view disappears
+            }
             
             
         }
@@ -332,20 +322,17 @@ struct ticketView: View {
                                     && viewModel.isTFLoaded == true
                                     && viewModel.isBetsLoaded {
                                     SectionTitle(index: parlayIndex, betArray: viewModel.currentUserDailyBets, maxBetsPlaced: 1, uid: Auth.auth().currentUser?.uid ?? "", selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, timeFrame: $timeFrame, viewModel: viewModel)
-                                    
                                 }
                             }
                         } else {
-                            ForEach(0..<viewModel.totalBetArrays.count, id: \.self) { parlayIndex in
-                                SectionTitle(index: parlayIndex,betArray: viewModel.totalBetArrays[parlayIndex], maxBetsPlaced: ticketFormatForGroups[parlayIndex], uid: uid, selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, timeFrame: $timeFrame, viewModel: viewModel)
+                            ForEach(0..<viewModel.currentUserDailyBets.count, id: \.self) { parlayIndex in
+                                if viewModel.isTFLoaded == true
+                                    && viewModel.isBetsLoaded {
+                                    SectionTitle(index: parlayIndex,betArray: viewModel.currentUserDailyBets, maxBetsPlaced: ticketFormatForGroups[parlayIndex], uid: uid, selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, timeFrame: $timeFrame, viewModel: viewModel)
+                                }
                             }
                         }
-                        
-                    }.onAppear() {
-                        print("TOTAL BET ARRAY COUNT", viewModel.totalBetArrays.count)
-                        print("TICKET FORMAT FOR GROUPS", ticketFormatForGroups)
                     }
-                    
                 }.padding(.bottom,65)
                     .padding()
             }
@@ -361,54 +348,15 @@ struct ticketView: View {
         let ownTicket: Bool
         let onTicketPage: Bool
         @Binding var timeFrame: String
-       // let totalOdds: Double
         @ObservedObject var viewModel: ticketViewModel
         @State var expand = false
-        
-        
-        var totalOdds: Double {
-            var total: Double = 1
-            for bet in betArray {
-                total = total*Double(bet.betOdds)
-            }
-            return total
-        }
-        
-        var hasLoss: Bool {
-            return betArray.contains(where: { $0.result == .loss })
-        }
-
-        var statusColor: Color {
-            if betArray.contains(where: { $0.result == .loss }) {
-                return K.finalColor.deleteRed
-            } else {
-                if selectedWeek == "current" {
-                    if betArray.count != maxBetsPlaced && (betArray.contains(where: { $0.result == .inAction }) || betArray.contains(where: { $0.result == .win })) {
-                        return K.finalColor.cardBlue
-                    } else if betArray.count == maxBetsPlaced && (betArray.contains(where: { $0.result == .inAction }) || betArray.contains(where: { $0.result == .notStarted})) {
-                        return K.finalColor.cardBlue
-                    } else if betArray.count == maxBetsPlaced  {
-                        return K.finalColor.winningGreen
-                    } else {
-                        return K.finalColor.cardBlue
-                    }
-                } else {
-                    if betArray.count != maxBetsPlaced {
-                        return K.finalColor.deleteRed
-                    } else {
-                        return K.finalColor.winningGreen
-                    }
-                }
-            }
-        }
-        
         
         var body: some View {
             ZStack {
                 VStack (alignment: .leading) {
                     HStack() {
                         
-                        Text("Straight \(index+1) | \(percentageToTotalWin(percentage: totalOdds))")
+                        Text("Straight \(index+1) | \(betArray[index].result == .loss ? "-100" : percentageToTotalWin(percentage: Double(betArray[index].betOdds)))")
                             .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
                             .foregroundColor(.white.opacity(0.9))
                         Spacer()
@@ -432,7 +380,7 @@ struct ticketView: View {
                 .frame(width: 320)
             }
             .frame(width: 343)
-            .background(statusColor.opacity(0.65))
+            .background(Color.cardBackgroundForBetResult(betArray[index].result).opacity(0.65))
             .cornerRadius(10)
 
             }
@@ -524,7 +472,7 @@ struct ticketView: View {
                                 }
                             }
                         }.padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
-                            .background(bet.result == .notStarted ? K.finalColor.backgroundBlue : Color.backgroundForBetResult(bet.result))
+                            .background(Color.cardColorForBetResult(bet.result))
                         if expand {
                             HStack {
                                 VStack (spacing: 3){
@@ -597,7 +545,8 @@ struct ticketView: View {
 
                             }
                         }
-                    }.background(bet.result == .notStarted ? Color.clear : Color.backgroundForBetResult(bet.result))
+                    }.background(Color.cardColorForBetResult(bet.result))
+
                     .cornerRadius(7.5)
                     .frame(width: 320)
                     .onAppear() {
@@ -609,7 +558,6 @@ struct ticketView: View {
                                 self.game = fetchedGame
                             } else {
                                 print("Failed to fetch game")
-                                // Handle the error or absence of the game
                             }
                         }
 

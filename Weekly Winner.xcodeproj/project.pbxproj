@@ -34,12 +34,9 @@
 		3CACEDAB2B856315002A88B2 /* signUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CACEDAA2B856315002A88B2 /* signUpView.swift */; };
 		3CADF50D2B4F091400BE850E /* pendingChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CADF50C2B4F091400BE850E /* pendingChallengeView.swift */; };
 		3CB1AC8B2A61602700C931CA /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB1AC8A2A61602700C931CA /* Group.swift */; };
-		3CB799BC2B47501D00C7A9F0 /* challengeViewTwo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB799BB2B47501D00C7A9F0 /* challengeViewTwo.swift */; };
 		3CD023D02A84655E0033D761 /* groupSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD023CF2A84655E0033D761 /* groupSettingsView.swift */; };
 		3CFD81C12B6BD0EF00DB3E7C /* finishedChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD81C02B6BD0EF00DB3E7C /* finishedChallengeView.swift */; };
 		3CFD81C42B6C64E700DB3E7C /* paymentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD81C32B6C64E600DB3E7C /* paymentViewModel.swift */; };
-		3CFEC48A2B4E517800C11B5C /* challengeTicketView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFEC4892B4E517800C11B5C /* challengeTicketView.swift */; };
-		3CFEC48C2B4E716000C11B5C /* finalizeChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFEC48B2B4E716000C11B5C /* finalizeChallengeView.swift */; };
 		8603ACFE2B1099C500B3B6BD /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8603ACFD2B1099C500B3B6BD /* FirebaseAnalytics */; };
 		8603AD002B1099C500B3B6BD /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 8603ACFF2B1099C500B3B6BD /* FirebaseAnalyticsSwift */; };
 		8603AD022B1099C500B3B6BD /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8603AD012B1099C500B3B6BD /* FirebaseAuth */; };
@@ -106,14 +103,11 @@
 		868FDA8B2A8AD4BC0092E3C5 /* splashScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868FDA8A2A8AD4BC0092E3C5 /* splashScreenView.swift */; };
 		868FDA8D2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868FDA8C2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift */; };
 		868FDA8F2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868FDA8E2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift */; };
-		869B67F42B5B248300F6CCDF /* finalizeAcceptChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869B67F32B5B248300F6CCDF /* finalizeAcceptChallengeView.swift */; };
 		869B67F62B5D750200F6CCDF /* inActionChallengeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869B67F52B5D750200F6CCDF /* inActionChallengeViewModel.swift */; };
-		869B67F82B5D797500F6CCDF /* inActionChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869B67F72B5D797500F6CCDF /* inActionChallengeView.swift */; };
 		869B67FA2B5ECF0300F6CCDF /* DeviceLocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869B67F92B5ECF0300F6CCDF /* DeviceLocationService.swift */; };
 		869B67FC2B5ED16500F6CCDF /* purchaseCurrencyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869B67FB2B5ED16500F6CCDF /* purchaseCurrencyView.swift */; };
 		86BC796A2B843FCD008BA830 /* emailVerificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86BC79692B843FCD008BA830 /* emailVerificationView.swift */; };
 		86E55C302B5B1C4F003164EE /* pendingChallengeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E55C2F2B5B1C4F003164EE /* pendingChallengeViewModel.swift */; };
-		86E55C322B5B1CB3003164EE /* acceptChallengeVew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E55C312B5B1CB3003164EE /* acceptChallengeVew.swift */; };
 		86E989C32B58577E000B2DB4 /* challengeDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86E989C22B58577E000B2DB4 /* challengeDetails.swift */; };
 		86F03BBE2BB1B00C009169AC /* addFriendsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86F03BBD2BB1B00C009169AC /* addFriendsView.swift */; };
 		86F03BC02BB1B059009169AC /* addFriendsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86F03BBF2BB1B059009169AC /* addFriendsViewModel.swift */; };
@@ -164,12 +158,9 @@
 		3CACEDAA2B856315002A88B2 /* signUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = signUpView.swift; sourceTree = "<group>"; };
 		3CADF50C2B4F091400BE850E /* pendingChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pendingChallengeView.swift; sourceTree = "<group>"; };
 		3CB1AC8A2A61602700C931CA /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
-		3CB799BB2B47501D00C7A9F0 /* challengeViewTwo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = challengeViewTwo.swift; sourceTree = "<group>"; };
 		3CD023CF2A84655E0033D761 /* groupSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = groupSettingsView.swift; sourceTree = "<group>"; };
 		3CFD81C02B6BD0EF00DB3E7C /* finishedChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = finishedChallengeView.swift; sourceTree = "<group>"; };
 		3CFD81C32B6C64E600DB3E7C /* paymentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = paymentViewModel.swift; sourceTree = "<group>"; };
-		3CFEC4892B4E517800C11B5C /* challengeTicketView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = challengeTicketView.swift; sourceTree = "<group>"; };
-		3CFEC48B2B4E716000C11B5C /* finalizeChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = finalizeChallengeView.swift; sourceTree = "<group>"; };
 		862095962BBB556000D98163 /* rewardAdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = rewardAdView.swift; sourceTree = "<group>"; };
 		863FC0502A41176400405F2A /* ticketViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ticketViewModel.swift; sourceTree = "<group>"; };
 		863FC0522A466FD500405F2A /* groupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = groupService.swift; sourceTree = "<group>"; };
@@ -226,14 +217,11 @@
 		868FDA8A2A8AD4BC0092E3C5 /* splashScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = splashScreenView.swift; sourceTree = "<group>"; };
 		868FDA8C2A8D65AE0092E3C5 /* profilePhotoSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = profilePhotoSelectorView.swift; sourceTree = "<group>"; };
 		868FDA8E2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditionsSignupView.swift; sourceTree = "<group>"; };
-		869B67F32B5B248300F6CCDF /* finalizeAcceptChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = finalizeAcceptChallengeView.swift; sourceTree = "<group>"; };
 		869B67F52B5D750200F6CCDF /* inActionChallengeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = inActionChallengeViewModel.swift; sourceTree = "<group>"; };
-		869B67F72B5D797500F6CCDF /* inActionChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = inActionChallengeView.swift; sourceTree = "<group>"; };
 		869B67F92B5ECF0300F6CCDF /* DeviceLocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceLocationService.swift; sourceTree = "<group>"; };
 		869B67FB2B5ED16500F6CCDF /* purchaseCurrencyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = purchaseCurrencyView.swift; sourceTree = "<group>"; };
 		86BC79692B843FCD008BA830 /* emailVerificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = emailVerificationView.swift; sourceTree = "<group>"; };
 		86E55C2F2B5B1C4F003164EE /* pendingChallengeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pendingChallengeViewModel.swift; sourceTree = "<group>"; };
-		86E55C312B5B1CB3003164EE /* acceptChallengeVew.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = acceptChallengeVew.swift; sourceTree = "<group>"; };
 		86E989C22B58577E000B2DB4 /* challengeDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = challengeDetails.swift; sourceTree = "<group>"; };
 		86F03BBD2BB1B00C009169AC /* addFriendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = addFriendsView.swift; sourceTree = "<group>"; };
 		86F03BBF2BB1B059009169AC /* addFriendsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = addFriendsViewModel.swift; sourceTree = "<group>"; };
@@ -371,12 +359,6 @@
 				3CADF50C2B4F091400BE850E /* pendingChallengeView.swift */,
 				3CFD81C02B6BD0EF00DB3E7C /* finishedChallengeView.swift */,
 				86E989C22B58577E000B2DB4 /* challengeDetails.swift */,
-				3CB799BB2B47501D00C7A9F0 /* challengeViewTwo.swift */,
-				3CFEC4892B4E517800C11B5C /* challengeTicketView.swift */,
-				3CFEC48B2B4E716000C11B5C /* finalizeChallengeView.swift */,
-				869B67F72B5D797500F6CCDF /* inActionChallengeView.swift */,
-				86E55C312B5B1CB3003164EE /* acceptChallengeVew.swift */,
-				869B67F32B5B248300F6CCDF /* finalizeAcceptChallengeView.swift */,
 				869B67FB2B5ED16500F6CCDF /* purchaseCurrencyView.swift */,
 				3C913EAA2BA51B97001D2153 /* acceptDirectChallenge.swift */,
 			);
@@ -703,12 +685,9 @@
 				868FDA8F2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift in Sources */,
 				866FFFA82AFE630E00A0CA13 /* SignupIntro.swift in Sources */,
 				864A2D662A6D8090000FBA35 /* AlertView.swift in Sources */,
-				869B67F82B5D797500F6CCDF /* inActionChallengeView.swift in Sources */,
 				865C4A7A2A32890F00C3C626 /* userService.swift in Sources */,
-				3CFEC48C2B4E716000C11B5C /* finalizeChallengeView.swift in Sources */,
 				867801882A213FA5006FE479 /* ticketView.swift in Sources */,
 				864A2D632A6D7F93000FBA35 /* AppUtilitiy.swift in Sources */,
-				3CFEC48A2B4E517800C11B5C /* challengeTicketView.swift in Sources */,
 				3CFD81C42B6C64E700DB3E7C /* paymentViewModel.swift in Sources */,
 				3C7C708C2A92F5F800C7C9DB /* prizesViewModel.swift in Sources */,
 				8653242F2A63B74C005AB3EF /* createGroupsViewModel.swift in Sources */,
@@ -748,8 +727,6 @@
 				866251122A3E892E00708495 /* Bet.swift in Sources */,
 				3C972C8A2B2FC07100671D0F /* screen1ViewModel.swift in Sources */,
 				864A2D6E2A70ED21000FBA35 /* imageUploader.swift in Sources */,
-				3CB799BC2B47501D00C7A9F0 /* challengeViewTwo.swift in Sources */,
-				86E55C322B5B1CB3003164EE /* acceptChallengeVew.swift in Sources */,
 				3C8E5C912B3FEE1F0075B300 /* inAppPurchaseView.swift in Sources */,
 				3C913EAB2BA51B97001D2153 /* acceptDirectChallenge.swift in Sources */,
 				3C8E5C952B43C28C0075B300 /* challengeViewModel.swift in Sources */,
@@ -765,7 +742,6 @@
 				3CD023D02A84655E0033D761 /* groupSettingsView.swift in Sources */,
 				865C4A762A327CA600C3C626 /* authenticationView.swift in Sources */,
 				8668B3132A2EF06A00A1B343 /* gameService.swift in Sources */,
-				869B67F42B5B248300F6CCDF /* finalizeAcceptChallengeView.swift in Sources */,
 				866251142A40D3B500708495 /* betService.swift in Sources */,
 				869B67F62B5D750200F6CCDF /* inActionChallengeViewModel.swift in Sources */,
 				864A2D682A6D80C1000FBA35 /* ButtonComponent.swift in Sources */,

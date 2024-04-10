@@ -153,7 +153,7 @@ extension UIColor {
 
 
 extension Color {
-    static func backgroundForBetResult(_ result: BetResult) -> Color {
+    static func cardColorForBetResult(_ result: BetResult) -> Color {
         switch result {
         case .notStarted: return K.finalColor.backgroundBlue
         case .inAction: return K.finalColor.potentialOrange
@@ -164,6 +164,20 @@ extension Color {
         // add other cases as needed
         }
     }
+    
+    static func cardBackgroundForBetResult(_ result: BetResult) -> Color {
+        let opacity = 0.65
+        switch result {
+        case .notStarted: return K.finalColor.cardBlue.opacity(opacity)
+        case .inAction: return K.finalColor.potentialOrange.opacity(opacity)
+        case .loss: return K.finalColor.deleteRed.opacity(opacity)
+        case .win: return K.finalColor.winningGreen.opacity(opacity)
+        case .forcedLoss: return K.lightRed.opacity(opacity)
+        case .push: return K.averageGray.opacity(opacity)
+        // add other cases as needed
+        }
+    }
+    
 }
 
 

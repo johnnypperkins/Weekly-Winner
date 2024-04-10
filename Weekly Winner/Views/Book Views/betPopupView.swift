@@ -99,7 +99,8 @@ struct dailyChallengeSubmitView: View {
                         timeFrame: timeFrame)
                     
                     { _ in
-                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat, timeFrame: timeFrame) {
+                        ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: ticketVM.currentTicketFormat, currentWeek: true, selectedWeek: "")
+                        {
                             let groupServe = groupService()
                             groupServe.setPotentialToWin(potential: Int(returnPotentialFromAllStraights(bets: ticketVM.currentUserDailyBets)), groupNumber: groupNumber, timeFrame: timeFrame, completion: {_ in })
                             ticketVM.fetchUserTickets(timeFrame: timeFrame) {}
@@ -155,10 +156,7 @@ struct dailyChallengeSubmitView: View {
             }
             
         }.onAppear(perform: {
-            ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid,
-                               for: groupNumber,
-                               ticketFormat: timeFrame == "daily" ? StaticUserData.shared.dailyTicket.ticketFormat : StaticUserData.shared.dailyTicket.ticketFormat,
-                               timeFrame: timeFrame) {
+            ticketVM.fetchBets(uid: Auth.auth().currentUser!.uid, for: groupNumber, ticketFormat: [], currentWeek: true, selectedWeek: "") {
                 if let firstNumberGreaterThanZero = ticketVM.availableBetsArray.first(where: { $0 > 0 }) {
                     betNumber = firstNumberGreaterThanZero
                 } else {

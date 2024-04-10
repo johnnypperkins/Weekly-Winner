@@ -323,98 +323,17 @@ class ticketViewModel: ObservableObject {
         }
     }
     
-    func fetchPastBets(uid: String, for groupNumber: Int, ticketFormat: [Int], selectedWeek: String, timeFrame: String, completion: @escaping () -> Void) {
-        
-        let documentLoc:String = {
-            if timeFrame == "weekly" {
-                return "week"
-            } else {
-                return "day"
-            }
-        }()
-        
-        let collectionLoc:String = {
-            if timeFrame == "weekly" {
-                return "pastWeekBets"
-            } else {
-                return "pastDayBets"
-            }
-        }()
-        
-        print("PAST BETS ARE FETCHED")
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MM/dd/yy" // Month, Date
-        guard let startDate = dateFormatter.date(from: selectedWeek) else {
-            return
-        }
-        print("Start date:", startDate)
+    func fetchBets(uid: String, for groupNumber: Int, ticketFormat: [Int], currentWeek: Bool, selectedWeek: String, completion: @escaping () -> Void) {
 
-        // Calculate the end date, which is one week later
-        //let endDate = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: startDate)!
-        
-        var endDate: Date?
-        
-        
-        if timeFrame == "weekly" {
-            endDate = Calendar.current.date(byAdding: .weekOfYear, value: 1, to: startDate)
+        let documentLoc = "day"
+        let collectionLoc = determineCollectionLocation(currentWeek: currentWeek)
+        guard let startDate = parseDate(from: selectedWeek, currentWeek: currentWeek) else { return }
+        let endDate = calculateEndDate(from: startDate, currentWeek: currentWeek)
 
-        } else if timeFrame == "daily" {
-            endDate = Calendar.current.date(byAdding: .day, value: 1, to: startDate)
-
-        }
-        print("End date:", endDate!)
-        
         let query = self.db.collection("users").document(uid).collection("bets").document(documentLoc).collection(collectionLoc)
                 .whereField("groupNumber", isEqualTo: groupNumber)
                 .whereField("timestamp", isGreaterThanOrEqualTo: startDate)
-                .whereField("timestamp", isLessThanOrEqualTo: endDate!)
-        
-        query.getDocuments { (querySnapshot, error) in
-            DispatchQueue.main.async {
-                guard let documents = querySnapshot?.documents else {
-                    print("Error getting documents: \(error!)")
-                    self.isBetsLoaded = true
-                    return
-                }
-                self.totalBetArrays.removeAll() // Clear previous data
-                for (index, parlayMax) in ticketFormat.enumerated() {
-                    let betTempArr = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
-                        return try? queryDocumentSnapshot.data(as: Bet.self)
-                    }
-                        .filter { $0.betNumber == index+1 }.prefix(parlayMax))
-                    self.totalBetArrays.append(betTempArr)
-                }
-                
-                self.calculateTotals(for: groupNumber, ticketFormat: ticketFormat)
-
-                if let error = error {
-                    print(error)
-                } else {
-                    self.currentTicketFormat = ticketFormat
-                    self.isBetsLoaded = true
-                    self.isTFLoaded = true
-                    print("PAST BETS", self.totalBetArrays)
-                }
-
-                // Call completion handler
-                completion()
-            }
-        }
-    }
-    
-    func fetchGameInfo() {
-        
-        
-    }
-    
-    func fetchBets(uid: String, for groupNumber: Int, ticketFormat: [Int], timeFrame: String, completion: @escaping () -> Void) {
-
-        let documentLoc = "day"
-        let collectionLoc = "currentDayBets"
-        
-        let query = self.db.collection("users").document(uid).collection("bets").document(documentLoc).collection(collectionLoc)
-            .whereField("groupNumber", isEqualTo: groupNumber)
-            .order(by: "timestamp") // Could also order by status
+                .whereField("timestamp", isLessThanOrEqualTo: endDate)
             query.getDocuments { (querySnapshot, error) in
             DispatchQueue.main.async {
                 guard let documents = querySnapshot?.documents else {
@@ -444,43 +363,6 @@ class ticketViewModel: ObservableObject {
             }
         }
     }
-    
-    func calculateTotals(for groupNumber: Int, ticketFormat: [Int]) {
-
-        var totalWonLocal: Double = 0.0
-        var totalPotentialWonLocal: Double = 0.0
-
-        // Helper function to avoid code duplication
-        func calculateForBetArray(_ betArray: [Bet], count: Int) {
-            if betArray.count == count {
-                let product = betArray.reduce(1.0, { $0 * $1.betOdds })
-                let toWin = percentageToTotalWin(percentage: Double(product))
-                let potentialWin = Double(toWin.replacingOccurrences(of: "$", with: "")) ?? 0.0
-
-                if betArray.filter({ $0.groupNumber == groupNumber }).allSatisfy({ $0.result == .win }) {
-                    totalWonLocal += potentialWin
-                }
-                
-                if betArray.filter({ $0.groupNumber == groupNumber }).contains(where: ({ $0.result == .loss })) {
-                    totalWonLocal -= 100
-                }
-
-                // check if not all elements in the array are a win
-                if !betArray.filter({ $0.groupNumber == groupNumber }).allSatisfy({ $0.result == .win }) &&
-                    !betArray.filter({ $0.groupNumber == groupNumber }).contains(where: { $0.result == .loss }) {
-                    totalPotentialWonLocal += potentialWin
-                }
-            }
-        }
-        for index in 0..<totalBetArrays.count {
-            let betArray = totalBetArrays[index]
-            calculateForBetArray(betArray, count: ticketFormat[index])
-        }
-
-        totalWon = totalWonLocal
-        totalPotentialWon = totalPotentialWonLocal
-    }
-    
     
     func deleteBet(bet: Bet, timeFrame: String) {
         
@@ -551,68 +433,62 @@ class ticketViewModel: ObservableObject {
             if let error = error {
                 print("Error removing document: \(error)")
             } else {
-                                self.fetchUserTickets(timeFrame: timeFrame) {
-                                    self.fetchBets(uid: userId, for: bet.groupNumber, ticketFormat: self.currentTicketFormat, timeFrame: timeFrame) {print("Document successfully removed!")
-                                        self.groupServe.setPotentialToWin(potential: Int(self.totalPotentialWon), groupNumber: bet.groupNumber, timeFrame: timeFrame, completion: {_ in })
-                                    } // fetch the updated list of bets
-                //                }
-                            }
+                self.fetchUserTickets(timeFrame: timeFrame) {
+                    self.fetchBets(uid: userId, for: bet.groupNumber, ticketFormat: self.currentTicketFormat, currentWeek: true, selectedWeek: "n/a") {
+                        print("Document successfully removed!")
+                        self.groupServe.setPotentialToWin(potential: Int(self.totalPotentialWon), groupNumber: bet.groupNumber, timeFrame: timeFrame, completion: {_ in })
+                    }
+                }
             }
-        
-        
+            
         }
         
     }
     
     func fetchGameDocument(byID documentID: String, completion: @escaping (Game?) -> Void) {
-            let db = Firestore.firestore()
-            
+        let db = Firestore.firestore()
+        
         db.collectionGroup("games").whereField("id", isEqualTo: documentID).getDocuments { (querySnapshot, error) in
-                if let error = error {
-                    print("Error getting game document: \(error)")
-                    return
-                }
-                
-           if let document = querySnapshot?.documents.first {
-               
-               
-                        do {
-                            
-                            let data = document.data()
-                            if let idd = data["id"] as? String,
-                               let commenceTime = data["commenceTime"] as? Timestamp,
-                               let totalOver = data["totalOver"] as? Double,
-                               let totalUnder = data["totalUnder"] as? Double,
-                               let homeTeam = data["homeTeam"] as? String,
-                               let awayTeam = data["awayTeam"] as? String,
-                               let homeSpread = data["homeSpread"] as? Double,
-                               let awaySpread = data["awaySpread"] as? Double,
-                               let homeTeamScore = data["homeTeamScore"] as? Int,
-                               let awayTeamScore = data["awayTeamScore"] as? Int,
-                               let whichSport = data["whichSport"] as? String,
-                               let bet_statistics = data["bet_statistics"] as? [Int],
-                               let total_plays = data["total_plays"] as? Int,
-                               // Extract additional fields here
-                               let awayML = data["awayML"] as? Int,
-                               let homeML = data["homeML"] as? Int,
-                               let awaySpreadODDS = data["awaySpreadODDS"] as? Int,
-                               let homeSpreadODDS = data["homeSpreadODDS"] as? Int,
-                               let totalOverODDS = data["totalOverODDS"] as? Int,
-                               let totalUnderODDS = data["totalUnderODDS"] as? Int,
-                               let status = data["status"] as? String
-                            {
-                                // Ensure completed is correctly extracted or defaulted
-                                let completed = data["completed"] as? Bool ?? false
+            if let error = error {
+                print("Error getting game document: \(error)")
+                return
+            }
+            
+            if let document = querySnapshot?.documents.first {
+                do {
+//                    let data = document.data()
+//                    if let idd = data["id"] as? String,
+//                       let commenceTime = data["commenceTime"] as? Timestamp,
+//                       let totalOver = data["totalOver"] as? Double,
+//                       let totalUnder = data["totalUnder"] as? Double,
+//                       let homeTeam = data["homeTeam"] as? String,
+//                       let awayTeam = data["awayTeam"] as? String,
+//                       let homeSpread = data["homeSpread"] as? Double,
+//                       let awaySpread = data["awaySpread"] as? Double,
+//                       let homeTeamScore = data["homeTeamScore"] as? Int,
+//                       let awayTeamScore = data["awayTeamScore"] as? Int,
+//                       let whichSport = data["whichSport"] as? String,
+//                       let bet_statistics = data["bet_statistics"] as? [Int],
+//                       let total_plays = data["total_plays"] as? Int,
+//                       let awayML = data["awayML"] as? Int,
+//                       let homeML = data["homeML"] as? Int,
+//                       let awaySpreadODDS = data["awaySpreadODDS"] as? Int,
+//                       let homeSpreadODDS = data["homeSpreadODDS"] as? Int,
+//                       let totalOverODDS = data["totalOverODDS"] as? Int,
+//                       let totalUnderODDS = data["totalUnderODDS"] as? Int,
+//                       let status = data["status"] as? String {
+//                        
+//                        // Create the newGame instance with all fields
+//                        let newGame = Game(id: nil, idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, status: status, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays, awayML: awayML, homeML: homeML, awaySpreadODDS: awaySpreadODDS, homeSpreadODDS: homeSpreadODDS, totalOverODDS: totalOverODDS, totalUnderODDS: totalUnderODDS)
+//                    }
+                    let game = try document.data(as: Game.self)
+                    completion(game)
 
-                                // Create the newGame instance with all fields
-                                let newGame = Game(id: nil, idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, status: status, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays, awayML: awayML, homeML: homeML, awaySpreadODDS: awaySpreadODDS, homeSpreadODDS: homeSpreadODDS, totalOverODDS: totalOverODDS, totalUnderODDS: totalUnderODDS)
-                                completion(newGame)
-                            }
-                            } catch let error {
-                                print("Error decoding game document: \(error)")
-                                completion(nil)
-                        }
-                    }
+                } catch let error {
+                    print("Error decoding game document: \(error)")
+                    completion(nil)
+                }
+            }
             else {
                 print("johnny")
                 completion(nil)
@@ -726,7 +602,46 @@ class ticketViewModel: ObservableObject {
         
     }
     
+    func stopListening() {
+        listener?.remove()
+    }
+}
 
+
+
+
+extension ticketViewModel {
+    private func determineCollectionLocation(currentWeek: Bool) -> String {
+        currentWeek ? "currentDayBets" : "pastDayBets"
+    }
+    
+    private func parseDate(from selectedWeek: String, currentWeek: Bool) -> Date? {
+        // Check if the selectedWeek is meant to represent the current week
+        if currentWeek {
+            // If so, calculate the date 3 days ago from today
+            let threeDaysAgo = Calendar.current.date(byAdding: .day, value: -3, to: Date())
+            return threeDaysAgo
+        } else {
+            // Otherwise, parse the selectedWeek string into a Date object
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "MM/dd/yy"
+            return dateFormatter.date(from: selectedWeek)
+        }
+    }
+
+    private func calculateEndDate(from startDate: Date, currentWeek: Bool) -> Date {
+        var valueAdd: Int {
+            if currentWeek {
+                return 7 // arbitrary figure to make sure fits in correct time frame
+            } else {
+                return 1
+            }
+        }
+        return Calendar.current.date(byAdding: .day, value: valueAdd, to: startDate)!
+    }
+    
+
+    
     func isTeamAvailable(_ team: String,_ groupNumber: Int, _ betType: BetType) -> Bool {
         
         for bet in currentUserDailyBets {
@@ -738,9 +653,6 @@ class ticketViewModel: ObservableObject {
         return true
     }
     
-    func stopListening() {
-        listener?.remove()
-    }
 }
 
 func parlayTitle(ticketFormat: [Int], index: Int) -> String {
