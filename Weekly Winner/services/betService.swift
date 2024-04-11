@@ -215,8 +215,82 @@ class BetService {
         }
     }
     
+    func fetchBets(uid: String, currentWeek: Bool, selectedWeek: String, completion: @escaping ([Bet], Error?) -> Void) {
+
+        let documentLoc = "day"
+        let collectionLoc = determineBetCollectionLocation(currentWeek: currentWeek)
+        guard let startDate = parseDate(from: selectedWeek, currentWeek: currentWeek) else { return }
+        let endDate = calculateEndDate(from: startDate, currentWeek: currentWeek)
+
+        let query = self.db.collection("users").document(uid).collection("bets").document(documentLoc).collection(collectionLoc)
+                .whereField("groupNumber", isEqualTo: 0) // dont want to make new query
+                .whereField("timestamp", isGreaterThanOrEqualTo: startDate)
+                .whereField("timestamp", isLessThanOrEqualTo: endDate)
+            query.getDocuments { (querySnapshot, error) in
+            DispatchQueue.main.async {
+                guard let documents = querySnapshot?.documents else {
+                    print("No documents")
+                    return
+                }
+                
+                let localDailyUserBets = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
+                    return try? queryDocumentSnapshot.data(as: Bet.self)
+                })
+//                if localDailyUserBets.isEmpty {
+//                    self.currentUserDailyBets = []
+//                } else {
+//                    self.currentUserDailyBets = localDailyUserBets
+//                }
+
+                if let error = error {
+                    print(error)
+                    completion([], error)
+                } else {
+                    completion(localDailyUserBets, nil)
+                }
+                
+            }
+        }
+    }
+    
     
 
+    
+}
+
+extension BetService {
+    private func determineBetCollectionLocation(currentWeek: Bool) -> String {
+        currentWeek ? "currentDayBets" : "pastDayBets"
+    }
+    
+    private func determineTicketCollectionLocation(currentWeek: Bool) -> String {
+        currentWeek ? "currentDayBets" : "pastDayBets"
+    }
+    
+    private func parseDate(from selectedWeek: String, currentWeek: Bool) -> Date? {
+        // Check if the selectedWeek is meant to represent the current week
+        if currentWeek {
+            // If so, calculate the date 3 days ago from today
+            let threeDaysAgo = Calendar.current.date(byAdding: .day, value: -3, to: Date())
+            return threeDaysAgo
+        } else {
+            // Otherwise, parse the selectedWeek string into a Date object
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "MM/dd/yy"
+            return dateFormatter.date(from: selectedWeek)
+        }
+    }
+
+    private func calculateEndDate(from startDate: Date, currentWeek: Bool) -> Date {
+        var valueAdd: Int {
+            if currentWeek {
+                return 7 // arbitrary figure to make sure fits in correct time frame
+            } else {
+                return 1
+            }
+        }
+        return Calendar.current.date(byAdding: .day, value: valueAdd, to: startDate)!
+    }
     
 }
 

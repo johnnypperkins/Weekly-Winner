@@ -296,10 +296,7 @@ struct profileBarView: View {
 }
 
 struct groupStats: View {
-//    let stat1: Int?
-//    let stat2: Int?
-//    let stat3: String
-//    let stat4: String
+
     let allBets: [Bet]
     let allTickets: [Ticket]
     var winsCount: Int {
@@ -377,18 +374,11 @@ struct groupStats: View {
             .stroke(.white, lineWidth: 0.4))
             .padding(.horizontal)
         HStack() {
-          Text("Bet Score")
+          Text("Average Bet Winnings")
             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
             .foregroundColor(.white)
             
             Spacer()
-            
-            /*
-             if (betData.result === "win") {
-                 totalBetsWon++;
-                 totalBetScore += ((1 / betData.betOdds)*100 - 100);
-             }
-             */
             
           Text("\(String(format: "%.2f", returnTotalBetScore(allBets: allBets)))")
                 .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))

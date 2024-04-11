@@ -20,6 +20,8 @@ class bookViewModel: ObservableObject {
     @Published var isTicketsLoaded = false  // Add this line
     @Published var mostPopularBets: [MostPopularBet] = []
     @Published var arePopularBetsLoaded = false
+    
+    @Published var currentUserDailyBets: [Bet] = []
 
     @Published var selectedGameType = "All Games"
     
@@ -51,6 +53,17 @@ class bookViewModel: ObservableObject {
         }
     }
     
+    func fetchBets(uid: String, currentWeek: Bool, selectedWeek: String, completion: @escaping () -> Void) {
+        betService.fetchBets(uid: uid, currentWeek: currentWeek, selectedWeek: selectedWeek) { bets, error in
+            if let error = error {
+                print(error)
+                completion()
+            } else {
+                self.currentUserDailyBets = bets
+                completion()
+            }
+        }
+    }
     
     func getGamesCommenceTime(completion: @escaping () -> Void) {
         self.allGames.removeAll()
@@ -120,6 +133,16 @@ class bookViewModel: ObservableObject {
                 completion()
             }
         }
+    }
+    
+    func isTeamAvailable(_ team: String,_ groupNumber: Int, _ betType: BetType, betArray: [Bet]) -> Bool {
+        
+        for bet in betArray {
+            if bet.teamBetOn == team && bet.groupNumber == groupNumber {
+                return false
+            }
+        }
+        return true
     }
     
 }

@@ -19,26 +19,26 @@ struct UserProfileView: View {
     @Binding var tab: Tab
     @State var timeFrame = "daily"
     @StateObject private var prizesVM = prizesViewModel()
-
+    
     var body: some View {
         VStack(spacing: 12) {
-
+            
             ProfileHeaderView(screen1VM: screen1VM, timeFrame: $timeFrame)
                 .padding(.top, 10)
                 .padding(.horizontal)
-           
+            
             countDown(prizesVM: prizesVM, timeFrame: $timeFrame)
-
+            
             VStack {
-             yourGroups(screen1VM: screen1VM, tab: $tab)
+                yourGroups(screen1VM: screen1VM, tab: $tab)
                     .padding(.top, 20)
-
+                
                 weeklyGlobalLeaders(screen1VM: screen1VM, timeFrame: $timeFrame)
                     .padding(.horizontal)
                 
                 Spacer()
             }.padding(.bottom,45)
-
+            
         }
         .sheet(isPresented: $showWebpage) {
             if screen1VM.updateURL != "" {
@@ -60,7 +60,7 @@ struct UserProfileView: View {
             if StaticUserData.shared.currentUser.id! != "" && StaticUserData.shared.currentUser.id! != nil {
                 screen1VM.setUserFCM(userID: StaticUserData.shared.currentUser.id!) {}
             }
-
+            
         }.padding(.top, 35)
     }
 }
@@ -175,15 +175,6 @@ struct weeklyGlobalLeaders: View {
                                 .cornerRadius(5)
                         }
                         
-    //                    Button(action: {
-    //                        whichTab = "search"
-    //                    }) {
-    //                        Text("Search")
-    //                            .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
-    //                            .foregroundColor(.white)
-    //                            .frame(width: 100, height: 30, alignment: .center)
-    //                            .cornerRadius(5)
-    //                    }
                         Button(action: {
                             withAnimation{
                                 whichTab = "global"
@@ -209,18 +200,21 @@ struct weeklyGlobalLeaders: View {
                     if screen1VM.canFetchDailyRankedTickets {
                         ForEach(0..<min(3, StaticUserData.shared.dailyRankedTickets.count), id: \.self) { index in
                             let ticket = StaticUserData.shared.dailyRankedTickets[index]
-                            
-                            BetCard(
-                                ticket: ticket,
-                                rank: ticket.rank,
-                                ownCard: false,
-                                currentWeek: true,
-                                homePage: true
-                            ).padding(EdgeInsets(top: 0, leading: 8, bottom: 5, trailing: 8))
+
+                            NavigationLink(destination: {
+                                ticketView(username: ticket.username, uid: ticket.uid, groupID: "GlobalDaily", selectedWeek: "current", ticketFormatForGroups: [], ownTicket: false, onTicketPage: false, passedTimeFrame: timeFrame)
+                            }, label: {
+                                BetCard(
+                                    ticket: ticket,
+                                    rank: ticket.rank,
+                                    ownCard: false,
+                                    currentWeek: true,
+                                    homePage: true
+                                ).padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0))
+                            })
                         }
                     }
-                }
-                else if whichTab == "friends" {
+                } else if whichTab == "friends" {
                     if screen1VM.canFetchDailyRankedTickets {
                         let ticketsFromFriends = StaticUserData.shared.dailyRankedTickets.filter { ticket in
                             screen1VM.friendsUIDS.contains(ticket.uid)
@@ -242,46 +236,32 @@ struct weeklyGlobalLeaders: View {
                                 }.frame(maxWidth: .infinity)
                                     .frame(maxHeight: 40)
                                     .padding(.horizontal)
-                          .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-                          .cornerRadius(10)
-                            
+                                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                                    .cornerRadius(10)
+                                
                             }.id(UUID())
-                            .padding(.horizontal)
+                                .padding(.horizontal)
                                 .padding(.top)
                             Spacer()
-                        }
-                        else{
+                        } else {
                             ForEach(0..<min(3, ticketsFromFriends.count), id: \.self) { index in
                                 let ticket = ticketsFromFriends[index]
-                                BetCard(
-                                    ticket: ticket,
-                                    rank: ticket.rank,
-                                    ownCard: false,
-                                    currentWeek: true,
-                                    homePage: true
-                                ).padding(EdgeInsets(top: 0, leading: 8, bottom: 5, trailing: 8))
+                                NavigationLink(destination: {
+                                    ticketView(username: ticket.username, uid: ticket.uid, groupID: "GlobalDaily", selectedWeek: "current", ticketFormatForGroups: [], ownTicket: false, onTicketPage: false, passedTimeFrame: timeFrame)
+                                }, label: {
+                                    BetCard(
+                                        ticket: ticket,
+                                        rank: ticket.rank,
+                                        ownCard: false,
+                                        currentWeek: true,
+                                        homePage: true
+                                    ).padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0))
+                                })
                             }
                             Spacer()
                         }
                     }
                 }
-//                } else if timeFrame == "weekly" {
-//                    if screen1VM.canFetchWeeklyRankedTickets {
-//                        
-//                        ForEach(0..<min(3, StaticUserData.shared.weeklyRankedTickets.count), id: \.self) { index in
-//                            let ticket = StaticUserData.shared.weeklyRankedTickets[index]
-//                            
-//                            BetCard(
-//                                ticket: ticket,
-//                                rank: ticket.rank,
-//                                ownCard: false,
-//                                currentWeek: true,
-//                                homePage: true
-//                            ).padding(EdgeInsets(top: 0, leading: 8, bottom: 5, trailing: 8))
-//                        }
-//                    }
-//                }
-                
             }.frame(height: 210)
         }
     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 230, maxHeight: 230)

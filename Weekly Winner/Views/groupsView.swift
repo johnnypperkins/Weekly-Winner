@@ -97,8 +97,7 @@ struct groupsView: View {
                                 ticketView(username: "", uid: Auth.auth().currentUser!.uid, groupID: "", selectedWeek: "current", ticketFormatForGroups: [], ownTicket: true, onTicketPage: true, passedTimeFrame: "daily")
                                 Spacer()
                             }
-                        }
-                        else { // not looking for group
+                        } else { // not looking for group
                             VStack {
                                 HStack {
                                     VStack(alignment: .leading) {
@@ -144,54 +143,6 @@ struct groupsView: View {
                                 Spacer()
                                 HStack {
                                     VStack {
-//                                        if timeFrame == "weekly" {
-//                                            if (viewModel.canGetHistoricalData && !showingChat && viewModel.weekIndex >= 0 && viewModel.weekIndex <= viewModel.totalArrayOfDates[0].count) {
-//                                                HStack {
-//                                                    Button(action: {
-//                                                        if viewModel.weekIndex < viewModel.totalArrayOfDates[0].count-1  {
-//                                                            viewModel.weekIndex = viewModel.weekIndex + 1
-//                                                            viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, week: viewModel.totalArrayOfDates[0][viewModel.weekIndex], timeFrame: timeFrame) {}
-//                                                        }
-//                                                    }, label: {
-//                                                        if viewModel.weekIndex < viewModel.totalArrayOfDates[0].count-1  {
-//                                                            Image(systemName: "chevron.left")
-//                                                                .foregroundColor(.white)
-//                                                        } else {
-//                                                            Image(systemName: "chevron.left")
-//                                                                .foregroundColor(.white).opacity(0.6)
-//                                                        }
-//                                                    })
-//                                                    
-//                                                    Text(viewModel.totalArrayOfDates[0][viewModel.weekIndex])
-//                                                        .foregroundColor(.white)
-//                                                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-//                                                    
-//                                                    Button(action: {
-//                                                        if viewModel.weekIndex > 0 {
-//                                                            viewModel.weekIndex = viewModel.weekIndex - 1
-//                                                            if(viewModel.weekIndex == 0) {
-//                                                                viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {}
-//                                                            } else {
-//                                                                viewModel.fetchPastRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, week: viewModel.totalArrayOfDates[0][viewModel.weekIndex], timeFrame: timeFrame) {}
-//                                                            }
-//                                                        }
-//                                                    }, label: {
-//                                                        if viewModel.weekIndex > 0 {
-//                                                            Image(systemName: "chevron.right")
-//                                                                .foregroundColor(.white)
-//                                                        } else {
-//                                                            Image(systemName: "chevron.right")
-//                                                                .foregroundColor(.white).opacity(0.6)
-//                                                        }
-//                                                    })
-//                                                }.padding(.leading)
-//                                                
-//                                                
-//                                                
-//                                            } else {
-//                                                Text("Test").foregroundColor(.clear)
-//                                            }
-//                                        } else 
                                         if timeFrame == "daily" {
                                             if viewModel.totalArrayOfDates.count > 0 {
                                                 if (viewModel.canGetHistoricalData){
@@ -251,36 +202,6 @@ struct groupsView: View {
                                         }
                                     }.frame(height: 25)
                                     Spacer()
-                                    //                                Button(action: {
-                                    //                                    showingChat = false
-                                    //                                }) {
-                                    //                                    Image(showingChat ? "podiumUnselected" : "podiumSelected") // Assuming "ticket" and "ticket.fill" are your symbols
-                                    //                                        .resizable()
-                                    //                                        .frame(width: 25, height: 28)
-                                    //
-                                    //                                }
-                                    
-                                    //                                Button(action: {
-                                    //                                    showingChat = true
-                                    //                                }) {
-                                    //                                    Image(showingChat ? "chatSelected" : "chatUnselected") // Assuming "message" and "message.fill" are your symbols
-                                    //                                        .resizable()
-                                    //                                        .frame(width: 20, height: 20)
-                                    //                                        .foregroundColor(showingChat ? .blue : .gray)
-                                    //                                }
-                                    
-                                    //                                Button(action: {
-                                    //                                    isStatsViewPresented = true
-                                    //                                }) {
-                                    //                                    Image("StatsUnselected")
-                                    //                                        .resizable()
-                                    //                                        .frame(width: 20, height: 20)
-                                    //                                        .foregroundColor(.white)
-                                    //                                }
-                                    //                                .sheet(isPresented: $isStatsViewPresented) {
-                                    //                                    statsView()
-                                    //                                        .presentationDetents([.fraction(0.75)])
-                                    //                                }
                                     
                                     
                                         Button(action: {
@@ -311,12 +232,7 @@ struct groupsView: View {
                                             //.padding()
                                                 .foregroundColor(.white)
                                         }
-//                                        .sheet(isPresented: $isGroupSettingsViewPresented) {
-//                                            
-//                                            groupSettingsView(selectedGroup: $selectedGroup, viewModel: viewModel, groupAdmin: "fg57TZhmLmWH9TT3WCA3WuXT7dy2", groupNum: 0,
-//                                                              ticketFormat: timeFrame == "weekly" ? StaticUserData.shared.weeklyTicket.ticketFormat : StaticUserData.shared.dailyTicket.ticketFormat, timeFrame: timeFrame)
-//                                            .presentationDetents([.fraction(0.75)])
-//                                        }
+
                                     }
                                     
                                 }.padding(EdgeInsets(top: 5, leading: 5, bottom: 10, trailing: 16))
@@ -332,7 +248,7 @@ struct groupsView: View {
                                                 currentLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup, timeFrame: "daily")
                                                     .frame(width: geometry.size.width)
                                                     .padding(EdgeInsets(top: 0, leading: 0, bottom: 40, trailing: 00))
-                                                //                                            .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+
                                                 currentLeaderboardView(viewModel: viewModel, selectedGroup: $selectedGroup, timeFrame: "friends")
                                                     .frame(width: geometry.size.width)
                                                     .padding(EdgeInsets(top: 0, leading: 0, bottom: 40, trailing: 00))
@@ -371,16 +287,7 @@ struct groupsView: View {
                             }
                         }
                     }
-                    .onAppear(){
-                        if selectedGroup > 0 {
-                            print("on appear ranked")
-                        }
-                    }
-//                }
-            }.navigationTitle("Groups")
-                .onAppear() {
-                    
-                }.padding(.top, 50)
+            }.navigationTitle("Groups").padding(.top, 50)
 //                .background(Color(red: 0.02, green: 0.05, blue: 0.26))
         }
     }
@@ -482,7 +389,7 @@ struct currentLeaderboardView: View {
     @ObservedObject var viewModel: groupsViewModel
     @Binding var selectedGroup: Int
     var timeFrame: String
-
+    
     var body: some View {
         VStack (spacing: 0) {
             if selectedGroup > 0 {
@@ -511,7 +418,7 @@ struct currentLeaderboardView: View {
                         }
                     }
                 }).id(UUID())
-    
+                
             }
             HStack {
                 Text("Leaderboard")
@@ -531,17 +438,6 @@ struct currentLeaderboardView: View {
                             }).id(UUID())
                         }
                     }
-//                    else if timeFrame == "friends" {
-//                        ForEach(0..<viewModel.friendsTickets.count, id: \.self) { index in
-//                            NavigationLink(destination:
-//                                            ticketView(username: viewModel.friendsTickets[index].username, uid: viewModel.friendsTickets[index].uid, groupID: viewModel.friendsTickets[index].groupID, selectedWeek: "current", ticketFormatForGroups: [], ownTicket: viewModel.friendsTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, onTicketPage: false, passedTimeFrame: "daily"), // FIX LATER ?
-//                                           label: {
-//                                BetCard(ticket: viewModel.friendsTickets[index], rank: (viewModel.friendsTickets[index].rank), ownCard: viewModel.friendsTickets[index].uid == Auth.auth().currentUser?.uid ? true : false, currentWeek: true, homePage: false).padding(.bottom,16)
-//                            }).id(UUID())
-//                            //                        }
-//                            //                    }
-//                        }
-//                    }
                 }.padding(.bottom,40)
             }.refreshable {
                 await viewModel.fetchUserTickets(timeFrame: timeFrame) {}
@@ -550,10 +446,8 @@ struct currentLeaderboardView: View {
                     if timeFrame == "daily" {
                         viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {}
                     } else {
-//                        viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {}
+                        //                        viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {}
                     }                }
-            }.onAppear() {
-                //print("\(viewModel.currentRankedGroupTickets.count) is count")
             }
         }
     }
@@ -615,12 +509,6 @@ struct pastLeaderboardView: View {
                         }
 
                 }.padding(.bottom,60)
-                    .onAppear(){
-                       // viewModel.printTickets(ticket: viewModel.pastRankedGroupTickets)
-                    }
-            }
-            .onAppear() {
-                print("\(viewModel.pastRankedGroupTickets.count) is count")
             }
         }
     }
@@ -767,19 +655,12 @@ struct BetCard: View {
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 44, maxHeight: ticket.groupAdmin != Auth.auth().currentUser?.uid || ticket.username == StaticUserData.shared.username ? 44 : 44)
         .background(ownCard ? K.finalColor.otherPurple.opacity(0.35): K.finalColor.cardBlue)
         .cornerRadius(10)
-        //.overlay(ownCard ? RoundedRectangle(cornerRadius: 10).stroke(Color.white, lineWidth: 1) : RoundedRectangle(cornerRadius: 10).stroke(Color.clear, lineWidth: 0))
-        //.shadow(color: ownCard ? Color.white : Color.clear, radius: ownCard ? 2.5 : 0, x: 0, y: 0)
-
-
-        
         .onAppear {
             isEnabled = ticket.isEnabled
             fetchUserProfilePic(uid: ticket.uid) { (profileImageUrl, error) in
                 if let error = error {
                     print("Error fetching profile image URL: \(error)")
-                   
                 } else if let profileImageUrl = profileImageUrl {
-                   //print("Profile image URL: \(profileImageUrl)")
                     self.profileImageURL = profileImageUrl
                 }
             }
@@ -818,188 +699,6 @@ struct SearchBar: View {
     }
 }
 
-
-
-
-//struct GroupJoinSheet: View {
-//    let group: Group // Groups99
-//    let viewModel: groupsViewModel
-//    @Binding var isPresented: Bool
-//    @State var canJoin = true
-//    @State var adminUsername = ""
-//    @State var enteredPassword = ""
-//    @ObservedObject private var authVM = authenticationViewModel()
-//    @Environment(\.dismiss) private var dismiss
-//    
-//
-//    var body: some View {
-//        
-//        VStack {
-//            ZStack(){
-//                VStack {
-//                    if (canJoin) {
-//                        Text("Join Group")
-//                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 20).weight(.medium))
-//                            .foregroundColor(.white)
-//                    }
-//                }
-//                HStack(){
-//                    Spacer()
-//                    Button {
-//                        dismiss()
-//                    } label: {
-//                        Image(systemName: "xmark.circle.fill")
-//                            .foregroundColor(.white)
-//                            
-//                    }.padding(.trailing,16)
-//                    
-//                }.frame (minWidth: 0, maxWidth: .infinity)
-//            }.frame (minWidth: 0, maxWidth: .infinity)
-//            
-//            VStack(alignment: .leading){
-//                HStack{
-//                    if group.groupImageURL != ""{
-//                        KFImage(URL(string: group.groupImageURL))
-//                            .resizable()
-//                            .cornerRadius(20)
-//                            .frame(width: 40, height: 40, alignment: .leading)
-//                    }
-//                    else {
-//                        Image(systemName: "person.3.fill")
-//                            .resizable()
-//                            .cornerRadius(25)
-//                            .frame(width: 40, height: 40, alignment: .leading)
-//                    }
-//                    
-//                    VStack(alignment: .leading) {
-//                        
-//                        HStack {
-//                            Text("\(group.groupName)")
-//                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-//                                .foregroundColor(.white)
-//                            
-//                            Spacer()
-//                            if group.password != "" {
-//                                Text("Private Group")
-//                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
-//                                    .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
-//                                    .frame(alignment: .top)
-//                            }
-//                            else{
-//                                Text("Public Group")
-//                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
-//                                    .foregroundColor(Color(red: 0.31, green: 0.57, blue: 1))
-//                                    .frame(alignment: .top)
-//                            }
-//                        }.frame(minWidth: 0, maxWidth: .infinity)
-//                        
-//                        Text("\(group.groupSlogan)")
-//                            .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
-//                              .foregroundColor(.white)
-//                    }
-//                    Spacer()
-//                    
-//                }
-//                HStack {
-//                    Text("Group Admin")
-//                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
-//                      .foregroundColor(.white)
-//                    Spacer()
-//                    Text(group.groupAdminUsername)
-//                      .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
-//                      .foregroundColor(.white)
-//                }
-//                .padding(.top,10)
-//                
-//                if !group.password!.isEmpty {
-//                    VStack(alignment: .leading, spacing: 10) {
-//                        Text("Password")
-//                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
-//                            .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-//                        HStack() {
-//                            TextField("Password", text: $enteredPassword)
-//                                .foregroundColor(.white)
-//                                .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
-//                                .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-//                            
-//                        }
-//                        .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 15))
-//                        .cornerRadius(10)
-//                        .background(Color(red: 0.13, green: 0.14, blue: 0.34))
-//                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 50)
-//                    }
-//                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 80, maxHeight: 80)
-//                }
-//            }.frame(minWidth: 0, maxWidth: .infinity)
-//                .padding(.horizontal,15)
-//                .padding(.vertical,20)
-//            
-//            if (canJoin) {
-//                Button(action: {
-//                    if enteredPassword != group.password {
-//                        AppUtility.shared.showCustomAlert(alertType: .none, message: "The password that you entered is invalid. Please check with the admin and rejoin.", actionButtonTitle: nil, cancelButtonTitle: K.appButtonTitle.ok) { action in
-//                            
-//                        }
-//                    }
-//                    else{
-//                        AppUtility.shared.showCustomAlert(alertType: .none, message: "Congratulations, you have joined \(group.groupName)", actionButtonTitle: nil, cancelButtonTitle: K.appButtonTitle.ok) { action in
-//                               // viewModel.joinGroup(group: group)
-//                                isPresented = false
-//                        }
-//                    }
-//                }, label: {
-//                    HStack{
-//                        Spacer()
-//                        
-//                        Text("Join")
-//                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-//                            .foregroundColor(.white)
-//                                        //shadow
-//                        
-//                        Spacer()
-//                    }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 56 , maxHeight: 56)
-//                        .background(Color(red: 0.31, green: 0.57, blue: 1))
-//                        .cornerRadius(10)
-//                        .padding(.top,10)
-//                })
-//                .padding()
-//            } else {
-//                HStack{
-//                    Spacer()
-//                    
-//                    Text("Join")
-//                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-//                        .foregroundColor(.white)
-//                                    //shadow
-//                    
-//                    Spacer()
-//                }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 40 , maxHeight: 40)
-//                    .background(Color(red: 0.31, green: 0.57, blue: 1))
-//                    .cornerRadius(10)
-//                    .padding(.top,10)
-//            }
-//            
-//        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-//        .padding()
-//        .onAppear() {
-////            viewModel.checkIfGroupAlreadyJoined(group: group) { (alreadyJoined) in
-////                if !alreadyJoined {
-////                    canJoin = true
-////                } else {
-////                    canJoin = false
-////                }
-////            }
-//            authVM.fetchUserInformation(uid: group.groupAdmin) { (user) in
-//                if let user = user {
-//                    adminUsername = user.username
-//                } else {
-//                    adminUsername = group.groupAdmin
-//                }
-//            }
-//        }
-//        .background(Color(red: 0.02, green: 0.05, blue: 0.26))
-//    }
-//}
 
 struct chatView: View {
     @ObservedObject var viewModel: chatViewModel
@@ -1063,12 +762,6 @@ struct chatView: View {
             
             
         }.padding([.horizontal, .top])
-        .onAppear() {
-//            viewModel.getChats(groupID: timeFrame == "weekly" ? StaticUserData.shared.weeklyTicket.groupID : StaticUserData.shared.dailyTicket.groupID) {_ in
-//            }
-//            let formatter = DateFormatter()
-//            formatter.dateFormat = "MMM d, h:mma"
-        }
     }
 
     

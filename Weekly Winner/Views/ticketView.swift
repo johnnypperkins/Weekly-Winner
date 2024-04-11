@@ -17,36 +17,20 @@ struct ticketView: View {
     var ticketFormatForGroups: [Int]
     var ownTicket: Bool
     var onTicketPage: Bool
-    //@Binding var passedTimeFrame: String
     
     var ticketIsEnabled: Bool {
-        if timeFrame == "weekly" {
-            if selectedWeek != "current" {
-                return true
-            } else {
-                if StaticUserData.shared.weeklyTicket.isEnabled || StaticUserData.shared.weeklyTicket.groupID == "Global" {
-                    return true
-                } else {
-                    return false
-                }
-            }
+        if selectedWeek != "current" {
+            return true
         } else {
-            if selectedWeek != "current" {
+            if StaticUserData.shared.dailyTicket.isEnabled || StaticUserData.shared.dailyTicket.groupID == "GlobalDaily" {
                 return true
             } else {
-                if StaticUserData.shared.dailyTicket.isEnabled || StaticUserData.shared.dailyTicket.groupID == "GlobalDaily" {
-                    return true
-                } else {
-                    return false
-                }
+                return false
             }
         }
-        
     }
     
 
-    
-    
     init(username: String, uid: String, groupID: String, selectedWeek: String, ticketFormatForGroups: [Int], ownTicket: Bool, onTicketPage: Bool, passedTimeFrame: String) {
         self.username = username
         self.uid = uid
@@ -62,11 +46,9 @@ struct ticketView: View {
             viewModel.fetchFriendTicket(uid: uid, with: groupID, timeFrame: timeFrame) { group in
             }
         }
-        
-        viewModel.fetchUserInformation(uid: uid) {}
-        viewModel.fetchUserBetsForStats(uid: uid) {}
-        viewModel.fetchUserticketsForStats(uid: uid) {}
         viewModel.fetchUserProfilePic(uid: uid) {}
+        viewModel.fetchUserInformation(uid: uid) {}
+
     }
     
     var body: some View {
@@ -76,7 +58,7 @@ struct ticketView: View {
             
             VStack {
                 if uid == Auth.auth().currentUser?.uid && onTicketPage{
-//                    onTicketHeader(viewModel: viewModel, 
+//                    onTicketHeader(viewModel: viewModel,
 //                                   timeFrame: $timeFrame,
 //                                   uid: uid)
                 } else {
@@ -112,6 +94,12 @@ struct ticketView: View {
                     }
                 } else {
                     groupStats(allBets: viewModel.allDailyBets, allTickets: viewModel.allDailyTickets)
+                        .onAppear() {
+                            viewModel.fetchUserBetsForStats(uid: uid) {}
+                            viewModel.fetchUserticketsForStats(uid: uid) {}
+                        }.onDisappear() {
+                            
+                        }
                         .padding()
                 }
                 
@@ -120,37 +108,18 @@ struct ticketView: View {
                 Task{
                     await viewModel.isFriend(id: uid)
                 }
-                print("ticket format for groups " + "\(ticketFormatForGroups)" + "\(viewModel.totalBetArrays.count)")
                 selectedGroup = 0
-                let currentTicketFormat = {
-                    if timeFrame == "daily" {
-                        return StaticUserData.shared.dailyTicket.ticketFormat
-                    } else {
-                        return StaticUserData.shared.weeklyTicket.ticketFormat
-                        
-                    }
-                }()
                 
-                if !onTicketPage {
-                    if selectedWeek == "current" {
-                        viewModel.fetchFriendTicket(uid: uid, with: groupID, timeFrame: timeFrame) {_ in
-                            viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: currentTicketFormat, currentWeek: true, selectedWeek: selectedWeek) {}
-                        }
-                    } else {
-                        viewModel.fetchPastFriendTicket(uid: uid, with: groupID, timeFrame: timeFrame) {_ in
-//                            viewModel.fetchPastBets(uid: uid, for: 0, ticketFormat: ticketFormatForGroups, selectedWeek: selectedWeek, timeFrame: timeFrame, completion: {})
-                            viewModel.fetchBets(uid: uid, for: viewModel.userTickets[0].groupNumber, ticketFormat: currentTicketFormat, currentWeek: false, selectedWeek: selectedWeek) {}
-                        }
-                    }
+                if selectedWeek == "current" {
+                    viewModel.fetchBets(uid: uid, currentWeek: true, selectedWeek: selectedWeek) {}
                 } else {
-                    viewModel.fetchBets(uid: uid, for: selectedGroup, ticketFormat: currentTicketFormat, currentWeek: true, selectedWeek: selectedWeek) {}
+                    viewModel.fetchBets(uid: uid, currentWeek: false, selectedWeek: selectedWeek) {}
                 }
+                
             }
             .onDisappear {
                 selectedGroup = 0
-                viewModel.stopListening() // Stop listening when view disappears
             }
-            
             
         }
     }
@@ -302,7 +271,7 @@ struct ticketView: View {
                     Spacer()
                     Text("\(Int(returnWinningsFromAllStraights(bets: viewModel.currentUserDailyBets)))")
                         .font(.custom("Futura", size: 20))
-                        .foregroundColor(viewModel.totalWon >= 0 ? K.finalColor.winningGreen : K.finalColor.deleteRed)
+                        .foregroundColor(Int(returnWinningsFromAllStraights(bets: viewModel.currentUserDailyBets)) >= 0 ? K.finalColor.winningGreen : K.finalColor.deleteRed)
                 }
                 .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
                 .frame(width: 160, height: 55, alignment: .center)
@@ -532,9 +501,6 @@ struct ticketView: View {
                             Button(action: {
                                 if canDelete {
                                     self.viewModel.deleteBet(bet: bet, timeFrame: timeFrame)
-//                                    self.bookVM.fetchUserTickets(timeFrame: timeFrame) {
-//                                        self.viewModel.fetchBets(uid: Auth.auth().currentUser?.uid, for: <#T##Int#>, ticketFormat: <#T##[Int]#>, timeFrame: <#T##String#>, completion: <#T##() -> Void#>)
-//                                    }
                                 }
                                 canDelete = true
                             }) {

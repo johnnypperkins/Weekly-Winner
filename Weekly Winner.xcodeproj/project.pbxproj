@@ -37,6 +37,7 @@
 		3CD023D02A84655E0033D761 /* groupSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD023CF2A84655E0033D761 /* groupSettingsView.swift */; };
 		3CFD81C12B6BD0EF00DB3E7C /* finishedChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD81C02B6BD0EF00DB3E7C /* finishedChallengeView.swift */; };
 		3CFD81C42B6C64E700DB3E7C /* paymentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD81C32B6C64E600DB3E7C /* paymentViewModel.swift */; };
+		5FC630AA2BC74508007AC0F8 /* RandomGarbage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC630A92BC74508007AC0F8 /* RandomGarbage.swift */; };
 		8603ACFE2B1099C500B3B6BD /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8603ACFD2B1099C500B3B6BD /* FirebaseAnalytics */; };
 		8603AD002B1099C500B3B6BD /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 8603ACFF2B1099C500B3B6BD /* FirebaseAnalyticsSwift */; };
 		8603AD022B1099C500B3B6BD /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8603AD012B1099C500B3B6BD /* FirebaseAuth */; };
@@ -161,6 +162,7 @@
 		3CD023CF2A84655E0033D761 /* groupSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = groupSettingsView.swift; sourceTree = "<group>"; };
 		3CFD81C02B6BD0EF00DB3E7C /* finishedChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = finishedChallengeView.swift; sourceTree = "<group>"; };
 		3CFD81C32B6C64E600DB3E7C /* paymentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = paymentViewModel.swift; sourceTree = "<group>"; };
+		5FC630A92BC74508007AC0F8 /* RandomGarbage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomGarbage.swift; sourceTree = "<group>"; };
 		862095962BBB556000D98163 /* rewardAdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = rewardAdView.swift; sourceTree = "<group>"; };
 		863FC0502A41176400405F2A /* ticketViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ticketViewModel.swift; sourceTree = "<group>"; };
 		863FC0522A466FD500405F2A /* groupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = groupService.swift; sourceTree = "<group>"; };
@@ -275,6 +277,7 @@
 			children = (
 				3C91B6C52A58BA0E00398F53 /* UI Misc.swift */,
 				3C91B6C72A58BE6D00398F53 /* RoundingUI.swift */,
+				5FC630A92BC74508007AC0F8 /* RandomGarbage.swift */,
 				8688C5932AFFDFCB007EED78 /* Iphone.gif */,
 				8688C5912AFFDE28007EED78 /* out-_1_.gif */,
 				866C52572A7709BA008BE839 /* Fonts */,
@@ -682,6 +685,7 @@
 				86E989C32B58577E000B2DB4 /* challengeDetails.swift in Sources */,
 				3C86F93A2B9C083500990049 /* peer2peerViewModel.swift in Sources */,
 				3CB1AC8B2A61602700C931CA /* Group.swift in Sources */,
+				5FC630AA2BC74508007AC0F8 /* RandomGarbage.swift in Sources */,
 				868FDA8F2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift in Sources */,
 				866FFFA82AFE630E00A0CA13 /* SignupIntro.swift in Sources */,
 				864A2D662A6D8090000FBA35 /* AlertView.swift in Sources */,

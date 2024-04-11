@@ -12,9 +12,7 @@ import Firebase
 import FirebaseFirestore
 
 class ticketViewModel: ObservableObject {
-    
-    @Published var totalBetArrays = [[Bet]]()
-    
+        
     @Published var currentUserDailyBets: [Bet] = []
     
     @Published var currentTicketFormat: [Int] = [1,1,1,1,1]
@@ -29,9 +27,8 @@ class ticketViewModel: ObservableObject {
 
     private var db = Firestore.firestore()
     private var listener: ListenerRegistration?
-    private let uService = userService()
+ 
     
-    private let groupServe = groupService()
     @Published var userTickets: [Ticket] = [] // Ticket99
     @Published var stats: Stats? = nil
     @Published var profilePicUrl: String = ""
@@ -41,10 +38,19 @@ class ticketViewModel: ObservableObject {
     @Published var allDailyTickets: [Ticket] = []
     @Published var allDailyBets: [Bet] = []
     
+    private let uService = userService()
+    private let groupServe = groupService()
+    private let betServe = BetService()
+    
     init() {
         Task{
             await self.isFriend(id: StaticUserData.shared.currentUser.id!)
         }
+        
+//        self.fetchUserInformation(uid: StaticUserData.shared.currentUser.id!) {}
+//        self.fetchUserBetsForStats(uid: StaticUserData.shared.currentUser.id!) {}
+//        self.fetchUserticketsForStats(uid: StaticUserData.shared.currentUser.id!) {}
+//        self.fetchUserProfilePic(uid: StaticUserData.shared.currentUser.id!) {}
     }
     
     
@@ -202,39 +208,19 @@ class ticketViewModel: ObservableObject {
     
     func fetchCurrentRankedTickets(groupID: String, timeFrame: String, completion: @escaping () -> Void){
         groupServe.getCurrentRankedTickets(groupID: groupID, timeFrame: timeFrame) { [weak self] (tickets, totalPlayers, error) in
-                if let error = error {
-                   print(error)
+            if let error = error {
+                print(error)
             } else if let tickets = tickets {
-                if timeFrame == "daily" {
-                    StaticUserData.shared.dailyRankedTickets = tickets
-                } else if timeFrame == "weekly" {
-                    StaticUserData.shared.weeklyRankedTickets = tickets
-                }
-                    //print(tickets)
-                    print("test print")
-                }
-
+                StaticUserData.shared.dailyRankedTickets = tickets
             }
         }
+    }
 
     func fetchFriendTicket(uid: String, with groupID: String, timeFrame: String, completion: @escaping (Result<Ticket, Error>) -> Void) { // Ticket99
         let db = Firestore.firestore()
         
-        let documentLoc:String = {
-            if timeFrame == "weekly" {
-                return "week"
-            } else {
-                return "day"
-            }
-        }()
-        
-        let collectionLoc:String = {
-            if timeFrame == "weekly" {
-                return "currentWeekTickets"
-            } else {
-                return "currentDayTickets"
-            }
-        }()
+        let documentLoc = "day"
+        let collectionLoc = "currentDayTickets"
         
         db.collection("users").document(uid).collection("tickets").document(documentLoc).collection(collectionLoc)
             .whereField("groupID", isEqualTo: groupID)
@@ -264,21 +250,9 @@ class ticketViewModel: ObservableObject {
     func fetchPastFriendTicket(uid: String, with groupID: String, timeFrame: String, completion: @escaping (Result<Ticket, Error>) -> Void) { // Ticket99
         let db = Firestore.firestore()
         
-        let documentLoc:String = {
-            if timeFrame == "weekly" {
-                return "week"
-            } else {
-                return "day"
-            }
-        }()
+        let documentLoc = "day"
         
-        let collectionLoc:String = {
-            if timeFrame == "weekly" {
-                return "pastWeekTickets"
-            } else {
-                return "pastDayTickets"
-            }
-        }()
+        let collectionLoc = "pastDayTickets"
         
         db.collection("users").document(uid).collection("tickets").document(documentLoc).collection(collectionLoc)
             .whereField("groupID", isEqualTo: groupID)
@@ -323,72 +297,26 @@ class ticketViewModel: ObservableObject {
         }
     }
     
-    func fetchBets(uid: String, for groupNumber: Int, ticketFormat: [Int], currentWeek: Bool, selectedWeek: String, completion: @escaping () -> Void) {
-
-        let documentLoc = "day"
-        let collectionLoc = determineCollectionLocation(currentWeek: currentWeek)
-        guard let startDate = parseDate(from: selectedWeek, currentWeek: currentWeek) else { return }
-        let endDate = calculateEndDate(from: startDate, currentWeek: currentWeek)
-
-        let query = self.db.collection("users").document(uid).collection("bets").document(documentLoc).collection(collectionLoc)
-                .whereField("groupNumber", isEqualTo: groupNumber)
-                .whereField("timestamp", isGreaterThanOrEqualTo: startDate)
-                .whereField("timestamp", isLessThanOrEqualTo: endDate)
-            query.getDocuments { (querySnapshot, error) in
-            DispatchQueue.main.async {
-                guard let documents = querySnapshot?.documents else {
-                    print("No documents")
-                    return
-                }
-                
-                let localDailyUserBets = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
-                    return try? queryDocumentSnapshot.data(as: Bet.self)
-                })
-                print("THIS IS LOCAL BLAH: \(localDailyUserBets)")
-                if localDailyUserBets.isEmpty {
-                    self.currentUserDailyBets = []
-                } else {
-                    self.currentUserDailyBets = localDailyUserBets
-                }
-
-                if let error = error {
-                    print(error)
-                } else {
-                    self.currentTicketFormat = ticketFormat
-                    self.isBetsLoaded = true
-                    self.isTFLoaded = true
-                    completion()
-                }
-                
+    func fetchBets(uid: String, currentWeek: Bool, selectedWeek: String, completion: @escaping () -> Void) {
+        betServe.fetchBets(uid: uid, currentWeek: currentWeek, selectedWeek: selectedWeek) { bets, error in
+            if let error = error {
+                print(error)
+                completion()
+            } else {
+                self.currentTicketFormat = [0,0,0,0]
+                self.isBetsLoaded = true
+                self.isTFLoaded = true
+                self.currentUserDailyBets = bets
+                completion()
             }
         }
     }
     
     func deleteBet(bet: Bet, timeFrame: String) {
         
-        let documentLoc:String = {
-            if timeFrame == "weekly" {
-                return "week"
-            } else {
-                return "day"
-            }
-        }()
-        
-        let collectionLoc:String = {
-            if timeFrame == "weekly" {
-                return "currentWeekTickets"
-            } else {
-                return "currentDayTickets"
-            }
-        }()
-        
-        let collectionLoc2:String = {
-            if timeFrame == "weekly" {
-                return "currentWeekBets"
-            } else {
-                return "currentDayBets"
-            }
-        }()
+        let documentLoc = "day"
+        let collectionLoc:String = "currentDayTickets"
+        let collectionLoc2 = "currentDayBets"
         
         var whichToInc = -1
         if bet.betType.rawValue == "betHomeSpread" || bet.betType.rawValue == "betHomeML" {
@@ -434,9 +362,9 @@ class ticketViewModel: ObservableObject {
                 print("Error removing document: \(error)")
             } else {
                 self.fetchUserTickets(timeFrame: timeFrame) {
-                    self.fetchBets(uid: userId, for: bet.groupNumber, ticketFormat: self.currentTicketFormat, currentWeek: true, selectedWeek: "n/a") {
+                    self.fetchBets(uid: userId, currentWeek: true, selectedWeek: "n/a") {
                         print("Document successfully removed!")
-                        self.groupServe.setPotentialToWin(potential: Int(self.totalPotentialWon), groupNumber: bet.groupNumber, timeFrame: timeFrame, completion: {_ in })
+                        self.groupServe.setPotentialToWin(potential: Int(returnPotentialFromAllStraights(bets: self.currentUserDailyBets)), groupNumber: bet.groupNumber, timeFrame: timeFrame, completion: {_ in })
                     }
                 }
             }
@@ -453,44 +381,16 @@ class ticketViewModel: ObservableObject {
                 print("Error getting game document: \(error)")
                 return
             }
-            
             if let document = querySnapshot?.documents.first {
                 do {
-//                    let data = document.data()
-//                    if let idd = data["id"] as? String,
-//                       let commenceTime = data["commenceTime"] as? Timestamp,
-//                       let totalOver = data["totalOver"] as? Double,
-//                       let totalUnder = data["totalUnder"] as? Double,
-//                       let homeTeam = data["homeTeam"] as? String,
-//                       let awayTeam = data["awayTeam"] as? String,
-//                       let homeSpread = data["homeSpread"] as? Double,
-//                       let awaySpread = data["awaySpread"] as? Double,
-//                       let homeTeamScore = data["homeTeamScore"] as? Int,
-//                       let awayTeamScore = data["awayTeamScore"] as? Int,
-//                       let whichSport = data["whichSport"] as? String,
-//                       let bet_statistics = data["bet_statistics"] as? [Int],
-//                       let total_plays = data["total_plays"] as? Int,
-//                       let awayML = data["awayML"] as? Int,
-//                       let homeML = data["homeML"] as? Int,
-//                       let awaySpreadODDS = data["awaySpreadODDS"] as? Int,
-//                       let homeSpreadODDS = data["homeSpreadODDS"] as? Int,
-//                       let totalOverODDS = data["totalOverODDS"] as? Int,
-//                       let totalUnderODDS = data["totalUnderODDS"] as? Int,
-//                       let status = data["status"] as? String {
-//                        
-//                        // Create the newGame instance with all fields
-//                        let newGame = Game(id: nil, idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, status: status, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays, awayML: awayML, homeML: homeML, awaySpreadODDS: awaySpreadODDS, homeSpreadODDS: homeSpreadODDS, totalOverODDS: totalOverODDS, totalUnderODDS: totalUnderODDS)
-//                    }
                     let game = try document.data(as: Game.self)
                     completion(game)
-
+                    
                 } catch let error {
-                    print("Error decoding game document: \(error)")
                     completion(nil)
                 }
-            }
-            else {
-                print("johnny")
+            } else {
+                print("Error decoding game document: \(error)")
                 completion(nil)
             }
         }
@@ -499,6 +399,7 @@ class ticketViewModel: ObservableObject {
 
     
     func fetchUserBetsForStats(uid: String, completion: @escaping () -> Void) {
+        self.allDailyBets.removeAll()
         Firestore.firestore().collection("users").document(uid).collection("bets")
             .document("day").collection("currentDayBets")
             .getDocuments { (querySnapshot, error) in
@@ -516,7 +417,8 @@ class ticketViewModel: ObservableObject {
                             self.allDailyBets.append(bet)
                         }
                     } catch let error {
-                        print("Error decoding bet: \(error.localizedDescription)")
+                        print("Error decoding bet1: \(error.localizedDescription), UID: \(uid)")
+                        
                     }
                 }
                 
@@ -540,7 +442,7 @@ class ticketViewModel: ObservableObject {
                             self.allDailyBets.append(bet)
                         }
                     } catch let error {
-                        print("Error decoding bet: \(error.localizedDescription)")
+                        print("Error decoding bet2: \(error.localizedDescription), UID: \(uid)")
                     }
                 }
                 
@@ -551,6 +453,8 @@ class ticketViewModel: ObservableObject {
     }
     
     func fetchUserticketsForStats(uid: String, completion: @escaping () -> Void) {
+        self.allDailyTickets.removeAll()
+
         Firestore.firestore().collection("users").document(uid).collection("tickets")
             .document("day").collection("currentDayTickets")
             .getDocuments { (querySnapshot, error) in
@@ -568,7 +472,7 @@ class ticketViewModel: ObservableObject {
                             self.allDailyTickets.append(ticket)
                         }
                     } catch let error {
-                        print("Error decoding bet: \(error.localizedDescription)")
+                        print("Error decoding bet3: \(error.localizedDescription)")
                     }
                 }
                 
@@ -592,7 +496,7 @@ class ticketViewModel: ObservableObject {
                             self.allDailyTickets.append(ticket)
                         }
                     } catch let error {
-                        print("Error decoding bet: \(error.localizedDescription)")
+                        print("Error decoding bet4: \(error.localizedDescription)")
                     }
                 }
                 
@@ -611,34 +515,6 @@ class ticketViewModel: ObservableObject {
 
 
 extension ticketViewModel {
-    private func determineCollectionLocation(currentWeek: Bool) -> String {
-        currentWeek ? "currentDayBets" : "pastDayBets"
-    }
-    
-    private func parseDate(from selectedWeek: String, currentWeek: Bool) -> Date? {
-        // Check if the selectedWeek is meant to represent the current week
-        if currentWeek {
-            // If so, calculate the date 3 days ago from today
-            let threeDaysAgo = Calendar.current.date(byAdding: .day, value: -3, to: Date())
-            return threeDaysAgo
-        } else {
-            // Otherwise, parse the selectedWeek string into a Date object
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "MM/dd/yy"
-            return dateFormatter.date(from: selectedWeek)
-        }
-    }
-
-    private func calculateEndDate(from startDate: Date, currentWeek: Bool) -> Date {
-        var valueAdd: Int {
-            if currentWeek {
-                return 7 // arbitrary figure to make sure fits in correct time frame
-            } else {
-                return 1
-            }
-        }
-        return Calendar.current.date(byAdding: .day, value: valueAdd, to: startDate)!
-    }
     
 
     
