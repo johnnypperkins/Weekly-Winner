@@ -46,7 +46,7 @@ class screen1ViewModel: ObservableObject {
             }
         }
         self.importFriends()
-
+        self.fetchUserAnnouncements(userID: Auth.auth().currentUser?.uid ?? "") {}
 
     }
     
@@ -119,7 +119,7 @@ class screen1ViewModel: ObservableObject {
                     {
                         
                         let announcement = Announcement(status: status, description: description, announcementType: announcementType, timestamp: timestamp)
-                        print("ANn'oun: \(announcement)")
+                        
                         self.userAnnouncements.append(announcement)
                     } else {
                         print("wrong fields")
@@ -127,7 +127,7 @@ class screen1ViewModel: ObservableObject {
                 }
             }
             self.userAnnouncements.sort(by: { $0.timestamp.dateValue() > $1.timestamp.dateValue() })
-            print("ANNOubc: \(self.userAnnouncements)")
+            
             completion()
         }
     }

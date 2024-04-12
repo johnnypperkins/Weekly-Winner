@@ -68,17 +68,12 @@ struct BettingAppView: View {
                 .offset(x:isShowing ? 300 : 0, y: isShowing ? 100 : 0)
                 .scaleEffect(isShowing ? 0.8 : 1)
         }.background(K.finalColor.backgroundBlue)
-            .padding(EdgeInsets(top: 60, leading: 0, bottom: 55, trailing: 0))
-            .navigationBarHidden(false)
-//            .onAppear() {
-//                rankedCommence = false
-//            }
-            .onDisappear() {
-                viewModel.getGamesCommenceTime() {}
-            }
-//            .onChange(of: showingSheet) { _ in
-//                poolBucks = StaticUserData.shared.currentUser.poolBucks
-//            }
+        .padding(EdgeInsets(top: 60, leading: 0, bottom: 55, trailing: 0))
+        .navigationBarHidden(false)
+        .onDisappear() {
+            viewModel.getGamesCommenceTime() {}
+        }
+
     }
     
 }

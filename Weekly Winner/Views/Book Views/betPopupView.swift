@@ -35,6 +35,7 @@ struct dailyChallengeSubmitView: View {
     @State private var timeFrame = "daily"
     @Binding var showingSheet: Bool
     @State var isFavorited = false
+    @State var betUploadedSafeGuard = false
     
 
     let midnightTimestamp = Timestamp(date: Calendar.current.startOfDay(for: Calendar.current.date(byAdding: .hour, value: -5, to: Date())!))
@@ -42,7 +43,7 @@ struct dailyChallengeSubmitView: View {
     func checkTeamTaken() {
         if timeFrame == "daily" {
             if game.commenceTime.seconds > (midnightTimestamp.seconds + 86400) {
-                uploadText = "Not Today"
+                uploadText = "Game Not Today"
                 placeBetOpacity = 0.6
                 placeBetColor = K.finalColor.deleteRed.opacity(0.6)
             } else {
@@ -67,9 +68,9 @@ struct dailyChallengeSubmitView: View {
                 
                 BetSliderView(game: game, betType: betType, chosenSpread: $chosenSpread)
                 
-                Spacer()
                 Button(action: {
-                    
+                    betUploadedSafeGuard = true
+
                     withAnimation {
                         isFavorited.toggle()
                     }
@@ -135,8 +136,10 @@ struct dailyChallengeSubmitView: View {
                             .frame(width: 30, height: 30)
 
                     }, value: isFavorited)
-                .disabled(!viewModel.isTeamAvailable(whichTeam, groupNumber, betType, betArray: viewModel.currentUserDailyBets) || (game.commenceTime.seconds > (midnightTimestamp.seconds + 86400) && timeFrame == "daily"))
+                .disabled(betUploadedSafeGuard || !viewModel.isTeamAvailable(whichTeam, groupNumber, betType, betArray: viewModel.currentUserDailyBets) || (game.commenceTime.seconds > (midnightTimestamp.seconds + 86400) && timeFrame == "daily"))
                 .padding(.horizontal)
+                Spacer()
+
                 
                 
                 

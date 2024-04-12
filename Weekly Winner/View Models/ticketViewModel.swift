@@ -11,7 +11,7 @@ import SwiftUI
 import Firebase
 import FirebaseFirestore
 
-class ticketViewModel: ObservableObject {
+@MainActor class ticketViewModel: ObservableObject {
         
     @Published var currentUserDailyBets: [Bet] = []
     
@@ -69,10 +69,10 @@ class ticketViewModel: ObservableObject {
         do {
             let document = try await friendDocRef.getDocument()
             if document.exists {
-                print("The user is a friend.")
+//                print("The user is a friend.")
                 self.isFollow = true
             } else {
-                print("The user is not a friend.")
+//                print("The user is not a friend.")
                 self.isFollow = false
             }
         } catch {

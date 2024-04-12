@@ -272,21 +272,6 @@ struct groupsView: View {
                         }
                         Spacer()
                     }
-                    .sheet(isPresented: $isShowingSheet, content: {
-                        createGroupsView()
-                    })
-                    .onChange(of: isShowingSheet) { newValue in
-                        if newValue == false {
-                            // The sheet was dismissed
-                            selectedGroup = 1
-                            print("onChange ranked")
-                            if timeFrame == "daily" {
-                                viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: timeFrame) {}
-                            } else {
-//                                viewModel.fetchCurrentRankedTickets(groupID: StaticUserData.shared.weeklyTicket.groupID, timeFrame: timeFrame) {}
-                            }
-                        }
-                    }
             }.navigationTitle("Groups").padding(.top, 50)
 //                .background(Color(red: 0.02, green: 0.05, blue: 0.26))
         }

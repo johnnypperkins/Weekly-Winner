@@ -41,7 +41,7 @@ class groupsViewModel: ObservableObject {
                 self.userGroupsLoaded = true
                 self.totalArrayOfDates.append(self.populateArrayOfDates(from: Timestamp(date: Calendar.current.date(from: DateComponents(year: 2023, month: 11, day: 22))!))) //weekly
                 self.totalArrayOfDates.append(self.populateArrayOfDays(from: Timestamp(date: Calendar.current.date(from: DateComponents(year: 2023, month: 12, day: 13))!))) // daily
-                print("Arrayy \(self.totalArrayOfDates)")
+                
             }
 //            self.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: "daily") {}
             

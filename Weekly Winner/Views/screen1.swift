@@ -67,84 +67,6 @@ struct UserProfileView: View {
 
 
 
-struct ScreenA: View {
-    var body: some View {
-        Text("helloA")
-    }
-}
-
-struct ScreenB: View {
-    var body: some View {
-        Text("helloB")
-    }
-}
-
-struct testView: View {
-    @State private var currentScreen: Int = 0 // 0 for Screen A, 1 for Screen B
-    @State private var dragTranslation: CGFloat = 0
-
-
-    var body: some View {
-        VStack {
-            // Title and Button views
-            HStack {
-                Button("Screen A") {
-                    withAnimation {
-                        currentScreen = 0
-                    }
-                }
-                Button("Screen B") {
-                    withAnimation {
-                        currentScreen = 1
-                    }
-                }
-            }.overlay(
-                Rectangle()
-                    .frame(width: 50, height: 10)
-                    .offset(x: (currentScreen == 0 ? 0 : 50) + dragTranslation / 2, y: 0)
-                    .animation(.linear, value: dragTranslation)
-                    .animation(.linear, value: currentScreen)
-            , alignment: .bottom)
-
-            // Screen sliding view
-            GeometryReader { geometry in
-                HStack(spacing: 0) {
-                    ScreenA()
-                        .frame(width: geometry.size.width)
-                    ScreenB()
-                        .frame(width: geometry.size.width)
-                }
-                .offset(x: -CGFloat(currentScreen) * geometry.size.width, y: 0)
-                .animation(.easeInOut, value: currentScreen)
-                .gesture(
-                    DragGesture()
-                        .onChanged { gesture in
-                            dragTranslation = gesture.translation.width
-                        }
-                        .onEnded { gesture in
-                            dragTranslation = 0
-                            if gesture.translation.width > 50 {
-                                // Swiped to the right
-                                withAnimation {
-                                    currentScreen = max(0, currentScreen - 1)
-                                }
-                            } else if gesture.translation.width < -50 {
-                                // Swiped to the left
-                                withAnimation {
-                                    currentScreen = min(1, currentScreen + 1)
-                                }
-                            }
-                        }
-                )
-
-            }
-        }
-    }
-}
-
-
-
-
 
 struct weeklyGlobalLeaders: View {
     @StateObject var screen1VM: screen1ViewModel
@@ -213,6 +135,7 @@ struct weeklyGlobalLeaders: View {
                                 ).padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0))
                             })
                         }
+                        Spacer()
                     }
                 } else if whichTab == "friends" {
                     if screen1VM.canFetchDailyRankedTickets {
@@ -411,11 +334,12 @@ struct announcementView: View {
             }
         }
         .onAppear {
-        }.onDisappear() {
-            viewModel.setAllAnnouncementsToSeen(userID: Auth.auth().currentUser!.uid) {
-                viewModel.fetchUserAnnouncements(userID: Auth.auth().currentUser!.uid) {}
-            }
         }
+//        .onDisappear() {
+//            viewModel.setAllAnnouncementsToSeen(userID: Auth.auth().currentUser!.uid) {
+//                viewModel.fetchUserAnnouncements(userID: Auth.auth().currentUser!.uid) {}
+//            }
+//        }
     }
 }
 
@@ -778,8 +702,6 @@ struct yourGroups: View {
                         .cornerRadius(7.5)
                 }
             }.padding(.horizontal, 16)
-        }.onAppear() {
-            screen1VM.fetchUserAnnouncements(userID: Auth.auth().currentUser!.uid) {}
         }
         .popup(isPresented: $showPopUp) {
             explanationView(pageSelected: 0)

@@ -36,11 +36,6 @@ class prizesViewModel: ObservableObject {
                    let thirdPrize = data?["3rd"] as? String,
                    let fourthPrize = data?["4th"] as? String,
                    let fifthPrize = data?["5th"] as? String {
-                    print("1st prize is: \(firstPrize)")
-                    print("2nd prize is: \(secondPrize)")
-                    print("3rd prize is: \(thirdPrize)")
-                    print("4th prize is: \(fourthPrize)")
-                    print("5th prize is: \(fifthPrize)")
                     self.dailyPrizes = [firstPrize, secondPrize, thirdPrize, fourthPrize, fifthPrize]
                     completion()
                 }

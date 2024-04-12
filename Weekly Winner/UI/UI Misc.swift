@@ -168,7 +168,7 @@ extension Color {
     static func cardBackgroundForBetResult(_ result: BetResult) -> Color {
         let opacity = 0.65
         switch result {
-        case .notStarted: return K.finalColor.cardBlue.opacity(opacity)
+        case .notStarted: return K.finalColor.cardBlue
         case .inAction: return K.finalColor.potentialOrange.opacity(opacity)
         case .loss: return K.finalColor.deleteRed.opacity(opacity)
         case .win: return K.finalColor.winningGreen.opacity(opacity)

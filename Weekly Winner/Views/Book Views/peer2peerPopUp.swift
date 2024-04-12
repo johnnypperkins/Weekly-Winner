@@ -201,8 +201,11 @@ struct peer2peerSubmitPage: View {
             peer2peerSlider(wagerAmount: $wagerAmount, selectedFriend: $selectedFriend, viewModel: viewModel, game: game, showingSheet: $showingSheet, whichTab: $whichTab, sendToFriends: $sendToFriends)
             Spacer()
         }.onChange(of: selectedFriend) { _ in
-            viewModel.senderDirectTicket?.receiverID = selectedFriend?.id ?? ""
-            viewModel.senderDirectTicket?.receiverUsername = selectedFriend?.username ?? ""
+            DispatchQueue.main.async {
+                
+                viewModel.senderDirectTicket?.receiverID = selectedFriend?.id ?? ""
+                viewModel.senderDirectTicket?.receiverUsername = selectedFriend?.username ?? ""
+            }
         }
         .onAppear() {
             viewModel.setSelectedBet(bet:
@@ -424,7 +427,10 @@ struct peer2peerSlider: View {
             }
         }.frame(width: 345)
             .onChange(of: wagerAmount) { newWagerAmount in
-                viewModel.senderDirectTicket?.senderWagerAmount = newWagerAmount
+                DispatchQueue.main.async {
+                    
+                    viewModel.senderDirectTicket?.senderWagerAmount = newWagerAmount
+                }
             }
         
     }
@@ -449,7 +455,10 @@ struct searchUserView: View {
                         .disabled(selectedUser == nil ? false : true)
                         .opacity(selectedUser == nil ? 1 : 0)
                         .onChange(of: opponentUsername) { newUsername in
-                            viewModel.fetchUser(from: opponentUsername.lowercased())
+                            DispatchQueue.main.async {
+                                
+                                viewModel.fetchUser(from: opponentUsername.lowercased())
+                            }
                         }
                     
                     ScrollView {
@@ -513,9 +522,12 @@ struct searchUserView: View {
                     
                 }
             }.onChange(of: selectedUser) { _ in
-                hideKeyboard()
-                viewModel.senderDirectTicket?.receiverID = selectedUser?.id ?? ""
-                viewModel.senderDirectTicket?.receiverUsername = selectedUser?.username ?? ""
+                DispatchQueue.main.async {
+                    
+                    hideKeyboard()
+                    viewModel.senderDirectTicket?.receiverID = selectedUser?.id ?? ""
+                    viewModel.senderDirectTicket?.receiverUsername = selectedUser?.username ?? ""
+                }
             }
         }
     }

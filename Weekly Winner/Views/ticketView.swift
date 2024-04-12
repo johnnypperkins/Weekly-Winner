@@ -257,7 +257,7 @@ struct ticketView: View {
                 HStack (spacing: 0) {
                     Text("Pending").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
                     Spacer()
-                    Text("\(Int(returnPotentialFromAllStraights(bets: viewModel.currentUserDailyBets)))")
+                    Text("\(String(format: "%.0f", returnPotentialFromAllStraights(bets: viewModel.currentUserDailyBets)))")
                         .font(.custom("Futura", size: 20))
                         .foregroundColor(K.finalColor.potentialOrange)
                 }.padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
@@ -269,7 +269,7 @@ struct ticketView: View {
                 HStack (spacing: 0){
                     Text("Balance").font(.custom("Futura", size: 16)).foregroundColor(K.finalColor.textWhite)
                     Spacer()
-                    Text("\(Int(returnWinningsFromAllStraights(bets: viewModel.currentUserDailyBets)))")
+                    Text("\(String(format: "%.0f", returnWinningsFromAllStraights(bets: viewModel.currentUserDailyBets)))")
                         .font(.custom("Futura", size: 20))
                         .foregroundColor(Int(returnWinningsFromAllStraights(bets: viewModel.currentUserDailyBets)) >= 0 ? K.finalColor.winningGreen : K.finalColor.deleteRed)
                 }
@@ -297,7 +297,7 @@ struct ticketView: View {
                             ForEach(0..<viewModel.currentUserDailyBets.count, id: \.self) { parlayIndex in
                                 if viewModel.isTFLoaded == true
                                     && viewModel.isBetsLoaded {
-                                    SectionTitle(index: parlayIndex,betArray: viewModel.currentUserDailyBets, maxBetsPlaced: ticketFormatForGroups[parlayIndex], uid: uid, selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, timeFrame: $timeFrame, viewModel: viewModel)
+                                    SectionTitle(index: parlayIndex,betArray: viewModel.currentUserDailyBets, maxBetsPlaced: 1, uid: uid, selectedWeek: selectedWeek, ownTicket: ownTicket ? true : false, onTicketPage: onTicketPage, timeFrame: $timeFrame, viewModel: viewModel)
                                 }
                             }
                         }
@@ -494,7 +494,7 @@ struct ticketView: View {
                             .background(K.finalColor.backgroundBlue)
                         }
                     }.frame(maxWidth: .infinity, maxHeight: .infinity) // This line
-                    
+                        .background(Color.cardColorForBetResult(bet.result))
                     .cornerRadius(7.5)
                         
                         if bet.result == .notStarted && uid == Auth.auth().currentUser?.uid && selectedWeek == "current" && ownCard && onTicketPage{ // ONLY SHOWS DELETE BUTTON IF .NOTSTARTED
@@ -511,8 +511,7 @@ struct ticketView: View {
 
                             }
                         }
-                    }.background(Color.cardColorForBetResult(bet.result))
-
+                    }
                     .cornerRadius(7.5)
                     .frame(width: 320)
                     .onAppear() {
@@ -520,7 +519,6 @@ struct ticketView: View {
                         
                         ticketVM.fetchGameDocument(byID: bet.gameID) { fetchedGame in
                             if let fetchedGame = fetchedGame {
-                                print("Fetched game: \(fetchedGame)")
                                 self.game = fetchedGame
                             } else {
                                 print("Failed to fetch game")
@@ -564,8 +562,6 @@ func returnPotentialFromAllStraights(bets: [Bet]) -> Double {
     for bet in bets {
         if bet.result == .inAction || bet.result == .notStarted {
             potential += percentageToTotalWinDouble(percentage: Double(bet.betOdds))
-            print("THIS IS BET \(bet)")
-            print("THIS IS potential \(potential)")
         }
     }
     return potential
