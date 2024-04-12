@@ -5,7 +5,7 @@ import SafariServices
 
 
 struct ticketView: View {
-    @ObservedObject var viewModel = ticketViewModel()
+    @StateObject var viewModel = TicketViewModel()
     @State private var selectedGroup = 0 // Variable to track the selected group
     @State var ticketShowing: Bool = true
     @State private var timeFrame: String
@@ -29,27 +29,17 @@ struct ticketView: View {
             }
         }
     }
-    
 
     init(username: String, uid: String, groupID: String, selectedWeek: String, ticketFormatForGroups: [Int], ownTicket: Bool, onTicketPage: Bool, passedTimeFrame: String) {
-        self.username = username
-        self.uid = uid
-        self.groupID = groupID
-        self.selectedWeek = selectedWeek
-        self.ticketFormatForGroups = ticketFormatForGroups
-        self.ownTicket = ownTicket
-        self.onTicketPage = onTicketPage
-        self._timeFrame = State(initialValue: passedTimeFrame)
-       
-
-        if uid != Auth.auth().currentUser?.uid{
-            viewModel.fetchFriendTicket(uid: uid, with: groupID, timeFrame: timeFrame) { group in
-            }
+            self.username = username
+            self.uid = uid
+            self.groupID = groupID
+            self.selectedWeek = selectedWeek
+            self.ticketFormatForGroups = ticketFormatForGroups
+            self.ownTicket = ownTicket
+            self.onTicketPage = onTicketPage
+            self._timeFrame = State(initialValue: passedTimeFrame)
         }
-        viewModel.fetchUserProfilePic(uid: uid) {}
-        viewModel.fetchUserInformation(uid: uid) {}
-
-    }
     
     var body: some View {
         ZStack {
@@ -110,6 +100,14 @@ struct ticketView: View {
                 }
                 selectedGroup = 0
                 
+                if uid != Auth.auth().currentUser?.uid {
+                    viewModel.fetchFriendTicket(uid: uid, with: groupID, timeFrame: timeFrame) { group in
+                        // Handle completion
+                    }
+                }
+                viewModel.fetchUserProfilePic(uid: uid) {}
+                viewModel.fetchUserInformation(uid: uid) {}
+                
                 if selectedWeek == "current" {
                     viewModel.fetchBets(uid: uid, currentWeek: true, selectedWeek: selectedWeek) {}
                 } else {
@@ -125,7 +123,7 @@ struct ticketView: View {
     }
     
     struct onTicketHeader: View {
-        @ObservedObject var viewModel: ticketViewModel
+        @ObservedObject var viewModel: TicketViewModel
         @Binding var timeFrame: String
         let uid: String
         
@@ -148,7 +146,7 @@ struct ticketView: View {
     
     struct offTicketHeader: View {
         
-        @ObservedObject var viewModel: ticketViewModel
+        @ObservedObject var viewModel: TicketViewModel
         @Binding var ticketShowing: Bool
         
         var body: some View {
@@ -249,7 +247,7 @@ struct ticketView: View {
         let onTicketPage: Bool
         let ticketFormatForGroups: [Int]
         @Binding var timeFrame: String
-        @ObservedObject var viewModel: ticketViewModel
+        @ObservedObject var viewModel: TicketViewModel
 
         
         var body: some View {
@@ -317,7 +315,7 @@ struct ticketView: View {
         let ownTicket: Bool
         let onTicketPage: Bool
         @Binding var timeFrame: String
-        @ObservedObject var viewModel: ticketViewModel
+        @ObservedObject var viewModel: TicketViewModel
         @State var expand = false
         
         var body: some View {
@@ -363,13 +361,13 @@ struct ticketView: View {
             let onTicketPage: Bool
             @State private var canDelete: Bool = false
             @State var moreInfoClicked = false
-            @ObservedObject var ticketVM: ticketViewModel
+            @ObservedObject var ticketVM: TicketViewModel
             @State private var game: Game? = nil
             @State var expand = false
             @Binding var timeFrame: String
             
 
-            @ObservedObject var viewModel: ticketViewModel
+            @ObservedObject var viewModel: TicketViewModel
 
             var extra: String {
                 if bet.betType == .under {

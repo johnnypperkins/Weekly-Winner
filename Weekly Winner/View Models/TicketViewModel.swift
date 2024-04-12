@@ -11,7 +11,7 @@ import SwiftUI
 import Firebase
 import FirebaseFirestore
 
-@MainActor class ticketViewModel: ObservableObject {
+@MainActor class TicketViewModel: ObservableObject {
         
     @Published var currentUserDailyBets: [Bet] = []
     
@@ -41,17 +41,6 @@ import FirebaseFirestore
     private let uService = userService()
     private let groupServe = groupService()
     private let betServe = BetService()
-    
-    init() {
-        Task{
-            await self.isFriend(id: StaticUserData.shared.currentUser.id!)
-        }
-        
-//        self.fetchUserInformation(uid: StaticUserData.shared.currentUser.id!) {}
-//        self.fetchUserBetsForStats(uid: StaticUserData.shared.currentUser.id!) {}
-//        self.fetchUserticketsForStats(uid: StaticUserData.shared.currentUser.id!) {}
-//        self.fetchUserProfilePic(uid: StaticUserData.shared.currentUser.id!) {}
-    }
     
     
     func isFriend(id: String) async {
@@ -514,7 +503,7 @@ import FirebaseFirestore
 
 
 
-extension ticketViewModel {
+extension TicketViewModel {
     
 
     

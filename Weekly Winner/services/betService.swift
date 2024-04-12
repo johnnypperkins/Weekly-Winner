@@ -253,8 +253,30 @@ class BetService {
         }
     }
     
-    
-
+    func fetchPastTickets(uid: String, completion: @escaping ([Ticket]) -> Void) {
+        var pastTicketsLocal: [Ticket] = []
+        Firestore.firestore().collection("users").document(uid).collection("tickets")
+            .document("day").collection("pastDayTickets")
+            .getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    print("Error fetching stats: \(error.localizedDescription)")
+                    completion([])
+                    return
+                }
+                let documents = querySnapshot?.documents ?? []
+                
+                for doc in documents {
+                    do {
+                        if let ticket = try doc.data(as: Ticket?.self) {
+                            pastTicketsLocal.append(ticket)
+                        }
+                    } catch let error {
+                        print("Error decoding bet4: \(error.localizedDescription)")
+                    }
+                }
+                completion(pastTicketsLocal)
+            }
+    }
     
 }
 

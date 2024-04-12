@@ -18,8 +18,8 @@ struct groupsView: View {
     @State private var searchText = ""
     @State private var isShowingSheet = false
     @State private var isShowingSheetTicket = false
-    @ObservedObject private var viewModel = groupsViewModel()
-    @ObservedObject private var chatVM = chatViewModel()
+    @StateObject private var viewModel = groupsViewModel()
+//    @ObservedObject private var chatVM = chatViewModel()
     @State private var selectedGroup = 1
     @State private var showingChat: Bool = false
     @State private var currentWeekSelected: Bool = true
@@ -261,7 +261,7 @@ struct groupsView: View {
                                     }
                                     
                                 } else {
-                                    chatView(viewModel: chatVM, selectedGroup: $selectedGroup, groupsViewModel: viewModel, timeFrame: $timeFrame)
+                                    //chatView(viewModel: chatVM, selectedGroup: $selectedGroup, groupsViewModel: viewModel, timeFrame: $timeFrame)
                                 }
                                 
                                 

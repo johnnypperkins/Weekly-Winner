@@ -14,7 +14,7 @@ import PopupView
 import Pow
 
 struct UserProfileView: View {
-    @ObservedObject private var screen1VM = screen1ViewModel()
+    @StateObject private var screen1VM = screen1ViewModel()
     @State private var showWebpage = false
     @Binding var tab: Tab
     @State var timeFrame = "daily"
@@ -47,16 +47,17 @@ struct UserProfileView: View {
         }
         .background(K.finalColor.backgroundBlue)
         .onAppear() {
-            screen1VM.forceUpdate () {
-                if screen1VM.updateURL != ""{
-                    AppUtility.shared.showCustomAlert(alertType: .none, message: "There is a new, necessary update. Sorry we know this is annoying...", actionButtonTitle: K.appButtonTitle.ok, cancelButtonTitle: nil) { action in
-                        if action == AlertButtonAction.okButton{
-                            showWebpage.toggle()
-                        }
-                        
-                    }
-                }
-            }
+            screen1VM.loadData()
+//            screen1VM.forceUpdate () {
+//                if screen1VM.updateURL != ""{
+//                    AppUtility.shared.showCustomAlert(alertType: .none, message: "There is a new, necessary update. Sorry we know this is annoying...", actionButtonTitle: K.appButtonTitle.ok, cancelButtonTitle: nil) { action in
+//                        if action == AlertButtonAction.okButton{
+//                            showWebpage.toggle()
+//                        }
+//                        
+//                    }
+//                }
+//            }
             if StaticUserData.shared.currentUser.id! != "" && StaticUserData.shared.currentUser.id! != nil {
                 screen1VM.setUserFCM(userID: StaticUserData.shared.currentUser.id!) {}
             }

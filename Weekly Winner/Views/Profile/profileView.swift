@@ -106,20 +106,21 @@ struct profileView: View {
                                   .stroke(.white, lineWidth: 0.4))
                                   .padding(.horizontal)
                                   .padding(.vertical)
-                                VStack{
-                                    Text("Past Tickets")
-                                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 15).weight(.medium))
-                                        .foregroundColor(.white)
-                                    
-                                
-                                        Text("\(viewModel.pastDayTicketsCount)")
-                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18).weight(.medium))
+                                NavigationLink(destination: {pastTicketsView(uid: user.id!)}, label: {
+                                    VStack{
+                                        Text("Past Tickets")
+                                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 15).weight(.medium))
                                             .foregroundColor(.white)
-                                    
-                                }.frame(maxWidth: .infinity)
-                                    
-                                    .padding(.vertical, 13)
-//                                                   }).id(UUID())
+                                        
+
+                                            Text("\(viewModel.pastDayTicketsCount)")
+                                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 18).weight(.medium))
+                                                .foregroundColor(.white)
+                                        
+                                    }.frame(maxWidth: .infinity)
+                                        
+                                        .padding(.vertical, 13)
+                                }).id(UUID())
                             }
                                 .frame(maxWidth: 300)
                                 .frame(maxHeight: 60)

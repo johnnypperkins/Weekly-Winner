@@ -38,6 +38,8 @@
 		3CFD81C12B6BD0EF00DB3E7C /* finishedChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD81C02B6BD0EF00DB3E7C /* finishedChallengeView.swift */; };
 		3CFD81C42B6C64E700DB3E7C /* paymentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD81C32B6C64E600DB3E7C /* paymentViewModel.swift */; };
 		5FC630AA2BC74508007AC0F8 /* RandomGarbage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC630A92BC74508007AC0F8 /* RandomGarbage.swift */; };
+		5FF96D352BC9B55F00463C11 /* pastTicketsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF96D342BC9B55F00463C11 /* pastTicketsView.swift */; };
+		5FF96D382BC9B5EB00463C11 /* pastTicketsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF96D372BC9B5EB00463C11 /* pastTicketsViewModel.swift */; };
 		8603ACFE2B1099C500B3B6BD /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 8603ACFD2B1099C500B3B6BD /* FirebaseAnalytics */; };
 		8603AD002B1099C500B3B6BD /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 8603ACFF2B1099C500B3B6BD /* FirebaseAnalyticsSwift */; };
 		8603AD022B1099C500B3B6BD /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 8603AD012B1099C500B3B6BD /* FirebaseAuth */; };
@@ -53,7 +55,7 @@
 		8603AD172B109A0E00B3B6BD /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 8603AD162B109A0E00B3B6BD /* Kingfisher */; };
 		862095952BBB511100D98163 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 862095942BBB511100D98163 /* GoogleMobileAds */; };
 		862095972BBB556000D98163 /* rewardAdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 862095962BBB556000D98163 /* rewardAdView.swift */; };
-		863FC0512A41176400405F2A /* ticketViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863FC0502A41176400405F2A /* ticketViewModel.swift */; };
+		863FC0512A41176400405F2A /* TicketViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863FC0502A41176400405F2A /* TicketViewModel.swift */; };
 		863FC0532A466FD500405F2A /* groupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863FC0522A466FD500405F2A /* groupService.swift */; };
 		863FF91D2A5B0FA200942CE7 /* sportsSelecterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863FF91C2A5B0FA200942CE7 /* sportsSelecterView.swift */; };
 		863FF91F2A5B0FDC00942CE7 /* sportsSelectorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863FF91E2A5B0FDC00942CE7 /* sportsSelectorViewModel.swift */; };
@@ -163,8 +165,10 @@
 		3CFD81C02B6BD0EF00DB3E7C /* finishedChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = finishedChallengeView.swift; sourceTree = "<group>"; };
 		3CFD81C32B6C64E600DB3E7C /* paymentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = paymentViewModel.swift; sourceTree = "<group>"; };
 		5FC630A92BC74508007AC0F8 /* RandomGarbage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomGarbage.swift; sourceTree = "<group>"; };
+		5FF96D342BC9B55F00463C11 /* pastTicketsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pastTicketsView.swift; sourceTree = "<group>"; };
+		5FF96D372BC9B5EB00463C11 /* pastTicketsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pastTicketsViewModel.swift; sourceTree = "<group>"; };
 		862095962BBB556000D98163 /* rewardAdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = rewardAdView.swift; sourceTree = "<group>"; };
-		863FC0502A41176400405F2A /* ticketViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ticketViewModel.swift; sourceTree = "<group>"; };
+		863FC0502A41176400405F2A /* TicketViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketViewModel.swift; sourceTree = "<group>"; };
 		863FC0522A466FD500405F2A /* groupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = groupService.swift; sourceTree = "<group>"; };
 		863FF91C2A5B0FA200942CE7 /* sportsSelecterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sportsSelecterView.swift; sourceTree = "<group>"; };
 		863FF91E2A5B0FDC00942CE7 /* sportsSelectorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sportsSelectorViewModel.swift; sourceTree = "<group>"; };
@@ -298,6 +302,7 @@
 		3CAA9A2E2A64B582000146FA /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				5FF96D332BC9B52900463C11 /* Profile */,
 				3CFEC4882B4E4F5E00C11B5C /* Authentication Views */,
 				3CFEC4872B4E4F0D00C11B5C /* Challenge Views */,
 				3C9567882B9007E2000A1A56 /* Book Views */,
@@ -310,9 +315,6 @@
 				863FF91C2A5B0FA200942CE7 /* sportsSelecterView.swift */,
 				8653242C2A63B535005AB3EF /* createGroupsView.swift */,
 				867801852A213F99006FE479 /* groupsView.swift */,
-				867801892A213FB1006FE479 /* profileView.swift */,
-				86F03BBD2BB1B00C009169AC /* addFriendsView.swift */,
-				864A2D6B2A6D8370000FBA35 /* editProfileView.swift */,
 				866C52552A737B27008BE839 /* settingsView.swift */,
 				8678017F2A213CB9006FE479 /* tabBarView.swift */,
 				3CD023CF2A84655E0033D761 /* groupSettingsView.swift */,
@@ -325,21 +327,18 @@
 		3CAA9A2F2A64B590000146FA /* View Models */ = {
 			isa = PBXGroup;
 			children = (
+				5FF96D362BC9B5BA00463C11 /* Profile ViewModels */,
 				3CFD81C22B6BD47E00DB3E7C /* Challenge ViewModels */,
 				865C4A772A327CC200C3C626 /* authenticationViewModel.swift */,
 				863FF91E2A5B0FDC00942CE7 /* sportsSelectorViewModel.swift */,
 				8668B3102A2EE9CF00A1B343 /* bookViewModel.swift */,
-				863FC0502A41176400405F2A /* ticketViewModel.swift */,
+				863FC0502A41176400405F2A /* TicketViewModel.swift */,
 				865324322A643720005AB3EF /* groupsViewModel.swift */,
 				8653242E2A63B74C005AB3EF /* createGroupsViewModel.swift */,
-				864A2D5E2A6D7DAF000FBA35 /* profileViewModel.swift */,
-				864A2D692A6D82CF000FBA35 /* editProfileViewModel.swift */,
 				3C3DB73D2A7C7E3E000F6898 /* chatViewModel.swift */,
 				3C7C708B2A92F5F800C7C9DB /* prizesViewModel.swift */,
 				3C972C892B2FC07100671D0F /* screen1ViewModel.swift */,
 				3C065BA92AC714C40040D6CE /* statsViewModel.swift */,
-				3C86F9392B9C083500990049 /* peer2peerViewModel.swift */,
-				86F03BBF2BB1B059009169AC /* addFriendsViewModel.swift */,
 			);
 			path = "View Models";
 			sourceTree = "<group>";
@@ -351,6 +350,7 @@
 				86E55C2F2B5B1C4F003164EE /* pendingChallengeViewModel.swift */,
 				869B67F52B5D750200F6CCDF /* inActionChallengeViewModel.swift */,
 				3CFD81C32B6C64E600DB3E7C /* paymentViewModel.swift */,
+				3C86F9392B9C083500990049 /* peer2peerViewModel.swift */,
 			);
 			path = "Challenge ViewModels";
 			sourceTree = "<group>";
@@ -379,6 +379,28 @@
 				868FDA8E2A8D67270092E3C5 /* TermsAndConditionsSignupView.swift */,
 			);
 			path = "Authentication Views";
+			sourceTree = "<group>";
+		};
+		5FF96D332BC9B52900463C11 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				867801892A213FB1006FE479 /* profileView.swift */,
+				86F03BBD2BB1B00C009169AC /* addFriendsView.swift */,
+				864A2D6B2A6D8370000FBA35 /* editProfileView.swift */,
+				5FF96D342BC9B55F00463C11 /* pastTicketsView.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		5FF96D362BC9B5BA00463C11 /* Profile ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				864A2D5E2A6D7DAF000FBA35 /* profileViewModel.swift */,
+				864A2D692A6D82CF000FBA35 /* editProfileViewModel.swift */,
+				86F03BBF2BB1B059009169AC /* addFriendsViewModel.swift */,
+				5FF96D372BC9B5EB00463C11 /* pastTicketsViewModel.swift */,
+			);
+			path = "Profile ViewModels";
 			sourceTree = "<group>";
 		};
 		864A2D642A6D8052000FBA35 /* CustomAlert */ = {
@@ -702,6 +724,7 @@
 				3C3DB73C2A7C6129000F6898 /* Chat.swift in Sources */,
 				8668B30F2A2EE62700A1B343 /* Game.swift in Sources */,
 				867801862A213F9A006FE479 /* groupsView.swift in Sources */,
+				5FF96D382BC9B5EB00463C11 /* pastTicketsViewModel.swift in Sources */,
 				863FC0532A466FD500405F2A /* groupService.swift in Sources */,
 				3C7C708A2A92F38600C7C9DB /* globalPrizesView.swift in Sources */,
 				869B67FC2B5ED16500F6CCDF /* purchaseCurrencyView.swift in Sources */,
@@ -720,7 +743,7 @@
 				8678018A2A213FB1006FE479 /* profileView.swift in Sources */,
 				3C8E5C932B43AA8A0075B300 /* challengeView.swift in Sources */,
 				864A2D5F2A6D7DAF000FBA35 /* profileViewModel.swift in Sources */,
-				863FC0512A41176400405F2A /* ticketViewModel.swift in Sources */,
+				863FC0512A41176400405F2A /* TicketViewModel.swift in Sources */,
 				3CFD81C12B6BD0EF00DB3E7C /* finishedChallengeView.swift in Sources */,
 				869B67FA2B5ECF0300F6CCDF /* DeviceLocationService.swift in Sources */,
 				3C95678A2B90081E000A1A56 /* betPopupView.swift in Sources */,
@@ -746,6 +769,7 @@
 				3CD023D02A84655E0033D761 /* groupSettingsView.swift in Sources */,
 				865C4A762A327CA600C3C626 /* authenticationView.swift in Sources */,
 				8668B3132A2EF06A00A1B343 /* gameService.swift in Sources */,
+				5FF96D352BC9B55F00463C11 /* pastTicketsView.swift in Sources */,
 				866251142A40D3B500708495 /* betService.swift in Sources */,
 				869B67F62B5D750200F6CCDF /* inActionChallengeViewModel.swift in Sources */,
 				864A2D682A6D80C1000FBA35 /* ButtonComponent.swift in Sources */,

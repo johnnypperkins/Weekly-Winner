@@ -35,20 +35,20 @@ class screen1ViewModel: ObservableObject {
     
     init() {
         self.userSession = Auth.auth().currentUser
-        self.setStaticUser {
-            
-            self.fetchUserCoinsAndBucks(userID: Auth.auth().currentUser?.uid ?? "") {}
-        }
-        self.fetchUserGroups {}
-        
-        fetchUserTickets(timeFrame: "daily") {
-            self.fetchCurrentRankedTickets(groupID: "GlobalDaily", timeFrame: "daily") {
-            }
-        }
-        self.importFriends()
-        self.fetchUserAnnouncements(userID: Auth.auth().currentUser?.uid ?? "") {}
 
     }
+    
+    func loadData() {
+            self.setStaticUser {
+                self.fetchUserCoinsAndBucks(userID: self.userSession?.uid ?? "") {}
+            }
+            self.fetchUserGroups {}
+            fetchUserTickets(timeFrame: "daily") {
+                self.fetchCurrentRankedTickets(groupID: "GlobalDaily", timeFrame: "daily") {}
+            }
+            self.importFriends()
+            self.fetchUserAnnouncements(userID: self.userSession?.uid ?? "") {}
+        }
     
     
     func importFriends() {
