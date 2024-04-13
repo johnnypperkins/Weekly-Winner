@@ -11,7 +11,7 @@ import Foundation
 import Firebase
 
 class profileViewModel: ObservableObject {
-    private let service = userService()
+    private let service = UserService()
     @Published var isBlocked: Bool = false
     @Published var isBlockedBy: Bool = false
     @Published var user: User
@@ -26,7 +26,8 @@ class profileViewModel: ObservableObject {
     @Published var pastDayTicketsCount = 0
     @Published var isFollow: Bool = false
     
-    private let uService = userService()
+    private let uService = UserService()
+    private let betService = BetService()
     
     init(user: User) {
         //self.getCountOfStringsInArrayField(user1: user)
@@ -96,27 +97,15 @@ class profileViewModel: ObservableObject {
     }
     
     func countPastDayTickets() {
-            let db = Firestore.firestore()
-      
-            
-        let collectionPath = db.collection("users").document(user.id!).collection("tickets").document("day").collection("pastDayTickets")
-            
-            collectionPath.getDocuments { snapshot, error in
-                if let error = error {
-                    print("Error getting documents: \(error)")
-                } else {
-                    if let snapshot = snapshot {
-                        DispatchQueue.main.async {
-                            // Update the published property with the count of documents
-                            self.pastDayTicketsCount = snapshot.documents.count
-                        }
-                    }
-                }
+        betService.fetchPastTickets(uid: StaticUserData.shared.currentUser.id!) { tickets in
+            DispatchQueue.main.async {
+                self.pastDayTicketsCount = tickets.count
             }
         }
+    }
     
     func importFriends() {
-        // Clear any existing data in friends
+        // Clear any existing data in friends   
         self.friendsUIDS.removeAll()
         
         // Initialize Firestore reference

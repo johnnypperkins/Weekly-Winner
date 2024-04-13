@@ -24,7 +24,7 @@ enum AuthenticationState {
 @MainActor
 class authenticationViewModel: ObservableObject {
     
-    private let service = userService()
+    private let service = UserService()
     
     @Published var authenticationState: AuthenticationState = .unauthenticated
     @Published var userSession : FirebaseAuth.User? = nil
@@ -519,10 +519,8 @@ print("fetched user")
     
     func fetchUser(completion: @escaping () -> Void) {
         guard let uid = self.userSession?.uid else { return }
-            
+        
         service.fetchUser(uid: uid) { user,success  in
-                //print(user)
-            
             if success {
                 self.username = user?.username ?? ""
                 self.currUser = user
@@ -530,13 +528,8 @@ print("fetched user")
                 StaticUserData.shared.username = self.currUser?.username ?? ""
                 
             }
-            else{
-                
-            }
-                //print(UserData.shared.username)
-                //print(user)
-            }
         }
+    }
     
     func fetchUserInformation(uid: String, completion: @escaping (User?) -> Void) {
         let db = Firestore.firestore()

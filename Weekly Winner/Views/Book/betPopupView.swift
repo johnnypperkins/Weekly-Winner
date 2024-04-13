@@ -91,7 +91,7 @@ struct dailyChallengeSubmitView: View {
                     { _ in
                         viewModel.fetchBets(uid: Auth.auth().currentUser!.uid, currentWeek: true, selectedWeek: "")
                         {
-                            let groupServe = groupService()
+                            let groupServe = GroupService()
                             groupServe.setPotentialToWin(potential: Int(returnPotentialFromAllStraights(bets: viewModel.currentUserDailyBets)), groupNumber: groupNumber, timeFrame: timeFrame, completion: {_ in })
                         }
                     }
