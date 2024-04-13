@@ -663,10 +663,7 @@ struct userBio: View {
                     .background(selectedUserID == user.id ? K.finalColor.otherPurple.opacity(0.35) : K.finalColor.cardBlue)
                     .cornerRadius(10)
             }
-//            .onTapGesture {
-//                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-//                print("tapped also")
-//            }
+
         }
     }
 }

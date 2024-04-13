@@ -316,6 +316,23 @@ extension String {
     }
 }
 
+struct CustomFontModifier: ViewModifier {
+    var size: CGFloat
+    var color: Color
+
+    func body(content: Content) -> some View {
+        content
+            .font(Font.custom(K.customFonts.lexendDecaMedium, size: size))
+            .foregroundColor(color)
+    }
+}
+
+extension View {
+    func lexMedCustom(_ size: CGFloat, color: Color) -> some View {
+        modifier(CustomFontModifier(size: size, color: color))
+    }
+}
+
 
 
 enum CommodityColor {
@@ -375,4 +392,112 @@ enum CommodityColor {
 
 func isWholeNumber(_ value: Double) -> Bool {
     return value.truncatingRemainder(dividingBy: 1) == 0
+}
+
+
+func customizeTicketFormat(_ a: Int,_ b: Int,_ c: Int,_ d: Int,_ e: Int) -> [Int] {
+    var ticketFormatArr: [Int] = []
+    for _ in 0..<a {
+        ticketFormatArr.append(1)
+    }
+    for _ in 0..<b {
+        ticketFormatArr.append(2)
+    }
+    for _ in 0..<c {
+        ticketFormatArr.append(3)
+    }
+    for _ in 0..<d {
+        ticketFormatArr.append(4)
+    }
+    for _ in 0..<e {
+        ticketFormatArr.append(5)
+    }
+    return ticketFormatArr
+}
+
+struct CustomStepper: View {
+    @Binding var value: Int
+    let range: ClosedRange<Int>
+    let title: String
+    
+    var body: some View {
+        HStack {
+            Text("\(title): \(value)")
+                .font(Font.custom(K.customFonts.lexendDecaLight, size: 16).weight(.light))
+                .foregroundColor(.white)
+            Spacer()
+            Button(action: {
+                if value > range.lowerBound {
+                    value -= 1
+                }
+            }) {
+                Image(systemName: "minus")
+                    .font(.system(size: 20))
+                    .foregroundColor(.white)
+                    .frame(width: 40, height: 40)
+                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                    .cornerRadius(5)
+            }
+          
+            Button(action: {
+                if value < range.upperBound {
+                    value += 1
+                }
+            }) {
+                Image(systemName: "plus")
+                    .font(.system(size: 20))
+                    .foregroundColor(.white)
+                    .frame(width: 40, height: 40)
+                    .background(Color(red: 0.13, green: 0.14, blue: 0.34))
+                    .cornerRadius(5)
+            }
+        }.padding(.vertical, 5)
+
+    }
+}
+
+struct CustomStepper2: View {
+    @Binding var value: Int
+    let range: ClosedRange<Int>
+    let title: String
+    
+    var body: some View {
+        VStack {
+            Text("\(value) \(title)")
+                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 30))
+                .foregroundColor(.white)
+            
+            HStack (spacing: 15) {
+                Spacer()
+                Button(action: {
+                    if value > range.lowerBound {
+                        value -= 1
+                    }
+                }) {
+                    Image(systemName: "minus")
+                        .font(.system(size: 30))
+                        .foregroundColor(.white)
+                        .frame(width: 120, height: 60)
+                        .background(K.finalColor.titleBlue.opacity(0.7))
+                        .cornerRadius(5)
+                }
+                
+                Button(action: {
+                    if value < range.upperBound {
+                        value += 1
+                    }
+                }) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 30))
+                        .foregroundColor(.white)
+                        .frame(width: 120, height: 60)
+                        .background(K.finalColor.titleBlue.opacity(0.7))
+                        .cornerRadius(5)
+                }
+                Spacer()
+            }
+            
+        }.frame(height: 150).background(K.finalColor.cardBlue).cornerRadius(7.5)
+    
+    }
 }

@@ -135,12 +135,8 @@ struct settingsView: View {
                                                 .foregroundColor(.white)
                                         }.padding(.vertical, 10)
                                     }.id(UUID())
-//                                    
-//                                    Divider()
                                     
-                                    Button(action: {
-                                        showInvitePage.toggle()
-                                    }) {
+                                    NavigationLink(destination: {referralView()}) {
                                         HStack{
                                             ZStack{
                                                 Circle()
@@ -152,25 +148,16 @@ struct settingsView: View {
                                                     .frame(width: 20, height: 20)
                                                     .foregroundColor(.white)
                                             }
-                                            Text("Invite Friends")
+                                            Text("Referral System")
                                                 .font(Font.custom(K.customFonts.lexendDecaLight, size: 16))
                                                 .foregroundColor(.white)
                                         }.padding(.top, 10)
                                             .padding(.bottom,20)
                                     }
-                                    
+                                    .id(UUID())
                                 }
                                 
                                 VStack(alignment: .leading) {
-                                    //                            Button(action: {
-                                    //                                self.showWebpage = true
-                                    //                            }) {
-                                    //                                Text("Open Website")
-                                    //                                    .foregroundColor(Color("Color 1"))
-                                    //                            }
-                                    //                            .sheet(isPresented: $showWebpage) {
-                                    //                                SafariView(url: URL(string: "https://merge-together.com")!)
-                                    //                            }
                                     Text("Support")
                                         .font(Font.custom(K.customFonts.lexendDecaSB, size: 16).weight(.semibold))
                                         .foregroundColor(.white)
@@ -355,18 +342,19 @@ struct settingsView: View {
                         .padding(.bottom,40)
                     Spacer()
                     //Spacer()
-                }.popup(isPresented: $showInvitePage) {
-                    inviteFriendsView()
-                    .frame(height: 650)
-                } customize: {
-                    $0
-                        .type (.toast)
-                        .position(.bottom)
-                        .isOpaque(true)
-                        .closeOnTap(false)
-                        .closeOnTapOutside(true)
-                        .backgroundColor(.black.opacity(0.4))
                 }
+//                .popup(isPresented: $showInvitePage) {
+//                    referralView()
+//                    .frame(height: 650)
+//                } customize: {
+//                    $0
+//                        .type (.toast)
+//                        .position(.bottom)
+//                        .isOpaque(true)
+//                        .closeOnTap(false)
+//                        .closeOnTapOutside(true)
+//                        .backgroundColor(.black.opacity(0.4))
+//                }
                 .edgesIgnoringSafeArea(.bottom)
                 
                 .toolbar(.hidden)
@@ -440,39 +428,7 @@ struct settingsView_Previews: PreviewProvider {
     }
 }
 
-struct inviteFriendsView: View {
-    var body: some View {
-        ZStack {
-            K.finalColor.backgroundBlue.cornerRadius(40, corners: [.topLeft, .topRight])
-            VStack {
-                
-              popUpPill()
-                
-                ScrollView {
-                    K.finalColor.backgroundBlue
-                    VStack (spacing: 5) {
-                        Text("How To Invite Friends?")
-                            .font(.custom(K.customFonts.lexendDecaSB, size: 20))
-                            .foregroundColor(K.finalColor.titleBlue)
-                            .padding(.vertical)
-                        
-                        Text("     WagerPool users can earn 2 PoolBucks for every user they refer. To refer a friend, all they have to do is enter your promo code during sign up. Easy as that!")
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
-                            .foregroundColor(K.finalColor.textWhite)
-                            .padding(.bottom)
-                        
-                        Text("Promo code: \(StaticUserData.shared.username)")
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 15))
-                            .foregroundColor(K.finalColor.textWhite)
-                            .padding(.bottom)
-                        
-                        
-                    }.padding(.horizontal)
-                }
-            }
-        }
-    }
-}
+
 struct TermsAndConditionsViewSettings: View {
     @Environment(\.dismiss) var dismiss
     

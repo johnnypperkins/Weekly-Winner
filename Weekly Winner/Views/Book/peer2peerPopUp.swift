@@ -286,21 +286,7 @@ struct userBioFriend: View {
                                 
                                 HStack(spacing: 5) {
                                     profilePicDisplayView(dimension: 24, picURL: friend.profileImageURL)
-//                                    if friend.profileImageURL != "" {
-//                                        KFImage(URL(string: friend.profileImageURL))
-//                                            .resizable()
-//                                            .aspectRatio(contentMode: .fill)
-//                                            .clipShape(Circle())
-//                                            .frame(width: 24, height: 24)
-//                                    } else {
-//                                        Image(systemName: "photo.circle.fill")
-//                                            .resizable()
-//                                            .aspectRatio(contentMode: .fill)
-//                                            .frame(width: 24, height: 24)
-//                                            .background(K.finalColor.tabSelectedBlue)
-//                                            .clipShape(Circle())
-//                                        
-//                                    }
+
                                     HStack(spacing: 0){
                                         Text("\(friend.username) ")
                                             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 12))
@@ -319,9 +305,7 @@ struct userBioFriend: View {
                                     .frame(width: 15, height: 15)
                                     .foregroundColor(.white)
                                 
-                                
                             }.padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
-                            //.padding(.bottom,10)
                             
                         }
                     }

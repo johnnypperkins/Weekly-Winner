@@ -38,8 +38,8 @@ import FirebaseFirestore
     @Published var allDailyTickets: [Ticket] = []
     @Published var allDailyBets: [Bet] = []
     
-    private let uService = userService()
-    private let groupServe = groupService()
+    private let userService = UserService()
+    private let groupServe = GroupService()
     private let betServe = BetService()
     
     
@@ -58,10 +58,8 @@ import FirebaseFirestore
         do {
             let document = try await friendDocRef.getDocument()
             if document.exists {
-//                print("The user is a friend.")
                 self.isFollow = true
             } else {
-//                print("The user is not a friend.")
                 self.isFollow = false
             }
         } catch {
@@ -71,7 +69,7 @@ import FirebaseFirestore
     }
     
     func follow () {
-        uService.follow(uid: Auth.auth().currentUser?.uid ?? "", friendId: userInfo!.id!, username: userInfo!.username, url: userInfo?.profileImageUrl ?? "")
+        userService.follow(uid: Auth.auth().currentUser?.uid ?? "", friendId: userInfo!.id!, username: userInfo!.username, url: userInfo?.profileImageUrl ?? "")
         isFollow = true
         Task{
             await getCountOfStringsInArrayField(user1: StaticUserData.shared.currentUser)
@@ -79,7 +77,7 @@ import FirebaseFirestore
     }
     
     func unfollow () {
-        uService.unfollow(uid: Auth.auth().currentUser?.uid ?? "", friendId: userInfo!.id!)
+        userService.unfollow(uid: Auth.auth().currentUser?.uid ?? "", friendId: userInfo!.id!)
         isFollow = false
         Task{
             await getCountOfStringsInArrayField(user1: StaticUserData.shared.currentUser)

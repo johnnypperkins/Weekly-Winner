@@ -14,8 +14,8 @@ import FirebaseFunctions
 
 class screen1ViewModel: ObservableObject {
     
-    private let serviceUSER = userService()
-    private let serviceGROUP = groupService()
+    private let serviceUSER = UserService()
+    private let serviceGROUP = GroupService()
     
     @Published var userSession : FirebaseAuth.User? = nil
     @Published var updateURL: String = ""

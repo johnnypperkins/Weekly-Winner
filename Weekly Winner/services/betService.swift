@@ -236,11 +236,6 @@ class BetService {
                 let localDailyUserBets = Array(documents.compactMap { queryDocumentSnapshot -> Bet? in
                     return try? queryDocumentSnapshot.data(as: Bet.self)
                 })
-//                if localDailyUserBets.isEmpty {
-//                    self.currentUserDailyBets = []
-//                } else {
-//                    self.currentUserDailyBets = localDailyUserBets
-//                }
 
                 if let error = error {
                     print(error)
@@ -257,6 +252,7 @@ class BetService {
         var pastTicketsLocal: [Ticket] = []
         Firestore.firestore().collection("users").document(uid).collection("tickets")
             .document("day").collection("pastDayTickets")
+            .order(by: "dateCreated", descending: true)  // Sorting by dateCreated in descending order
             .getDocuments { (querySnapshot, error) in
                 if let error = error {
                     print("Error fetching stats: \(error.localizedDescription)")
@@ -268,7 +264,9 @@ class BetService {
                 for doc in documents {
                     do {
                         if let ticket = try doc.data(as: Ticket?.self) {
-                            pastTicketsLocal.append(ticket)
+                            if ticket.isEnabled {
+                                pastTicketsLocal.append(ticket)
+                            }
                         }
                     } catch let error {
                         print("Error decoding bet4: \(error.localizedDescription)")
@@ -277,6 +275,7 @@ class BetService {
                 completion(pastTicketsLocal)
             }
     }
+
     
 }
 

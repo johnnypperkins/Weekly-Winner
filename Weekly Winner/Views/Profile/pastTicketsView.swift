@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct pastTicketsView: View {
-    @ObservedObject var viewModel = PastTicketsViewModel()
+    @StateObject var viewModel = PastTicketsViewModel()
     let uid: String
     
     var body: some View {
@@ -22,16 +22,26 @@ struct pastTicketsView: View {
                     ForEach(viewModel.pastUserTickets, id: \.id) { ticket in
                         NavigationLink(destination: {
                             #warning("THIS DOESNT WORK. Goes to current ticket need to do some gay date thing to get the exact one...")
-                            ticketView(username: ticket.username, uid: ticket.uid, groupID: "GlobalDaily", selectedWeek: "current", ticketFormatForGroups: [], ownTicket: false, onTicketPage: false, passedTimeFrame: "daily")
+                            ticketView(username: ticket.username, uid: ticket.uid, groupID: "GlobalDaily", selectedWeek: viewModel.returnStringForSpecificDate(from: ticket.dateCreated), ticketFormatForGroups: [], ownTicket: true, onTicketPage: true, passedTimeFrame: "daily")
                         }, label: {
-                            BetCard(
-                                ticket: ticket,
-                                rank: ticket.rank,
-                                ownCard: false,
-                                currentWeek: true,
-                                homePage: true
-                            ).padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0))
-                                .padding(.horizontal)
+                            
+                            VStack(spacing: 3){
+                                HStack{
+                                    Text("\(formatDateMMDDYY(from: ticket.dateCreated))")
+                                        .lexMedCustom(14, color: .white)
+                                    Spacer()
+                                }.padding(.horizontal)
+                                    .padding(.leading, 2)
+                                
+                                BetCard(
+                                    ticket: ticket,
+                                    rank: ticket.rank,
+                                    ownCard: false,
+                                    currentWeek: false,
+                                    homePage: true
+                                ).padding(EdgeInsets(top: 0, leading: 0, bottom: 5, trailing: 0))
+                                    .padding(.horizontal)
+                            }
                         })
                     }
                 }.padding(.vertical)

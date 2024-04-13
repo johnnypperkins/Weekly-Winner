@@ -19,7 +19,7 @@ enum Tab {
 
 struct tabBarView: View {
     @State private var selectedTab = 0 // which tab selected
-    @ObservedObject var authViewModel = authenticationViewModel()
+    @StateObject var authViewModel = authenticationViewModel()
     @State var showContentView = false
     @State private var isShowing = false
     @State var selection: Tab
@@ -64,7 +64,7 @@ struct tabBarView: View {
                                 }.tag(Tab.challenges)
                             
                             
-                            profileView(user: authViewModel.currUser!)
+                            profileView(user: user)
                                 .ignoresSafeArea(.all)
                                 .tabItem {
                                     CustomTabBarItem(index: 4, selectedTab: $selectedTab, item: TabItem(title: "Profile", icon: Image(systemName: "ticket.fill"), color: .blue))
@@ -74,8 +74,6 @@ struct tabBarView: View {
                         else {
                             EmptyView()
                         }
-                    }.onAppear() {
-                        print(authViewModel.currUser)
                     }
                     //.edgesIgnoringSafeArea(.all)
 

@@ -8,7 +8,7 @@
 import Firebase
 import FirebaseFirestoreSwift
 
-struct userService {
+struct UserService {
     
     func fetchUser(uid: String, completion: @escaping (User?, Bool) -> Void) {
         Firestore.firestore().collection("users").document(uid).getDocument { snapshot, error in

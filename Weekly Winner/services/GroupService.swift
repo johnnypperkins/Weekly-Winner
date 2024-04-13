@@ -9,7 +9,7 @@ import Foundation
 import Firebase
 import FirebaseFirestore
 
-class groupService {
+class GroupService {
     private let db = Firestore.firestore()
 
     
@@ -379,55 +379,7 @@ class groupService {
             }
         }
     }
-
-
-
-
-
     
-//    func createGroup(groupAdminUsername: String, groupName: String, groupSlogan: String, password: String?, ticketFormat: [Int], groupUrl: String, completion: @escaping (Result<String, Error>) -> Void) {
-//            
-//        guard let currentUser = Auth.auth().currentUser else {
-//                    completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No user is currently logged in"])))
-//                    return
-//                }
-//        let time = Timestamp()
-//            var ref: DocumentReference? = nil
-//            ref = db.collection("groups").addDocument(data: [
-//                "groupName": groupName,
-//                "dateCreated": time,
-//                "groupImageURL": groupUrl,
-//                "groupSlogan": groupSlogan,
-//                "groupAdmin": currentUser.uid,
-//                "groupAdminUsername": groupAdminUsername,
-//                "password": password ?? NSNull(),
-//                "ticketFormat": ticketFormat
-//            ]) { err in
-//                if let err = err {
-//                                completion(.failure(err))
-//                } else {
-//                    guard let groupID = ref?.documentID else {
-//                        completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to retrieve group ID"])))
-//                        return
-//                    }
-//                    self.db.collection("groups").document(groupID).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": currentUser.uid])
-//                    let group = Group(id: groupID, groupName: groupName, dateCreated: time, groupImageURL: groupUrl, groupSlogan: groupSlogan, groupAdmin: currentUser.uid, groupAdminUsername: groupAdminUsername, ticketFormat: ticketFormat)
-//                    self.joinGroup(userID: currentUser.uid, group: group){error in
-//                        
-//                    }
-//                        
-//                    
-//                    do {
-//                        Firestore.firestore().collection("groups").document(groupID).updateData(["keywordsForLookup": group.keywordsForLookup])
-//                    } catch let error {
-//                        print("Error updating data: \(error)")
-//                    }
-//                }
-//            }
-//        }
-    
-
-
     
     func ticketCount(userID: String, completion: @escaping (Int?, Error?) -> Void) {
         let db = Firestore.firestore()
@@ -448,95 +400,8 @@ class groupService {
             completion(ticketCount, nil)
         }
     }
-    
-
-    
-//    func joinGroup(userID: String, group: Group, completion: @escaping (Error?) -> Void) {
-//        Task {
-//                
-//                var enabled = false
-//                ticketCount(userID: userID) { num, error in
-//                    if group.groupAdmin == userID {
-//                        enabled = true
-//                    }
-//                    let db = Firestore.firestore()
-//                    db.collection("groups").document(group.id!).collection("members").getDocuments { (snapshot, error) in
-//                        if let error = error {
-//                            print("Error getting documents: \(error)")
-//                        } else {
-//                            let rank = (snapshot?.documents.count)! + 1 ?? -99
-//                            let userTicketsCollection = db.collection("users").document(userID).collection("tickets").document("week").collection("currentWeekTickets")
-//                            let ticket = Ticket(username: UserData.shared.username, uid: Auth.auth().currentUser!.uid, groupID: group.id!, groupNumber: num!, dateCreated: Timestamp(date: Date()), totalWon: 0, totalPotentialWon: 0, groupName: group.groupName, rank: String(rank), isEnabled: enabled, groupAdmin: group.groupAdmin, ticketFormat: group.ticketFormat)
-//                            do {
-//                                let _ = try userTicketsCollection.addDocument(from: ticket) { error in
-//                                    if let error = error {
-//                                        print("Error uploading group: \(error)")
-//                                    } else {
-//                                        print("Joined group successfully!")
-//                                        self.db.collection("groups").document(group.id!).collection("members").document(Auth.auth().currentUser!.uid).setData(["userID": userID])
-//                                    }
-//                                }
-//                            } catch {
-//                                print("Error encoding group: \(error)")
-//                            }
-//                            completion(error)
-//                        }
-//                    }
-//                }
-//                completion(nil)
-//        }
-//    }
 
 
-
-    func leaveGroup(ticket: Ticket, userID: String, completion: @escaping (Error?) -> Void) {
-        let db = Firestore.firestore()
-        let serialQueue = DispatchQueue(label: "com.yourapp.leaveGroup")
-        var firstError: Error?
-
-        serialQueue.async {
-            let groupLeave = DispatchGroup()
-
-            groupLeave.enter()
-            db.collection("users").document(userID).collection("tickets").document("week").collection("currentWeekTickets").whereField("groupID", isEqualTo: ticket.groupID).getDocuments { (snapshot, error) in
-                if let error = error {
-                    firstError = firstError ?? error
-                } else {
-                    for doc in snapshot!.documents {
-                        doc.reference.delete()
-                    }
-                }
-                groupLeave.leave()
-            }
-            groupLeave.wait()
-
-            groupLeave.enter()
-            db.collection("users").document(userID).collection("bets").document("week").collection("currentWeekBets").whereField("groupID", isEqualTo: ticket.groupID).getDocuments() { (snapshot, error) in
-                if let error = error {
-                    firstError = firstError ?? error
-                } else {
-                    for document in snapshot!.documents {
-                        document.reference.delete()
-                    }
-                }
-                groupLeave.leave()
-            }
-            groupLeave.wait()
-
-            groupLeave.enter()
-            db.collection("groups").document(ticket.groupID).collection("members").document(userID).delete() { err in
-                if let err = err {
-                    firstError = firstError ?? err
-                }
-                groupLeave.leave()
-            }
-            groupLeave.wait()
-
-            DispatchQueue.main.async {
-                completion(firstError)
-            }
-        }
-    }
 
 
     
@@ -640,40 +505,44 @@ class groupService {
             }
     }
     
-    func setChallengePotentialToWin(potential potentialToWin: Int, id: String, timeFrame: String, completion: @escaping (Error?) -> Void) {
-        
-        
-        guard let userID = Auth.auth().currentUser?.uid else {
-            completion(AuthError.userNotFound)
-            return
+    
+    func populateArrayOfDays(from timestamp: Timestamp) -> [String] {
+        var days: [String] = []
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone(identifier: "UTC-5")! // Set to UTC-5
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM/dd/yy" // Month/Day/Year Hours:Minutes in 24-hour format
+//        dateFormatter.dateFormat = "MM/dd/yy HH:mm" // to check hours
+        dateFormatter.timeZone = TimeZone(identifier: "UTC-5")! // Set to UTC-5
+
+        // Convert Firestore Timestamp to Date
+        let utcDate = timestamp.dateValue()
+
+        // Adjust the date to UTC-5 and subtract 6 hours and 59 minutes to align with 00:01
+        var inputDate = calendar.date(byAdding: .second, value: TimeZone(identifier: "UTC-5")!.secondsFromGMT(), to: utcDate)!
+        inputDate = calendar.date(byAdding: .hour, value: 5, to: inputDate)!
+        inputDate = calendar.date(byAdding: .minute, value: 1, to: inputDate)!
+
+        // Get the current date in UTC-5
+        let currentDateInUTC5 = calendar.date(byAdding: .second, value: TimeZone(identifier: "UTC-5")!.secondsFromGMT(), to: Date())!
+        print("CURRENT DATE UTC-5", currentDateInUTC5)
+
+        // Initialize the current day to the inputDate
+        var currentDay = inputDate
+
+        // Keep adding days until a day in the future is added
+        while currentDay <= currentDateInUTC5 {
+            days.append(dateFormatter.string(from: currentDay))
+            currentDay = calendar.date(byAdding: .day, value: 1, to: currentDay)!
         }
-        
-        let db = Firestore.firestore()
-        
-        // Query the document where the 'groupNumber' field is equal to the given groupNumber
-        db.collection("users").document(userID).collection("challengeTickets")
-            .whereField("id", isEqualTo: id)
-            .getDocuments { (querySnapshot, err) in
-                if let err = err {
-                    // Handle the error
-                    completion(err)
-                } else if let document = querySnapshot?.documents.first {
-                    // Create the data to upload
-                    let data: [String: Any] = [
-                        "totalPotentialWon": potentialToWin
-                    ]
-                    
-                    // Set the 'potentialToWin' field in the document
-                    document.reference.setData(data, merge: true) { error in
-                        if let error = error {
-                            // Handle the error
-                            completion(error)
-                        } else {
-                            // Upload successful
-                            completion(nil)
-                        }
-                    }
-                }
-            }
+
+        // Remove the future day and replace the last valid day with "Current"
+        days.removeLast()
+        days.append("Current")
+        days.reverse()
+
+        return days
     }
+    
 }

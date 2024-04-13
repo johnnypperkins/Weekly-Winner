@@ -28,27 +28,20 @@ class groupsViewModel: ObservableObject {
     @Published var friendsTickets: [Ticket] = []
     @Published var friendsList: [String] = []
     
-    private let grpService = groupService()
+    private let groupService = GroupService()
     
     private let db = Firestore.firestore()
 
     
     init() {
-//        fetchUserTickets(timeFrame: "daily") {
         self.fetchFriendsList()
             self.groupsFetched = true
             self.fetchUserGroups {
                 self.userGroupsLoaded = true
                 self.totalArrayOfDates.append(self.populateArrayOfDates(from: Timestamp(date: Calendar.current.date(from: DateComponents(year: 2023, month: 11, day: 22))!))) //weekly
-                self.totalArrayOfDates.append(self.populateArrayOfDays(from: Timestamp(date: Calendar.current.date(from: DateComponents(year: 2023, month: 12, day: 13))!))) // daily
+                self.totalArrayOfDates.append(self.loadPastDailyTicketDates(from: Timestamp(date: Calendar.current.date(from: DateComponents(year: 2023, month: 12, day: 13))!))) // daily
                 
             }
-//            self.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: "daily") {}
-            
-//        }
-//        fetchUserTickets(timeFrame: "weekly") {
-//            self.fetchCurrentRankedTickets(groupID: StaticUserData.shared.dailyTicket.groupID, timeFrame: "weekly") {}
-//        }
     }
     
     func fetchFriendsList() {
@@ -143,7 +136,7 @@ class groupsViewModel: ObservableObject {
     }
     
     func fetchCurrentRankedTickets(groupID: String, timeFrame: String, completion: @escaping () -> Void){
-        grpService.getCurrentRankedTickets(groupID: groupID, timeFrame: "daily") { [weak self] (tickets, totalPlayers, error) in
+        groupService.getCurrentRankedTickets(groupID: groupID, timeFrame: "daily") { [weak self] (tickets, totalPlayers, error) in
                 if let error = error {
                     // Handle error
                     //print("Error fetching groups CURRENT: \(error)")
@@ -166,7 +159,7 @@ class groupsViewModel: ObservableObject {
         }
     
     func fetchPastRankedTickets(groupID: String, week: String, timeFrame: String, completion: @escaping () -> Void) {
-        grpService.getPastRankedTickets(groupID: groupID, week: week, timeFrame: "daily") { [weak self] (tickets, error) in
+        groupService.getPastRankedTickets(groupID: groupID, week: week, timeFrame: "daily") { [weak self] (tickets, error) in
                 if let error = error {
                     // Handle error
                     print("Error fetching groups PAST: \(error)")
@@ -182,86 +175,17 @@ class groupsViewModel: ObservableObject {
     }
     
     
-//    func joinGroup(group: Group) { // Group99
-//        
-//        grpService.joinGroup(userID: Auth.auth().currentUser!.uid, group: group){ error in
-//            self.fetchUserTickets() {
-////                self.fetchGroups(array1: self.userTickets){
-////
-////                }
-//                self.fetchUserGroups {
-//                }
-//                
-//                print(self.userTickets)
-//            }
-//        }
-//    }
-    
-//    func checkIfGroupAlreadyJoined(group: Group, completion: @escaping (Bool) -> Void) {
-//        self.fetchUserTickets() {
-//            for groupsJoined in self.userTickets {
-//                if group.id == groupsJoined.groupID {
-//                    completion(true)
-//                    return
-//                }
-//            }
-//            completion(false)
-//        }
-//    }
-
-
-//    func fetchUserTickets(timeFrame: String, completion: @escaping () -> Void) {
-//        print("Fetch started")
-//      
-//        
-//        let db = Firestore.firestore()
-//        let ticketsCollection = db.collection("users").document(currentUser.uid).collection("tickets").document("week").collection("currentWeekTickets")
-//        
-//        ticketsCollection.order(by: "groupNumber").getDocuments { [weak self] snapshot, error in
-//            guard let self = self else { return }
-//            
-//            if let error = error {
-//                //print("Error fetching groups: \(error.localizedDescription)")
-//                return
-//            }
-//            
-//            guard let documents = snapshot?.documents, error == nil else { return }
-//            
-//            self.userTickets = documents.compactMap { snapshot in
-//                //print(snapshot)
-//                return try? snapshot.data(as: Ticket.self) // Ticket99
-//            }
-//            
-//            
-//            
-//            // Call the completion closure after fetching and processing
-//            completion()
-//        }
-//    }
-    
     func fetchUserTickets(timeFrame: String, completion: @escaping () -> Void) {
         guard let userId = Auth.auth().currentUser?.uid else { return }
-        grpService.fetchUserTickets(userID: userId, timeFrame: "daily") { tickets, error in
+        groupService.fetchUserTickets(userID: userId, timeFrame: "daily") { tickets, error in
             if let error = error {
                 print("Error fetching user groups: \(error.localizedDescription)")
             } else if let tickets = tickets {
                 self.userTickets = tickets
-//                if timeFrame == "weekly" {
-//                    StaticUserData.shared.weeklyTicket = tickets[0]
-//                } else if timeFrame == "daily" {
-//                    StaticUserData.shared.dailyTicket = tickets[0]
-//
-//                }
-                //self.currentTicketFormat = tickets[groupNumber].ticketFormat
-               
-                //self.isTFLoaded = true
-                //self.isGroupsLoaded = true  // Set this to true when data is loaded
             }
             completion()
-            //print(groups)
-            //print(userId)
         }
-    }//test
+    }
   
     func fetchGroups(array1: [Ticket], completion: @escaping () -> Void) {
        
@@ -402,50 +326,6 @@ class groupsViewModel: ObservableObject {
             }
         }
     }
-
-
-
-//    func leaveGroup(ticket: Ticket, completion: @escaping () -> Void) {
-//        // Get a reference to Firestore and the current user
-//        guard let currentUser = Auth.auth().currentUser?.uid else {
-//            print("No current user")
-//            return
-//        }
-//        grpService.leaveGroup(ticket: ticket, userID: currentUser) { error in
-//            self.fetchUserTickets() {
-//                //self.fetchGroups(array1: self.userTickets){}
-//                self.fetchUserGroups {
-//                    
-//                }
-//            }
-//        }
-//
-//        
-//        func deleteGroupIfNeeded(groupID: String) {
-//            db.collection("groups").document(groupID).getDocument { document, error in
-//                if let error = error {
-//                    print("Error fetching group: \(error.localizedDescription)")
-//                    return
-//                }
-//                guard let document = document, document.exists, let members = document.get("members") as? [String] else {
-//                    // If the group still has members, we don't delete it.
-//                    return
-//                }
-//                print("Members: \(members)") // Debug line
-//                print("Members count: \(members.count)") // Debug line
-//                if members.isEmpty {
-//                    // If no members left, delete the group.
-//                    document.reference.delete { error in
-//                        if let error = error {
-//                            print("Error deleting group: \(error.localizedDescription)")
-//                        } else {
-//                            print("Group successfully deleted!")
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
     
     func populateArrayOfDates(from timestamp: Timestamp) -> [String] {
         var weeks: [String] = []
@@ -468,7 +348,7 @@ class groupsViewModel: ObservableObject {
 
         // Get the current date in Eastern Time
         let currentDateInEasternTime = calendar.date(byAdding: .second, value: TimeZone(identifier: "UTC-5")!.secondsFromGMT(), to: Date())!
-        print("CURRENT DATE UTC+2", currentDateInEasternTime)
+        //print("CURRENT DATE UTC+2", currentDateInEasternTime)
         
         // Keep adding Mondays one week later until a Monday in the future is added
         while currentMonday <= currentDateInEasternTime {
@@ -484,43 +364,8 @@ class groupsViewModel: ObservableObject {
         return weeks
     }
     
-    func populateArrayOfDays(from timestamp: Timestamp) -> [String] {
-        var days: [String] = []
-        var calendar = Calendar.current
-        calendar.timeZone = TimeZone(identifier: "UTC-5")! // Set to UTC-5
-
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MM/dd/yy" // Month/Day/Year Hours:Minutes in 24-hour format
-//        dateFormatter.dateFormat = "MM/dd/yy HH:mm" // to check hours
-        dateFormatter.timeZone = TimeZone(identifier: "UTC-5")! // Set to UTC-5
-
-        // Convert Firestore Timestamp to Date
-        let utcDate = timestamp.dateValue()
-
-        // Adjust the date to UTC-5 and subtract 6 hours and 59 minutes to align with 00:01
-        var inputDate = calendar.date(byAdding: .second, value: TimeZone(identifier: "UTC-5")!.secondsFromGMT(), to: utcDate)!
-        inputDate = calendar.date(byAdding: .hour, value: 5, to: inputDate)!
-        inputDate = calendar.date(byAdding: .minute, value: 1, to: inputDate)!
-
-        // Get the current date in UTC-5
-        let currentDateInUTC5 = calendar.date(byAdding: .second, value: TimeZone(identifier: "UTC-5")!.secondsFromGMT(), to: Date())!
-        print("CURRENT DATE UTC-5", currentDateInUTC5)
-
-        // Initialize the current day to the inputDate
-        var currentDay = inputDate
-
-        // Keep adding days until a day in the future is added
-        while currentDay <= currentDateInUTC5 {
-            days.append(dateFormatter.string(from: currentDay))
-            currentDay = calendar.date(byAdding: .day, value: 1, to: currentDay)!
-        }
-
-        // Remove the future day and replace the last valid day with "Current"
-        days.removeLast()
-        days.append("Current")
-        days.reverse()
-
-        return days
+    func loadPastDailyTicketDates(from timestamp: Timestamp) -> [String] {
+        return groupService.populateArrayOfDays(from: timestamp)
     }
 
 
@@ -535,32 +380,9 @@ class groupsViewModel: ObservableObject {
     func resetTicketFormat(newTicketFormat: [Int], groupID: String, timeFrame: String, completion: @escaping () -> Void) {
         
         let documentLoc:String = "day"
-//        {
-//            if timeFrame == "weekly" {
-//                return "week"
-//            } else {
-//                return "day"
-//            }
-//        }()
-        
         let collectionLoc:String = "currentDayTickets"
-//        {
-//            if timeFrame == "weekly" {
-//                return "currentWeekTickets"
-//            } else {
-//                return "currentDayTickets"
-//            }
-//        }()
-        
         let collectionLoc2:String = "currentDayBets"
-//        {
-//            if timeFrame == "weekly" {
-//                return "currentWeekBets"
-//            } else {
-//                return "currentDayBets"
-//            }
-//        }()
-//        
+        
         let db = Firestore.firestore()
         print("NEW TICKET FORMAT", newTicketFormat)
         print("GROUPID", groupID)

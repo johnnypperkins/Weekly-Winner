@@ -15,7 +15,6 @@ struct editProfileView: View {
     @State private var showImagePicker = false
     @State private var selectedImage: UIImage?
     @State private var profileImage: Image?
-    @StateObject var viewModelAuth = authenticationViewModel()
     @State private var sourceType: UIImagePickerController.SourceType = .photoLibrary
     //@State private var instagramText: String = "@liluzivert"
 //    @ObservedObject var profileVM: profileViewModel

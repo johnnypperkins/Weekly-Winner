@@ -583,7 +583,7 @@ struct BetCard: View {
                     HStack(alignment: .top, spacing: 10) {
                         if currentWeek {
                             HStack (alignment: .center) {
-                                Text("\(ticket.totalPotentialWon)")
+                                Text("\(currentWeek ? ticket.totalPotentialWon : 0)")
                                     .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
                                     .foregroundColor(K.finalColor.potentialOrange)
                                     .frame(width: 45, height: 20, alignment: .center)
