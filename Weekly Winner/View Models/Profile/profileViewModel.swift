@@ -41,6 +41,8 @@ class profileViewModel: ObservableObject {
         }
         fetchUserBetsForStats(uid: user.id!) {}
         fetchUserticketsForStats(uid: user.id!) {}
+        countPastDayTickets(uid: user.id!)
+
         Task{
             await self.isFriend(id: user.id!)
         }
@@ -96,8 +98,8 @@ class profileViewModel: ObservableObject {
 //        }
     }
     
-    func countPastDayTickets() {
-        betService.fetchPastTickets(uid: StaticUserData.shared.currentUser.id!) { tickets in
+    func countPastDayTickets(uid: String) {
+        betService.fetchPastTickets(uid: uid) { tickets in
             DispatchQueue.main.async {
                 self.pastDayTicketsCount = tickets.count
             }
@@ -302,14 +304,14 @@ class profileViewModel: ObservableObject {
 
 
     
-    func fetchUser() {
-            guard let uid = user.id else { return }
-            
+    func fetchUser(completion: @escaping () -> Void) {
+        guard let uid = user.id else { return }
+        
         service.fetchUser(uid: uid) { user,success  in
             self.user = user!
             self.profileImageURLHolder = user!.profileImageUrl
-            }
         }
+    }
     
 
 

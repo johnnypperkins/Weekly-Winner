@@ -218,11 +218,6 @@ struct profilePhotoSelectorView: View {
                                         Text("State")
                                             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16).weight(.medium))
                                             .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                                        
-                                        //                    Text("(if residing in the USA):")
-                                        //                        .font(Font.custom(K.customFonts.lexendDecaLight, size: 12).weight(.light))
-                                        //                        .foregroundColor(Color(red: 0.88, green: 0.89, blue: 0.89))
-                                        //                        .padding(.trailing,10)
                                         Text("*")
                                             .font(Font.custom(K.customFonts.lexendDecaLight, size: 14).weight(.light))
                                             .foregroundColor(.red)
@@ -254,23 +249,22 @@ struct profilePhotoSelectorView: View {
                                         Spacer()
                                         ZStack{
                                             
-                                            
-                                            if isPickerPresented {
-                                                CustomDatePicker(day: $selectedDay, month: $selectedMonth, year: $selectedYear)
-                                                    .id(FocusableFieldProfileData.birthday)
-                                                    .focused($focus, equals: .birthday)
-                                            }else{
+//                                            
+//                                            if isPickerPresented {
+//                                                CustomDatePicker(day: $selectedDay, month: $selectedMonth, year: $selectedYear)
+//                                                    .id(FocusableFieldProfileData.birthday)
+//                                                    .focused($focus, equals: .birthday)
+//                                            }else{
                                                 Button(action: {
                                                     withAnimation{
-                                                        self.isPickerPresented.toggle()
+                                                        isPickerPresented = true
                                                         self.focus = .birthday
                                                     }
                                                 }) {if selectedYear == "" {
                                                     Text("\(formattedDate(Date()))")
                                                         .foregroundColor(.white)
                                                         .padding(8)
-                                                }
-                                                    else{
+                                                } else{
                                                         Text("\(selectedMonth)/\(selectedDay)/\(selectedYear)")
                                                             .foregroundColor(.white)
                                                             .padding(8)
@@ -279,7 +273,7 @@ struct profilePhotoSelectorView: View {
                                                     .clipShape(RoundedRectangle(cornerRadius: 10))
                                                 
                                                 
-                                            }
+//                                            }
                                         }
                                         
                                     }.padding(.horizontal,16)
@@ -417,8 +411,8 @@ struct profilePhotoSelectorView: View {
                                 viewModel.uploadProfileImage(selectedImage)
                             }
                             if let date = createDate(day: selectedDay, month: selectedMonth, year: Int(selectedYear) ?? 0) {
-                                viewModel.uploadSupplementaryData(country: country, birthday: date, state: selectedState, gender: selectedGender, username: username, instagram: instagram, promoCode: promoCode)
-                                viewModel.sendPromoBucks(to: promoCode, from: username)
+                                viewModel.uploadSupplementaryData(country: country, birthday: date, state: selectedState, gender: selectedGender, username: username, instagram: instagram, promoCode: promoCode) {
+                                }
                                 print(date)
                             }
                             Task{
@@ -486,6 +480,20 @@ struct profilePhotoSelectorView: View {
             viewModel.checkVerification { success in
                 verified = success
             }
+        }.popup(isPresented: $isPickerPresented) {
+            Text("The popup")
+            CustomDatePicker(day: $selectedDay, month: $selectedMonth, year: $selectedYear, isPickerPresented: $isPickerPresented)
+                .frame(height: 400)
+
+        } customize: {
+            $0
+                .type (.toast)
+                .position(.bottom)
+                .isOpaque(true)
+                .closeOnTap(false)
+                .closeOnTapOutside(true)
+                .backgroundColor(.black.opacity(0.4))
+
         }
         
     }
@@ -526,6 +534,8 @@ struct CustomDatePicker: View {
     @Binding var day: Int
     @Binding var month: Int
     @Binding var year: String
+    @Binding var isPickerPresented: Bool
+    
 
     private var months: [String] { Calendar.current.shortMonthSymbols }
     private var days: [Int] { (1...31).map { $0 } }
@@ -541,28 +551,45 @@ struct CustomDatePicker: View {
     ]
 
     var body: some View {
-        HStack {
-            Picker(selection: $day, label: Text("Day")) {
-                ForEach(days, id: \.self) {
-                    Text("\($0)").foregroundColor(.white)
-                }
-            }
-            .pickerStyle(WheelPickerStyle())
+        
+        ZStack{
+            K.finalColor.backgroundBlue.cornerRadius(15, corners: [.topLeft, .topRight])
+            
+            VStack {
+                HStack {
+                    Picker(selection: $day, label: Text("Day")) {
+                        ForEach(days, id: \.self) {
+                            Text("\($0)").foregroundColor(.white)
+                        }
+                    }
+                    .pickerStyle(WheelPickerStyle())
 
-            Picker(selection: $month, label: Text("Month")) {
-                ForEach(1..<months.count + 1, id: \.self) {
-                    Text(months[$0 - 1]).foregroundColor(.white)
-                }
-            }
-            .pickerStyle(WheelPickerStyle())
+                    Picker(selection: $month, label: Text("Month")) {
+                        ForEach(1..<months.count + 1, id: \.self) {
+                            Text(months[$0 - 1]).foregroundColor(.white)
+                        }
+                    }
+                    .pickerStyle(WheelPickerStyle())
 
-            Picker(selection: $year, label: Text("Year")) {
-                ForEach(years, id: \.self) { number in
-                    Text("\(number)").foregroundColor(.white)
-                        .tag(number)
+                    Picker(selection: $year, label: Text("Year")) {
+                        ForEach(years, id: \.self) { number in
+                            Text("\(number)").foregroundColor(.white)
+                                .tag(number)
+                        }
+                    }
+                    .pickerStyle(WheelPickerStyle())
                 }
+                Button(action: {
+                    isPickerPresented = false
+                }, label: {
+                    Text("Confirm")
+                        .lexMedCustom(18, color: .white)
+                        .padding()
+                        .background(K.finalColor.winningGreen).opacity(year == "" ? 0.6 : 1)
+                        .cornerRadius(7.5)
+                }).disabled(year == "")
+                Spacer()
             }
-            .pickerStyle(WheelPickerStyle())
         }
     }
 }

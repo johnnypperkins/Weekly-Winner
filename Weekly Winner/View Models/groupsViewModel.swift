@@ -34,13 +34,16 @@ class groupsViewModel: ObservableObject {
 
     
     init() {
+        loadInfo()
+    }
+    
+    func loadInfo() {
         self.fetchFriendsList()
             self.groupsFetched = true
             self.fetchUserGroups {
                 self.userGroupsLoaded = true
                 self.totalArrayOfDates.append(self.populateArrayOfDates(from: Timestamp(date: Calendar.current.date(from: DateComponents(year: 2023, month: 11, day: 22))!))) //weekly
                 self.totalArrayOfDates.append(self.loadPastDailyTicketDates(from: Timestamp(date: Calendar.current.date(from: DateComponents(year: 2023, month: 12, day: 13))!))) // daily
-                
             }
     }
     

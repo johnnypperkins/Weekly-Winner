@@ -505,10 +505,10 @@ struct publicWager: View { // public challenges you can accept
                 acceptDirectChallenge(viewModel: viewModel, directChallengeTicket: challenge, inAction: false, publicViewing: false)
                     .background(K.finalColor.backgroundBlue)
             }, label: {
-                publicWagerDetails(challenge: challenge, yourTicket: false)
+                publicWagerDetails(challenge: challenge, yourTicket: false).padding(.horizontal)
             })
         } else {
-            publicWagerDetails(challenge: challenge, yourTicket: true)
+            publicWagerDetails(challenge: challenge, yourTicket: true).padding(.horizontal)
         }
         
     }
@@ -542,11 +542,9 @@ struct publicWagerDetails: View {
     var body: some View {
         ZStack {
             HStack {
-                
                 HStack (spacing: 4){
                     Text("\(challenge.receiverTeamName) \(betLineFormatted) (\(challenge.receiverOdds > 0 ? "+" : "")\(challenge.receiverOdds))")
-                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 16))
-                        .foregroundColor(.white)
+                        .lexMedCustom(16, color: .white)
                         .padding(.horizontal, 3)
                 }
                 
@@ -559,65 +557,47 @@ struct publicWagerDetails: View {
                             .stroke(.white, lineWidth: 0.4))
                         .padding(.horizontal,1)
                         .padding(.vertical, 4)
-                    
                     VStack (spacing: 0){
                         HStack (spacing: 0){
-                            
-                                
-                                Text("Risk:")
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 15))
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal, 5)
-                                currencyImage(currency: challenge.currencyChosen, dimension: 16)
-                                    .padding(.trailing, 3)
-                            
-                            
-                            
+                            Text("Risk:")
+                                .lexMedCustom(15, color: .white)
+                                .padding(.horizontal, 5)
+                            currencyImage(currency: challenge.currencyChosen, dimension: 16)
+                                .padding(.trailing, 3)
                             Text("\(String(format: "%.2f", challenge.receiverWagerAmount))") // NEED TO FIX
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 15))
-                                .foregroundColor(.white)
-                                
+                                .lexMedCustom(15, color: .white)
                             Spacer()
                         }
                         HStack (spacing: 0){
-                            
-                                
-                                Text("Win: ")
-                                    .font(Font.custom(K.customFonts.lexendDecaMedium, size: 15))
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal, 5)
-                                currencyImage(currency: challenge.currencyChosen, dimension: 16)
-                                    .padding(.trailing, 3)
-                            
-                            
+                            Text("Win: ")
+                                .lexMedCustom(15, color: .white)
+                                .padding(.horizontal, 5)
+                            currencyImage(currency: challenge.currencyChosen, dimension: 16)
+                                .padding(.trailing, 3)
                             Text("\(String(format: "%.2f", returnPotentialWinnings(wagerAmount: challenge.receiverWagerAmount, MLOdds: challenge.receiverOdds)))") // NEED TO FIX
-                                .font(Font.custom(K.customFonts.lexendDecaMedium, size: 15))
-                                .foregroundColor(.white)
-                                
+                                .lexMedCustom(15, color: .white)
                             Spacer()
                         }
                     }.frame(width: 120).padding(.trailing,5)
                 }
             }.padding(.top, 22).padding(.horizontal, 6).padding(.bottom,6)
-
+            
             VStack {
                 HStack {
                     Text("Expires: \(toHHMMSS(from:challenge.gameCommenceTime.dateValue()))")
-                        .font(Font.custom(K.customFonts.lexendDecaMedium, size: 7))
-                        .foregroundColor(.white)
+                        .lexMedCustom(7, color: .white)
                         .padding(2.5)
                         .background(K.finalColor.deleteRed)
                         .cornerRadius(5, corners: .bottomRight)
                     Spacer()
                     if yourTicket {
                         Text("Your Challenge")
-                            .font(Font.custom(K.customFonts.lexendDecaMedium, size: 7))
-                            .foregroundColor(.white)
+                            .lexMedCustom(7, color: .white)
                             .padding(2.5)
                             .background(K.finalColor.potentialOrange)
                             .cornerRadius(5, corners: .bottomLeft)
                     }
-                        
+                    
                 }
                 Spacer()
             }

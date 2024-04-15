@@ -14,7 +14,9 @@ import PopupView
 import Pow
 
 struct UserProfileView: View {
+    
     @StateObject private var screen1VM = screen1ViewModel()
+//    @StateObject private var testVM = authenticationViewModel()
     @State private var showWebpage = false
     @Binding var tab: Tab
     @State var timeFrame = "daily"
@@ -23,6 +25,13 @@ struct UserProfileView: View {
     var body: some View {
         VStack(spacing: 12) {
             
+//            Button(action: {
+//                testVM.sendPromoBucks(to: StaticUserData.shared.currentUser.promoCode, from: StaticUserData.shared.currentUser.username) {}
+//            }, label: {
+//                Text("dfsajfkdlsdhjkslq")
+//                    .lexMedCustom(30, color: .white)
+//            })
+//            
             ProfileHeaderView(screen1VM: screen1VM, timeFrame: $timeFrame)
                 .padding(.top, 10)
                 .padding(.horizontal)
@@ -660,23 +669,24 @@ struct yourGroups: View {
                             }
                             Spacer()
                         }
-                        if screen1VM.userAnnouncements.contains(where: {$0.status == "unSeen"}) {
-                            VStack {
-                                HStack {
-                                    Spacer()
-                                    Rectangle()
-                                        .frame(width: 30, height: 30)
-                                        .foregroundColor(.red)
-                                        .cornerRadius(7.5)
-                                        .padding(.trailing, -15)
-                                        .padding(.top, -15)
-                                        
-                                                    .changeEffect(.pulse(shape: Circle(), count: 3), value: 10)
-                                              
-                                }
-                                Spacer()
-                            }
-                        }
+                        // Fix this later
+//                        if screen1VM.userAnnouncements.contains(where: {$0.status == "unSeen"}) {
+//                            VStack {
+//                                HStack {
+//                                    Spacer()
+//                                    Rectangle()
+//                                        .frame(width: 30, height: 30)
+//                                        .foregroundColor(.red)
+//                                        .cornerRadius(7.5)
+//                                        .padding(.trailing, -15)
+//                                        .padding(.top, -15)
+//                                        
+//                                                    .changeEffect(.pulse(shape: Circle(), count: 3), value: 10)
+//                                              
+//                                }
+//                                Spacer()
+//                            }
+//                        }
 
                     }.frame(height: 100)
                         .background(K.finalColor.cardBlue)

@@ -42,7 +42,7 @@ class PastTicketsViewModel: ObservableObject {
 
         // Get the current date in UTC-5
         let currentDateInUTC5 = calendar.date(byAdding: .second, value: TimeZone(identifier: "UTC-5")!.secondsFromGMT(), to: Date())!
-        print("CURRENT DATE UTC-5", currentDateInUTC5)
+//        print("CURRENT DATE UTC-5", currentDateInUTC5)
 
         // Initialize the current day to the inputDate
 //        var currentDay = inputDate

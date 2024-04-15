@@ -15,7 +15,7 @@ class BetService {
     
     func getGamesCommenceTime(completion: @escaping ([Game]) -> Void) {
         Firestore.firestore().collectionGroup("games")
-            //.whereField("whichSport", isEqualTo: whichSport) // Uncomment and adjust if filtering is needed
+            .whereField("status", in: ["notStarted", "inAction"])
             .order(by: "commenceTime") // Could also order by status
             .getDocuments { querySnapshot, error in // Changed from addSnapshotListener to getDocuments
                 guard let snapshot = querySnapshot else {
@@ -58,6 +58,85 @@ class BetService {
                 completion(games) // Call the completion handler once the games are populated
             }
     }
+//    
+//    func getGamesCommenceTime(completion: @escaping ([Game], Error?) -> Void) -> ListenerRegistration {
+//        let listener = Firestore.firestore().collectionGroup("games")
+//            .order(by: "commenceTime")
+//            .addSnapshotListener { querySnapshot, error in
+//                if let error = error {
+//                    print("Error fetching documents: \(error.localizedDescription)")
+//                    completion([], error) // Call the completion handler in case of an error
+//                    return
+//                }
+//
+//                guard let snapshot = querySnapshot else {
+//                    print("Error fetching documents: error not provided by Firestore")
+//                    completion([], NSError(domain: "FirestoreError", code: 0, userInfo: [NSLocalizedDescriptionKey : "Unknown Firestore error"]))
+//                    return
+//                }
+//
+//                var games: [Game] = snapshot.documents.compactMap { doc -> Game? in
+//                    let data = doc.data()
+//                    guard let idd = data["id"] as? String,
+//                          let commenceTime = data["commenceTime"] as? Timestamp,
+//                          let totalOver = data["totalOver"] as? Double,
+//                          let totalUnder = data["totalUnder"] as? Double,
+//                          let homeTeam = data["homeTeam"] as? String,
+//                          let awayTeam = data["awayTeam"] as? String,
+//                          let homeSpread = data["homeSpread"] as? Double,
+//                          let awaySpread = data["awaySpread"] as? Double,
+//                          let homeTeamScore = data["homeTeamScore"] as? Int,
+//                          let awayTeamScore = data["awayTeamScore"] as? Int,
+//                          let whichSport = data["whichSport"] as? String,
+//                          let bet_statistics = data["bet_statistics"] as? [Int],
+//                          let total_plays = data["total_plays"] as? Int,
+//                          let awayML = data["awayML"] as? Int,
+//                          let homeML = data["homeML"] as? Int,
+//                          let awaySpreadODDS = data["awaySpreadODDS"] as? Int,
+//                          let homeSpreadODDS = data["homeSpreadODDS"] as? Int,
+//                          let totalOverODDS = data["totalOverODDS"] as? Int,
+//                          let totalUnderODDS = data["totalUnderODDS"] as? Int,
+//                          let status = data["status"] as? String
+//                        else {
+//                          return nil
+//                      }
+//
+//                    return Game(id: nil, idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, status: status, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays, awayML: awayML, homeML: homeML, awaySpreadODDS: awaySpreadODDS, homeSpreadODDS: homeSpreadODDS, totalOverODDS: totalOverODDS, totalUnderODDS: totalUnderODDS)
+//                }
+//
+//                completion(games, nil) // Call the completion handler with the updated list of games
+//            }
+//
+//        return listener // Return the listener registration for cancellation purposes
+//    }
+    
+//    func getGamesCommenceTime(completion: @escaping ([Game], Error?) -> Void) -> ListenerRegistration {
+//        let gamesCollection = Firestore.firestore().collectionGroup("games")
+//            .order(by: "commenceTime")
+//
+//        let listener = gamesCollection.addSnapshotListener { (snapshot, error) in
+//            if let error = error {
+//                completion([], error)
+//                return
+//            }
+//            
+//            var games: [Game] = []
+//            snapshot?.documents.forEach { document in
+//                do {
+//                    let game = try document.data(as: Game.self)
+//                    games.append(game)
+//                } catch let decodeError {
+//                    print("Error decoding game: \(decodeError)")
+//                }
+//            }
+//
+//            completion(games, nil)
+//        }
+//
+//        return listener
+//    }
+
+
 
 
     

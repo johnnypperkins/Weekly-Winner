@@ -31,6 +31,8 @@ struct ContentView: View {
                         profilePhotoSelectorView(model: viewModel)
                     } else if shouldTransitionToTabBarView {
                         // Transition to tabBarView after the delay
+//                        profilePhotoSelectorView(model: viewModel)
+
                         tabBarView(selection: .dashboard)
                     }
                 } else {

@@ -1,9 +1,3 @@
-//
-//  referralView.swift
-//  Weekly Winner
-//
-//  Created by Reid Brown on 4/13/24.
-//
 
 import Foundation
 import SwiftUI
@@ -11,40 +5,48 @@ import SwiftUI
 struct referralView: View {
     @StateObject var viewModel = ReferralViewModel()
     var body: some View {
-            ZStack {
-                K.finalColor.backgroundBlue.ignoresSafeArea(.all)
-                
-
+        ZStack {
+            K.finalColor.backgroundBlue.ignoresSafeArea(.all)
+            
+            VStack {
                 VStack {
-                    K.finalColor.backgroundBlue
-                    VStack (spacing: 5) {
-                        Text("How To Invite Friends?")
-                            .lexMedCustom(20, color: K.finalColor.titleBlue)
-                            .padding(.vertical)
-                        
-                        Text("     WagerPool users can earn 2 PoolBucks for every user they refer. To refer a friend, all they have to do is enter your promo code during sign up. Easy as that!")
-                            .lexMedCustom(15, color: .white)
-                            .padding(.bottom)
-                        
-                        Text("Promo code: \(StaticUserData.shared.username)")
-                            .lexMedCustom(15, color: .white)
-                            .padding(.bottom)
-                        
-                    }.padding(.horizontal)
+                    Text("Referral Page")
+                        .lexMedCustom(20, color: K.finalColor.titleBlue)
+                        .padding(.top)
                     
-                    ReferralProgressBar(count: viewModel.referredUsers.count)
-                        .frame(height: 30)
-                        .padding(.horizontal)
+                    Text("For every 5 users you refer, you will receive 15 poolBucks! When signing up, the user must use your username as their promo code (all lowercase) and you will receive a referral.")
+                        .lexMedCustom(15, color: .white)
+                        .padding()
                     
-                    ScrollView {
-                        VStack (spacing: 5){
-                            ForEach(viewModel.referredUsers, id: \.id) { user in
-                                userBioReusable(user: user)
-                            }
+                    HStack (spacing: 0){
+                        Text("Your Promo Code: ")
+                            .lexMedCustom(15, color: .white)
+                            .padding(3)
+                        Text("\(StaticUserData.shared.username)")
+                            .lexMedCustom(15, color: .white)
+                            .padding(3)
+                            .background(K.finalColor.titleBlue)
+                            .cornerRadius(5)
+                    }.padding(.bottom)
+                }.background(K.finalColor.cardBlue).cornerRadius(7.5).padding()
+                
+                ReferralProgressBar(count: viewModel.referredUsers.count)
+                    .frame(height: 35)
+                    .padding(.horizontal, 20)
+                
+                ScrollView {
+                    VStack (spacing: 5){
+                        Text("Past Referrals")
+                            .lexMedCustom(15, color: .white)
+                            .padding()
+                        
+                        ForEach(viewModel.referredUsers, id: \.id) { user in
+                            userBioReusable(user: user)
                         }
                     }
-                }
-            .onAppear() {
+                }.frame(height: 300)
+                Spacer()
+            }.onAppear() {
                 viewModel.fetchUsersWithPromoCode() {_ in }
             }
         }

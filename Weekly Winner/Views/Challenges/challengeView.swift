@@ -100,6 +100,7 @@ struct FilterSheetView: View {
     @Binding var filtered: [DirectChallengeTicket]
     @ObservedObject var viewModel: challengeViewModel
     @State var isExpanded = false
+    @Binding var showFilterView: Bool
     
     @Environment(\.dismiss) private var dismiss
     
@@ -209,6 +210,7 @@ struct FilterSheetView: View {
                 // Dismiss the current view or sheet
                 withAnimation{
                     dismiss()
+                    showFilterView = false
                 }
             }, label: {
                 Text("Apply Filter")
@@ -400,7 +402,7 @@ struct challengeCardView: View {
             }
             .popup(isPresented: $showFilterView) {
                 Text("The popup")
-                FilterSheetView(selectedSport: $selectedSport, maxWagerAmount: $maxWagerAmount, showOnlyFriends: $showOnlyFriends, filtered: $filtered, viewModel: viewModel, friendUIDs: [])
+                FilterSheetView(selectedSport: $selectedSport, maxWagerAmount: $maxWagerAmount, showOnlyFriends: $showOnlyFriends, filtered: $filtered, viewModel: viewModel, showFilterView: $showFilterView, friendUIDs: [])
 //                    .frame(height: 800)
                 
             } customize: {

@@ -208,8 +208,7 @@ struct profileView: View {
                 .frame(minHeight: 0, maxHeight: .infinity)
                 .background(Color(red: 0.02, green: 0.05, blue: 0.26))
                 .onAppear() {
-                    viewModel.fetchUser()
-                    viewModel.countPastDayTickets()
+                    viewModel.fetchUser() { }
                     viewModel.importFriends()
                     //viewModel = profileViewModel(user: user)
                 }
@@ -375,7 +374,7 @@ struct groupStats: View {
             .stroke(.white, lineWidth: 0.4))
             .padding(.horizontal)
         HStack() {
-          Text("Average Bet Winnings")
+          Text("Average Winnings per Bet")
             .font(Font.custom(K.customFonts.lexendDecaMedium, size: 14))
             .foregroundColor(.white)
             

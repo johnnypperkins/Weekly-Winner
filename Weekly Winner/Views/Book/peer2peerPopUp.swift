@@ -30,6 +30,8 @@ func returnTeamBetOn(betType: BetType, game: Game) -> String {
     }
 }
 
+
+
 struct peer2peerSubmitPage: View {
     let game: Game
     let betType: BetType
@@ -42,50 +44,41 @@ struct peer2peerSubmitPage: View {
     @State var opponentUsername = ""
     @State var sendToFriends = false
     
-    @ObservedObject var viewModel = peer2peerViewModel()
+    @StateObject var viewModel = peer2peerViewModel()
 
 
     var body: some View {
         VStack {
             VStack (spacing: 1){
-                HStack (spacing: 0){
+                HStack (spacing: 100){
                     Button(action: {
                         whichTab = "friends"
                         
                     }) {
                         Text("Friends")
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
-                            .foregroundColor(.white)
-                            .frame(width: 200, height: 30, alignment: .center)
+                            .lexMedCustom(14, color: .white)
+                            .padding(4)
+                            .background(whichTab == "friends" ? K.finalColor.titleBlue : K.finalColor.cardBlue)
                             .cornerRadius(5)
                     }
-                    
-//                    Button(action: {
-//                        whichTab = "search"
-//                    }) {
-//                        Text("Search")
-//                            .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
-//                            .foregroundColor(.white)
-//                            .frame(width: 100, height: 30, alignment: .center)
-//                            .cornerRadius(5)
-//                    }
+
                     Button(action: {
                         whichTab = "public"
                     }) {
                         Text("Public")
-                            .font(.custom(K.customFonts.lexendDecaMedium, size: 14))
-                            .foregroundColor(.white)
-                            .frame(width: 200, height: 30, alignment: .center)
+                            .lexMedCustom(14, color: .white)
+                            .padding(4)
+                            .background(whichTab == "friends" ? K.finalColor.cardBlue : K.finalColor.titleBlue)
                             .cornerRadius(5)
                     }
                     
                 }
-                Rectangle()
-                    .fill(Color.white) // Sets the rectangle's fill color to white
-                    .frame(width: 70, height: 1.5)
-                    .cornerRadius(1) // Apply rounded corners
-                    .offset(x: whichTab == "friends" ? -100 : (whichTab == "search" ? 0 : 100), y: 0)
-                    .animation(.easeInOut(duration: 0.35))
+//                Rectangle()
+//                    .fill(Color.white) // Sets the rectangle's fill color to white
+//                    .frame(width: 70, height: 1.5)
+//                    .cornerRadius(1) // Apply rounded corners
+//                    .offset(x: whichTab == "friends" ? -100 : (whichTab == "search" ? 0 : 100), y: 0)
+//                    .animation(.easeInOut(duration: 0.35))
             }.padding(.bottom,2)
             if whichTab == "friends" {
                 ZStack {
@@ -159,30 +152,8 @@ struct peer2peerSubmitPage: View {
                     }
                 }
                 
-            }
-//            else if whichTab == "search" {
-//                searchUserView(game: game, viewModel: viewModel, betType: betType, wagerAmount: $wagerAmount, selectedUser: $selectedUser)
-//            } 
-            else if whichTab == "public" {
+            } else if whichTab == "public" {
                 VStack {
-//                            HStack {
-//                        
-//                                Text(sendToFriends ? "Send to All Friends" : "Send to Public")
-//                                    .font(Font.custom("LexendDeca-Medium", size: 18))
-//                                    .foregroundColor(.white)
-//                                    .transition(.opacity)
-//                                    .animation(.easeInOut, value: sendToFriends)
-//                                Spacer()
-//                                Toggle("", isOn: $sendToFriends)
-//                                    .labelsHidden()
-//                                    .toggleStyle(SwitchToggleStyle(tint: .white))
-//                                     // Adjust padding as needed
-//                            }.padding(.horizontal)
-//                            .frame(height: 50)
-//                            .background(sendToFriends ? Color.green : K.finalColor.cardBlue) // Change colors as needed
-//                            .cornerRadius(7.5)
-//                            
-//                                
                     HStack{
                         Text("Send to Public")
                             .font(Font.custom("LexendDeca-Medium", size: 18))
@@ -200,7 +171,8 @@ struct peer2peerSubmitPage: View {
             twoWagers(game: game, viewModel: viewModel, betType: betType, wagerAmount: $wagerAmount, selectedFriend: $selectedFriend)
             peer2peerSlider(wagerAmount: $wagerAmount, selectedFriend: $selectedFriend, viewModel: viewModel, game: game, showingSheet: $showingSheet, whichTab: $whichTab, sendToFriends: $sendToFriends)
             Spacer()
-        }.onChange(of: selectedFriend) { _ in
+        }
+        .onChange(of: selectedFriend) { _ in
             DispatchQueue.main.async {
                 
                 viewModel.senderDirectTicket?.receiverID = selectedFriend?.id ?? ""

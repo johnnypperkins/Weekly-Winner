@@ -46,9 +46,6 @@ struct tabBarView: View {
                                     CustomTabBarItem(index: 1, selectedTab: $selectedTab, item: TabItem(title: "Book", icon: Image(systemName: "dollarsign.circle.fill"), color: .green)) // change to book
                                 }.tag(Tab.book)
                             
-                            
-            
-                            
                             groupsView()
                                 .ignoresSafeArea(.all)
                                 .tabItem {

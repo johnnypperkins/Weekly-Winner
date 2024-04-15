@@ -47,7 +47,7 @@ class authenticationViewModel: ObservableObject {
     @Published var usernameTaken = false
     @Published var updateURL: String? = nil
     
-    @Published var currentVersion = "2.1.1"
+    @Published var currentVersion = "2.1.2"
     
     fileprivate var currentNonce: String?
 
@@ -127,10 +127,16 @@ class authenticationViewModel: ObservableObject {
             }
         }
     }
-
-    func sendPromoBucks(to username: String, from ownUsername: String) {
+    
+    func sendPromoBucks(to username: String, from ownUsername: String, completion: @escaping () -> Void) {
         let db = Firestore.firestore()
         let usersCollection = db.collection("users")
+        // 0. send notification regardless
+        // 1. check to see if multiple of 5
+        // 2. if so, update that users poolBucks to 15
+        // 3. send them notification that they hit 5 and received 15 poolbucks
+        print("PROMO0")
+        
         if username != "" {
             usersCollection.whereField("username", isEqualTo: username.lowercased()).getDocuments { (querySnapshot, err) in
                 if let err = err {
@@ -138,33 +144,78 @@ class authenticationViewModel: ObservableObject {
                 } else {
                     for document in querySnapshot!.documents {
                         let userRef = usersCollection.document(document.documentID)
+                        print("PROMO1")
                         
-                        userRef.updateData([
-                            "poolBucks": FieldValue.increment(Double(2))
-                        ]) { err in
-                            if let err = err {
-                                print("Error updating document: \(err)")
-                            } else {
-                                print("poolBucks successfully updated")
-                                
-                                let announcementsRef = userRef.collection("Misc").document("announcements").collection("announcementCollection")
-                                announcementsRef.addDocument(data: [
-                                    "status": "unSeen",
-                                    "description": "\(ownUsername) used your promo code to sign up and you were awarded 2 poolBucks!",
-                                    "announcementType": "promoCode",
-                                    "timestamp": Timestamp(date: Date()) // Current timestamp
-                                ]) { err in
-                                    if let err = err {
-                                        print("Error adding announcement document: \(err)")
-                                    } else {
-                                        print("Announcement successfully added")
+                        // 1. send notification
+                        if let fcmToken = document.data()["fcmToken"] as? String {
+                            staticSendNotification(token: fcmToken, message: "\(ownUsername) used your promo code to sign up!") {}
+                        } else {
+                            print("PROMO1.5")
+                        }
+                        
+                        // 2. get all users that have promocode of one that you just used
+                        var users = [User]()
+                        db.collection("users")
+                            .whereField("promoCode", isEqualTo: username)
+                            .getDocuments { (snapshot, error) in
+                                if let error = error {
+                                    print("PROMOERROR: \(error)")
+                                    return
+                                }
+                                for document in snapshot?.documents ?? [] {
+                                    do {
+                                        let user = try document.data(as: User.self)
+                                        users.append(user)
+                                    } catch {
+                                        print(error)
                                     }
                                 }
+                                print ("USERS COUNT BLAH: \(users.count)")
+                                
+                                // 3. check if is the fifth one
+                                if users.count % 5 == 0 && !users.isEmpty{
+                                    // 4. if is 5th, give poolbucks and send notification
+                                    if let fcmToken = document.data()["fcmToken"] as? String {
+                                        staticSendNotification(token: fcmToken, message: "5 users used your promo code! You received 15 poolBucks!") {}
+                                    }
+                                    
+                                    userRef.updateData([
+                                        
+                                        "poolBucks": FieldValue.increment(Double(15))
+                                    ]) { err in
+                                        if let err = err {
+                                            print("Error updating document: \(err)")
+                                        } else {
+                                            print("poolBucks successfully updated")
+                                            
+                                            let announcementsRef = userRef.collection("Misc").document("announcements").collection("announcementCollection")
+                                            announcementsRef.addDocument(data: [
+                                                "status": "unSeen",
+                                                "description": "5 users used your promo code! You received 15 poolBucks",
+                                                "announcementType": "promoCode",
+                                                "timestamp": Timestamp(date: Date()) // Current timestamp
+                                            ]) { err in
+                                                if let err = err {
+                                                    print("Error adding announcement document: \(err)")
+                                                } else {
+                                                    print("Announcement successfully added")
+                                                    completion()
+                                                }
+                                            }
+                                        }
+                                    }
+                                    
+                                } else {
+                                    completion()
+                                }
+                                
                             }
-                        }
+                        
                     }
                 }
             }
+            
+            
         }
     }
 
@@ -347,7 +398,7 @@ print("fetched user")
         
     }
     
-    func uploadSupplementaryData(country: String, birthday: Date, state: String, gender: String, username: String, instagram: String, promoCode: String) {
+    func uploadSupplementaryData(country: String, birthday: Date, state: String, gender: String, username: String, instagram: String, promoCode: String, completion: @escaping () -> Void) {
         guard let uid = Auth.auth().currentUser else {return }
         
 //        Task{
@@ -361,7 +412,11 @@ print("fetched user")
             
         }
         Firestore.firestore().collection("users").document(uid.uid).updateData(["username": username]) { _ in
-            
+            Firestore.firestore().collection("users").document(uid.uid).updateData(["promoCode": promoCode]) { _ in
+                if promoCode != "" {
+                    self.sendPromoBucks(to: promoCode, from: username) {}
+                }
+            }
         }
         let timestamp = Timestamp(date: birthday)
         Firestore.firestore().collection("users").document(uid.uid).updateData(["birthday": timestamp]) { _ in
@@ -373,66 +428,37 @@ print("fetched user")
         Firestore.firestore().collection("users").document(uid.uid).updateData(["state": state]) { _ in
             
         }
-//        if state != "Choose here" {
-            Firestore.firestore().collection("users").document(uid.uid).updateData(["instagram": instagram]) { _ in
-                
-            }
-            Firestore.firestore().collection("users").document(uid.uid).updateData(["promoCode": promoCode]) { _ in
-                
-            }
+        //        if state != "Choose here" {
+        Firestore.firestore().collection("users").document(uid.uid).updateData(["instagram": instagram]) { _ in
             
-            
-            
-            let userTicketsCollection = Firestore.firestore()
-                .collection("users")
-                .document(uid.uid)
-                .collection("tickets")
-                .document("day")
-                .collection("currentDayTickets")
-            
-            let userTicketsCollection2 = Firestore.firestore()
-                .collection("users")
-                .document(uid.uid)
-                .collection("tickets")
-                .document("week")
-                .collection("currentWeekTickets")
-            
-            userTicketsCollection.getDocuments { (querySnapshot, err) in
-                if let err = err {
-                    print("Error getting documents: \(err)")
-                } else {
-                    // Assuming there is only one document in this collection
-                    if let document = querySnapshot?.documents.first {
-                        document.reference.updateData(["username": username]) { error in
-                            if let error = error {
-                                print("Error updating document: \(error)")
-                            } else {
-                                print("Document successfully updated")
-                            }
-                        }
-                    }
-                }
-            }
-            
-            userTicketsCollection2.getDocuments { (querySnapshot, err) in
-                if let err = err {
-                    print("Error getting documents: \(err)")
-                } else {
-                    // Assuming there is only one document in this collection
-                    if let document = querySnapshot?.documents.first {
-                        document.reference.updateData(["username": username]) { error in
-                            if let error = error {
-                                print("Error updating document: \(error)")
-                            } else {
-                                print("Document successfully updated")
-                            }
-                        }
-                    }
-                }
-            }
-            
-//        }
+        }
         
+        
+        
+        
+        let userTicketsCollection = Firestore.firestore()
+            .collection("users")
+            .document(uid.uid)
+            .collection("tickets")
+            .document("day")
+            .collection("currentDayTickets")
+        
+        userTicketsCollection.getDocuments { (querySnapshot, err) in
+            if let err = err {
+                print("Error getting documents: \(err)")
+            } else {
+                // Assuming there is only one document in this collection
+                if let document = querySnapshot?.documents.first {
+                    document.reference.updateData(["username": username]) { error in
+                        if let error = error {
+                            print("Error updating document: \(error)")
+                        } else {
+                            completion()
+                        }
+                    }
+                }
+            }
+        }
     }
     
     

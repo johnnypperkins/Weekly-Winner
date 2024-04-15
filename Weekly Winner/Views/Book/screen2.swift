@@ -29,7 +29,7 @@ struct BettingAppView: View {
                 sideMenuView(bookVM: viewModel, isShowing: $isShowing)
             }
             VStack {
-                
+                #warning("UPDATE POOL BUCKS ON APPEAR")
                 screen2HeaderView(isShowing: $isShowing, rankedCommence: $rankedCommence, searchTerm: $searchTerm, viewModel: viewModel, poolBucks: $poolBucks)
 
                 ScrollView { // All the games to display
@@ -71,11 +71,14 @@ struct BettingAppView: View {
         .padding(EdgeInsets(top: 60, leading: 0, bottom: 55, trailing: 0))
         .navigationBarHidden(false)
         .onDisappear() {
-            viewModel.getGamesCommenceTime() {}
+            viewModel.removeListener()
+        }.onAppear() {
+            viewModel.setupGamesListener()
+            viewModel.fetchUserCoinsAndBucks(userID: StaticUserData.shared.currentUser.id!) {
+                poolBucks = StaticUserData.shared.currentUser.poolBucks
+            }
         }
-
     }
-    
 }
 
 struct screen2HeaderView: View {
@@ -422,6 +425,7 @@ struct screen2PopUp: View {
                     dailyChallengeSubmitView(game: game, betType: $betType, viewModel: viewModel, showingSheet: $showingSheet)
                 } else {
                     peer2peerSubmitPage(game: game, betType: betType, showingSheet: $showingSheet)
+        
                 }
             }
         }.onDisappear() {

@@ -30,7 +30,7 @@ class bookViewModel: ObservableObject {
     private let db = Firestore.firestore()
         
     init() {
-        getGamesCommenceTime() {}
+//        setupGamesListener()
     }
     
     enum GameType: String, CaseIterable, Hashable {
@@ -65,26 +65,156 @@ class bookViewModel: ObservableObject {
         }
     }
     
-    func getGamesCommenceTime(completion: @escaping () -> Void) {
-        self.allGames.removeAll()
-        self.allPopularGames.removeAll()
-        betService.getGamesCommenceTime() { [weak self] games in
+    func fetchUserCoinsAndBucks(userID: String, completion: @escaping () -> Void) {
+        let db = Firestore.firestore()
+        let userRef = db.collection("users").document(userID)
+        
+        userRef.getDocument { (document, error) in
+            if let document = document, document.exists {
+                let data = document.data()
+                let poolCoins = data?["poolCoins"] as? Double
+                let poolBucks = data?["poolBucks"] as? Double
+                StaticUserData.shared.currentUser.poolBucks = poolBucks ?? -99
+                StaticUserData.shared.currentUser.poolCoins = poolCoins ?? -99
+                completion()
+            } else {
+                print("Document does not exist or error fetching document: \(error?.localizedDescription ?? "Unknown error")")
+                completion()
+            }
+        }
+    }
+    
+//    func getGamesCommenceTime(completion: @escaping () -> Void) {
+//        self.allGames.removeAll()
+//        self.allPopularGames.removeAll()
+//        betService.getGamesCommenceTime() { [weak self] games in
+//            guard let self = self else { return }
+//            let now = Date() // Get the current date and time
+//            for game in games {
+//                if !self.allGames.contains(where: ({$0.idd == game.idd})) {
+//                    self.allGames.append(game) // Append game to allGames array
+//                    if game.total_plays > 0 {
+//                        self.allPopularGames.append(game)
+//                    }
+//                }
+//            }
+//            allPopularGames.sort { $0.total_plays > $1.total_plays }
+//            completion()
+//        }
+//    }
+//    
+//    var listener: ListenerRegistration?
+//
+//    func setupListener() {
+//        listener = getGamesCommenceTime { [weak self] games, error in
+//            guard let self = self else { return }
+//            if let error = error {
+//                print("Error: \(error)")
+//            } else {
+//                let now = Date() // Get the current date and time
+//                self.allGames = self.allGames.filter { game in
+//                    !games.contains(where: { $0.idd == game.idd })
+//                } + games
+//
+//                self.allPopularGames = games.filter { $0.total_plays > 0 }
+//                self.allPopularGames.sort { $0.total_plays > $1.total_plays }
+//            }
+//        }
+//    }
+    
+//    var listener: ListenerRegistration?
+
+//    var listener: ListenerRegistration?
+//
+//    func setupListener() {
+//        listener = getGamesCommenceTime { [weak self] (games: [Game], error: Error?) in
+//            guard let self = self else { return }
+//            if let error = error {
+//                print("Error: \(error.localizedDescription)")
+//                return
+//            }
+//
+//            DispatchQueue.main.async {
+//                // Assuming 'allGames' and 'allPopularGames' are part of the class
+//                self.allGames = games
+//                self.allPopularGames = games.filter { $0.total_plays > 0 }
+//                self.allPopularGames.sort { $0.total_plays > $1.total_plays }
+//            }
+//        }
+//    }
+
+
+    var listener: ListenerRegistration?
+    func setupGamesListener() {
+        let gamesCollection = Firestore.firestore().collectionGroup("games")
+            .whereField("status", in: ["notStarted", "inAction"])
+            .order(by: "commenceTime")
+            
+
+        listener = gamesCollection.addSnapshotListener { [weak self] (snapshot, error) in
             guard let self = self else { return }
-            let now = Date() // Get the current date and time
-            for game in games {
-                if !self.allGames.contains(where: ({$0.idd == game.idd})) {
-                    self.allGames.append(game) // Append game to allGames array
-                    if game.total_plays > 0 {
-                        self.allPopularGames.append(game)
-                    }
+            
+            if let error = error {
+                print("Error listening for game updates: \(error.localizedDescription)")
+                return
+            }
+
+            var games: [Game] = []
+            snapshot?.documents.forEach { document in
+                do {
+                    
+                    
+                        let data = document.data()
+                        guard let idd = data["id"] as? String,
+                              let commenceTime = data["commenceTime"] as? Timestamp,
+                              let totalOver = data["totalOver"] as? Double,
+                              let totalUnder = data["totalUnder"] as? Double,
+                              let homeTeam = data["homeTeam"] as? String,
+                              let awayTeam = data["awayTeam"] as? String,
+                              let homeSpread = data["homeSpread"] as? Double,
+                              let awaySpread = data["awaySpread"] as? Double,
+                              let homeTeamScore = data["homeTeamScore"] as? Int,
+                              let awayTeamScore = data["awayTeamScore"] as? Int,
+                              let whichSport = data["whichSport"] as? String,
+                              let bet_statistics = data["bet_statistics"] as? [Int],
+                              let total_plays = data["total_plays"] as? Int,
+                              let awayML = data["awayML"] as? Int,
+                              let homeML = data["homeML"] as? Int,
+                              let awaySpreadODDS = data["awaySpreadODDS"] as? Int,
+                              let homeSpreadODDS = data["homeSpreadODDS"] as? Int,
+                              let totalOverODDS = data["totalOverODDS"] as? Int,
+                              let totalUnderODDS = data["totalUnderODDS"] as? Int,
+                              let status = data["status"] as? String 
+                    else { return  }
+                    
+                    let game = Game(id: nil, idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, status: status, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays, awayML: awayML, homeML: homeML, awaySpreadODDS: awaySpreadODDS, homeSpreadODDS: homeSpreadODDS, totalOverODDS: totalOverODDS, totalUnderODDS: totalUnderODDS)
+                                
+//                    let game = try document.data(as: Game.self)
+                    games.append(game)
+                } catch let decodeError {
+                    print("Error decoding game: \(decodeError)")
                 }
             }
-            allPopularGames.sort { $0.total_plays > $1.total_plays }
-            completion()
+
+            // Process the fetched games data right here
+            DispatchQueue.main.async {
+                self.updateGameData(with: games)
+            }
         }
     }
 
-
+    func updateGameData(with games: [Game]) {
+        // Update UI or internal data structures
+        self.allGames = games
+        self.allPopularGames = games.filter { $0.total_plays > 0 }
+        self.allPopularGames.sort { $0.total_plays > $1.total_plays }
+    }
+    
+    func removeListener() {
+        listener?.remove()
+    }
+    
+    
     
     func uploadBet(groupNumber: Int, groupID: String, betNumber: Int, team: String, betLine: Double, betOdds: Double, betType: BetType, gameID: String, whichSport: String, points_bought: Int, timeFrame: String, completion: @escaping (Error?) -> Void) {
             // Prepare the data to upload
@@ -112,25 +242,6 @@ class bookViewModel: ObservableObject {
             } else {
                 self.mostPopularBets = popularBets ?? []
                 self.arePopularBetsLoaded = true
-            }
-        }
-    }
-    
-    func fetchUserCoinsAndBucks(userID: String, completion: @escaping () -> Void) {
-        let db = Firestore.firestore()
-        let userRef = db.collection("users").document(userID)
-        
-        userRef.getDocument { (document, error) in
-            if let document = document, document.exists {
-                let data = document.data()
-                let poolCoins = data?["poolCoins"] as? Double
-                let poolBucks = data?["poolBucks"] as? Double
-                StaticUserData.shared.currentUser.poolBucks = poolBucks ?? -99
-                StaticUserData.shared.currentUser.poolCoins = poolCoins ?? -99
-                completion()
-            } else {
-                print("Document does not exist or error fetching document: \(error?.localizedDescription ?? "Unknown error")")
-                completion()
             }
         }
     }

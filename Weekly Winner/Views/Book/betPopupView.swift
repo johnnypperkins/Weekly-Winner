@@ -71,9 +71,9 @@ struct dailyChallengeSubmitView: View {
                 Button(action: {
                     betUploadedSafeGuard = true
 
-                    withAnimation {
+//                    withAnimation {
                         isFavorited.toggle()
-                    }
+//                    }
                     
                     viewModel.uploadBet(
                         groupNumber: groupNumber,
