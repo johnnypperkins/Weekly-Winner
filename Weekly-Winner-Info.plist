@@ -17,28 +17,12 @@
 			</array>
 		</dict>
 	</array>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-9148656115654064~1489502952</string>
 	<key>NSServices</key>
 	<array>
 		<dict/>
 	</array>
-	<key>UIAppFonts</key>
-	<array>
-		<string>Jura-Regular.ttf</string>
-		<string>Poppins-Light.ttf</string>
-		<string>Poppins-Medium.ttf</string>
-		<string>Poppins-Regular.ttf</string>
-		<string>LexendDeca-Medium.ttf</string>
-		<string>LexendDeca-SemiBold.ttf</string>
-		<string>LexendDeca-Light.ttf</string>
-	</array>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>fetch</string>
-		<string>processing</string>
-		<string>remote-notification</string>
-	</array>
-	<key>GADApplicationIdentifier</key>
-	<string>ca-app-pub-9148656115654064~1489502952</string>
 	<key>SKAdNetworkItems</key>
 	<array>
 		<dict>
@@ -237,6 +221,22 @@
 			<key>SKAdNetworkIdentifier</key>
 			<string>3qcr597p9d.skadnetwork</string>
 		</dict>
+	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Jura-Regular.ttf</string>
+		<string>Poppins-Light.ttf</string>
+		<string>Poppins-Medium.ttf</string>
+		<string>Poppins-Regular.ttf</string>
+		<string>LexendDeca-Medium.ttf</string>
+		<string>LexendDeca-SemiBold.ttf</string>
+		<string>LexendDeca-Light.ttf</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>processing</string>
+		<string>remote-notification</string>
 	</array>
 	<key>aps-connection-initiate</key>
 	<true/>

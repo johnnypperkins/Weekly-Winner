@@ -953,7 +953,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Weekly-Winner-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = WagerPool;
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app needs your location for app functionality";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app needs your location for to confirm you are in a state where this app is in compliance with local laws. ";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -1005,7 +1005,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Weekly-Winner-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = WagerPool;
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app needs your location for app functionality";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app needs your location for to confirm you are in a state where this app is in compliance with local laws. ";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
