@@ -73,14 +73,12 @@ struct purchaseCurrencyView: View {
     
     @State var timeFrame = "Deposit"
     let allowedStates = ["AK", "AZ", "AR", "CO", "FL", "GA", "IL", "IN",
-                  "KS","KY","MD","MA","MI","MN","NE","NM","NY",
-                  "NC","ND","OK","OR","RI",
-                  "SC","SD","TX",
-                  "UT",
-                  "VT",
-                  "VA",
-                  "WI",
-                  "WY","DC"]
+                         "KS", "KY", "MD", "MA", "MI", "MN", "NE", "NM", "NY",
+                         "NC", "ND", "OK", "OR", "RI", "SC", "SD", "TX", "UT",
+                         "VT", "VA", "WI", "WY", "DC",
+                         "AL", "CA", "CT", "DE", "IA", "LA", "ME", "MO", "MS",
+                         "NH", "NJ", "OH", "PA", "TN", "WV"];
+
     
     @State var depositAmountString: String = ""
     @State var withdrawlAmount: Int = 0
@@ -155,12 +153,14 @@ struct purchaseCurrencyView: View {
                     
             } else {
                 VStack (spacing: 10) {
-                    Text("Deposit/Withdrawal Page Loading...")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 16))
-                        .foregroundStyle(.white)
-                    Text("Available States: AK, AZ, AR, CO, FL, GA, IL, IN, KS, KY, MD, MA, MI, MN, NE, NM, NY, NC, ND, OK, OR, RI, SC, SD, TX, UT, VT, VA, WI, WY, DC")
-                        .font(.custom(K.customFonts.lexendDecaMedium, size: 12))
-                        .foregroundStyle(.white)
+                    Text("Checking Location...")
+                        .lexMedCustom(16, color: .white)
+
+                    Text("Unavailable States: HI, ID, MT, NV, WA")
+                        .lexMedCustom(12, color: .white)
+
+                    Text("*Make Sure Location Services are Turned On*")
+                        .lexMedCustom(12, color: K.finalColor.potentialOrange)
                 }.padding(.horizontal, 16)
     
             }

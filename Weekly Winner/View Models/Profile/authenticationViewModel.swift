@@ -47,7 +47,7 @@ class authenticationViewModel: ObservableObject {
     @Published var usernameTaken = false
     @Published var updateURL: String? = nil
     
-    @Published var currentVersion = "2.1.2"
+    @Published var currentVersion = "2.1.3"
     
     fileprivate var currentNonce: String?
 

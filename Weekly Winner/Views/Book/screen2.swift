@@ -29,7 +29,6 @@ struct BettingAppView: View {
                 sideMenuView(bookVM: viewModel, isShowing: $isShowing)
             }
             VStack {
-                #warning("UPDATE POOL BUCKS ON APPEAR")
                 screen2HeaderView(isShowing: $isShowing, rankedCommence: $rankedCommence, searchTerm: $searchTerm, viewModel: viewModel, poolBucks: $poolBucks)
 
                 ScrollView { // All the games to display
@@ -39,7 +38,7 @@ struct BettingAppView: View {
                             ForEach(rankedCommence ? viewModel.allGames : viewModel.allPopularGames, id: \.idd) { game in
                                 if (shouldAppear(search: searchTerm, input: game.homeTeam) || shouldAppear(search: searchTerm, input: game.awayTeam) || searchTerm == "") {
                                     let now = Date() // Get the current date and time
-                                    if game.commenceTime.dateValue() > now {
+                                    if game.commenceTime.dateValue() > now  {
                                         if viewModel.selectedGameType == "All Games" {
                                             gameRowView(game: game, isDisabled: false, viewModel: viewModel, poolBucks: $poolBucks)
                                 
@@ -80,6 +79,28 @@ struct BettingAppView: View {
         }
     }
 }
+
+func isDuplicateFree(games: [Game], homeTeam: String, awayTeam: String) -> Bool {
+    var homeCount = 0
+    var awayCount = 0
+
+    
+    for game in games {
+        if game.homeTeam == homeTeam {
+            homeCount += 1
+        }
+        if game.awayTeam == awayTeam {
+            awayCount += 1
+        }
+        if homeCount > 1 || awayCount > 1 {
+            return false
+        }
+    }
+    
+    return true
+}
+
+
 
 struct screen2HeaderView: View {
     @Binding var isShowing: Bool

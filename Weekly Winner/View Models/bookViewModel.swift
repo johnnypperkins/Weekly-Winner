@@ -37,10 +37,10 @@ class bookViewModel: ObservableObject {
         case collegeFootball = "College Football"
         case nfl = "NFL"
         case NBA = "NBA"
-        case NCAAB = "NCAAB"
+//        case NCAAB = "NCAAB"
         case NHL = "NHL"
         case MLB = "MLB"
-        case EPL = "EPL"
+//        case EPL = "EPL"
     }
     
 
@@ -83,66 +83,6 @@ class bookViewModel: ObservableObject {
             }
         }
     }
-    
-//    func getGamesCommenceTime(completion: @escaping () -> Void) {
-//        self.allGames.removeAll()
-//        self.allPopularGames.removeAll()
-//        betService.getGamesCommenceTime() { [weak self] games in
-//            guard let self = self else { return }
-//            let now = Date() // Get the current date and time
-//            for game in games {
-//                if !self.allGames.contains(where: ({$0.idd == game.idd})) {
-//                    self.allGames.append(game) // Append game to allGames array
-//                    if game.total_plays > 0 {
-//                        self.allPopularGames.append(game)
-//                    }
-//                }
-//            }
-//            allPopularGames.sort { $0.total_plays > $1.total_plays }
-//            completion()
-//        }
-//    }
-//    
-//    var listener: ListenerRegistration?
-//
-//    func setupListener() {
-//        listener = getGamesCommenceTime { [weak self] games, error in
-//            guard let self = self else { return }
-//            if let error = error {
-//                print("Error: \(error)")
-//            } else {
-//                let now = Date() // Get the current date and time
-//                self.allGames = self.allGames.filter { game in
-//                    !games.contains(where: { $0.idd == game.idd })
-//                } + games
-//
-//                self.allPopularGames = games.filter { $0.total_plays > 0 }
-//                self.allPopularGames.sort { $0.total_plays > $1.total_plays }
-//            }
-//        }
-//    }
-    
-//    var listener: ListenerRegistration?
-
-//    var listener: ListenerRegistration?
-//
-//    func setupListener() {
-//        listener = getGamesCommenceTime { [weak self] (games: [Game], error: Error?) in
-//            guard let self = self else { return }
-//            if let error = error {
-//                print("Error: \(error.localizedDescription)")
-//                return
-//            }
-//
-//            DispatchQueue.main.async {
-//                // Assuming 'allGames' and 'allPopularGames' are part of the class
-//                self.allGames = games
-//                self.allPopularGames = games.filter { $0.total_plays > 0 }
-//                self.allPopularGames.sort { $0.total_plays > $1.total_plays }
-//            }
-//        }
-//    }
-
 
     var listener: ListenerRegistration?
     func setupGamesListener() {
@@ -162,8 +102,6 @@ class bookViewModel: ObservableObject {
             var games: [Game] = []
             snapshot?.documents.forEach { document in
                 do {
-                    
-                    
                         let data = document.data()
                         guard let idd = data["id"] as? String,
                               let commenceTime = data["commenceTime"] as? Timestamp,
@@ -188,9 +126,13 @@ class bookViewModel: ObservableObject {
                     else { return  }
                     
                     let game = Game(id: nil, idd: idd, awaySpread: awaySpread, awayTeam: awayTeam, homeSpread: homeSpread, homeTeam: homeTeam, commenceTime: commenceTime, status: status, totalOver: totalOver, totalUnder: totalUnder, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, whichSport: whichSport, bet_statistics: bet_statistics, total_plays: total_plays, awayML: awayML, homeML: homeML, awaySpreadODDS: awaySpreadODDS, homeSpreadODDS: homeSpreadODDS, totalOverODDS: totalOverODDS, totalUnderODDS: totalUnderODDS)
-                                
-//                    let game = try document.data(as: Game.self)
-                    games.append(game)
+                    if !games.contains(where: {$0.homeTeam == game.homeTeam && $0.awayTeam == game.awayTeam}) {
+                        games.append(game)
+                    } else {
+                        print("THERE ARE DUPLICATES \(game.homeTeam), \(game.awayTeam)")
+                        games.removeAll { $0.homeTeam == game.homeTeam && $0.awayTeam == game.awayTeam }
+                    }
+                    
                 } catch let decodeError {
                     print("Error decoding game: \(decodeError)")
                 }
@@ -204,12 +146,11 @@ class bookViewModel: ObservableObject {
     }
 
     func updateGameData(with games: [Game]) {
-        // Update UI or internal data structures
         self.allGames = games
         self.allPopularGames = games.filter { $0.total_plays > 0 }
         self.allPopularGames.sort { $0.total_plays > $1.total_plays }
     }
-    
+
     func removeListener() {
         listener?.remove()
     }

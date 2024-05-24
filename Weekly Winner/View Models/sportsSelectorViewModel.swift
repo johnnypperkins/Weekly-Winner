@@ -13,10 +13,10 @@ enum sportsSelecterViewModel: Int, CaseIterable {
 //    case NFL
 //    case NCAAF
     case NBA
-    case NCAAB
+//    case NCAAB
     case NHL
     case MLB
-    case EPL
+//    case EPL
     
     
     var title: String {
@@ -25,10 +25,10 @@ enum sportsSelecterViewModel: Int, CaseIterable {
 //            case .NFL: return "NFL"
 //            case .NCAAF: return "NCAAF"
             case .NBA: return "NBA"
-            case .NCAAB: return "NCAAB"
+//            case .NCAAB: return "NCAAB"
             case .NHL: return "NHL"
             case .MLB: return "MLB"
-            case .EPL: return "EPL"
+//            case .EPL: return "EPL"
         }
     }
         
@@ -39,10 +39,10 @@ enum sportsSelecterViewModel: Int, CaseIterable {
 //            case .NFL: return "football.fill"
 //            case .NCAAF: return "figure.american.football"
             case .NBA: return "basketball.fill"
-            case .NCAAB: return "basketball.fill"
+//            case .NCAAB: return "basketball.fill"
             case .NHL: return "figure.hockey"
             case .MLB: return "figure.baseball"
-            case .EPL: return "figure.soccer"
+//            case .EPL: return "figure.soccer"
         }
     }
     
